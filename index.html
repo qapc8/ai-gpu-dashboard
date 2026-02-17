@@ -1224,14 +1224,19 @@ let charts = {};
 // ════════════════════════════════════════════════════════════════
 // LOADING
 // ════════════════════════════════════════════════════════════════
-async function fetchJSON(url) { const r = await fetch(url); return r.json(); }
+const IS_STATIC = typeof EMBEDDED_DATA !== 'undefined';
+async function fetchJSON(url) {
+  const r = await fetch(url);
+  const ct = r.headers.get('content-type') || '';
+  if(!r.ok || !ct.includes('json')) throw new Error(`Server unavailable (${r.status})`);
+  return r.json();
+}
 
 async function loadAllData() {
-  if(typeof EMBEDDED_DATA !== 'undefined') {
+  if(IS_STATIC) {
     DATA = EMBEDDED_DATA;
     renderAll();
-    // Auto-load embedded AI summary
-    if(typeof EMBEDDED_AI !== 'undefined') loadAI('summary');
+    loadAI('summary');
     return;
   }
   const [matrix,specs,providers,historical,indicators,regional,workloads,tco,inference,spot,news,
@@ -2416,8 +2421,8 @@ async function loadAI(type, bypassCache) {
   const el = document.getElementById(cfg.el);
   if(!el) return;
 
-  // Check for embedded AI data first (static deployment)
-  if(!bypassCache && typeof EMBEDDED_AI !== 'undefined' && EMBEDDED_AI[type]) {
+  // Use embedded AI data when available (static deployment or cached)
+  if(typeof EMBEDDED_AI !== 'undefined' && EMBEDDED_AI[type]) {
     const cached = EMBEDDED_AI[type];
     const raw = cached.analysis || cached.quick_summary || JSON.stringify(cached);
     el.innerHTML = formatAIOutput(raw);
@@ -2427,7 +2432,7 @@ async function loadAI(type, bypassCache) {
     return;
   }
 
-  // Show loading state
+  // Live server mode — fetch from API
   el.innerHTML = '<div class="ai-loading"><div class="ai-spinner"></div>Generating analysis&hellip; This may take 15-30 seconds</div>';
   setAIStatus(cfg.status, 'loading');
   aiRunningCount++;
@@ -2456,15 +2461,21 @@ async function loadAI(type, bypassCache) {
 async function loadAllAI() {
   const btn = document.getElementById('btnGenerateAll');
   if(btn) { btn.textContent = 'Generating...'; btn.disabled = true; }
+  // Fire all intelligence reports in parallel
   const types = ['notes','trends','investment','regional','efficiency','forecast','sustainability'];
   await Promise.all(types.map(t => loadAI(t)));
   if(btn) { btn.textContent = 'Generate All Reports'; btn.disabled = false; }
 }
 
 async function refreshAllAI() {
-  aiLoadedSet.clear();
-  // Clear cache on server by requesting with nocache
+  // On static deployment, just re-render from embedded data
   const types = ['notes','trends','investment','regional','efficiency','forecast','sustainability'];
+  if(IS_STATIC) {
+    aiLoadedSet.clear();
+    await Promise.all(types.map(t => loadAI(t)));
+    return;
+  }
+  aiLoadedSet.clear();
   await Promise.all(types.map(t => loadAI(t, true)));
 }
 
@@ -2476,15 +2487,15 @@ async function loadGpuAI() {
   const el = document.getElementById('aiGpuContent');
   const statusEl = document.getElementById('statusGpu');
 
-  // Check for embedded AI data first (static deployment)
+  // Use embedded AI data when available
   const embeddedKey = 'gpu_' + gpuId;
   if(typeof EMBEDDED_AI !== 'undefined' && EMBEDDED_AI[embeddedKey]) {
-    const cached = EMBEDDED_AI[embeddedKey];
-    el.innerHTML = formatAIOutput(cached.analysis || '');
+    el.innerHTML = formatAIOutput(EMBEDDED_AI[embeddedKey].analysis || '');
     if(statusEl) { statusEl.className='intel-status intel-status-ready'; statusEl.textContent='READY'; }
     return;
   }
 
+  // Live server fallback
   el.innerHTML = `<div class="ai-loading"><div class="ai-spinner"></div>Analyzing ${name}&hellip;</div>`;
   if(statusEl) { statusEl.className='intel-status intel-status-loading'; statusEl.textContent='RUNNING'; }
 
