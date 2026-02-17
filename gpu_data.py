@@ -150,19 +150,6 @@ GPU_SPECS = {
         "msrp_usd": 8000,
         "tier": "mid"
     },
-    "L4": {
-        "name": "NVIDIA L4 24GB",
-        "vendor": "NVIDIA",
-        "vram_gb": 24,
-        "arch": "Ada Lovelace",
-        "fp16_tflops": 121,
-        "fp32_tflops": 30.3,
-        "tdp_watts": 72,
-        "interconnect": "PCIe 4.0",
-        "release_year": 2023,
-        "msrp_usd": 3500,
-        "tier": "mid"
-    },
     "RTX-4090": {
         "name": "NVIDIA RTX 4090 24GB",
         "vendor": "NVIDIA",
@@ -277,10 +264,6 @@ CLOUD_PRICING = {
                 "us-east-1": 1.006, "us-east-2": 1.006, "us-west-2": 1.006,
                 "eu-west-1": 1.11, "eu-central-1": 1.15,
                 "ap-northeast-1": 1.22, "ap-southeast-1": 1.18
-            }},
-            "L4": {"instance": "g6.xlarge", "gpus_per_instance": 1, "price_per_gpu_hr": 0.804, "regions": {
-                "us-east-1": 0.804, "us-east-2": 0.804, "us-west-2": 0.804,
-                "eu-west-1": 0.884, "eu-central-1": 0.917
             }}
         },
         "spot_discount": 0.60,
@@ -309,11 +292,6 @@ CLOUD_PRICING = {
                 "us-central1": 1.84, "us-east4": 1.84, "us-west1": 1.84,
                 "europe-west4": 2.02, "europe-west1": 2.00,
                 "asia-east1": 2.12, "asia-northeast1": 2.15
-            }},
-            "L4": {"instance": "g2-standard-4", "gpus_per_instance": 1, "price_per_gpu_hr": 0.70, "regions": {
-                "us-central1": 0.70, "us-east4": 0.70, "us-west1": 0.70,
-                "europe-west4": 0.77, "europe-west1": 0.76,
-                "asia-east1": 0.80, "asia-northeast1": 0.82
             }},
             "V100": {"instance": "n1-standard-8+V100", "gpus_per_instance": 1, "price_per_gpu_hr": 2.48, "regions": {
                 "us-central1": 2.48, "us-east4": 2.48, "us-west1": 2.48,
@@ -697,32 +675,6 @@ HISTORICAL_PRICING = {
         "2026-01": {"avg": 0.76, "min": 0.49, "max": 1.06, "availability": "abundant"},
         "2026-02": {"avg": 0.75, "min": 0.48, "max": 1.05, "availability": "abundant"}
     },
-    "L4": {
-        "2023-07": {"avg": 0.98, "min": 0.82, "max": 1.15, "availability": "moderate"},
-        "2023-08": {"avg": 0.95, "min": 0.80, "max": 1.12, "availability": "moderate"},
-        "2023-09": {"avg": 0.92, "min": 0.78, "max": 1.10, "availability": "moderate"},
-        "2023-10": {"avg": 0.90, "min": 0.76, "max": 1.07, "availability": "good"},
-        "2023-11": {"avg": 0.88, "min": 0.75, "max": 1.05, "availability": "good"},
-        "2023-12": {"avg": 0.86, "min": 0.73, "max": 1.02, "availability": "good"},
-        "2024-01": {"avg": 0.84, "min": 0.71, "max": 1.00, "availability": "good"},
-        "2024-02": {"avg": 0.82, "min": 0.70, "max": 0.98, "availability": "good"},
-        "2024-03": {"avg": 0.81, "min": 0.69, "max": 0.97, "availability": "good"},
-        "2024-04": {"avg": 0.80, "min": 0.68, "max": 0.95, "availability": "abundant"},
-        "2024-05": {"avg": 0.78, "min": 0.66, "max": 0.94, "availability": "abundant"},
-        "2024-06": {"avg": 0.77, "min": 0.65, "max": 0.92, "availability": "abundant"},
-        "2024-07": {"avg": 0.76, "min": 0.64, "max": 0.91, "availability": "abundant"},
-        "2024-08": {"avg": 0.75, "min": 0.63, "max": 0.90, "availability": "abundant"},
-        "2024-09": {"avg": 0.74, "min": 0.62, "max": 0.89, "availability": "abundant"},
-        "2024-10": {"avg": 0.73, "min": 0.61, "max": 0.88, "availability": "abundant"},
-        "2024-11": {"avg": 0.72, "min": 0.60, "max": 0.87, "availability": "abundant"},
-        "2024-12": {"avg": 0.71, "min": 0.59, "max": 0.86, "availability": "abundant"},
-        "2025-01": {"avg": 0.70, "min": 0.58, "max": 0.85, "availability": "abundant"},
-        "2025-04": {"avg": 0.69, "min": 0.57, "max": 0.84, "availability": "abundant"},
-        "2025-07": {"avg": 0.68, "min": 0.56, "max": 0.83, "availability": "abundant"},
-        "2025-10": {"avg": 0.67, "min": 0.55, "max": 0.82, "availability": "abundant"},
-        "2026-01": {"avg": 0.66, "min": 0.54, "max": 0.81, "availability": "abundant"},
-        "2026-02": {"avg": 0.66, "min": 0.53, "max": 0.80, "availability": "abundant"}
-    },
     "MI300X": {
         "2024-01": {"avg": 3.60, "min": 3.10, "max": 4.30, "availability": "scarce"},
         "2024-02": {"avg": 3.50, "min": 3.00, "max": 4.20, "availability": "scarce"},
@@ -852,8 +804,7 @@ REGIONAL_DATA = {
             "H100-SXM": {"avg": 2.80, "low": 2.15, "high": 4.28},
             "B200": {"avg": 4.50, "low": 3.75, "high": 5.35},
             "A100-80GB": {"avg": 1.55, "low": 1.10, "high": 2.52},
-            "MI300X": {"avg": 2.30, "low": 1.85, "high": 3.15},
-            "L4": {"avg": 0.75, "low": 0.70, "high": 0.80}
+"MI300X": {"avg": 2.30, "low": 1.85, "high": 3.15}
         },
         "adoption_trend_monthly": {
             "2024-01": 38.0, "2024-04": 39.2, "2024-07": 40.1, "2024-10": 41.0,
@@ -875,8 +826,7 @@ REGIONAL_DATA = {
             "H100-SXM": {"avg": 3.50, "low": 2.35, "high": 4.73},
             "B200": {"avg": 5.40, "low": 4.68, "high": 5.89},
             "A100-80GB": {"avg": 1.85, "low": 1.25, "high": 2.84},
-            "MI300X": {"avg": 2.75, "low": 2.05, "high": 3.47},
-            "L4": {"avg": 0.82, "low": 0.76, "high": 0.92}
+"MI300X": {"avg": 2.75, "low": 2.05, "high": 3.47}
         },
         "adoption_trend_monthly": {
             "2024-01": 19.5, "2024-04": 20.2, "2024-07": 20.8, "2024-10": 21.4,
@@ -898,8 +848,7 @@ REGIONAL_DATA = {
             "H100-SXM": {"avg": 3.95, "low": 2.50, "high": 5.14},
             "B200": {"avg": 5.90, "low": 5.58, "high": 6.42},
             "A100-80GB": {"avg": 2.10, "low": 1.35, "high": 3.03},
-            "MI300X": {"avg": 2.95, "low": 2.40, "high": 3.68},
-            "L4": {"avg": 0.82, "low": 0.80, "high": 0.82}
+"MI300X": {"avg": 2.95, "low": 2.40, "high": 3.68}
         },
         "adoption_trend_monthly": {
             "2024-01": 20.5, "2024-04": 21.2, "2024-07": 21.8, "2024-10": 22.5,
@@ -996,11 +945,11 @@ WORKLOAD_RECOMMENDATIONS = {
         "best_value": "Vast.ai MI300X"
     },
     "LLM Inference": {
-        "recommended": ["L4", "A10G", "L40S"],
+        "recommended": ["A10G", "L40S"],
         "min_gpus": 1,
         "budget_monthly_low": 300,
         "budget_monthly_high": 5000,
-        "best_value": "GCP L4"
+        "best_value": "GCP A10G"
     },
     "Image/Video Generation": {
         "recommended": ["RTX-4090", "L40S", "A100-40GB", "MI250X"],
@@ -1010,11 +959,11 @@ WORKLOAD_RECOMMENDATIONS = {
         "best_value": "Vast.ai RTX 4090"
     },
     "Research / Experimentation": {
-        "recommended": ["L4", "A10G", "RTX-4090", "MI210"],
+        "recommended": ["A10G", "RTX-4090", "MI210"],
         "min_gpus": 1,
         "budget_monthly_low": 50,
         "budget_monthly_high": 1000,
-        "best_value": "Vast.ai T4 spot"
+        "best_value": "Vast.ai RTX-4090 spot"
     }
 }
 
@@ -1028,7 +977,7 @@ TCO_COMPONENTS = {
         "cost_per_gpu_hr": {
             "H100-SXM": 0.35, "B200": 0.45, "H200": 0.38, "GB200": 0.55,
             "A100-80GB": 0.25, "A100-40GB": 0.20, "MI300X": 0.30, "MI325X": 0.35,
-            "L40S": 0.12, "L4": 0.05, "A10G": 0.05,
+            "L40S": 0.12, "A10G": 0.05,
             "RTX-4090": 0.08, "RTX-5090": 0.10, "MI250X": 0.22
         }
     },
@@ -1037,7 +986,7 @@ TCO_COMPONENTS = {
         "cost_per_gpu_hr": {
             "H100-SXM": 0.18, "B200": 0.22, "H200": 0.20, "GB200": 0.30,
             "A100-80GB": 0.15, "A100-40GB": 0.12, "MI300X": 0.16, "MI325X": 0.18,
-            "L40S": 0.08, "L4": 0.04, "A10G": 0.04,
+            "L40S": 0.08, "A10G": 0.04,
             "RTX-4090": 0.05, "RTX-5090": 0.06, "MI250X": 0.12
         }
     },
@@ -1046,7 +995,7 @@ TCO_COMPONENTS = {
         "cost_per_gpu_hr": {
             "H100-SXM": 0.08, "B200": 0.10, "H200": 0.09, "GB200": 0.12,
             "A100-80GB": 0.06, "A100-40GB": 0.05, "MI300X": 0.07, "MI325X": 0.08,
-            "L40S": 0.04, "L4": 0.02, "A10G": 0.02,
+            "L40S": 0.04, "A10G": 0.02,
             "RTX-4090": 0.03, "RTX-5090": 0.03, "MI250X": 0.05
         }
     },
@@ -1055,7 +1004,7 @@ TCO_COMPONENTS = {
         "cost_per_gpu_hr": {
             "H100-SXM": 0.14, "B200": 0.20, "H200": 0.14, "GB200": 0.42,
             "A100-80GB": 0.08, "A100-40GB": 0.08, "MI300X": 0.15, "MI325X": 0.16,
-            "L40S": 0.07, "L4": 0.01, "A10G": 0.03,
+            "L40S": 0.07, "A10G": 0.03,
             "RTX-4090": 0.09, "RTX-5090": 0.12, "MI250X": 0.11
         }
     },
@@ -1064,7 +1013,7 @@ TCO_COMPONENTS = {
         "cost_per_gpu_hr": {
             "H100-SXM": 0.10, "B200": 0.12, "H200": 0.10, "GB200": 0.15,
             "A100-80GB": 0.08, "A100-40GB": 0.06, "MI300X": 0.10, "MI325X": 0.10,
-            "L40S": 0.05, "L4": 0.03, "A10G": 0.03,
+            "L40S": 0.05, "A10G": 0.03,
             "RTX-4090": 0.04, "RTX-5090": 0.05, "MI250X": 0.06
         }
     }
@@ -1141,7 +1090,7 @@ INFERENCE_BENCHMARKS = {
     },
     # #13 — Qwen3 30B-A3B (Alibaba)
     "Qwen3-30B-A3B": {"params_b": 30, "type": "LLM", "category": "Medium", "rank": 13,
-        "gpus": {"H100-SXM": {"tokens_per_sec": 320, "cost_per_1m_tokens": 0.10, "vram_gb": 5}, "B200": {"tokens_per_sec": 580, "cost_per_1m_tokens": 0.058, "vram_gb": 5}, "A100-80GB": {"tokens_per_sec": 180, "cost_per_1m_tokens": 0.18, "vram_gb": 5}, "MI300X": {"tokens_per_sec": 260, "cost_per_1m_tokens": 0.12, "vram_gb": 5}, "L4": {"tokens_per_sec": 70, "cost_per_1m_tokens": 0.35, "vram_gb": 5}},
+        "gpus": {"H100-SXM": {"tokens_per_sec": 320, "cost_per_1m_tokens": 0.10, "vram_gb": 5}, "B200": {"tokens_per_sec": 580, "cost_per_1m_tokens": 0.058, "vram_gb": 5}, "A100-80GB": {"tokens_per_sec": 180, "cost_per_1m_tokens": 0.18, "vram_gb": 5}, "MI300X": {"tokens_per_sec": 260, "cost_per_1m_tokens": 0.12, "vram_gb": 5}},
         "providers": {"OpenRouter": 0.06, "Together": 0.08, "Fireworks": 0.08, "DeepInfra": 0.05, "Groq": 0.05}
     },
     # #14 — Llama 3.3 70B (Meta)
@@ -1227,13 +1176,6 @@ SPOT_MARKET = {
         "7d_avg": 0.23, "30d_avg": 0.25, "volatility_30d": 22.5,
         "available_gpus": 15200, "queue_depth": 12,
         "hourly_prices_24h": [0.22,0.20,0.19,0.18,0.18,0.19,0.21,0.23,0.25,0.27,0.29,0.31,0.33,0.35,0.32,0.30,0.28,0.26,0.25,0.24,0.23,0.22,0.21,0.20]
-    },
-    "L4": {
-        "bid": 0.38, "ask": 0.48, "spread_pct": 20.8, "last_trade": 0.44,
-        "24h_low": 0.35, "24h_high": 0.52, "24h_volume_gpu_hrs": 68000,
-        "7d_avg": 0.43, "30d_avg": 0.45, "volatility_30d": 15.2,
-        "available_gpus": 12000, "queue_depth": 20,
-        "hourly_prices_24h": [0.40,0.39,0.38,0.38,0.39,0.40,0.42,0.44,0.46,0.48,0.50,0.51,0.52,0.50,0.48,0.47,0.46,0.45,0.44,0.43,0.42,0.41,0.40,0.40]
     }
 }
 
@@ -1411,57 +1353,49 @@ UTILIZATION_METRICS = {
         "H100-SXM": {"avg_utilization_pct": 78, "peak_pct": 94, "off_peak_pct": 52, "idle_cost_per_hr": 0.48, "efficiency_score": 82, "utilization_trend": [68, 71, 74, 76, 78]},
         "B200": {"avg_utilization_pct": 85, "peak_pct": 97, "off_peak_pct": 61, "idle_cost_per_hr": 0.72, "efficiency_score": 88, "utilization_trend": [72, 76, 80, 83, 85]},
         "A100-80GB": {"avg_utilization_pct": 65, "peak_pct": 88, "off_peak_pct": 38, "idle_cost_per_hr": 0.42, "efficiency_score": 70, "utilization_trend": [75, 72, 70, 67, 65]},
-        "MI300X": {"avg_utilization_pct": 58, "peak_pct": 82, "off_peak_pct": 30, "idle_cost_per_hr": 0.55, "efficiency_score": 62, "utilization_trend": [40, 45, 50, 54, 58]},
-        "L4": {"avg_utilization_pct": 72, "peak_pct": 91, "off_peak_pct": 45, "idle_cost_per_hr": 0.18, "efficiency_score": 78, "utilization_trend": [60, 64, 67, 70, 72]}
+        "MI300X": {"avg_utilization_pct": 58, "peak_pct": 82, "off_peak_pct": 30, "idle_cost_per_hr": 0.55, "efficiency_score": 62, "utilization_trend": [40, 45, 50, 54, 58]}
     },
     "GCP": {
         "H100-SXM": {"avg_utilization_pct": 76, "peak_pct": 93, "off_peak_pct": 50, "idle_cost_per_hr": 0.52, "efficiency_score": 80, "utilization_trend": [66, 69, 72, 74, 76]},
         "B200": {"avg_utilization_pct": 83, "peak_pct": 96, "off_peak_pct": 58, "idle_cost_per_hr": 0.78, "efficiency_score": 86, "utilization_trend": [70, 74, 78, 81, 83]},
         "A100-80GB": {"avg_utilization_pct": 63, "peak_pct": 86, "off_peak_pct": 36, "idle_cost_per_hr": 0.45, "efficiency_score": 68, "utilization_trend": [73, 70, 68, 65, 63]},
-        "MI300X": {"avg_utilization_pct": 55, "peak_pct": 80, "off_peak_pct": 28, "idle_cost_per_hr": 0.58, "efficiency_score": 59, "utilization_trend": [38, 42, 47, 51, 55]},
-        "L4": {"avg_utilization_pct": 70, "peak_pct": 89, "off_peak_pct": 43, "idle_cost_per_hr": 0.19, "efficiency_score": 76, "utilization_trend": [58, 62, 65, 68, 70]}
+        "MI300X": {"avg_utilization_pct": 55, "peak_pct": 80, "off_peak_pct": 28, "idle_cost_per_hr": 0.58, "efficiency_score": 59, "utilization_trend": [38, 42, 47, 51, 55]}
     },
     "Azure": {
         "H100-SXM": {"avg_utilization_pct": 74, "peak_pct": 92, "off_peak_pct": 48, "idle_cost_per_hr": 0.55, "efficiency_score": 78, "utilization_trend": [64, 67, 70, 72, 74]},
         "B200": {"avg_utilization_pct": 81, "peak_pct": 95, "off_peak_pct": 55, "idle_cost_per_hr": 0.82, "efficiency_score": 84, "utilization_trend": [68, 72, 76, 79, 81]},
         "A100-80GB": {"avg_utilization_pct": 62, "peak_pct": 85, "off_peak_pct": 35, "idle_cost_per_hr": 0.47, "efficiency_score": 67, "utilization_trend": [72, 69, 67, 64, 62]},
-        "MI300X": {"avg_utilization_pct": 60, "peak_pct": 84, "off_peak_pct": 32, "idle_cost_per_hr": 0.52, "efficiency_score": 64, "utilization_trend": [42, 47, 52, 56, 60]},
-        "L4": {"avg_utilization_pct": 68, "peak_pct": 88, "off_peak_pct": 41, "idle_cost_per_hr": 0.20, "efficiency_score": 74, "utilization_trend": [56, 60, 63, 66, 68]}
+        "MI300X": {"avg_utilization_pct": 60, "peak_pct": 84, "off_peak_pct": 32, "idle_cost_per_hr": 0.52, "efficiency_score": 64, "utilization_trend": [42, 47, 52, 56, 60]}
     },
     "Lambda": {
         "H100-SXM": {"avg_utilization_pct": 82, "peak_pct": 96, "off_peak_pct": 60, "idle_cost_per_hr": 0.38, "efficiency_score": 87, "utilization_trend": [72, 75, 78, 80, 82]},
         "B200": {"avg_utilization_pct": 88, "peak_pct": 98, "off_peak_pct": 68, "idle_cost_per_hr": 0.58, "efficiency_score": 91, "utilization_trend": [76, 80, 84, 86, 88]},
         "A100-80GB": {"avg_utilization_pct": 70, "peak_pct": 90, "off_peak_pct": 42, "idle_cost_per_hr": 0.32, "efficiency_score": 75, "utilization_trend": [78, 76, 74, 72, 70]},
-        "MI300X": {"avg_utilization_pct": 62, "peak_pct": 85, "off_peak_pct": 34, "idle_cost_per_hr": 0.48, "efficiency_score": 66, "utilization_trend": [44, 49, 54, 58, 62]},
-        "L4": {"avg_utilization_pct": 75, "peak_pct": 92, "off_peak_pct": 48, "idle_cost_per_hr": 0.14, "efficiency_score": 80, "utilization_trend": [63, 66, 70, 73, 75]}
+        "MI300X": {"avg_utilization_pct": 62, "peak_pct": 85, "off_peak_pct": 34, "idle_cost_per_hr": 0.48, "efficiency_score": 66, "utilization_trend": [44, 49, 54, 58, 62]}
     },
     "CoreWeave": {
         "H100-SXM": {"avg_utilization_pct": 84, "peak_pct": 97, "off_peak_pct": 62, "idle_cost_per_hr": 0.35, "efficiency_score": 89, "utilization_trend": [74, 77, 80, 82, 84]},
         "B200": {"avg_utilization_pct": 90, "peak_pct": 99, "off_peak_pct": 72, "idle_cost_per_hr": 0.52, "efficiency_score": 93, "utilization_trend": [78, 82, 86, 88, 90]},
         "A100-80GB": {"avg_utilization_pct": 68, "peak_pct": 89, "off_peak_pct": 40, "idle_cost_per_hr": 0.28, "efficiency_score": 73, "utilization_trend": [76, 74, 72, 70, 68]},
-        "MI300X": {"avg_utilization_pct": 64, "peak_pct": 86, "off_peak_pct": 36, "idle_cost_per_hr": 0.44, "efficiency_score": 68, "utilization_trend": [46, 51, 56, 60, 64]},
-        "L4": {"avg_utilization_pct": 77, "peak_pct": 93, "off_peak_pct": 50, "idle_cost_per_hr": 0.12, "efficiency_score": 82, "utilization_trend": [65, 68, 72, 75, 77]}
+        "MI300X": {"avg_utilization_pct": 64, "peak_pct": 86, "off_peak_pct": 36, "idle_cost_per_hr": 0.44, "efficiency_score": 68, "utilization_trend": [46, 51, 56, 60, 64]}
     },
     "RunPod": {
         "H100-SXM": {"avg_utilization_pct": 80, "peak_pct": 95, "off_peak_pct": 56, "idle_cost_per_hr": 0.40, "efficiency_score": 85, "utilization_trend": [70, 73, 76, 78, 80]},
         "B200": {"avg_utilization_pct": 86, "peak_pct": 97, "off_peak_pct": 64, "idle_cost_per_hr": 0.60, "efficiency_score": 89, "utilization_trend": [74, 78, 82, 84, 86]},
         "A100-80GB": {"avg_utilization_pct": 66, "peak_pct": 87, "off_peak_pct": 38, "idle_cost_per_hr": 0.30, "efficiency_score": 71, "utilization_trend": [74, 72, 70, 68, 66]},
-        "MI300X": {"avg_utilization_pct": 56, "peak_pct": 81, "off_peak_pct": 29, "idle_cost_per_hr": 0.50, "efficiency_score": 60, "utilization_trend": [38, 43, 48, 52, 56]},
-        "L4": {"avg_utilization_pct": 73, "peak_pct": 91, "off_peak_pct": 46, "idle_cost_per_hr": 0.13, "efficiency_score": 79, "utilization_trend": [61, 65, 68, 71, 73]}
+        "MI300X": {"avg_utilization_pct": 56, "peak_pct": 81, "off_peak_pct": 29, "idle_cost_per_hr": 0.50, "efficiency_score": 60, "utilization_trend": [38, 43, 48, 52, 56]}
     },
     "Vast.ai": {
         "H100-SXM": {"avg_utilization_pct": 71, "peak_pct": 90, "off_peak_pct": 44, "idle_cost_per_hr": 0.32, "efficiency_score": 76, "utilization_trend": [61, 64, 67, 69, 71]},
         "B200": {"avg_utilization_pct": 78, "peak_pct": 94, "off_peak_pct": 52, "idle_cost_per_hr": 0.50, "efficiency_score": 82, "utilization_trend": [66, 70, 74, 76, 78]},
         "A100-80GB": {"avg_utilization_pct": 64, "peak_pct": 86, "off_peak_pct": 36, "idle_cost_per_hr": 0.22, "efficiency_score": 69, "utilization_trend": [72, 70, 68, 66, 64]},
-        "MI300X": {"avg_utilization_pct": 50, "peak_pct": 76, "off_peak_pct": 24, "idle_cost_per_hr": 0.42, "efficiency_score": 54, "utilization_trend": [34, 38, 42, 46, 50]},
-        "L4": {"avg_utilization_pct": 69, "peak_pct": 88, "off_peak_pct": 42, "idle_cost_per_hr": 0.10, "efficiency_score": 74, "utilization_trend": [57, 61, 64, 67, 69]}
+        "MI300X": {"avg_utilization_pct": 50, "peak_pct": 76, "off_peak_pct": 24, "idle_cost_per_hr": 0.42, "efficiency_score": 54, "utilization_trend": [34, 38, 42, 46, 50]}
     },
     "FluidStack": {
         "H100-SXM": {"avg_utilization_pct": 69, "peak_pct": 88, "off_peak_pct": 42, "idle_cost_per_hr": 0.30, "efficiency_score": 74, "utilization_trend": [59, 62, 65, 67, 69]},
         "B200": {"avg_utilization_pct": 76, "peak_pct": 93, "off_peak_pct": 50, "idle_cost_per_hr": 0.48, "efficiency_score": 80, "utilization_trend": [64, 68, 72, 74, 76]},
         "A100-80GB": {"avg_utilization_pct": 62, "peak_pct": 84, "off_peak_pct": 34, "idle_cost_per_hr": 0.20, "efficiency_score": 67, "utilization_trend": [70, 68, 66, 64, 62]},
-        "MI300X": {"avg_utilization_pct": 48, "peak_pct": 74, "off_peak_pct": 22, "idle_cost_per_hr": 0.40, "efficiency_score": 52, "utilization_trend": [32, 36, 40, 44, 48]},
-        "L4": {"avg_utilization_pct": 67, "peak_pct": 87, "off_peak_pct": 40, "idle_cost_per_hr": 0.09, "efficiency_score": 72, "utilization_trend": [55, 59, 62, 65, 67]}
+        "MI300X": {"avg_utilization_pct": 48, "peak_pct": 74, "off_peak_pct": 22, "idle_cost_per_hr": 0.40, "efficiency_score": 52, "utilization_trend": [32, 36, 40, 44, 48]}
     }
 }
 
@@ -1549,26 +1483,6 @@ RESERVATION_ANALYTICS = {
             "low_util": {"type": "spot", "reason": "Good spot savings, growing AMD availability"},
             "medium_util": {"type": "reserved_1yr", "reason": "Lock in AMD pricing advantage vs NVIDIA"},
             "high_util": {"type": "reserved_3yr", "reason": "Best TCO for AMD-compatible workloads"}
-        }
-    },
-    "L4": {
-        "on_demand_rate": 0.70,
-        "spot_avg_rate": 0.28,
-        "reserved_1yr_rate": 0.49,
-        "reserved_3yr_rate": 0.28,
-        "breakeven_hours_spot": {"vs_on_demand": 0, "description": "Spot always cheaper"},
-        "breakeven_hours_1yr": {"monthly_hrs": 410, "description": "56% utilization to break even"},
-        "breakeven_hours_3yr": {"monthly_hrs": 260, "description": "36% utilization to break even"},
-        "savings_at_utilization": {
-            "40_pct": {"spot": 60, "reserved_1yr": -4, "reserved_3yr": 30},
-            "60_pct": {"spot": 60, "reserved_1yr": 16, "reserved_3yr": 46},
-            "80_pct": {"spot": 60, "reserved_1yr": 28, "reserved_3yr": 58},
-            "100_pct": {"spot": 60, "reserved_1yr": 30, "reserved_3yr": 60}
-        },
-        "recommended_commitment": {
-            "low_util": {"type": "spot", "reason": "Excellent spot availability for inference GPUs"},
-            "medium_util": {"type": "reserved_1yr", "reason": "Stable inference workloads benefit from reserved"},
-            "high_util": {"type": "reserved_3yr", "reason": "L4 longevity makes 3yr commitment safe"}
         }
     },
     "H200": {
@@ -1674,17 +1588,6 @@ PRICE_FORECASTS = {
         "demand_signal": "growing",
         "pattern_match": "Competitive pressure play (AMD gaining share)"
     },
-    "L4": {
-        "current_avg": 0.70,
-        "elasticity_coefficient": -0.22,
-        "forecast_3mo": {"low": 0.62, "mid": 0.67, "high": 0.72, "confidence": 0.80},
-        "forecast_6mo": {"low": 0.55, "mid": 0.62, "high": 0.70, "confidence": 0.68},
-        "forecast_12mo": {"low": 0.45, "mid": 0.55, "high": 0.65, "confidence": 0.52},
-        "price_floor": 0.35,
-        "supply_signal": "stable",
-        "demand_signal": "growing",
-        "pattern_match": "Inference workhorse (steady demand, gradual decline)"
-    },
     "RTX-4090": {
         "current_avg": 0.22,
         "elasticity_coefficient": -0.48,
@@ -1734,7 +1637,7 @@ COMPETITIVE_MOAT = {
         "moat_strength_score": 92,
         "market_share_pct": 78,
         "market_share_trend": [88, 86, 84, 81, 78],
-        "key_products": ["B200", "GB200", "H200", "H100-SXM", "L4"],
+        "key_products": ["B200", "GB200", "H200", "H100-SXM"],
         "strengths": ["CUDA ecosystem lock-in", "NVLink/NVSwitch interconnect", "Dominant software stack", "Training performance leadership"],
         "weaknesses": ["Premium pricing", "Supply constraints on latest gen", "Growing competitive pressure"],
         "parity_timeline": None
@@ -1837,7 +1740,6 @@ GPU_CARBON_FOOTPRINT = {
     "A100-80GB": {"tdp_watts": 300, "typical_watts": 250, "kwh_per_hour": 0.25, "annual_kwh_full_util": 2190, "carbon_kg_per_year_us_avg": 876, "carbon_kg_per_year_eu_nordic": 99, "water_liters_per_year_us_avg": 3942, "embodied_carbon_kg": 100},
     "MI300X": {"tdp_watts": 750, "typical_watts": 620, "kwh_per_hour": 0.62, "annual_kwh_full_util": 5431, "carbon_kg_per_year_us_avg": 2172, "carbon_kg_per_year_eu_nordic": 244, "water_liters_per_year_us_avg": 9776, "embodied_carbon_kg": 160},
     "H200": {"tdp_watts": 700, "typical_watts": 580, "kwh_per_hour": 0.58, "annual_kwh_full_util": 5081, "carbon_kg_per_year_us_avg": 2032, "carbon_kg_per_year_eu_nordic": 228, "water_liters_per_year_us_avg": 9146, "embodied_carbon_kg": 155},
-    "L4": {"tdp_watts": 72, "typical_watts": 60, "kwh_per_hour": 0.06, "annual_kwh_full_util": 526, "carbon_kg_per_year_us_avg": 210, "carbon_kg_per_year_eu_nordic": 24, "water_liters_per_year_us_avg": 947, "embodied_carbon_kg": 35},
     "RTX-4090": {"tdp_watts": 450, "typical_watts": 370, "kwh_per_hour": 0.37, "annual_kwh_full_util": 3241, "carbon_kg_per_year_us_avg": 1296, "carbon_kg_per_year_eu_nordic": 146, "water_liters_per_year_us_avg": 5834, "embodied_carbon_kg": 80}
 }
 
@@ -1921,7 +1823,6 @@ MODEL_HARDWARE_FIT = {
             "B200": {"optimal_config": "1x B200", "batch_size": 512, "throughput_tok_s": 680, "cost_per_1m_tokens": 0.042, "vram_headroom_pct": 93, "fit_score": 55, "notes": "Massive overkill, only if bundled"},
             "A100-80GB": {"optimal_config": "1x A100", "batch_size": 128, "throughput_tok_s": 280, "cost_per_1m_tokens": 0.048, "vram_headroom_pct": 82, "fit_score": 72, "notes": "Good balance for small models"},
             "MI300X": {"optimal_config": "1x MI300X", "batch_size": 256, "throughput_tok_s": 380, "cost_per_1m_tokens": 0.045, "vram_headroom_pct": 93, "fit_score": 60, "notes": "VRAM overkill, decent throughput"},
-            "L4": {"optimal_config": "1x L4", "batch_size": 32, "throughput_tok_s": 85, "cost_per_1m_tokens": 0.065, "vram_headroom_pct": 42, "fit_score": 88, "notes": "Best fit — right-sized for 7B inference"},
             "RTX-4090": {"optimal_config": "1x RTX-4090", "batch_size": 64, "throughput_tok_s": 140, "cost_per_1m_tokens": 0.035, "vram_headroom_pct": 42, "fit_score": 92, "notes": "Best cost/perf for 7B inference"}
         }
     },
@@ -1933,7 +1834,6 @@ MODEL_HARDWARE_FIT = {
             "B200": {"optimal_config": "1x B200", "batch_size": 256, "throughput_tok_s": 480, "cost_per_1m_tokens": 0.062, "vram_headroom_pct": 86, "fit_score": 65, "notes": "Overkill but fast"},
             "A100-80GB": {"optimal_config": "1x A100", "batch_size": 64, "throughput_tok_s": 195, "cost_per_1m_tokens": 0.072, "vram_headroom_pct": 68, "fit_score": 82, "notes": "Sweet spot for 13B inference"},
             "MI300X": {"optimal_config": "1x MI300X", "batch_size": 128, "throughput_tok_s": 270, "cost_per_1m_tokens": 0.065, "vram_headroom_pct": 86, "fit_score": 70, "notes": "Good perf, VRAM headroom for batching"},
-            "L4": {"optimal_config": "2x L4", "batch_size": 16, "throughput_tok_s": 55, "cost_per_1m_tokens": 0.12, "vram_headroom_pct": 8, "fit_score": 58, "notes": "Needs 2 GPUs, tight fit"},
             "RTX-4090": {"optimal_config": "2x RTX-4090", "batch_size": 32, "throughput_tok_s": 95, "cost_per_1m_tokens": 0.058, "vram_headroom_pct": 8, "fit_score": 72, "notes": "Best cost/perf if 2-GPU setup acceptable"}
         }
     },

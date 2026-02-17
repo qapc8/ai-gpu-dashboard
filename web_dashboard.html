@@ -1573,7 +1573,7 @@ function updateTrendChart() {
 function renderAvailabilityChart() {
   const hist=DATA.historical;
   const am={'scarce':1,'limited':2,'moderate':3,'good':4,'abundant':5};
-  const gpus=['H100-SXM','H200','A100-80GB','MI300X','L4','RTX-4090'];
+  const gpus=['H100-SXM','H200','A100-80GB','MI300X','RTX-4090'];
   const ap=new Set(); gpus.forEach(g=>{if(hist[g])Object.keys(hist[g]).forEach(p=>ap.add(p));});
   const periods=[...ap].sort().slice(-8);
   const ds=gpus.map((g,i)=>({label:g,data:periods.map(p=>hist[g]?.[p]?am[hist[g][p].availability]||0:null),borderColor:CL[i],tension:0.35,pointRadius:3,borderWidth:2,spanGaps:true}));
