@@ -800,7 +800,7 @@ body {
   </div>
   <div class="grid g-2 mb">
     <div class="card">
-      <div class="card-hd"><span class="card-hd-title" id="providerChartTitle">Provider Price Comparison</span></div>
+      <div class="card-hd"><span class="card-hd-title" id="providerChartTitle">Price Comparison</span><span class="card-hd-badge" style="background:var(--blue-dim);color:var(--blue);">Cloud</span><span class="card-hd-badge" style="background:var(--amber-dim);color:var(--amber);margin-left:4px;">Marketplace</span></div>
       <div class="card-bd"><div class="chart-wrap" style="height:340px;"><canvas id="chartProviders"></canvas></div></div>
     </div>
     <div class="card">
@@ -808,9 +808,13 @@ body {
       <div class="card-bd"><div class="chart-wrap" style="height:340px;"><canvas id="chartPriceTypes"></canvas></div></div>
     </div>
   </div>
+  <div class="card mb">
+    <div class="card-hd"><span class="card-hd-title">Cloud Providers</span><span class="card-hd-badge" style="background:var(--blue-dim);color:var(--blue);">Own Infrastructure</span></div>
+    <div class="card-bd-flush"><table class="dt" id="providerCloudTable"></table></div>
+  </div>
   <div class="card">
-    <div class="card-hd"><span class="card-hd-title" id="providerTableTitle">Detailed Provider Breakdown</span></div>
-    <div class="card-bd-flush"><table class="dt" id="providerTable"></table></div>
+    <div class="card-hd"><span class="card-hd-title">GPU Marketplaces</span><span class="card-hd-badge" style="background:var(--amber-dim);color:var(--amber);">Aggregated / Community Hardware</span></div>
+    <div class="card-bd-flush"><table class="dt" id="providerMktTable"></table></div>
   </div>
 </div>
 
@@ -1578,7 +1582,7 @@ function renderOverviewLeadChart() {
 
 function renderOverviewTable() {
   const m = DATA.matrix, spot = DATA.spot;
-  let h = '<thead><tr><th>GPU</th><th>Vendor</th><th class="r">VRAM</th><th class="r">Best $/hr</th><th>Provider</th><th class="r">Spot</th><th class="r">Spread</th><th class="r">MoM</th><th class="r">TFLOPS/$</th><th class="r">VRAM/$</th></tr></thead><tbody>';
+  let h = '<thead><tr><th>GPU</th><th>Vendor</th><th class="r">VRAM</th><th class="r">Best $/hr</th><th>Provider</th><th>Type</th><th class="r">Spot</th><th class="r">Spread</th><th class="r">MoM</th><th class="r">TFLOPS/$</th><th class="r">VRAM/$</th></tr></thead><tbody>';
   m.forEach(r => {
     const vc = r.vendor==='AMD' ? 'tag-vendor-amd' : 'tag-vendor-nvidia';
     const mc = r.monthly_change_pct<0 ? 'c-green' : 'c-red';
@@ -1586,7 +1590,11 @@ function renderOverviewTable() {
     const spotPrice = sp ? '$'+sp.last_trade.toFixed(2) : '—';
     const spread = sp ? sp.spread_pct+'%' : '—';
     const spreadCls = sp ? (sp.spread_pct > 15 ? 'c-red' : sp.spread_pct > 10 ? 'c-amber' : 'c-green') : '';
-    h += `<tr><td class="gpu-name">${r.name}</td><td><span class="tag ${vc}">${r.vendor}</span></td><td class="r">${r.vram_gb}GB</td><td class="r c-green fw">$${r.cheapest_price.toFixed(2)}</td><td>${r.cheapest_provider}</td><td class="r">${spotPrice}</td><td class="r ${spreadCls}">${spread}</td><td class="r ${mc}">${r.monthly_change_pct>0?'+':''}${r.monthly_change_pct}%</td><td class="r c-purple">${r.flops_per_dollar}</td><td class="r c-cyan">${r.vram_per_dollar}</td></tr>`;
+    const isMkt = r.cheapest_provider_type === 'marketplace';
+    const typeBadge = isMkt
+      ? '<span class="tag" style="background:var(--amber-dim);color:var(--amber);font-size:9px;">MKT</span>'
+      : '<span class="tag" style="background:var(--blue-dim);color:var(--blue);font-size:9px;">CLOUD</span>';
+    h += `<tr><td class="gpu-name">${r.name}</td><td><span class="tag ${vc}">${r.vendor}</span></td><td class="r">${r.vram_gb}GB</td><td class="r c-green fw">$${r.cheapest_price.toFixed(2)}</td><td>${r.cheapest_provider}</td><td>${typeBadge}</td><td class="r">${spotPrice}</td><td class="r ${spreadCls}">${spread}</td><td class="r ${mc}">${r.monthly_change_pct>0?'+':''}${r.monthly_change_pct}%</td><td class="r c-purple">${r.flops_per_dollar}</td><td class="r c-cyan">${r.vram_per_dollar}</td></tr>`;
   });
   h += '</tbody>';
   document.getElementById('overviewTopTable').innerHTML = h;
@@ -1597,11 +1605,15 @@ function renderOverviewTable() {
 // ════════════════════════════════════════════════════════════════
 function renderPriceMatrix() {
   const m = DATA.matrix;
-  let h = `<thead><tr><th>GPU</th><th>Vendor</th><th>Arch</th><th class="r">VRAM</th><th>Tier</th><th class="r">Best $/hr</th><th>Provider</th><th class="r">Avg</th><th class="r">Max</th><th class="r">#Prov</th><th class="r">Spread</th><th class="r">MoM</th><th class="r">TFLOPS/$</th><th class="r">VRAM/$</th></tr></thead><tbody>`;
+  let h = `<thead><tr><th>GPU</th><th>Vendor</th><th>Arch</th><th class="r">VRAM</th><th>Tier</th><th class="r">Best $/hr</th><th>Provider</th><th>Type</th><th class="r">Avg</th><th class="r">Max</th><th class="r">#Prov</th><th class="r">Spread</th><th class="r">MoM</th><th class="r">TFLOPS/$</th><th class="r">VRAM/$</th></tr></thead><tbody>`;
   m.forEach(r => {
     const vc = r.vendor==='AMD'?'tag-vendor-amd':'tag-vendor-nvidia';
     const mc = r.monthly_change_pct<0?'c-green':'c-red';
-    h += `<tr><td class="gpu-name">${r.name}</td><td><span class="tag ${vc}">${r.vendor}</span></td><td><span class="tag tag-arch">${r.arch}</span></td><td class="r">${r.vram_gb}GB</td><td>${r.tier}</td><td class="r c-green fw">$${r.cheapest_price.toFixed(2)}</td><td>${r.cheapest_provider}</td><td class="r">$${r.avg_price.toFixed(2)}</td><td class="r c-red">$${r.most_expensive.toFixed(2)}</td><td class="r">${r.num_providers}</td><td class="r">${r.price_spread_pct}%</td><td class="r ${mc}">${r.monthly_change_pct>0?'+':''}${r.monthly_change_pct}%</td><td class="r c-purple">${r.flops_per_dollar}</td><td class="r c-cyan">${r.vram_per_dollar}</td></tr>`;
+    const isMkt = r.cheapest_provider_type === 'marketplace';
+    const typeBadge = isMkt
+      ? '<span class="tag" style="background:var(--amber-dim);color:var(--amber);font-size:9px;">MKT</span>'
+      : '<span class="tag" style="background:var(--blue-dim);color:var(--blue);font-size:9px;">CLOUD</span>';
+    h += `<tr><td class="gpu-name">${r.name}</td><td><span class="tag ${vc}">${r.vendor}</span></td><td><span class="tag tag-arch">${r.arch}</span></td><td class="r">${r.vram_gb}GB</td><td>${r.tier}</td><td class="r c-green fw">$${r.cheapest_price.toFixed(2)}</td><td>${r.cheapest_provider}</td><td>${typeBadge}</td><td class="r">$${r.avg_price.toFixed(2)}</td><td class="r c-red">$${r.most_expensive.toFixed(2)}</td><td class="r">${r.num_providers}</td><td class="r">${r.price_spread_pct}%</td><td class="r ${mc}">${r.monthly_change_pct>0?'+':''}${r.monthly_change_pct}%</td><td class="r c-purple">${r.flops_per_dollar}</td><td class="r c-cyan">${r.vram_per_dollar}</td></tr>`;
   });
   h += '</tbody>';
   document.getElementById('priceMatrixTable').innerHTML = h;
@@ -1699,26 +1711,36 @@ function renderProvidersTab() { updateProviderView(); }
 
 function updateProviderView() {
   const gpuId = document.getElementById('providerGpuSelect').value || 'H100-SXM';
-  document.getElementById('providerChartTitle').textContent = `Provider Comparison — ${gpuId}`;
-  document.getElementById('providerTableTitle').textContent = `Detailed Breakdown — ${gpuId}`;
-  const pd = DATA.providers; const rows = [];
+  document.getElementById('providerChartTitle').textContent = `Price Comparison — ${gpuId}`;
+  const pd = DATA.providers;
+  const rows = [];
   for(const [prov,p] of Object.entries(pd)){
     if(p.gpus&&p.gpus[gpuId]){
       const g=p.gpus[gpuId]; const spot=g.price_per_gpu_hr*(1-p.spot_discount);
       const r1=g.price_per_gpu_hr*(1-p.reserved_1yr_discount); const r3=g.price_per_gpu_hr*(1-p.reserved_3yr_discount);
-      rows.push({provider:prov,name:p.provider_name,instance:g.instance,ondemand:g.price_per_gpu_hr,
+      rows.push({provider:prov,name:p.provider_name,type:p.type||'cloud',instance:g.instance,ondemand:g.price_per_gpu_hr,
         spot:p.spot_discount>0?spot:null,res1:r1,res3:r3,monthly:g.price_per_gpu_hr*730,regions:g.regions||{},spot_discount:p.spot_discount});
     }
   }
   rows.sort((a,b)=>a.ondemand-b.ondemand);
 
+  const cloudRows = rows.filter(r => r.type === 'cloud');
+  const mktRows = rows.filter(r => r.type === 'marketplace');
+
+  // Bar chart: color-coded by type (blue=cloud, amber=marketplace)
   if(charts.pv) charts.pv.destroy();
   charts.pv = new Chart(document.getElementById('chartProviders'),{type:'bar',
     data:{labels:rows.map(r=>r.provider),datasets:[{label:'On-Demand $/hr',data:rows.map(r=>r.ondemand),
-      backgroundColor:rows.map(r=>(PC[r.provider]||C.blue)+'70'),borderColor:rows.map(r=>PC[r.provider]||C.blue),borderWidth:1}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
+      backgroundColor:rows.map(r=> r.type==='marketplace' ? C.amber+'70' : (PC[r.provider]||C.blue)+'70'),
+      borderColor:rows.map(r=> r.type==='marketplace' ? C.amber : (PC[r.provider]||C.blue)),borderWidth:1,
+      borderDash: rows.map(r=> r.type==='marketplace' ? [3,3] : [])
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+      tooltip:{callbacks:{afterLabel:(ctx)=>rows[ctx.dataIndex]?.type==='marketplace'?'(Marketplace)':'(Cloud Provider)'}}},
+      scales:{y:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
   });
 
+  // Grouped bar: on-demand/spot/reserved
   if(charts.pt) charts.pt.destroy();
   charts.pt = new Chart(document.getElementById('chartPriceTypes'),{type:'bar',
     data:{labels:rows.map(r=>r.provider),datasets:[
@@ -1730,15 +1752,22 @@ function updateProviderView() {
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
   });
 
-  let h=`<thead><tr><th>Provider</th><th>Instance</th><th class="r">On-Demand</th><th class="r">Spot</th><th class="r">1yr Res.</th><th class="r">3yr Res.</th><th class="r">Monthly</th><th class="r">Annual</th><th class="r">vs Best</th><th>Regions</th></tr></thead><tbody>`;
-  const best=rows[0]?.ondemand||1;
-  rows.forEach(r=>{
-    const prem=((r.ondemand-best)/best*100);
-    const pc=prem===0?'c-green':'c-red';
-    h+=`<tr><td style="color:${PC[r.provider]||C.blue};font-weight:700;">${r.provider}</td><td class="dim">${r.instance}</td><td class="r c-green fw">$${r.ondemand.toFixed(2)}</td><td class="r" style="color:var(--green)">${r.spot?'$'+r.spot.toFixed(2):'N/A'}</td><td class="r">$${r.res1.toFixed(2)}</td><td class="r c-cyan">$${r.res3.toFixed(2)}</td><td class="r">$${r.monthly.toFixed(0)}</td><td class="r">$${(r.monthly*12).toFixed(0)}</td><td class="r ${pc}">${prem===0?'BEST':'+'+prem.toFixed(1)+'%'}</td><td class="dim" style="font-size:10px;">${Object.keys(r.regions).join(', ')}</td></tr>`;
-  });
-  h+='</tbody>';
-  document.getElementById('providerTable').innerHTML=h;
+  // Render cloud table
+  const renderProvTable = (tableRows, elId) => {
+    const best = tableRows[0]?.ondemand || 1;
+    let h=`<thead><tr><th>Provider</th><th>Instance</th><th class="r">On-Demand</th><th class="r">Spot</th><th class="r">1yr Res.</th><th class="r">3yr Res.</th><th class="r">Monthly</th><th class="r">Annual</th><th class="r">vs Best</th><th>Regions</th></tr></thead><tbody>`;
+    if(!tableRows.length) { h += '<tr><td colspan="10" class="dim" style="text-align:center;padding:20px;">No providers offer this GPU</td></tr>'; }
+    tableRows.forEach(r=>{
+      const prem=((r.ondemand-best)/best*100);
+      const pc=prem===0?'c-green':'c-red';
+      h+=`<tr><td style="color:${PC[r.provider]||C.blue};font-weight:700;">${r.provider}</td><td class="dim">${r.instance}</td><td class="r c-green fw">$${r.ondemand.toFixed(2)}</td><td class="r" style="color:var(--green)">${r.spot?'$'+r.spot.toFixed(2):'—'}</td><td class="r">$${r.res1.toFixed(2)}</td><td class="r c-cyan">$${r.res3.toFixed(2)}</td><td class="r">$${r.monthly.toFixed(0)}</td><td class="r">$${(r.monthly*12).toFixed(0)}</td><td class="r ${pc}">${prem===0?'BEST':'+'+prem.toFixed(1)+'%'}</td><td class="dim" style="font-size:10px;">${Object.keys(r.regions).join(', ')}</td></tr>`;
+    });
+    h+='</tbody>';
+    document.getElementById(elId).innerHTML=h;
+  };
+
+  renderProvTable(cloudRows, 'providerCloudTable');
+  renderProvTable(mktRows, 'providerMktTable');
 }
 
 // ════════════════════════════════════════════════════════════════

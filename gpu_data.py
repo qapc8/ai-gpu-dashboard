@@ -239,6 +239,7 @@ GPU_SPECS = {
 CLOUD_PRICING = {
     "AWS": {
         "provider_name": "Amazon Web Services",
+        "type": "cloud",
         "gpus": {
             "B200": {"instance": "p6.48xlarge", "gpus_per_instance": 8, "price_per_gpu_hr": 5.12, "regions": {
                 "us-east-1": 5.12, "us-east-2": 5.12, "us-west-2": 5.12,
@@ -272,6 +273,7 @@ CLOUD_PRICING = {
     },
     "GCP": {
         "provider_name": "Google Cloud Platform",
+        "type": "cloud",
         "gpus": {
             "B200": {"instance": "a3-ultragpu-8g", "gpus_per_instance": 8, "price_per_gpu_hr": 4.85, "regions": {
                 "us-central1": 4.85, "us-east4": 4.85, "us-west1": 4.85,
@@ -304,6 +306,7 @@ CLOUD_PRICING = {
     },
     "Azure": {
         "provider_name": "Microsoft Azure",
+        "type": "cloud",
         "gpus": {
             "B200": {"instance": "ND_B200_v6", "gpus_per_instance": 8, "price_per_gpu_hr": 5.35, "regions": {
                 "eastus": 5.35, "eastus2": 5.35, "westus2": 5.35,
@@ -339,6 +342,7 @@ CLOUD_PRICING = {
     },
     "Lambda": {
         "provider_name": "Lambda Labs",
+        "type": "cloud",
         "gpus": {
             "B200": {"instance": "gpu_8x_b200", "gpus_per_instance": 8, "price_per_gpu_hr": 3.99, "regions": {
                 "us-west-1": 3.99, "us-south-1": 3.99
@@ -366,6 +370,7 @@ CLOUD_PRICING = {
     },
     "CoreWeave": {
         "provider_name": "CoreWeave",
+        "type": "cloud",
         "gpus": {
             "B200": {"instance": "b200-sxm-192gb", "gpus_per_instance": 1, "price_per_gpu_hr": 3.75, "regions": {
                 "LAS1": 3.75, "ORD1": 3.75
@@ -398,6 +403,7 @@ CLOUD_PRICING = {
     },
     "RunPod": {
         "provider_name": "RunPod",
+        "type": "marketplace",
         "gpus": {
             "H100-SXM": {"instance": "h100-sxm", "gpus_per_instance": 1, "price_per_gpu_hr": 2.69, "regions": {
                 "US": 2.69, "EU": 2.89
@@ -429,7 +435,8 @@ CLOUD_PRICING = {
         "reserved_3yr_discount": 0.30
     },
     "Vast.ai": {
-        "provider_name": "Vast.ai (Marketplace)",
+        "provider_name": "Vast.ai",
+        "type": "marketplace",
         "gpus": {
             "H100-SXM": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 2.15, "regions": {
                 "US": 2.15, "EU": 2.35, "APAC": 2.50
@@ -465,6 +472,7 @@ CLOUD_PRICING = {
     },
     "FluidStack": {
         "provider_name": "FluidStack",
+        "type": "marketplace",
         "gpus": {
             "H100-SXM": {"instance": "h100_sxm", "gpus_per_instance": 1, "price_per_gpu_hr": 2.45, "regions": {
                 "US": 2.45, "EU": 2.69, "APAC": 2.85
@@ -488,6 +496,7 @@ CLOUD_PRICING = {
     },
     "Oracle": {
         "provider_name": "Oracle Cloud (OCI)",
+        "type": "cloud",
         "gpus": {
             "B200": {"instance": "BM.GPU.B200.8", "gpus_per_instance": 8, "price_per_gpu_hr": 4.25, "regions": {
                 "us-ashburn-1": 4.25, "us-phoenix-1": 4.25,
@@ -511,6 +520,7 @@ CLOUD_PRICING = {
     },
     "Together": {
         "provider_name": "Together AI",
+        "type": "cloud",
         "gpus": {
             "H100-SXM": {"instance": "dedicated", "gpus_per_instance": 1, "price_per_gpu_hr": 2.50, "regions": {
                 "US": 2.50
@@ -1214,6 +1224,7 @@ def get_cheapest_by_gpu(gpu_id: str) -> list:
             results.append({
                 "provider": provider,
                 "provider_name": data["provider_name"],
+                "provider_type": data.get("type", "cloud"),
                 "instance": gpu["instance"],
                 "price_per_gpu_hr": gpu["price_per_gpu_hr"],
                 "price_monthly": gpu["price_per_gpu_hr"] * 730,
@@ -1271,6 +1282,7 @@ def get_price_comparison_matrix() -> list:
             "tier": spec["tier"],
             "cheapest_price": cheapest,
             "cheapest_provider": providers[0]["provider"] if providers else "N/A",
+            "cheapest_provider_type": providers[0].get("provider_type", "cloud") if providers else "cloud",
             "most_expensive": most_expensive,
             "avg_price": round(avg_price, 2),
             "num_providers": len(providers),
