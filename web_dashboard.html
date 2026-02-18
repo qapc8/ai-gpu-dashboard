@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GPU Market Intelligence Platform</title>
+<title>GPU Intel Pro — Market Terminal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -63,7 +63,7 @@ body {
   background: var(--bg-1);
   border-bottom: 1px solid var(--border-0);
   padding: 0 20px;
-  height: 48px;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -75,33 +75,42 @@ body {
 .topbar-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  flex-shrink: 0;
 }
 .topbar-logo {
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
   background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--mono);
   font-weight: 800;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--bg-0);
+}
+.topbar-name {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
 }
 .topbar-title {
   font-family: var(--sans);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--text-0);
-  letter-spacing: -0.3px;
+  letter-spacing: -0.2px;
+  white-space: nowrap;
 }
 .topbar-subtitle {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-3);
-  font-weight: 400;
-  margin-left: 4px;
+  font-weight: 500;
+  font-family: var(--mono);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 .topbar-indicators {
   display: flex;
@@ -109,18 +118,22 @@ body {
   gap: 0;
   overflow-x: auto;
   scrollbar-width: none;
+  margin: 0 16px;
+  flex: 1;
+  justify-content: center;
 }
 .topbar-indicators::-webkit-scrollbar { display: none; }
 .indicator {
   display: flex;
-  align-items: center;
-  gap: 5px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
   font-family: var(--mono);
-  font-size: 11px;
-  padding: 4px 14px;
+  padding: 5px 16px;
   white-space: nowrap;
   border-right: 1px solid var(--border-0);
   transition: background 0.15s;
+  min-width: 0;
 }
 .indicator:hover { background: var(--bg-hover); }
 .indicator:last-child { border-right: none; }
@@ -129,23 +142,30 @@ body {
   font-weight: 600;
   font-size: 9px;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.6px;
+  line-height: 1;
 }
-.indicator-value { color: var(--text-0); font-weight: 700; font-size: 12px; }
-.indicator-change { font-weight: 700; font-size: 10px; padding: 1px 5px; border-radius: 3px; }
+.indicator-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.indicator-value { color: var(--text-0); font-weight: 700; font-size: 12px; line-height: 1; }
+.indicator-change { font-weight: 600; font-size: 9.5px; padding: 1px 4px; border-radius: 3px; line-height: 1; }
 .indicator-change.up { color: var(--green); background: rgba(34,197,94,0.12); }
 .indicator-change.down { color: var(--red); background: rgba(239,68,68,0.12); }
 .indicator-spark-svg { display: block; flex-shrink: 0; }
-.indicator-sub { font-size: 9px; font-weight: 600; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.3px; }
+.indicator-sub { font-size: 9px; font-weight: 600; padding: 1px 4px; border-radius: 3px; letter-spacing: 0.3px; line-height: 1; }
 .indicator-sub.up { color: var(--green); }
 .indicator-sub.tag-green { color: var(--green); background: rgba(34,197,94,0.12); }
 .indicator-sub.tag-amber { color: var(--amber); background: rgba(251,191,36,0.12); }
 .indicator-sub.tag-red { color: var(--red); background: rgba(239,68,68,0.12); }
-.indicator-divider { width: 1px; height: 24px; background: var(--border-1); margin: 0; flex-shrink: 0; }
+.indicator-divider { width: 1px; height: 32px; background: var(--border-1); margin: 0; flex-shrink: 0; }
 .topbar-meta {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
+  flex-shrink: 0;
 }
 .live-dot {
   width: 7px; height: 7px;
@@ -157,8 +177,10 @@ body {
 @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
 .topbar-time {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-3);
+  line-height: 1.2;
+  text-align: right;
 }
 
 /* ─── NEWS TICKER ─── */
@@ -637,9 +659,9 @@ body {
 <div class="topbar">
   <div class="topbar-brand">
     <div class="topbar-logo">G</div>
-    <div>
-      <span class="topbar-title">GPU Market Intelligence</span>
-      <span class="topbar-subtitle">Platform</span>
+    <div class="topbar-name">
+      <span class="topbar-title">GPU Intel Pro</span>
+      <span class="topbar-subtitle">Market Terminal</span>
     </div>
   </div>
   <div class="topbar-indicators" id="tickerBar"></div>
@@ -1314,7 +1336,7 @@ function renderTicker() {
   if (!mi || !mi.nvidia_stock) return;
 
   // SVG sparkline from price array
-  const spark = (prices, color, w=48, h=16) => {
+  const spark = (prices, color, w=44, h=14) => {
     if (!prices || prices.length < 2) return '';
     const mn = Math.min(...prices), mx = Math.max(...prices), rng = mx - mn || 1;
     const pts = prices.map((p,i) => `${(i/(prices.length-1))*w},${h-((p-mn)/rng)*(h-2)-1}`).join(' ');
@@ -1328,37 +1350,44 @@ function renderTicker() {
     return ((p[p.length-1] - p[0]) / p[0] * 100).toFixed(1);
   };
 
-  // Stock indicator with sparkline
-  const mkStock = (label, price, ytdChg, color) => {
-    const cls = ytdChg >= 0 ? 'up' : 'down';
-    const arrow = ytdChg >= 0 ? '\u25B2' : '\u25BC';
+  const chgBadge = (val, suffix='%') => {
+    const cls = val >= 0 ? 'up' : 'down';
+    return `<span class="indicator-change ${cls}">${val > 0 ? '+' : ''}${val}${suffix}</span>`;
+  };
+
+  // Stock: label on top, value + change on bottom row
+  const mkStock = (label, price, ytdChg) => {
     return `<div class="indicator">
       <span class="indicator-label">${label}</span>
-      <span class="indicator-value">$${price}</span>
-      <span class="indicator-change ${cls}">${arrow} ${ytdChg > 0 ? '+' : ''}${ytdChg}%</span>
+      <div class="indicator-row">
+        <span class="indicator-value">$${price}</span>
+        ${chgBadge(ytdChg)}
+      </div>
     </div>`;
   };
 
-  // Spot indicator with 24h sparkline
+  // Spot: label on top, sparkline + value + change on bottom row
   const mkSpot = (label, s, color) => {
     if (!s) return '';
     const chg = parseFloat(pctChg(s));
-    const cls = chg >= 0 ? 'up' : 'down';
-    const arrow = chg >= 0 ? '\u25B2' : '\u25BC';
     return `<div class="indicator">
       <span class="indicator-label">${label}</span>
-      ${spark(s.hourly_prices_24h, color)}
-      <span class="indicator-value">$${s.last_trade.toFixed(2)}</span>
-      <span class="indicator-change ${cls}">${arrow} ${chg > 0 ? '+' : ''}${chg}%</span>
+      <div class="indicator-row">
+        ${spark(s.hourly_prices_24h, color)}
+        <span class="indicator-value">$${s.last_trade.toFixed(2)}</span>
+        ${chgBadge(chg)}
+      </div>
     </div>`;
   };
 
-  // Metric indicator with optional sub-badge
+  // Metric: label on top, value + sub-badge on bottom row
   const mkMetric = (label, value, sub, subCls) => {
     return `<div class="indicator">
       <span class="indicator-label">${label}</span>
-      <span class="indicator-value">${value}</span>
-      ${sub ? `<span class="indicator-sub ${subCls||''}">${sub}</span>` : ''}
+      <div class="indicator-row">
+        <span class="indicator-value">${value}</span>
+        ${sub ? `<span class="indicator-sub ${subCls||''}">${sub}</span>` : ''}
+      </div>
     </div>`;
   };
 
@@ -1374,7 +1403,6 @@ function renderTicker() {
   const amdShare = mi.amd_gpu_market_share_pct[amdKeys[amdKeys.length-1]];
 
   const totalVol = spot ? Object.values(spot).reduce((s,g) => s + (g['24h_volume_gpu_hrs']||0), 0) : 0;
-  const totalAvail = spot ? Object.values(spot).reduce((s,g) => s + (g.available_gpus||0), 0) : 0;
 
   const div = '<div class="indicator-divider"></div>';
 
@@ -1386,13 +1414,12 @@ function renderTicker() {
     mkSpot('B200 SPOT', spot?.['B200'], '#a78bfa') +
     mkSpot('H200 SPOT', spot?.['H200'], '#4e8ff7') +
     div +
-    mkMetric('AI CAPEX \'26', '$'+mi.ai_capex_bn['2026_est']+'B', '\u25B2 40% YoY', 'up') +
-    mkMetric('GPU MKT', '$'+mi.gpu_market_size_bn['2025']+'B', '\u25B2 35% YoY', 'up') +
-    mkMetric('DC SHIPS', latestShip.toLocaleString()+'K', 'Q1\'26', '') +
+    mkMetric('AI CAPEX \'26', '$'+mi.ai_capex_bn['2026_est']+'B', '+40% YoY', 'up') +
+    mkMetric('GPU MKT', '$'+mi.gpu_market_size_bn['2025']+'B', '+35%', 'up') +
     div +
     mkMetric('H100 LEAD', lead+'wk', leadTag[0], leadTag[1]) +
-    mkMetric('AMD DC', amdShare+'%', '\u25B2 mkt share', 'up') +
-    mkMetric('SPOT VOL', (totalVol/1000).toFixed(0)+'K hrs', totalAvail.toLocaleString()+' avail', '') ;
+    mkMetric('AMD DC', amdShare+'%', 'mkt share', '') +
+    mkMetric('SPOT VOL', (totalVol/1000).toFixed(0)+'K hrs', '', '');
 }
 
 // ════════════════════════════════════════════════════════════════
