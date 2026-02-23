@@ -994,13 +994,8 @@ body {
     <div class="card"><div class="card-hd"><span class="card-hd-title">Utilization by Provider</span></div><div class="card-bd" style="height:320px;"><canvas id="chartUtilByProvider"></canvas></div></div>
     <div class="card"><div class="card-hd"><span class="card-hd-title">Efficiency Scores</span></div><div class="card-bd" style="height:320px;"><canvas id="chartEfficiency"></canvas></div></div>
   </div>
-  <div class="grid g-2 mb">
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Utilization Trends (5-month)</span></div><div class="card-bd" style="height:300px;"><canvas id="chartUtilTrend"></canvas></div></div>
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Reservation Breakeven Analysis</span></div><div class="card-bd" style="height:300px;"><canvas id="chartBreakeven"></canvas></div></div>
-  </div>
-  <div class="grid g-2 mb">
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Recommended Allocation by Utilization</span></div><div class="card-bd"><div id="reservationTable"></div></div></div>
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Savings by Commitment Type</span></div><div class="card-bd" style="height:300px;"><canvas id="chartSavings"></canvas></div></div>
+  <div class="card mb">
+    <div class="card-hd"><span class="card-hd-title">Utilization Trends (5-month)</span></div><div class="card-bd" style="height:300px;"><canvas id="chartUtilTrend"></canvas></div>
   </div>
   <div class="card" style="border-color:var(--purple-dim);">
     <div class="card-hd" style="background:var(--bg-3);">
@@ -1050,7 +1045,7 @@ body {
   </div>
   <div class="grid g-2 mb">
     <div class="card"><div class="card-hd"><span class="card-hd-title">Sustainability Scores by Region</span></div><div class="card-bd"><div id="sustainabilityTable"></div></div></div>
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Export Control Timeline</span></div><div class="card-bd"><div id="exportControlTable"></div></div></div>
+    <div class="card"><div class="card-hd"><span class="card-hd-title">Export Control &amp; Regulatory Timeline</span></div><div class="card-bd" style="overflow-x:auto;"><div id="exportControlTable"></div></div></div>
   </div>
   <div class="card" style="border-color:var(--purple-dim);">
     <div class="card-hd" style="background:var(--bg-3);">
@@ -2207,7 +2202,7 @@ function renderTcoTab() {
 // EFFICIENCY TAB
 // ════════════════════════════════════════════════════════════════
 function renderEfficiencyTab() {
-  const util=DATA.utilization, res=DATA.reservations;
+  const util=DATA.utilization;
   if(!util||!Object.keys(util).length) return;
 
   // KPI stats
@@ -2250,47 +2245,6 @@ function renderEfficiencyTab() {
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'Utilization %'},grid:{color:'rgba(26,34,51,0.4)'},max:100},x:{grid:{display:false}}}}
   });
 
-  // Breakeven chart
-  if(res&&Object.keys(res).length) {
-    const rGpus=Object.keys(res);
-    if(charts.bev) charts.bev.destroy();
-    charts.bev=new Chart(document.getElementById('chartBreakeven'),{type:'bar',
-      data:{labels:rGpus,datasets:[
-        {label:'On-Demand',data:rGpus.map(g=>res[g].on_demand_rate),backgroundColor:C.red+'70',borderColor:C.red,borderWidth:1},
-        {label:'1yr Reserved',data:rGpus.map(g=>res[g].reserved_1yr_rate),backgroundColor:C.amber+'70',borderColor:C.amber,borderWidth:1},
-        {label:'3yr Reserved',data:rGpus.map(g=>res[g].reserved_3yr_rate),backgroundColor:C.green+'70',borderColor:C.green,borderWidth:1},
-        {label:'Spot Avg',data:rGpus.map(g=>res[g].spot_avg_rate),backgroundColor:C.cyan+'70',borderColor:C.cyan,borderWidth:1},
-      ]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
-    });
-
-    // Savings chart (80% utilization)
-    if(charts.sav) charts.sav.destroy();
-    charts.sav=new Chart(document.getElementById('chartSavings'),{type:'bar',
-      data:{labels:rGpus,datasets:[
-        {label:'Spot Savings %',data:rGpus.map(g=>res[g].savings_at_utilization['80_pct']?.spot||0),backgroundColor:C.cyan+'70',borderColor:C.cyan,borderWidth:1},
-        {label:'1yr Reserved %',data:rGpus.map(g=>res[g].savings_at_utilization['80_pct']?.reserved_1yr||0),backgroundColor:C.amber+'70',borderColor:C.amber,borderWidth:1},
-        {label:'3yr Reserved %',data:rGpus.map(g=>res[g].savings_at_utilization['80_pct']?.reserved_3yr||0),backgroundColor:C.green+'70',borderColor:C.green,borderWidth:1},
-      ]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'},title:{display:true,text:'Savings at 80% Utilization',color:'#8a95a6'}},scales:{y:{title:{display:true,text:'Savings %'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
-    });
-
-    // Reservation table
-    let h='<table class="dt"><thead><tr><th>GPU</th><th>On-Demand</th><th>Spot</th><th>1yr Reserved</th><th>3yr Reserved</th><th>Low Util</th><th>Med Util</th><th>High Util</th></tr></thead><tbody>';
-    rGpus.forEach(g=>{
-      const r=res[g];
-      h+=`<tr><td style="color:var(--cyan);font-weight:600;">${g}</td>
-        <td>$${r.on_demand_rate.toFixed(2)}/hr</td>
-        <td style="color:var(--green);">$${r.spot_avg_rate.toFixed(2)}/hr</td>
-        <td>$${r.reserved_1yr_rate.toFixed(2)}/hr</td>
-        <td style="color:var(--green);">$${r.reserved_3yr_rate.toFixed(2)}/hr</td>
-        <td><span style="color:var(--amber);">${r.recommended_commitment.low_util.type}</span></td>
-        <td><span style="color:var(--blue);">${r.recommended_commitment.medium_util.type}</span></td>
-        <td><span style="color:var(--green);">${r.recommended_commitment.high_util.type}</span></td></tr>`;
-    });
-    h+='</tbody></table>';
-    document.getElementById('reservationTable').innerHTML=h;
-  }
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -2455,18 +2409,36 @@ function renderSustainabilityTab() {
     h+='</tbody></table>';
     document.getElementById('sustainabilityTable').innerHTML=h;
 
-    // Export control timeline
+    // Export control & regulatory timeline
     if(sc.export_controls) {
-      let eh='<table class="dt"><thead><tr><th>Date</th><th>Regulation</th><th>Target</th><th>Impact</th><th>Description</th></tr></thead><tbody>';
+      const regions=['US','EU','China','Japan','India','Middle_East','SE_Asia'];
+      const regionLabels={US:'US',EU:'EU',China:'CN',Japan:'JP',India:'IN',Middle_East:'ME',SE_Asia:'SEA'};
+      const riColor=v=>v==='high_positive'||v==='major_benefit'?'var(--green)':v==='positive'||v==='positive_industry'||v==='positive_enforcement'?'var(--green)':(v==='negative'||v==='high_negative'||v==='negative_domestic')?'var(--red)':(v==='low_negative')?'#e08040':v==='mixed'?'var(--amber)':v==='uncertain'?'var(--purple)':'var(--text-3)';
+      const riIcon=v=>v==='high_positive'||v==='major_benefit'?'++':v==='positive'||v==='positive_industry'||v==='positive_enforcement'?'+':v==='high_negative'?'--':(v==='negative'||v==='negative_domestic')?'-':v==='low_negative'?'~-':v==='mixed'?'+-':v==='uncertain'?'?':'·';
+      const statusBadge=s=>{const m={enacted:'background:var(--green-dim);color:var(--green)',in_effect:'background:var(--green-dim);color:var(--green)',rescinded:'background:var(--red-dim);color:var(--red)',proposed:'background:var(--amber-dim);color:var(--amber)',in_committee:'background:var(--amber-dim);color:var(--amber)',temporary:'background:var(--purple-dim);color:var(--purple)',upcoming:'background:var(--blue-dim);color:var(--blue)'};return`<span style="padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;text-transform:uppercase;white-space:nowrap;${m[s]||''}">${(s||'').replace(/_/g,' ')}</span>`;};
+      let eh='<table class="dt" style="font-size:11px;"><thead><tr><th style="width:60px;">Date</th><th>Regulation</th><th style="width:90px;">Category</th><th>Target</th><th style="width:50px;">Status</th><th style="width:40px;">Imp.</th>';
+      regions.forEach(r=>eh+=`<th style="width:28px;text-align:center;font-size:9px;padding:4px 2px;">${regionLabels[r]}</th>`);
+      eh+='<th>GPUs</th><th>Description</th></tr></thead><tbody>';
       sc.export_controls.forEach(e=>{
         const ic=e.impact==='high'?'var(--red)':e.impact==='medium'?'var(--amber)':'var(--green)';
-        eh+=`<tr><td style="font-family:var(--mono);color:var(--text-2);">${e.date}</td>
-          <td style="color:var(--cyan);font-weight:600;">${e.regulation}</td>
-          <td>${e.target}</td>
-          <td style="color:${ic};font-weight:700;text-transform:uppercase;">${e.impact}</td>
-          <td style="font-size:11px;">${e.description}</td></tr>`;
+        const gpus=(e.affected_gpus||[]).length?e.affected_gpus.slice(0,3).join(', ')+(e.affected_gpus.length>3?' +':''):'—';
+        eh+=`<tr><td style="font-family:var(--mono);color:var(--text-2);white-space:nowrap;">${e.date}</td>
+          <td style="color:var(--cyan);font-weight:600;white-space:nowrap;">${e.regulation}</td>
+          <td style="font-size:10px;color:var(--text-2);">${e.category||''}</td>
+          <td style="font-size:10px;">${e.target}</td>
+          <td>${statusBadge(e.status)}</td>
+          <td style="color:${ic};font-weight:700;text-transform:uppercase;text-align:center;">${e.impact}</td>`;
+        regions.forEach(r=>{
+          const v=e.regional_impact?.[r]||'neutral';
+          eh+=`<td style="text-align:center;color:${riColor(v)};font-weight:700;font-size:10px;" title="${r}: ${v.replace(/_/g,' ')}">${riIcon(v)}</td>`;
+        });
+        eh+=`<td style="font-size:10px;color:var(--text-2);white-space:nowrap;">${gpus}</td>
+          <td style="font-size:10px;max-width:320px;">${e.description}</td></tr>`;
       });
       eh+='</tbody></table>';
+      eh+='<div style="margin-top:8px;font-size:9px;color:var(--text-3);display:flex;gap:12px;flex-wrap:wrap;">';
+      eh+='<span>Regional impact: <b style="color:var(--green);">++</b> major benefit <b style="color:var(--green);">+</b> positive <b style="color:var(--amber);">+-</b> mixed <b style="color:var(--text-3);">·</b> neutral <b style="color:#e08040;">~-</b> low negative <b style="color:var(--red);">-</b> negative <b style="color:var(--red);">--</b> high negative <b style="color:var(--purple);">?</b> uncertain</span>';
+      eh+='</div>';
       document.getElementById('exportControlTable').innerHTML=eh;
     }
   }

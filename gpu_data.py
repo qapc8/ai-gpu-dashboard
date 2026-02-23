@@ -1935,13 +1935,206 @@ SUPPLY_CHAIN_RISK = {
 }
 
 EXPORT_CONTROL_TRACKER = [
-    {"date": "2022-10", "regulation": "US CHIPS Act Export Controls", "target": "China", "impact": "high", "affected_gpus": ["A100", "H100"], "description": "Initial restrictions on advanced AI chips to China"},
-    {"date": "2023-10", "regulation": "Updated Export Controls", "target": "China + 40 countries", "impact": "high", "affected_gpus": ["A100", "H100", "MI300X", "L40S"], "description": "Closed loopholes, expanded country list, compute density thresholds"},
-    {"date": "2024-01", "regulation": "NVIDIA China-specific SKUs", "target": "China", "impact": "medium", "affected_gpus": ["H20", "L20"], "description": "Compliance variants with reduced specs for China market"},
-    {"date": "2024-09", "regulation": "EU AI Act Phase 1", "target": "EU", "impact": "low", "affected_gpus": [], "description": "Risk-based AI regulation, compute reporting requirements for GPAI"},
-    {"date": "2025-03", "regulation": "Diffusion Rule (Biden framework)", "target": "Global tiers", "impact": "high", "affected_gpus": ["B200", "GB200", "MI325X"], "description": "3-tier country framework for AI chip exports, datacenter caps"},
-    {"date": "2025-07", "regulation": "Japan/Netherlands ASML restrictions", "target": "China", "impact": "medium", "affected_gpus": [], "description": "DUV lithography equipment restrictions aligned with US policy"},
-    {"date": "2026-01", "regulation": "Proposed Compute Sovereignty Act", "target": "US domestic", "impact": "medium", "affected_gpus": ["B200", "GB200"], "description": "Proposed requirements for domestic AI compute capacity reservations"}
+    {
+        "date": "2022-08", "regulation": "CHIPS and Science Act",
+        "category": "Industrial Policy", "target": "US domestic",
+        "status": "enacted", "impact": "high",
+        "affected_gpus": [],
+        "description": "$39B manufacturing subsidies + $13B R&D. Recipients barred from expanding chip fabs in China for 10 years. 25% investment tax credit for US fab construction.",
+        "regional_impact": {"US": "major_benefit", "EU": "neutral", "China": "negative", "Japan": "neutral", "India": "positive", "Middle_East": "neutral", "SE_Asia": "positive"}
+    },
+    {
+        "date": "2022-10", "regulation": "BIS Advanced Computing Export Controls",
+        "category": "Export Control", "target": "China, Macau",
+        "status": "enacted", "impact": "high",
+        "affected_gpus": ["A100", "H100", "MI250X"],
+        "description": "First sweeping controls blocking A100-class+ chips to China. Introduced TPP and performance-density thresholds. Also restricted semiconductor manufacturing equipment.",
+        "regional_impact": {"US": "mixed", "EU": "neutral", "China": "high_negative", "Japan": "neutral", "India": "neutral", "Middle_East": "neutral", "SE_Asia": "neutral"}
+    },
+    {
+        "date": "2023-07", "regulation": "Japan Semiconductor Equipment Controls",
+        "category": "Export Control (Equipment)", "target": "China (de facto)",
+        "status": "enacted", "impact": "high",
+        "affected_gpus": [],
+        "description": "Japan restricted 23 types of advanced chip manufacturing equipment (lithography, etching, deposition). Expanded by 21 items in Apr 2024. China stockpiled $5B in equipment pre-deadline.",
+        "regional_impact": {"US": "positive", "EU": "neutral", "China": "high_negative", "Japan": "negative_domestic", "India": "neutral", "Middle_East": "neutral", "SE_Asia": "neutral"}
+    },
+    {
+        "date": "2023-07", "regulation": "China Gallium/Germanium Export Controls",
+        "category": "Retaliation", "target": "Global (primarily US, EU, Japan)",
+        "status": "enacted", "impact": "medium",
+        "affected_gpus": [],
+        "description": "China imposed export licenses on gallium and germanium. Escalated to graphite (Oct 2023), antimony (Aug 2024), tungsten (Feb 2025), rare earths (Apr 2025). Full US halt Dec 2024. Partially suspended Nov 2025 under trade truce.",
+        "regional_impact": {"US": "negative", "EU": "negative", "China": "mixed", "Japan": "negative", "India": "positive", "Middle_East": "neutral", "SE_Asia": "neutral"}
+    },
+    {
+        "date": "2023-09", "regulation": "Netherlands ASML DUV Export Controls",
+        "category": "Export Control (Equipment)", "target": "China (de facto)",
+        "status": "enacted", "impact": "high",
+        "affected_gpus": [],
+        "description": "Blocked ASML from selling advanced DUV immersion lithography to China. Expanded Sep 2024 to require licenses for 1970i/1980i DUV machines. ASML China revenue projected to drop from 29% to ~20%.",
+        "regional_impact": {"US": "positive", "EU": "mixed", "China": "high_negative", "Japan": "positive", "India": "neutral", "Middle_East": "neutral", "SE_Asia": "neutral"}
+    },
+    {
+        "date": "2023-10", "regulation": "BIS Updated Export Controls (Loophole Closure)",
+        "category": "Export Control", "target": "China, Macau",
+        "status": "enacted", "impact": "high",
+        "affected_gpus": ["A800", "H800", "RTX 4090", "MI300X", "L40S"],
+        "description": "Closed loopholes — blocked A800/H800 China workaround variants. Added performance-density thresholds capturing RTX 4090 gaming GPU. Expanded Entity List.",
+        "regional_impact": {"US": "mixed", "EU": "neutral", "China": "high_negative", "Japan": "neutral", "India": "neutral", "Middle_East": "neutral", "SE_Asia": "low_negative"}
+    },
+    {
+        "date": "2024-01", "regulation": "NVIDIA China Compliance SKUs (H20/L20)",
+        "category": "Industry Response", "target": "China",
+        "status": "enacted", "impact": "medium",
+        "affected_gpus": ["H20", "L20"],
+        "description": "NVIDIA released downgraded H20 and L20 chips designed to comply with US thresholds for the China market. Reduced memory bandwidth and compute performance vs H100.",
+        "regional_impact": {"US": "neutral", "EU": "neutral", "China": "positive", "Japan": "neutral", "India": "neutral", "Middle_East": "neutral", "SE_Asia": "neutral"}
+    },
+    {
+        "date": "2024-08", "regulation": "EU AI Act (Entry into Force)",
+        "category": "AI Governance", "target": "EU + any entity selling AI in EU",
+        "status": "enacted", "impact": "high",
+        "affected_gpus": [],
+        "description": "World's first comprehensive AI law. Risk-based framework: prohibited/high/limited/minimal risk tiers. Penalties up to EUR 35M or 7% global turnover. Phase 1 (prohibited practices) Feb 2025, Phase 2 (GPAI) Aug 2025, Phase 3 (high-risk) Aug 2026.",
+        "regional_impact": {"US": "negative", "EU": "mixed", "China": "low_negative", "Japan": "neutral", "India": "neutral", "Middle_East": "neutral", "SE_Asia": "neutral"}
+    },
+    {
+        "date": "2024-12", "regulation": "Biden Entity List + HBM Controls + FDPR Expansion",
+        "category": "Export Control", "target": "China, Macau",
+        "status": "enacted", "impact": "high",
+        "affected_gpus": ["HBM3/HBM3e stacks"],
+        "description": "Added 140 entities to Entity List (fabs, tool makers, Huawei suppliers). First country-wide HBM export controls to China. Expanded Foreign Direct Product Rule scope. Restricted advanced AI chip packaging tech.",
+        "regional_impact": {"US": "mixed", "EU": "low_negative", "China": "high_negative", "Japan": "low_negative", "India": "neutral", "Middle_East": "neutral", "SE_Asia": "low_negative"}
+    },
+    {
+        "date": "2025-01", "regulation": "Biden AI Diffusion Rule (3-Tier Framework)",
+        "category": "Export Control", "target": "Global — 3 tiers",
+        "status": "rescinded", "impact": "high",
+        "affected_gpus": ["H100", "H200", "B100", "B200", "GB200", "MI300X", "MI325X"],
+        "description": "3-tier global system: Tier 1 (18 allies) unrestricted; Tier 2 (~150 countries) quantity caps ~50K GPUs/entity; Tier 3 (~25 countries incl. China) prohibited. Also controlled AI model weights. Rescinded by Trump admin May 2025 before compliance date.",
+        "regional_impact": {"US": "mixed", "EU": "positive", "China": "high_negative", "Japan": "positive", "India": "negative", "Middle_East": "negative", "SE_Asia": "negative"}
+    },
+    {
+        "date": "2025-02", "regulation": "EU AI Act Phase 1 — Prohibited Practices",
+        "category": "AI Governance", "target": "EU",
+        "status": "in_effect", "impact": "medium",
+        "affected_gpus": [],
+        "description": "Ban on social scoring, emotion recognition in workplaces/schools, untargeted facial scraping, predictive crime assessment. First enforcement phase of EU AI Act.",
+        "regional_impact": {"US": "low_negative", "EU": "mixed", "China": "neutral", "Japan": "neutral", "India": "neutral", "Middle_East": "neutral", "SE_Asia": "neutral"}
+    },
+    {
+        "date": "2025-05", "regulation": "Trump Rescinds AI Diffusion Rule",
+        "category": "Deregulation", "target": "Global",
+        "status": "enacted", "impact": "high",
+        "affected_gpus": [],
+        "description": "Eliminated Biden's 3-tier country system and quantity caps 2 days before compliance date. Replaced with bilateral deal-based approach. Pre-existing China entity-level controls remain.",
+        "regional_impact": {"US": "positive", "EU": "neutral", "China": "neutral", "Japan": "neutral", "India": "positive", "Middle_East": "positive", "SE_Asia": "positive"}
+    },
+    {
+        "date": "2025-05", "regulation": "BIS Huawei Ascend Worldwide Ban (GP10)",
+        "category": "Export Control", "target": "Worldwide",
+        "status": "enacted", "impact": "high",
+        "affected_gpus": ["Ascend 910B", "Ascend 910C", "Ascend 910D"],
+        "description": "Declared using/selling/servicing Huawei Ascend 910B/C/D chips anywhere violates US export controls under Foreign Direct Product Rule. Extraterritorial worldwide scope.",
+        "regional_impact": {"US": "positive", "EU": "low_negative", "China": "high_negative", "Japan": "neutral", "India": "low_negative", "Middle_East": "negative", "SE_Asia": "negative"}
+    },
+    {
+        "date": "2025-07", "regulation": "Proposed Malaysia/Thailand Chip Restrictions",
+        "category": "Export Control", "target": "Malaysia, Thailand",
+        "status": "proposed", "impact": "medium",
+        "affected_gpus": ["All advanced AI GPUs"],
+        "description": "Draft BIS rule requiring export licenses for AI GPU shipments to Malaysia/Thailand — evidence of transshipment to China. Enhanced documentation and end-use verification.",
+        "regional_impact": {"US": "neutral", "EU": "neutral", "China": "negative", "Japan": "neutral", "India": "neutral", "Middle_East": "neutral", "SE_Asia": "high_negative"}
+    },
+    {
+        "date": "2025-08", "regulation": "Trump H20 Revenue-Sharing Deal (15%)",
+        "category": "Export License", "target": "China",
+        "status": "enacted", "impact": "medium",
+        "affected_gpus": ["H20"],
+        "description": "Export license for NVIDIA/AMD to sell H20-class chips to China with 15% of China sales revenue paid to US government. First-ever revenue-sharing arrangement tied to export licenses.",
+        "regional_impact": {"US": "mixed", "EU": "neutral", "China": "positive", "Japan": "neutral", "India": "neutral", "Middle_East": "neutral", "SE_Asia": "neutral"}
+    },
+    {
+        "date": "2025-08", "regulation": "EU AI Act Phase 2 — GPAI Obligations",
+        "category": "AI Governance", "target": "EU",
+        "status": "in_effect", "impact": "medium",
+        "affected_gpus": [],
+        "description": "General-Purpose AI model obligations take effect. AI Office becomes operational. Compute reporting requirements for GPAI providers. Governance infrastructure established.",
+        "regional_impact": {"US": "negative", "EU": "mixed", "China": "low_negative", "Japan": "neutral", "India": "neutral", "Middle_East": "neutral", "SE_Asia": "neutral"}
+    },
+    {
+        "date": "2025-11", "regulation": "UAE/Saudi 70K GB300 Chip Authorization",
+        "category": "Export License", "target": "UAE, Saudi Arabia",
+        "status": "enacted", "impact": "high",
+        "affected_gpus": ["GB300"],
+        "description": "Commerce authorized 70,000 NVIDIA GB300 chips to HUMAIN (Saudi) and G42 (UAE). Ended regulatory standoff blocking billions in data center investments. Part of US-Gulf AI partnership.",
+        "regional_impact": {"US": "positive", "EU": "neutral", "China": "negative", "Japan": "neutral", "India": "low_negative", "Middle_East": "high_positive", "SE_Asia": "neutral"}
+    },
+    {
+        "date": "2025-11", "regulation": "China Rare Earth Export Truce",
+        "category": "Trade Truce", "target": "US, Global",
+        "status": "temporary", "impact": "medium",
+        "affected_gpus": [],
+        "description": "China suspended export controls on gallium, germanium, antimony, graphite, and rare earths for 1 year under trade truce. General licenses issued for US end users. Can be reimposed at any time.",
+        "regional_impact": {"US": "positive", "EU": "positive", "China": "mixed", "Japan": "positive", "India": "neutral", "Middle_East": "neutral", "SE_Asia": "neutral"}
+    },
+    {
+        "date": "2025-12", "regulation": "Trump H200 to China (25% Revenue Share)",
+        "category": "Export License", "target": "China (approved customers)",
+        "status": "enacted", "impact": "high",
+        "affected_gpus": ["H200", "MI325X"],
+        "description": "Authorized NVIDIA H200 sales to vetted Chinese customers with 25% revenue share to US government (up from 15% for H20). Near-cutting-edge chips to China under commercial terms. Bipartisan criticism.",
+        "regional_impact": {"US": "mixed", "EU": "neutral", "China": "positive", "Japan": "neutral", "India": "neutral", "Middle_East": "neutral", "SE_Asia": "neutral"}
+    },
+    {
+        "date": "2025-12", "regulation": "Vietnam AI Law",
+        "category": "AI Governance", "target": "Vietnam",
+        "status": "enacted", "impact": "low",
+        "affected_gpus": [],
+        "description": "First SE Asian comprehensive AI law. Phased implementation starting Mar 2026 over 4 years. Establishes AI governance framework for Vietnamese market.",
+        "regional_impact": {"US": "neutral", "EU": "neutral", "China": "neutral", "Japan": "neutral", "India": "neutral", "Middle_East": "neutral", "SE_Asia": "mixed"}
+    },
+    {
+        "date": "2026-01", "regulation": "BIS Codified H200/MI325X License Policy",
+        "category": "Export Control", "target": "China, Macau",
+        "status": "enacted", "impact": "high",
+        "affected_gpus": ["H200", "MI325X"],
+        "description": "Codified shift from 'presumption of denial' to 'case-by-case review' for H200/MI325X-class exports to China. Requires: sufficient US domestic supply, no foundry capacity diversion, third-party testing, and recipient security procedures.",
+        "regional_impact": {"US": "mixed", "EU": "neutral", "China": "positive", "Japan": "neutral", "India": "neutral", "Middle_East": "neutral", "SE_Asia": "neutral"}
+    },
+    {
+        "date": "2026-01", "regulation": "Section 232 Semiconductor Tariff (25%)",
+        "category": "Tariff", "target": "All non-US origins",
+        "status": "enacted", "impact": "high",
+        "affected_gpus": ["All imported AI chips"],
+        "description": "25% tariff on imported advanced AI semiconductors, SME, and derivative products. Broad exemptions for US data center imports, R&D, startups, consumer use, and public sector. Impact review due Jul 2026.",
+        "regional_impact": {"US": "mixed", "EU": "negative", "China": "negative", "Japan": "negative", "India": "low_negative", "Middle_East": "neutral", "SE_Asia": "negative"}
+    },
+    {
+        "date": "2026-01", "regulation": "AI OVERWATCH Act (H.R. 6875)",
+        "category": "Legislative", "target": "Countries of concern (China)",
+        "status": "in_committee", "impact": "high",
+        "affected_gpus": ["All export-licensed AI GPUs"],
+        "description": "Congressional oversight of AI chip exports like arms sales. Creates 'Trusted US Person' framework for ally deployments. Would temporarily revoke existing China licenses pending national security strategy review. Passed committee markup Jan 2026.",
+        "regional_impact": {"US": "mixed", "EU": "positive", "China": "high_negative", "Japan": "positive", "India": "neutral", "Middle_East": "uncertain", "SE_Asia": "neutral"}
+    },
+    {
+        "date": "2026-02", "regulation": "India Semiconductor Mission 2.0",
+        "category": "Industrial Policy", "target": "India domestic",
+        "status": "enacted", "impact": "medium",
+        "affected_gpus": [],
+        "description": "ISM 2.0 expanded beyond fab subsidies to semiconductor equipment, materials, and IP. 10 approved fab projects; $38B domestic market targeting $100B by 2030. Government subsidizes AI compute at Rs 65/GPU-hr vs global $2-3/hr.",
+        "regional_impact": {"US": "positive", "EU": "neutral", "China": "low_negative", "Japan": "positive", "India": "high_positive", "Middle_East": "neutral", "SE_Asia": "neutral"}
+    },
+    {
+        "date": "2026-08", "regulation": "EU AI Act Phase 3 — High-Risk AI Systems",
+        "category": "AI Governance", "target": "EU",
+        "status": "upcoming", "impact": "high",
+        "affected_gpus": [],
+        "description": "Full compliance for high-risk standalone AI systems: biometrics, critical infrastructure, employment, law enforcement, education, migration. Conformity assessments and CE marking required.",
+        "regional_impact": {"US": "negative", "EU": "mixed", "China": "low_negative", "Japan": "neutral", "India": "neutral", "Middle_East": "neutral", "SE_Asia": "neutral"}
+    },
 ]
 
 
