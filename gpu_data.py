@@ -1150,6 +1150,8 @@ SPOT_MARKET = {
         "24h_low": 1.70, "24h_high": 2.18, "24h_volume_gpu_hrs": 48500,
         "7d_avg": 1.92, "30d_avg": 2.01, "90d_avg": 2.25, "volatility_30d": 8.5,
         "available_gpus": 2840, "queue_depth": 125,
+        "volume_90d_avg": 32000, "volume_30d_avg": 41000,
+        "inventory_90d": 1800, "inventory_30d": 2300,
         "hourly_prices_24h": [1.88,1.85,1.82,1.80,1.78,1.82,1.85,1.90,1.95,2.02,2.08,2.12,2.15,2.18,2.12,2.08,2.05,2.00,1.98,1.95,1.92,1.90,1.88,1.85]
     },
     "B200": {
@@ -1157,6 +1159,8 @@ SPOT_MARKET = {
         "24h_low": 2.95, "24h_high": 3.80, "24h_volume_gpu_hrs": 12200,
         "7d_avg": 3.30, "30d_avg": 3.48, "90d_avg": 4.10, "volatility_30d": 14.2,
         "available_gpus": 680, "queue_depth": 310,
+        "volume_90d_avg": 3500, "volume_30d_avg": 7800,
+        "inventory_90d": 150, "inventory_30d": 380,
         "hourly_prices_24h": [3.20,3.15,3.10,3.05,3.10,3.18,3.25,3.35,3.45,3.55,3.65,3.75,3.80,3.72,3.60,3.50,3.45,3.40,3.38,3.35,3.30,3.28,3.25,3.20]
     },
     "H200": {
@@ -1164,6 +1168,8 @@ SPOT_MARKET = {
         "24h_low": 2.45, "24h_high": 3.00, "24h_volume_gpu_hrs": 18900,
         "7d_avg": 2.68, "30d_avg": 2.78, "90d_avg": 3.15, "volatility_30d": 9.8,
         "available_gpus": 1250, "queue_depth": 180,
+        "volume_90d_avg": 8500, "volume_30d_avg": 14200,
+        "inventory_90d": 520, "inventory_30d": 880,
         "hourly_prices_24h": [2.60,2.58,2.55,2.52,2.55,2.60,2.65,2.72,2.78,2.85,2.92,2.98,3.00,2.95,2.88,2.82,2.78,2.75,2.72,2.70,2.68,2.65,2.62,2.60]
     },
     "A100-80GB": {
@@ -1171,6 +1177,8 @@ SPOT_MARKET = {
         "24h_low": 0.80, "24h_high": 1.15, "24h_volume_gpu_hrs": 92300,
         "7d_avg": 0.93, "30d_avg": 0.98, "90d_avg": 1.18, "volatility_30d": 12.3,
         "available_gpus": 8500, "queue_depth": 45,
+        "volume_90d_avg": 65000, "volume_30d_avg": 78000,
+        "inventory_90d": 5200, "inventory_30d": 7100,
         "hourly_prices_24h": [0.90,0.88,0.86,0.85,0.85,0.87,0.90,0.92,0.95,0.98,1.02,1.05,1.08,1.12,1.15,1.10,1.05,1.02,0.98,0.96,0.94,0.92,0.91,0.90]
     },
     "MI300X": {
@@ -1178,6 +1186,8 @@ SPOT_MARKET = {
         "24h_low": 1.40, "24h_high": 1.85, "24h_volume_gpu_hrs": 15600,
         "7d_avg": 1.58, "30d_avg": 1.68, "90d_avg": 1.95, "volatility_30d": 11.5,
         "available_gpus": 1820, "queue_depth": 95,
+        "volume_90d_avg": 6800, "volume_30d_avg": 11500,
+        "inventory_90d": 850, "inventory_30d": 1350,
         "hourly_prices_24h": [1.52,1.50,1.48,1.46,1.48,1.52,1.56,1.62,1.68,1.72,1.78,1.82,1.85,1.80,1.75,1.72,1.68,1.65,1.62,1.60,1.58,1.55,1.53,1.52]
     },
     "RTX-4090": {
@@ -1185,6 +1195,8 @@ SPOT_MARKET = {
         "24h_low": 0.16, "24h_high": 0.35, "24h_volume_gpu_hrs": 145000,
         "7d_avg": 0.23, "30d_avg": 0.25, "90d_avg": 0.35, "volatility_30d": 22.5,
         "available_gpus": 15200, "queue_depth": 12,
+        "volume_90d_avg": 95000, "volume_30d_avg": 120000,
+        "inventory_90d": 9800, "inventory_30d": 12500,
         "hourly_prices_24h": [0.22,0.20,0.19,0.18,0.18,0.19,0.21,0.23,0.25,0.27,0.29,0.31,0.33,0.35,0.32,0.30,0.28,0.26,0.25,0.24,0.23,0.22,0.21,0.20]
     }
 }
