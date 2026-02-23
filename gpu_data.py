@@ -1068,108 +1068,130 @@ TCO_COMPONENTS = {
 
 INFERENCE_BENCHMARKS = {
     # ── Top 20 models by usage on OpenRouter (Feb 2026) ──
-    # Pricing: $/M tokens from OpenRouter API + major providers
-    # Ranked by real usage volume from millions of users
+    # Pricing: $/M tokens (input/output split) from OpenRouter API + major providers
+    # tokens_7d: billions of tokens processed per week
+    # context_k: context window in K tokens
+    # open_source: True for DeepSeek/Qwen/Llama, False for Claude/GPT/Gemini/Grok
 
     # #1 — Grok Code Fast (xAI)
     "Grok-Code-Fast": {"params_b": 70, "type": "Code", "category": "Large", "rank": 1,
+        "tokens_7d": 12.0, "context_k": 128, "open_source": False,
         "gpus": {"H100-SXM": {"tokens_per_sec": 105, "cost_per_1m_tokens": 0.35, "vram_gb": 42}, "B200": {"tokens_per_sec": 200, "cost_per_1m_tokens": 0.20, "vram_gb": 42}, "A100-80GB": {"tokens_per_sec": 58, "cost_per_1m_tokens": 0.65, "vram_gb": 42}},
-        "providers": {"xAI API": 0.20, "OpenRouter": 0.20, "Together": 0.28}
+        "providers": {"xAI API": {"input": 0.10, "output": 0.30}, "OpenRouter": {"input": 0.10, "output": 0.30}, "Together": {"input": 0.14, "output": 0.42}}
     },
     # #2 — Grok 4 Fast (xAI)
     "Grok-4-Fast": {"params_b": 314, "type": "LLM", "category": "Frontier", "rank": 2,
+        "tokens_7d": 10.5, "context_k": 256, "open_source": False,
         "gpus": {"H100-SXM": {"tokens_per_sec": 22, "cost_per_1m_tokens": 2.80, "vram_gb": 280}, "B200": {"tokens_per_sec": 45, "cost_per_1m_tokens": 1.55, "vram_gb": 280}},
-        "providers": {"xAI API": 0.20, "OpenRouter": 0.20}
+        "providers": {"xAI API": {"input": 0.10, "output": 0.30}, "OpenRouter": {"input": 0.10, "output": 0.30}}
     },
     # #3 — Claude Sonnet 4 (Anthropic)
     "Claude-Sonnet-4": {"params_b": 175, "type": "LLM", "category": "Frontier", "rank": 3,
+        "tokens_7d": 9.2, "context_k": 200, "open_source": False,
         "gpus": {},
-        "providers": {"Anthropic API": 3.00, "OpenRouter": 3.00, "AWS Bedrock": 3.00, "Google Vertex": 3.00, "Azure": 3.00}
+        "providers": {"Anthropic API": {"input": 3.00, "output": 15.00}, "OpenRouter": {"input": 3.00, "output": 15.00}, "AWS Bedrock": {"input": 3.00, "output": 15.00}, "Google Vertex": {"input": 3.00, "output": 15.00}, "Azure": {"input": 3.00, "output": 15.00}}
     },
     # #4 — Gemini 2.5 Flash (Google)
     "Gemini-2.5-Flash": {"params_b": 65, "type": "LLM", "category": "Large", "rank": 4,
+        "tokens_7d": 8.4, "context_k": 1000, "open_source": False,
         "gpus": {},
-        "providers": {"Google AI Studio": 0.15, "Google Vertex": 0.30, "OpenRouter": 0.30}
+        "providers": {"Google AI Studio": {"input": 0.075, "output": 0.30}, "Google Vertex": {"input": 0.15, "output": 0.60}, "OpenRouter": {"input": 0.15, "output": 0.60}}
     },
     # #5 — Claude Sonnet 4.5 (Anthropic)
     "Claude-Sonnet-4.5": {"params_b": 175, "type": "LLM", "category": "Frontier", "rank": 5,
+        "tokens_7d": 7.8, "context_k": 200, "open_source": False,
         "gpus": {},
-        "providers": {"Anthropic API": 3.00, "OpenRouter": 3.00, "AWS Bedrock": 3.00, "Google Vertex": 3.00, "Azure": 3.00}
+        "providers": {"Anthropic API": {"input": 3.00, "output": 15.00}, "OpenRouter": {"input": 3.00, "output": 15.00}, "AWS Bedrock": {"input": 3.00, "output": 15.00}, "Google Vertex": {"input": 3.00, "output": 15.00}, "Azure": {"input": 3.00, "output": 15.00}}
     },
     # #6 — DeepSeek V3.1 (DeepSeek)
     "DeepSeek-V3.1": {"params_b": 671, "type": "LLM", "category": "Frontier", "rank": 6,
+        "tokens_7d": 6.5, "context_k": 128, "open_source": True,
         "gpus": {"H100-SXM": {"tokens_per_sec": 38, "cost_per_1m_tokens": 1.75, "vram_gb": 180}, "B200": {"tokens_per_sec": 78, "cost_per_1m_tokens": 0.90, "vram_gb": 180}},
-        "providers": {"DeepSeek API": 0.15, "OpenRouter": 0.15, "Together": 0.75, "Fireworks": 0.80, "DeepInfra": 0.72}
+        "providers": {"DeepSeek API": {"input": 0.07, "output": 0.27}, "OpenRouter": {"input": 0.07, "output": 0.27}, "Together": {"input": 0.35, "output": 1.10}, "Fireworks": {"input": 0.40, "output": 1.20}, "DeepInfra": {"input": 0.35, "output": 1.05}}
     },
     # #7 — GPT-4.1 Mini (OpenAI)
     "GPT-4.1-Mini": {"params_b": 70, "type": "LLM", "category": "Large", "rank": 7,
+        "tokens_7d": 5.9, "context_k": 1000, "open_source": False,
         "gpus": {},
-        "providers": {"OpenAI API": 0.40, "OpenRouter": 0.40, "Azure": 0.40}
+        "providers": {"OpenAI API": {"input": 0.40, "output": 1.60}, "OpenRouter": {"input": 0.40, "output": 1.60}, "Azure": {"input": 0.40, "output": 1.60}}
     },
     # #8 — Gemini 2.0 Flash (Google)
     "Gemini-2.0-Flash": {"params_b": 50, "type": "LLM", "category": "Large", "rank": 8,
+        "tokens_7d": 5.2, "context_k": 1000, "open_source": False,
         "gpus": {},
-        "providers": {"Google AI Studio": 0.10, "Google Vertex": 0.10, "OpenRouter": 0.10}
+        "providers": {"Google AI Studio": {"input": 0.10, "output": 0.40}, "Google Vertex": {"input": 0.10, "output": 0.40}, "OpenRouter": {"input": 0.10, "output": 0.40}}
     },
     # #9 — Gemini 2.5 Flash Lite (Google)
     "Gemini-2.5-Flash-Lite": {"params_b": 30, "type": "LLM", "category": "Medium", "rank": 9,
+        "tokens_7d": 4.6, "context_k": 1000, "open_source": False,
         "gpus": {},
-        "providers": {"Google AI Studio": 0.05, "Google Vertex": 0.10, "OpenRouter": 0.10}
+        "providers": {"Google AI Studio": {"input": 0.025, "output": 0.10}, "Google Vertex": {"input": 0.05, "output": 0.20}, "OpenRouter": {"input": 0.05, "output": 0.20}}
     },
     # #10 — DeepSeek V3 (DeepSeek)
     "DeepSeek-V3": {"params_b": 671, "type": "LLM", "category": "Frontier", "rank": 10,
+        "tokens_7d": 4.1, "context_k": 128, "open_source": True,
         "gpus": {"H100-SXM": {"tokens_per_sec": 35, "cost_per_1m_tokens": 1.85, "vram_gb": 180}, "B200": {"tokens_per_sec": 72, "cost_per_1m_tokens": 0.95, "vram_gb": 180}},
-        "providers": {"DeepSeek API": 0.19, "OpenRouter": 0.19, "Together": 0.80, "Fireworks": 0.87, "DeepInfra": 0.78}
+        "providers": {"DeepSeek API": {"input": 0.07, "output": 0.27}, "OpenRouter": {"input": 0.07, "output": 0.27}, "Together": {"input": 0.40, "output": 1.20}, "Fireworks": {"input": 0.43, "output": 1.30}, "DeepInfra": {"input": 0.38, "output": 1.15}}
     },
     # #11 — GPT-5 (OpenAI)
     "GPT-5": {"params_b": 500, "type": "LLM", "category": "Frontier", "rank": 11,
+        "tokens_7d": 3.5, "context_k": 256, "open_source": False,
         "gpus": {},
-        "providers": {"OpenAI API": 1.75, "OpenRouter": 1.75, "Azure": 1.75}
+        "providers": {"OpenAI API": {"input": 1.00, "output": 3.00}, "OpenRouter": {"input": 1.00, "output": 3.00}, "Azure": {"input": 1.00, "output": 3.00}}
     },
     # #12 — Gemini 2.5 Pro (Google)
     "Gemini-2.5-Pro": {"params_b": 175, "type": "LLM", "category": "Frontier", "rank": 12,
+        "tokens_7d": 3.0, "context_k": 1000, "open_source": False,
         "gpus": {},
-        "providers": {"Google AI Studio": 1.25, "Google Vertex": 1.25, "OpenRouter": 1.25}
+        "providers": {"Google AI Studio": {"input": 1.25, "output": 10.00}, "Google Vertex": {"input": 1.25, "output": 10.00}, "OpenRouter": {"input": 1.25, "output": 10.00}}
     },
     # #13 — Qwen3 30B-A3B (Alibaba)
     "Qwen3-30B-A3B": {"params_b": 30, "type": "LLM", "category": "Medium", "rank": 13,
+        "tokens_7d": 2.6, "context_k": 128, "open_source": True,
         "gpus": {"H100-SXM": {"tokens_per_sec": 320, "cost_per_1m_tokens": 0.10, "vram_gb": 5}, "B200": {"tokens_per_sec": 580, "cost_per_1m_tokens": 0.058, "vram_gb": 5}, "A100-80GB": {"tokens_per_sec": 180, "cost_per_1m_tokens": 0.18, "vram_gb": 5}, "MI300X": {"tokens_per_sec": 260, "cost_per_1m_tokens": 0.12, "vram_gb": 5}},
-        "providers": {"OpenRouter": 0.06, "Together": 0.08, "Fireworks": 0.08, "DeepInfra": 0.05, "Groq": 0.05}
+        "providers": {"OpenRouter": {"input": 0.03, "output": 0.09}, "Together": {"input": 0.04, "output": 0.12}, "Fireworks": {"input": 0.04, "output": 0.12}, "DeepInfra": {"input": 0.025, "output": 0.075}, "Groq": {"input": 0.025, "output": 0.075}}
     },
     # #14 — Llama 3.3 70B (Meta)
     "Llama-3.3-70B": {"params_b": 70, "type": "LLM", "category": "Large", "rank": 14,
+        "tokens_7d": 2.2, "context_k": 128, "open_source": True,
         "gpus": {"H100-SXM": {"tokens_per_sec": 100, "cost_per_1m_tokens": 0.36, "vram_gb": 42}, "B200": {"tokens_per_sec": 195, "cost_per_1m_tokens": 0.21, "vram_gb": 42}, "H200": {"tokens_per_sec": 125, "cost_per_1m_tokens": 0.30, "vram_gb": 42}, "A100-80GB": {"tokens_per_sec": 55, "cost_per_1m_tokens": 0.68, "vram_gb": 42}, "MI300X": {"tokens_per_sec": 82, "cost_per_1m_tokens": 0.45, "vram_gb": 42}},
-        "providers": {"OpenRouter": 0.10, "Together": 0.27, "Fireworks": 0.28, "Groq": 0.10, "AWS Bedrock": 0.45, "Azure": 0.42, "DeepInfra": 0.28}
+        "providers": {"OpenRouter": {"input": 0.05, "output": 0.15}, "Together": {"input": 0.13, "output": 0.40}, "Fireworks": {"input": 0.14, "output": 0.42}, "Groq": {"input": 0.05, "output": 0.15}, "AWS Bedrock": {"input": 0.22, "output": 0.67}, "Azure": {"input": 0.21, "output": 0.63}, "DeepInfra": {"input": 0.14, "output": 0.42}}
     },
     # #15 — DeepSeek R1 (DeepSeek)
     "DeepSeek-R1": {"params_b": 671, "type": "LLM", "category": "Frontier", "rank": 15,
+        "tokens_7d": 1.8, "context_k": 128, "open_source": True,
         "gpus": {"H100-SXM": {"tokens_per_sec": 28, "cost_per_1m_tokens": 2.10, "vram_gb": 180}, "B200": {"tokens_per_sec": 58, "cost_per_1m_tokens": 1.15, "vram_gb": 180}},
-        "providers": {"DeepSeek API": 0.40, "OpenRouter": 0.40, "Together": 1.50, "Fireworks": 1.60, "DeepInfra": 1.40}
+        "providers": {"DeepSeek API": {"input": 0.14, "output": 0.55}, "OpenRouter": {"input": 0.14, "output": 0.55}, "Together": {"input": 0.75, "output": 2.25}, "Fireworks": {"input": 0.80, "output": 2.40}, "DeepInfra": {"input": 0.70, "output": 2.10}}
     },
     # #16 — Qwen3 Coder 480B (Alibaba)
     "Qwen3-Coder-480B": {"params_b": 480, "type": "Code", "category": "Frontier", "rank": 16,
+        "tokens_7d": 1.4, "context_k": 256, "open_source": True,
         "gpus": {"H100-SXM": {"tokens_per_sec": 15, "cost_per_1m_tokens": 3.50, "vram_gb": 350}, "B200": {"tokens_per_sec": 32, "cost_per_1m_tokens": 1.90, "vram_gb": 350}},
-        "providers": {"OpenRouter": 0.12, "Together": 1.00, "DeepInfra": 0.75, "Fireworks": 1.10}
+        "providers": {"OpenRouter": {"input": 0.06, "output": 0.18}, "Together": {"input": 0.50, "output": 1.50}, "DeepInfra": {"input": 0.38, "output": 1.12}, "Fireworks": {"input": 0.55, "output": 1.65}}
     },
     # #17 — Claude 3.7 Sonnet (Anthropic)
     "Claude-3.7-Sonnet": {"params_b": 175, "type": "LLM", "category": "Frontier", "rank": 17,
+        "tokens_7d": 1.1, "context_k": 200, "open_source": False,
         "gpus": {},
-        "providers": {"Anthropic API": 3.00, "OpenRouter": 3.00, "AWS Bedrock": 3.00, "Google Vertex": 3.00, "Azure": 3.00}
+        "providers": {"Anthropic API": {"input": 3.00, "output": 15.00}, "OpenRouter": {"input": 3.00, "output": 15.00}, "AWS Bedrock": {"input": 3.00, "output": 15.00}, "Google Vertex": {"input": 3.00, "output": 15.00}, "Azure": {"input": 3.00, "output": 15.00}}
     },
     # #18 — GPT-4o Mini (OpenAI)
     "GPT-4o-Mini": {"params_b": 70, "type": "LLM", "category": "Large", "rank": 18,
+        "tokens_7d": 0.8, "context_k": 128, "open_source": False,
         "gpus": {},
-        "providers": {"OpenAI API": 0.15, "OpenRouter": 0.15, "Azure": 0.15}
+        "providers": {"OpenAI API": {"input": 0.075, "output": 0.30}, "OpenRouter": {"input": 0.075, "output": 0.30}, "Azure": {"input": 0.075, "output": 0.30}}
     },
     # #19 — Gemini 2.5 Pro Preview (Google)
     "Gemini-2.5-Pro-Preview": {"params_b": 175, "type": "LLM", "category": "Frontier", "rank": 19,
+        "tokens_7d": 0.6, "context_k": 1000, "open_source": False,
         "gpus": {},
-        "providers": {"Google AI Studio": 1.25, "Google Vertex": 1.25, "OpenRouter": 1.25}
+        "providers": {"Google AI Studio": {"input": 1.25, "output": 10.00}, "Google Vertex": {"input": 1.25, "output": 10.00}, "OpenRouter": {"input": 1.25, "output": 10.00}}
     },
     # #20 — GPT-5.2 (OpenAI)
     "GPT-5.2": {"params_b": 500, "type": "LLM", "category": "Frontier", "rank": 20,
+        "tokens_7d": 0.4, "context_k": 256, "open_source": False,
         "gpus": {},
-        "providers": {"OpenAI API": 1.75, "OpenRouter": 1.75, "Azure": 1.75}
+        "providers": {"OpenAI API": {"input": 1.00, "output": 3.00}, "OpenRouter": {"input": 1.00, "output": 3.00}, "Azure": {"input": 1.00, "output": 3.00}}
     }
 }
 
