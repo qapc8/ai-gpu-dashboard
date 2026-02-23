@@ -268,7 +268,7 @@ CLOUD_PRICING = {
         "provider_name": "Amazon Web Services",
         "type": "cloud",
         "gpus": {
-            "B200": {"instance": "p6.48xlarge", "gpus_per_instance": 8, "price_per_gpu_hr": 14.24, "regions": {
+            "B200": {"instance": "p6-b200.48xlarge", "gpus_per_instance": 8, "price_per_gpu_hr": 14.24, "regions": {
                 "us-east-1": 14.24, "us-east-2": 14.24, "us-west-2": 14.24,
                 "eu-west-1": 15.66, "eu-central-1": 16.24,
                 "ap-northeast-1": 17.09, "ap-southeast-1": 16.66
@@ -315,37 +315,32 @@ CLOUD_PRICING = {
         "provider_name": "Google Cloud Platform",
         "type": "cloud",
         "gpus": {
-            "B200": {"instance": "a3-ultragpu-8g", "gpus_per_instance": 8, "price_per_gpu_hr": 13.52, "regions": {
-                "us-central1": 13.52, "us-east4": 13.52, "us-west1": 13.52,
-                "europe-west4": 14.87, "europe-west1": 14.72,
-                "asia-east1": 15.55, "asia-northeast1": 15.80
-            }},
-            "H200": {"instance": "a3-ultra-8g", "gpus_per_instance": 8, "price_per_gpu_hr": 10.85, "regions": {
+            "H200": {"instance": "a3-ultragpu-8g", "gpus_per_instance": 8, "price_per_gpu_hr": 10.85, "regions": {
                 "us-central1": 10.85, "us-east4": 10.85, "us-west1": 10.85,
                 "europe-west4": 11.94, "europe-west1": 11.82
             }},
-            "H100-SXM": {"instance": "a3-highgpu-8g", "gpus_per_instance": 8, "price_per_gpu_hr": 12.75, "regions": {
-                "us-central1": 12.75, "us-east4": 12.75, "us-west1": 12.75,
-                "europe-west4": 14.03, "europe-west1": 13.88,
-                "asia-east1": 14.66, "asia-northeast1": 14.90
+            "H100-SXM": {"instance": "a3-highgpu-8g", "gpus_per_instance": 8, "price_per_gpu_hr": 11.06, "regions": {
+                "us-central1": 11.06, "us-east4": 11.06, "us-west1": 11.06,
+                "europe-west4": 12.17, "europe-west1": 12.04,
+                "asia-east1": 12.72, "asia-northeast1": 12.93
             }},
-            "A100-80GB": {"instance": "a2-ultragpu-1g", "gpus_per_instance": 1, "price_per_gpu_hr": 5.63, "regions": {
-                "us-central1": 5.63, "us-east4": 5.63, "us-west1": 5.63,
-                "europe-west4": 6.19, "europe-west1": 6.13,
-                "asia-east1": 6.47, "asia-northeast1": 6.58
+            "A100-80GB": {"instance": "a2-ultragpu-1g", "gpus_per_instance": 1, "price_per_gpu_hr": 5.07, "regions": {
+                "us-central1": 5.07, "us-east4": 5.07, "us-west1": 5.07,
+                "europe-west4": 5.58, "europe-west1": 5.52,
+                "asia-east1": 5.83, "asia-northeast1": 5.93
             }},
-            "A100-40GB": {"instance": "a2-highgpu-1g", "gpus_per_instance": 1, "price_per_gpu_hr": 3.92, "regions": {
-                "us-central1": 3.92, "us-east4": 3.92, "us-west1": 3.92,
-                "europe-west4": 4.31, "europe-west1": 4.27,
-                "asia-east1": 4.51, "asia-northeast1": 4.59
+            "A100-40GB": {"instance": "a2-highgpu-1g", "gpus_per_instance": 1, "price_per_gpu_hr": 3.67, "regions": {
+                "us-central1": 3.67, "us-east4": 3.67, "us-west1": 3.67,
+                "europe-west4": 4.04, "europe-west1": 4.00,
+                "asia-east1": 4.22, "asia-northeast1": 4.29
             }},
-            "L4": {"instance": "g2-standard-4", "gpus_per_instance": 1, "price_per_gpu_hr": 0.82, "regions": {
-                "us-central1": 0.82, "us-east4": 0.82, "us-west1": 0.82,
-                "europe-west4": 0.90, "europe-west1": 0.89
+            "L4": {"instance": "g2-standard-4", "gpus_per_instance": 1, "price_per_gpu_hr": 0.71, "regions": {
+                "us-central1": 0.71, "us-east4": 0.71, "us-west1": 0.71,
+                "europe-west4": 0.78, "europe-west1": 0.77
             }},
-            "T4": {"instance": "n1-standard-4+T4", "gpus_per_instance": 1, "price_per_gpu_hr": 0.35, "regions": {
-                "us-central1": 0.35, "us-east4": 0.35, "us-west1": 0.35,
-                "europe-west4": 0.39
+            "T4": {"instance": "n1-standard-4+T4", "gpus_per_instance": 1, "price_per_gpu_hr": 1.14, "regions": {
+                "us-central1": 1.14, "us-east4": 1.14, "us-west1": 1.14,
+                "europe-west4": 1.25
             }}
         },
         "spot_discount": 0.65,
@@ -356,7 +351,7 @@ CLOUD_PRICING = {
         "provider_name": "Microsoft Azure",
         "type": "cloud",
         "gpus": {
-            "GB200": {"instance": "ND_GB200_v6", "gpus_per_instance": 2, "price_per_gpu_hr": 27.04, "regions": {
+            "GB200": {"instance": "ND128isr_NDR_GB200_v6", "gpus_per_instance": 4, "price_per_gpu_hr": 27.04, "regions": {
                 "eastus": 27.04, "eastus2": 27.04, "westus2": 27.04,
                 "westeurope": 29.74, "northeurope": 29.42
             }},
@@ -836,9 +831,9 @@ MARKET_INDICATORS = {
                                      "2024-Q1": 850, "2024-Q2": 920, "2024-Q3": 1050, "2024-Q4": 1180,
                                      "2025-Q1": 1320, "2025-Q2": 1450, "2025-Q3": 1580, "2025-Q4": 1700,
                                      "2026-Q1": 1850},
-    "flagship_lead_time_weeks": {"2023-01": 52, "2023-03": 46, "2023-06": 40, "2023-09": 36, "2023-12": 28,
-                              "2024-03": 20, "2024-06": 16, "2024-09": 12, "2024-12": 8,
-                              "2025-03": 10, "2025-06": 18, "2025-09": 28, "2025-12": 36, "2026-01": 40, "2026-02": 42},
+    "flagship_lead_time_weeks": {"2023-01": 48, "2023-03": 48, "2023-06": 40, "2023-09": 36, "2023-12": 28,
+                              "2024-03": 16, "2024-06": 10, "2024-09": 8, "2024-11": 52,
+                              "2025-01": 48, "2025-03": 44, "2025-06": 40, "2025-09": 36, "2025-12": 36, "2026-01": 36, "2026-02": 36},
     "amd_gpu_market_share_pct": {"2023-01": 3, "2023-06": 5, "2024-01": 8, "2024-06": 12, "2025-01": 16, "2025-06": 19, "2026-01": 22}
 }
 
