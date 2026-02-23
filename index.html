@@ -2218,8 +2218,8 @@ function renderSpotTab() {
   });
 
   // Inventory Trend: 90d → 30d → Now per GPU
-  if(charts.it) charts.it.destroy();
-  charts.it=new Chart(document.getElementById('chartInventoryTrend'),{type:'bar',
+  if(charts.ivt) charts.ivt.destroy();
+  charts.ivt=new Chart(document.getElementById('chartInventoryTrend'),{type:'bar',
     data:{labels:gpus,datasets:[
       {label:'90d Ago',data:sd.map(d=>d.inventory_90d||0),backgroundColor:C.purple+'45',borderColor:C.purple,borderWidth:1},
       {label:'30d Ago',data:sd.map(d=>d.inventory_30d||0),backgroundColor:C.amber+'50',borderColor:C.amber,borderWidth:1},
