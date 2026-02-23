@@ -276,7 +276,6 @@ CLOUD_PRICING = {
                 "ap-northeast-1": 1.22, "ap-southeast-1": 1.18
             }}
         },
-        "spot_discount": 0.60,
         "reserved_1yr_discount": 0.40,
         "reserved_3yr_discount": 0.60
     },
@@ -308,7 +307,6 @@ CLOUD_PRICING = {
                 "europe-west4": 3.27
             }}
         },
-        "spot_discount": 0.65,
         "reserved_1yr_discount": 0.37,
         "reserved_3yr_discount": 0.55
     },
@@ -347,7 +345,6 @@ CLOUD_PRICING = {
                 "westeurope": 3.37, "northeurope": 3.33
             }}
         },
-        "spot_discount": 0.60,
         "reserved_1yr_discount": 0.36,
         "reserved_3yr_discount": 0.56
     },
@@ -355,13 +352,10 @@ CLOUD_PRICING = {
         "provider_name": "Lambda Labs",
         "type": "cloud",
         "gpus": {
-            "B200": {"instance": "gpu_8x_b200", "gpus_per_instance": 8, "price_per_gpu_hr": 3.99, "regions": {
-                "us-west-1": 3.99, "us-south-1": 3.99
+            "B200": {"instance": "gpu_8x_b200", "gpus_per_instance": 8, "price_per_gpu_hr": 5.74, "regions": {
+                "us-west-1": 5.74, "us-south-1": 5.74
             }},
-            "H200": {"instance": "gpu_8x_h200", "gpus_per_instance": 8, "price_per_gpu_hr": 3.29, "regions": {
-                "us-west-1": 3.29, "us-south-1": 3.29
-            }},
-            "H100-SXM": {"instance": "gpu_8x_h100_sxm5", "gpus_per_instance": 8, "price_per_gpu_hr": 2.49, "regions": {
+            "H100-SXM": {"instance": "gpu_8x_h100_sxm5", "gpus_per_instance": 8, "price_per_gpu_hr": 3.44, "regions": {
                 "us-west-1": 2.49, "us-south-1": 2.49, "us-east-1": 2.49,
                 "europe-central-1": 2.79
             }},
@@ -378,7 +372,6 @@ CLOUD_PRICING = {
                 "us-west-1": 0.60, "us-south-1": 0.60
             }}
         },
-        "spot_discount": 0.0,
         "reserved_1yr_discount": 0.20,
         "reserved_3yr_discount": 0.35
     },
@@ -411,7 +404,6 @@ CLOUD_PRICING = {
                 "LAS1": 0.74, "ORD1": 0.74
             }}
         },
-        "spot_discount": 0.50,
         "reserved_1yr_discount": 0.25,
         "reserved_3yr_discount": 0.45
     },
@@ -419,14 +411,20 @@ CLOUD_PRICING = {
         "provider_name": "RunPod",
         "type": "marketplace",
         "gpus": {
+            "B200": {"instance": "b200-sxm", "gpus_per_instance": 1, "price_per_gpu_hr": 5.98, "regions": {
+                "US": 5.98
+            }},
+            "H200": {"instance": "h200-sxm", "gpus_per_instance": 1, "price_per_gpu_hr": 3.59, "regions": {
+                "US": 3.59
+            }},
             "H100-SXM": {"instance": "h100-sxm", "gpus_per_instance": 1, "price_per_gpu_hr": 1.99, "regions": {
                 "US": 1.99, "EU": 2.19
             }},
             "H100-PCIe": {"instance": "h100-pcie", "gpus_per_instance": 1, "price_per_gpu_hr": 1.79, "regions": {
                 "US": 1.79, "EU": 1.99
             }},
-            "MI300X": {"instance": "mi300x", "gpus_per_instance": 1, "price_per_gpu_hr": 1.89, "regions": {
-                "US": 1.89, "EU": 2.09
+            "MI300X": {"instance": "mi300x", "gpus_per_instance": 1, "price_per_gpu_hr": 2.49, "regions": {
+                "US": 2.49, "EU": 2.69
             }},
             "A100-80GB": {"instance": "a100-80gb", "gpus_per_instance": 1, "price_per_gpu_hr": 1.29, "regions": {
                 "US": 1.29, "EU": 1.44
@@ -444,7 +442,6 @@ CLOUD_PRICING = {
                 "US": 0.39
             }}
         },
-        "spot_discount": 0.40,
         "reserved_1yr_discount": 0.15,
         "reserved_3yr_discount": 0.30
     },
@@ -452,6 +449,12 @@ CLOUD_PRICING = {
         "provider_name": "Vast.ai",
         "type": "marketplace",
         "gpus": {
+            "B200": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 2.67, "regions": {
+                "US": 2.67, "EU": 3.10
+            }},
+            "H200": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 1.97, "regions": {
+                "US": 1.97, "EU": 2.20, "APAC": 2.40
+            }},
             "H100-SXM": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 1.70, "regions": {
                 "US": 1.70, "EU": 1.90, "APAC": 2.05
             }},
@@ -473,14 +476,13 @@ CLOUD_PRICING = {
             "RTX-4090": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 0.29, "regions": {
                 "US": 0.29, "EU": 0.34, "APAC": 0.38
             }},
-            "L40S": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 0.55, "regions": {
-                "US": 0.55, "EU": 0.65
+            "L40S": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 0.47, "regions": {
+                "US": 0.47, "EU": 0.57
             }},
             "RTX-5090": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 0.45, "regions": {
                 "US": 0.45, "EU": 0.55
             }}
         },
-        "spot_discount": 0.0,
         "reserved_1yr_discount": 0.0,
         "reserved_3yr_discount": 0.0
     },
@@ -488,6 +490,9 @@ CLOUD_PRICING = {
         "provider_name": "FluidStack",
         "type": "marketplace",
         "gpus": {
+            "H200": {"instance": "h200_sxm", "gpus_per_instance": 1, "price_per_gpu_hr": 2.30, "regions": {
+                "US": 2.30, "EU": 2.53
+            }},
             "H100-SXM": {"instance": "h100_sxm", "gpus_per_instance": 1, "price_per_gpu_hr": 2.10, "regions": {
                 "US": 2.10, "EU": 2.31, "APAC": 2.45
             }},
@@ -504,7 +509,6 @@ CLOUD_PRICING = {
                 "US": 0.69
             }}
         },
-        "spot_discount": 0.30,
         "reserved_1yr_discount": 0.20,
         "reserved_3yr_discount": 0.35
     },
@@ -532,7 +536,6 @@ CLOUD_PRICING = {
                 "us-ashburn-1": 0.70, "us-phoenix-1": 0.70
             }}
         },
-        "spot_discount": 0.50,
         "reserved_1yr_discount": 0.30,
         "reserved_3yr_discount": 0.50
     },
@@ -547,7 +550,6 @@ CLOUD_PRICING = {
                 "US": 1.50
             }}
         },
-        "spot_discount": 0.0,
         "reserved_1yr_discount": 0.25,
         "reserved_3yr_discount": 0.40
     }
@@ -812,8 +814,8 @@ MARKET_INDICATORS = {
                               "2025-01": 48, "2025-03": 44, "2025-06": 40, "2025-09": 36, "2025-12": 36, "2026-01": 36, "2026-02": 36},
     "amd_gpu_market_share_pct": {"2023-01": 3, "2023-06": 5, "2024-01": 8, "2024-06": 12, "2025-01": 16, "2025-06": 19, "2026-01": 22},
     "gpu_lead_times": {
-        "B200": {"weeks": 36, "status": "constrained", "note": "Sold out through mid-2026"},
-        "GB200": {"weeks": 40, "status": "constrained", "note": "NVL72 racks backordered"},
+        "B200": {"weeks": 4, "status": "available", "note": "Shipping, broadly available"},
+        "GB200": {"weeks": 10, "status": "limited", "note": "NVL72 racks ramping"},
         "H200": {"weeks": 12, "status": "limited", "note": "8-20 wk depending on volume"},
         "H100-SXM": {"weeks": 2, "status": "available", "note": "Broadly available"},
         "H100-PCIe": {"weeks": 2, "status": "available", "note": "Broadly available"},
@@ -1172,78 +1174,123 @@ INFERENCE_BENCHMARKS = {
 }
 
 # ============================================================================
-# PRICING TIERS — On-Demand vs Reserved vs Spot across providers
+# PRICING TIERS — On-Demand vs Reserved across providers
 # ============================================================================
 
 SPOT_MARKET = {
     "B200": {
-        "on_demand_low": 3.75, "on_demand_avg": 8.50, "on_demand_high": 14.24,
-        "spot_low": 1.50, "spot_avg": 3.40, "spot_high": 5.70,
-        "reserved_1yr_low": 2.81, "reserved_1yr_avg": 5.95, "reserved_1yr_high": 9.97,
-        "reserved_3yr_low": 2.06, "reserved_3yr_avg": 4.25, "reserved_3yr_high": 6.41,
-        "spot_savings_pct": 60, "res1_savings_pct": 30, "res3_savings_pct": 50,
-        "spot_availability": "limited", "available_gpus": 780, "providers_with_spot": 3,
-        "quarterly_trend": [12.80, 11.50, 10.20, 8.50]
+        "on_demand_low": 2.67, "on_demand_avg": 6.50, "on_demand_high": 14.24,
+        "reserved_1yr_low": 2.00, "reserved_1yr_avg": 4.55, "reserved_1yr_high": 9.97,
+        "reserved_3yr_low": 1.47, "reserved_3yr_avg": 3.25, "reserved_3yr_high": 6.41,
+        "res1_savings_pct": 30, "res3_savings_pct": 50,
+        "num_providers": 6, "quarterly_trend": [12.80, 11.50, 10.20, 8.50]
     },
     "H200": {
-        "on_demand_low": 3.29, "on_demand_avg": 7.60, "on_demand_high": 10.85,
-        "spot_low": 1.32, "spot_avg": 3.04, "spot_high": 4.34,
-        "reserved_1yr_low": 2.47, "reserved_1yr_avg": 5.32, "reserved_1yr_high": 7.60,
-        "reserved_3yr_low": 1.81, "reserved_3yr_avg": 3.80, "reserved_3yr_high": 4.88,
-        "spot_savings_pct": 60, "res1_savings_pct": 30, "res3_savings_pct": 50,
-        "spot_availability": "limited", "available_gpus": 1480, "providers_with_spot": 4,
-        "quarterly_trend": [9.80, 8.60, 7.90, 7.60]
+        "on_demand_low": 1.97, "on_demand_avg": 5.30, "on_demand_high": 10.85,
+        "reserved_1yr_low": 1.48, "reserved_1yr_avg": 3.71, "reserved_1yr_high": 7.60,
+        "reserved_3yr_low": 1.08, "reserved_3yr_avg": 2.65, "reserved_3yr_high": 4.88,
+        "res1_savings_pct": 30, "res3_savings_pct": 50,
+        "num_providers": 8, "quarterly_trend": [9.80, 8.60, 7.90, 7.60]
     },
     "H100-SXM": {
         "on_demand_low": 1.70, "on_demand_avg": 5.80, "on_demand_high": 12.75,
-        "spot_low": 0.68, "spot_avg": 2.32, "spot_high": 5.10,
         "reserved_1yr_low": 1.28, "reserved_1yr_avg": 4.06, "reserved_1yr_high": 8.93,
         "reserved_3yr_low": 0.94, "reserved_3yr_avg": 2.90, "reserved_3yr_high": 5.74,
-        "spot_savings_pct": 60, "res1_savings_pct": 30, "res3_savings_pct": 50,
-        "spot_availability": "moderate", "available_gpus": 3200, "providers_with_spot": 6,
-        "quarterly_trend": [8.20, 7.10, 6.40, 5.80]
+        "res1_savings_pct": 30, "res3_savings_pct": 50,
+        "num_providers": 10, "quarterly_trend": [8.20, 7.10, 6.40, 5.80]
     },
     "A100-80GB": {
         "on_demand_low": 0.85, "on_demand_avg": 2.60, "on_demand_high": 5.63,
-        "spot_low": 0.34, "spot_avg": 1.04, "spot_high": 2.25,
         "reserved_1yr_low": 0.64, "reserved_1yr_avg": 1.82, "reserved_1yr_high": 3.94,
         "reserved_3yr_low": 0.47, "reserved_3yr_avg": 1.30, "reserved_3yr_high": 2.53,
-        "spot_savings_pct": 60, "res1_savings_pct": 30, "res3_savings_pct": 50,
-        "spot_availability": "good", "available_gpus": 9200, "providers_with_spot": 7,
-        "quarterly_trend": [3.40, 3.10, 2.80, 2.60]
+        "res1_savings_pct": 30, "res3_savings_pct": 50,
+        "num_providers": 9, "quarterly_trend": [3.40, 3.10, 2.80, 2.60]
     },
     "MI300X": {
         "on_demand_low": 1.50, "on_demand_avg": 3.10, "on_demand_high": 6.00,
-        "spot_low": 0.60, "spot_avg": 1.24, "spot_high": 2.40,
         "reserved_1yr_low": 1.13, "reserved_1yr_avg": 2.17, "reserved_1yr_high": 4.20,
         "reserved_3yr_low": 0.83, "reserved_3yr_avg": 1.55, "reserved_3yr_high": 2.70,
-        "spot_savings_pct": 60, "res1_savings_pct": 30, "res3_savings_pct": 50,
-        "spot_availability": "moderate", "available_gpus": 2100, "providers_with_spot": 4,
-        "quarterly_trend": [4.20, 3.80, 3.40, 3.10]
+        "res1_savings_pct": 30, "res3_savings_pct": 50,
+        "num_providers": 5, "quarterly_trend": [4.20, 3.80, 3.40, 3.10]
     },
     "RTX-4090": {
         "on_demand_low": 0.29, "on_demand_avg": 0.45, "on_demand_high": 0.74,
-        "spot_low": 0.12, "spot_avg": 0.18, "spot_high": 0.30,
         "reserved_1yr_low": 0.22, "reserved_1yr_avg": 0.34, "reserved_1yr_high": 0.56,
         "reserved_3yr_low": 0.16, "reserved_3yr_avg": 0.25, "reserved_3yr_high": 0.37,
-        "spot_savings_pct": 60, "res1_savings_pct": 25, "res3_savings_pct": 45,
-        "spot_availability": "abundant", "available_gpus": 16800, "providers_with_spot": 4,
-        "quarterly_trend": [0.65, 0.55, 0.48, 0.45]
+        "res1_savings_pct": 25, "res3_savings_pct": 45,
+        "num_providers": 4, "quarterly_trend": [0.65, 0.55, 0.48, 0.45]
     },
     "L40S": {
-        "on_demand_low": 0.55, "on_demand_avg": 1.10, "on_demand_high": 1.86,
-        "spot_low": 0.22, "spot_avg": 0.44, "spot_high": 0.74,
-        "reserved_1yr_low": 0.41, "reserved_1yr_avg": 0.77, "reserved_1yr_high": 1.30,
-        "reserved_3yr_low": 0.30, "reserved_3yr_avg": 0.55, "reserved_3yr_high": 0.84,
-        "spot_savings_pct": 60, "res1_savings_pct": 30, "res3_savings_pct": 50,
-        "spot_availability": "good", "available_gpus": 5200, "providers_with_spot": 5,
-        "quarterly_trend": [1.45, 1.30, 1.18, 1.10]
+        "on_demand_low": 0.47, "on_demand_avg": 1.00, "on_demand_high": 1.86,
+        "reserved_1yr_low": 0.35, "reserved_1yr_avg": 0.70, "reserved_1yr_high": 1.30,
+        "reserved_3yr_low": 0.26, "reserved_3yr_avg": 0.50, "reserved_3yr_high": 0.84,
+        "res1_savings_pct": 30, "res3_savings_pct": 50,
+        "num_providers": 6, "quarterly_trend": [1.45, 1.30, 1.18, 1.10]
     }
 }
 
 # ============================================================================
 # NEWS & MARKET SIGNALS
 # ============================================================================
+
+COMMUNITY_SENTIMENT = {
+    "H100-SXM": {
+        "score": 88, "reddit_sentiment": 0.82, "github_compat_score": 95,
+        "hf_models_trained": 48200, "mentions_30d": 32400,
+        "ecosystem": "mature", "adoption": "stable", "community_pick": True,
+        "pros": ["Universal framework support", "Massive ecosystem", "Proven at scale"],
+        "cons": ["Price premium vs AMD"],
+        "top_use_case": "LLM training & serving at scale"
+    },
+    "B200": {
+        "score": 82, "reddit_sentiment": 0.78, "github_compat_score": 80,
+        "hf_models_trained": 3100, "mentions_30d": 28600,
+        "ecosystem": "growing", "adoption": "rising", "community_pick": False,
+        "pros": ["2x H100 perf/watt", "192GB HBM3e", "FP4 support"],
+        "cons": ["Still ramping ecosystem"],
+        "top_use_case": "Next-gen LLM training & large batch inference"
+    },
+    "H200": {
+        "score": 85, "reddit_sentiment": 0.80, "github_compat_score": 92,
+        "hf_models_trained": 12500, "mentions_30d": 18200,
+        "ecosystem": "mature", "adoption": "rising", "community_pick": False,
+        "pros": ["141GB HBM3e", "H100-compatible", "Great for large models"],
+        "cons": ["Being leapfrogged by B200"],
+        "top_use_case": "Large model inference & fine-tuning"
+    },
+    "A100-80GB": {
+        "score": 79, "reddit_sentiment": 0.75, "github_compat_score": 98,
+        "hf_models_trained": 85400, "mentions_30d": 14100,
+        "ecosystem": "mature", "adoption": "stable", "community_pick": False,
+        "pros": ["Best price/perf for training", "Universal support", "Abundant supply"],
+        "cons": ["Aging architecture"],
+        "top_use_case": "Cost-effective fine-tuning & mid-size training"
+    },
+    "MI300X": {
+        "score": 62, "reddit_sentiment": 0.58, "github_compat_score": 65,
+        "hf_models_trained": 2800, "mentions_30d": 9400,
+        "ecosystem": "growing", "adoption": "rising", "community_pick": False,
+        "pros": ["192GB HBM3", "Competitive pricing", "ROCm improving"],
+        "cons": ["ROCm gaps vs CUDA", "Smaller ecosystem"],
+        "top_use_case": "Inference workloads & cost-optimized serving"
+    },
+    "L40S": {
+        "score": 72, "reddit_sentiment": 0.70, "github_compat_score": 90,
+        "hf_models_trained": 8200, "mentions_30d": 6800,
+        "ecosystem": "mature", "adoption": "stable", "community_pick": False,
+        "pros": ["Great for inference", "Low power", "Affordable"],
+        "cons": ["No NVLink", "48GB VRAM limit"],
+        "top_use_case": "Inference serving & fine-tuning small models"
+    },
+    "RTX-4090": {
+        "score": 74, "reddit_sentiment": 0.85, "github_compat_score": 88,
+        "hf_models_trained": 22100, "mentions_30d": 11200,
+        "ecosystem": "mature", "adoption": "stable", "community_pick": True,
+        "pros": ["Cheapest per hour", "Great for prototyping", "Consumer availability"],
+        "cons": ["24GB VRAM limit", "Not for production"],
+        "top_use_case": "Research prototyping & personal inference"
+    }
+}
 
 NEWS_FEED = [
     {"date": "2026-02-17", "source": "Motley Fool", "headline": "NVIDIA Q4 FY2026 earnings due Feb 25 -- Amazon, Google, Meta, Microsoft capex plans boost NVDA outlook", "category": "earnings", "sentiment": "bullish", "impact": "high"},
@@ -1280,7 +1327,6 @@ def get_cheapest_by_gpu(gpu_id: str) -> list:
                 "instance": gpu["instance"],
                 "price_per_gpu_hr": gpu["price_per_gpu_hr"],
                 "price_monthly": gpu["price_per_gpu_hr"] * 730,
-                "spot_price": gpu["price_per_gpu_hr"] * (1 - data["spot_discount"]) if data["spot_discount"] > 0 else None,
                 "reserved_1yr": gpu["price_per_gpu_hr"] * (1 - data["reserved_1yr_discount"]),
                 "reserved_3yr": gpu["price_per_gpu_hr"] * (1 - data["reserved_3yr_discount"]),
                 "regions": gpu.get("regions", {})
@@ -1382,7 +1428,8 @@ def generate_market_summary() -> dict:
             "price_spread_pct": most_competitive["price_spread_pct"]
         },
         "market_indicators": MARKET_INDICATORS,
-        "comparison_matrix": comparison
+        "comparison_matrix": comparison,
+        "market_sentiment": COMMUNITY_SENTIMENT
     }
 
 
