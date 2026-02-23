@@ -751,7 +751,7 @@ body {
       <div class="card-bd"><div class="chart-wrap" style="height:250px;"><canvas id="chartOverviewShipments"></canvas></div></div>
     </div>
     <div class="card">
-      <div class="card-hd"><span class="card-hd-title">H100 Lead Time (weeks)</span></div>
+      <div class="card-hd"><span class="card-hd-title">Flagship GPU Lead Time (weeks)</span></div>
       <div class="card-bd"><div class="chart-wrap" style="height:250px;"><canvas id="chartOverviewLead"></canvas></div></div>
     </div>
   </div>
@@ -812,7 +812,7 @@ body {
       <div class="card-bd"><div class="chart-wrap" style="height:260px;"><canvas id="chartShipments"></canvas></div></div>
     </div>
     <div class="card">
-      <div class="card-hd"><span class="card-hd-title">H100 Lead Time (weeks)</span></div>
+      <div class="card-hd"><span class="card-hd-title">Flagship GPU Lead Time (weeks)</span></div>
       <div class="card-bd"><div class="chart-wrap" style="height:260px;"><canvas id="chartLeadTime"></canvas></div></div>
     </div>
   </div>
@@ -965,7 +965,7 @@ body {
       <div class="card-bd"><div class="chart-wrap" style="height:380px;"><canvas id="chartTcoStack"></canvas></div></div>
     </div>
     <div class="card">
-      <div class="card-hd"><span class="card-hd-title">TCO Component Share (H100-SXM)</span></div>
+      <div class="card-hd"><span class="card-hd-title" id="tcoPieTitle">TCO Component Share (Flagship GPU)</span></div>
       <div class="card-bd"><div class="chart-wrap" style="height:380px;"><canvas id="chartTcoPie"></canvas></div></div>
     </div>
   </div>
@@ -1486,14 +1486,14 @@ function renderTicker() {
     mkStock('NVDA', mi.nvidia_stock.current, mi.nvidia_stock.ytd_change) +
     mkStock('AMD', mi.amd_stock.current, mi.amd_stock.ytd_change) +
     div +
-    mkSpot('H100 SPOT', spot?.['H100-SXM'], '#22d3ee') +
     mkSpot('B200 SPOT', spot?.['B200'], '#a78bfa') +
     mkSpot('H200 SPOT', spot?.['H200'], '#4e8ff7') +
+    mkSpot('H100 SPOT', spot?.['H100-SXM'], '#22d3ee') +
     div +
     mkMetric('AI CAPEX \'26', '$'+mi.ai_capex_bn['2026_est']+'B', '+40% YoY', 'up') +
     mkMetric('GPU MKT', '$'+mi.gpu_market_size_bn['2025']+'B', '+35%', 'up') +
     div +
-    mkMetric('H100 LEAD', lead+'wk', leadTag[0], leadTag[1]) +
+    mkMetric('B200 LEAD', lead+'wk', leadTag[0], leadTag[1]) +
     mkMetric('AMD DC', amdShare+'%', 'mkt share', '') +
     mkMetric('SPOT VOL', (totalVol/1000).toFixed(0)+'K hrs', '', '');
 }
@@ -1522,7 +1522,7 @@ function renderOverview() {
   if (!m || !m.length) return;
 
   // KPI calculations
-  const h100s = spot?.['H100-SXM'], b200s = spot?.['B200'], h200s = spot?.['H200'];
+  const b200s = spot?.['B200'], h200s = spot?.['H200'], h100s = spot?.['H100-SXM'];
   const totalVol = spot ? Object.values(spot).reduce((s,g) => s + (g['24h_volume_gpu_hrs']||0), 0) : 0;
   const totalAvail = spot ? Object.values(spot).reduce((s,g) => s + (g.available_gpus||0), 0) : 0;
   const mktSize = mi.gpu_market_size_bn?.['2025'] || '--';
@@ -1535,11 +1535,11 @@ function renderOverview() {
   const kpi = (cls, label, val, sub) => `<div class="kpi kpi-${cls}"><div class="kpi-label">${label}</div><div class="kpi-value">${val}</div><div class="kpi-sub">${sub}</div></div>`;
 
   document.getElementById('overviewKpis').innerHTML =
-    kpi('cyan', 'H100 Spot', '$'+(h100s?.last_trade?.toFixed(2)||'--')+'/hr', `Bid $${h100s?.bid||'--'} / Ask $${h100s?.ask||'--'} &middot; <span class="up">${h100s?.available_gpus?.toLocaleString()||0} avail</span>`) +
     kpi('purple', 'B200 Spot', '$'+(b200s?.last_trade?.toFixed(2)||'--')+'/hr', `Spread ${b200s?.spread_pct||'--'}% &middot; Vol ${(b200s?.['24h_volume_gpu_hrs']||0).toLocaleString()} hrs`) +
-    kpi('blue', 'Spot Volume (24h)', (totalVol/1000).toFixed(0)+'K GPU-hrs', `${totalAvail.toLocaleString()} GPUs available across ${nProv} providers`) +
+    kpi('blue', 'H200 Spot', '$'+(h200s?.last_trade?.toFixed(2)||'--')+'/hr', `Bid $${h200s?.bid||'--'} / Ask $${h200s?.ask||'--'} &middot; <span class="up">${h200s?.available_gpus?.toLocaleString()||0} avail</span>`) +
+    kpi('cyan', 'Spot Volume (24h)', (totalVol/1000).toFixed(0)+'K GPU-hrs', `${totalAvail.toLocaleString()} GPUs available across ${nProv} providers`) +
     kpi('green', 'GPU Market 2025', '$'+mktSize+'B', `AI CapEx \'26E: <span class="up">$${capex26}B</span> (+40% YoY)`) +
-    kpi('amber', 'H100 Lead Time', lead+' wk', lead <= 2 ? '<span class="up">Supply normalized</span>' : '<span class="dn">Constrained</span>') +
+    kpi('amber', 'B200 Lead Time', lead+' wk', lead <= 2 ? '<span class="up">Supply normalized</span>' : '<span class="dn">Constrained</span>') +
     kpi('red', 'Best Value GPU', bestVal.flops_per_dollar+' TFLOPS/$', `${bestVal.name} @ $${bestVal.cheapest_price.toFixed(2)}/hr`);
 
   renderOverviewSpotTable();
@@ -1553,7 +1553,7 @@ function renderOverview() {
 function renderOverviewSpotTable() {
   const spot = DATA.spot;
   if (!spot || !Object.keys(spot).length) return;
-  const gpus = ['H100-SXM','B200','H200','A100-80GB','MI300X','RTX-4090'];
+  const gpus = ['B200','H200','H100-SXM','A100-80GB','MI300X','RTX-4090'];
   let h = '<thead><tr><th>GPU</th><th class="r">Bid</th><th class="r">Ask</th><th class="r">Last</th><th class="r">Spread</th><th class="r">24h Low</th><th class="r">24h High</th><th class="r">24h Vol</th><th class="r">Avail</th><th>24h Trend</th></tr></thead><tbody>';
   gpus.forEach(g => {
     const s = spot[g]; if (!s) return;
@@ -1577,7 +1577,7 @@ function renderOverviewSpotTable() {
 
 function renderOverviewTrendChart() {
   const hist = DATA.historical;
-  const gpus = ['H100-SXM','B200','H200','A100-80GB','MI300X','RTX-4090'];
+  const gpus = ['B200','H200','H100-SXM','A100-80GB','MI300X','RTX-4090'];
   const ap = new Set();
   gpus.forEach(g => { if(hist[g]) Object.keys(hist[g]).forEach(p => ap.add(p)); });
   const periods = [...ap].sort().slice(-12);
@@ -1631,7 +1631,7 @@ function renderOverviewLeadChart() {
   if(charts.ovLead) charts.ovLead.destroy();
   charts.ovLead = new Chart(document.getElementById('chartOverviewLead'),{
     type:'line',
-    data:{labels:lbl, datasets:[{label:'H100 Lead (wks)',data:lbl.map(l=>lt[l]),
+    data:{labels:lbl, datasets:[{label:'Flagship Lead (wks)',data:lbl.map(l=>lt[l]),
       borderColor:C.amber,backgroundColor:C.amber+'20',fill:true,tension:0.3,pointRadius:2,borderWidth:2}]},
     options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
       scales:{y:{title:{display:true,text:'weeks'},grid:{color:'rgba(26,34,51,0.4)'},reverse:false},x:{grid:{display:false},ticks:{maxRotation:45}}}}
@@ -1752,7 +1752,7 @@ function updateTrendChart() {
 function renderAvailabilityChart() {
   const hist=DATA.historical;
   const am={'scarce':1,'limited':2,'moderate':3,'good':4,'abundant':5};
-  const gpus=['H100-SXM','H200','A100-80GB','MI300X','RTX-4090'];
+  const gpus=['B200','H200','H100-SXM','A100-80GB','MI300X','RTX-4090'];
   const ap=new Set(); gpus.forEach(g=>{if(hist[g])Object.keys(hist[g]).forEach(p=>ap.add(p));});
   const periods=[...ap].sort().slice(-8);
   const ds=gpus.map((g,i)=>({label:g,data:periods.map(p=>hist[g]?.[p]?am[hist[g][p].availability]||0:null),borderColor:CL[i],tension:0.35,pointRadius:3,borderWidth:2,spanGaps:true}));
@@ -1768,7 +1768,7 @@ function renderAvailabilityChart() {
 function renderProvidersTab() { updateProviderView(); }
 
 function updateProviderView() {
-  const gpuId = document.getElementById('providerGpuSelect').value || 'H100-SXM';
+  const gpuId = document.getElementById('providerGpuSelect').value || 'B200';
   document.getElementById('providerChartTitle').textContent = `Price Comparison — ${gpuId}`;
   const pd = DATA.providers;
   const rows = [];
@@ -2211,13 +2211,14 @@ function renderTcoTab() {
     totals[g]={base,overhead:t,total:base+t}; bdowns[g]=bd;
   });
 
-  const h100T=totals['H100-SXM'];
-  const ohPct=h100T?((h100T.overhead/h100T.total)*100).toFixed(0):'--';
+  const refT=totals['B200']||totals['H100-SXM'];
+  const refName=totals['B200']?'B200':'H100-SXM';
+  const ohPct=refT?((refT.overhead/refT.total)*100).toFixed(0):'--';
   document.getElementById('tcoStats').innerHTML=`
-    <div class="kpi kpi-cyan"><div class="kpi-label">H100 Total TCO/hr</div><div class="kpi-value">$${h100T?h100T.total.toFixed(2):'--'}</div><div class="kpi-sub">GPU + overhead</div></div>
-    <div class="kpi kpi-red"><div class="kpi-label">Hidden Cost %</div><div class="kpi-value">${ohPct}%</div><div class="kpi-sub">Non-GPU overhead (H100)</div></div>
+    <div class="kpi kpi-purple"><div class="kpi-label">${refName} Total TCO/hr</div><div class="kpi-value">$${refT?refT.total.toFixed(2):'--'}</div><div class="kpi-sub">GPU + overhead</div></div>
+    <div class="kpi kpi-red"><div class="kpi-label">Hidden Cost %</div><div class="kpi-value">${ohPct}%</div><div class="kpi-sub">Non-GPU overhead (${refName})</div></div>
     <div class="kpi kpi-green"><div class="kpi-label">GPUs Analyzed</div><div class="kpi-value">${gpus.length}</div><div class="kpi-sub">${comps.length} cost components</div></div>
-    <div class="kpi kpi-amber"><div class="kpi-label">Monthly TCO (8xH100)</div><div class="kpi-value">$${h100T?(h100T.total*8*730).toLocaleString('en',{maximumFractionDigits:0}):'--'}</div><div class="kpi-sub">24/7 operation</div></div>`;
+    <div class="kpi kpi-amber"><div class="kpi-label">Monthly TCO (8x${refName})</div><div class="kpi-value">$${refT?(refT.total*8*730).toLocaleString('en',{maximumFractionDigits:0}):'--'}</div><div class="kpi-sub">24/7 operation</div></div>`;
 
   if(charts.ts) charts.ts.destroy();
   charts.ts=new Chart(document.getElementById('chartTcoStack'),{type:'bar',
@@ -2229,7 +2230,8 @@ function renderTcoTab() {
   });
 
   if(charts.tp) charts.tp.destroy();
-  const ref='H100-SXM';
+  const ref=refName;
+  document.getElementById('tcoPieTitle').textContent='TCO Component Share ('+ref+')';
   const pL=['GPU Compute',...comps.map(c=>compL[c]||c)];
   const pD=[totals[ref]?.base||0,...comps.map(c=>bdowns[ref]?.[c]||0)];
   const pC2=[C.green,...compC];
