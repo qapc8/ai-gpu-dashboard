@@ -944,19 +944,13 @@ body {
       <div class="card-bd"><div class="chart-wrap" style="height:380px;"><canvas id="chartInferenceCost"></canvas></div></div>
     </div>
     <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Open-Source vs Proprietary — Price Comparison</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:380px;"><canvas id="chartApiVsSelfHosted"></canvas></div></div>
+      <div class="card-hd"><span class="card-hd-title">Price & Usage Landscape — Bubble = Weekly Volume</span></div>
+      <div class="card-bd"><div class="chart-wrap" style="height:380px;"><canvas id="chartInferenceThroughput"></canvas></div></div>
     </div>
   </div>
-  <div class="grid g-2">
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Cost Frontier — Model Size vs $/M Tokens</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:340px;"><canvas id="chartInferenceThroughput"></canvas></div></div>
-    </div>
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Input vs Output Pricing — Top 10 Models</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:340px;"><canvas id="chartProviderCoverage"></canvas></div></div>
-    </div>
+  <div class="card">
+    <div class="card-hd"><span class="card-hd-title">Input vs Output Pricing — Top 10 Models</span></div>
+    <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartProviderCoverage"></canvas></div></div>
   </div>
 </div>
 
@@ -2279,20 +2273,18 @@ function renderInferenceTab(filterCat) {
     <div class="kpi kpi-purple"><div class="kpi-label">Median API Input</div><div class="kpi-value">${fmtPrice(medianInput)}</div><div class="kpi-sub">Across ${allModels.length} models</div></div>
     <div class="kpi kpi-amber"><div class="kpi-label">Weekly Token Vol</div><div class="kpi-value">${fmtTok(totalTokens)}</div><div class="kpi-sub">Total tokens/week</div></div>`;
 
-  // Table: 11 fixed columns
+  // Table: 9 fixed columns (removed Type and Best GPU)
   const catColors={Small:'#22c55e',Medium:'#3b82f6',Large:'#a855f7',Frontier:'#f59e0b'};
   const maxTokens=Math.max(...allModels.map(m=>inf[m].tokens_7d||0),1);
   let h='<thead><tr>';
   h+='<th style="width:30px;">#</th>';
   h+='<th>Model</th>';
-  h+='<th>Type</th>';
   h+='<th class="r">Params</th>';
   h+='<th class="r">Context</th>';
   h+='<th style="text-align:center;">OS</th>';
   h+='<th class="r" style="background:rgba(34,197,94,0.05);">Best In</th>';
   h+='<th class="r" style="background:rgba(251,146,60,0.05);">Best Out</th>';
   h+='<th>Provider</th>';
-  h+='<th class="r" style="background:rgba(56,189,248,0.05);">Best GPU</th>';
   h+='<th style="min-width:110px;">Usage (7d)</th>';
   h+='</tr></thead><tbody>';
 
@@ -2301,8 +2293,6 @@ function renderInferenceTab(filterCat) {
     const ip=getBestInputPrice(d.providers);
     const op=getBestOutputPrice(d.providers);
     const prov=getBestProviderName(d.providers);
-    const gpuVals=d.gpus?Object.values(d.gpus).map(g=>g.cost_per_1m_tokens).filter(v=>v>0):[];
-    const bestGpu=gpuVals.length?Math.min(...gpuVals):null;
     const cc=catColors[d.category]||'#666';
     const tok7d=d.tokens_7d||0;
     const barW=maxTokens>0?Math.round(tok7d/maxTokens*100):0;
@@ -2310,14 +2300,12 @@ function renderInferenceTab(filterCat) {
     h+=`<tr>`;
     h+=`<td style="font-family:var(--mono);font-size:11px;color:var(--fg2);text-align:center;">${d.rank||''}</td>`;
     h+=`<td class="gpu-name" style="white-space:nowrap;">${m}</td>`;
-    h+=`<td><span style="font-size:10px;color:var(--fg2);">${d.type||'LLM'}</span></td>`;
     h+=`<td class="r" style="font-family:var(--mono);font-size:11px;">${d.params_b}B</td>`;
     h+=`<td class="r" style="font-family:var(--mono);font-size:11px;">${d.context_k?d.context_k+'K':'—'}</td>`;
     h+=`<td style="text-align:center;">${d.open_source?'<span style="color:var(--green);font-weight:700;">✓</span>':'<span style="color:var(--fg2);">✗</span>'}</td>`;
     h+=`<td class="r" style="background:rgba(34,197,94,0.05);font-family:var(--mono);font-size:11px;font-weight:700;color:var(--green);">${fmtPrice(ip)}</td>`;
     h+=`<td class="r" style="background:rgba(251,146,60,0.05);font-family:var(--mono);font-size:11px;color:var(--orange);">${fmtPrice(op)}</td>`;
     h+=`<td style="font-size:10px;white-space:nowrap;">${prov}</td>`;
-    h+=`<td class="r" style="background:rgba(56,189,248,0.05);font-family:var(--mono);font-size:11px;color:var(--cyan);">${fmtPrice(bestGpu)}</td>`;
     const tokLabel=tok7d>=1000?(tok7d/1000).toFixed(1)+'T':tok7d>=1?tok7d.toFixed(0)+'B':tok7d.toFixed(1)+'B';
     h+=`<td style="font-family:var(--mono);font-size:11px;"><div style="display:flex;align-items:center;gap:6px;"><span style="min-width:36px;">${tokLabel}</span><div style="flex:1;height:10px;background:var(--bg2);border-radius:3px;overflow:hidden;"><div style="width:${barW}%;height:100%;background:${cc};border-radius:3px;"></div></div></div></td>`;
     h+=`</tr>`;
@@ -2340,43 +2328,27 @@ function renderInferenceTab(filterCat) {
       scales:{x:{title:{display:true,text:'Tokens / week'},grid:{color:'rgba(26,34,51,0.4)'},ticks:{callback:v=>v>=1000?(v/1000)+'T':v+'B'}},y:{grid:{display:false},ticks:{font:{size:9}}}}}
   });
 
-  // Chart 2: Open-Source vs Proprietary price comparison (scatter)
+  // Chart 2: Price & Usage Landscape — bubble (x=input, y=output, size=usage, color=OSS/proprietary)
+  const maxTok=Math.max(...allModels.map(m=>inf[m].tokens_7d||1));
+  const mkBubble=list=>list.filter(m=>getBestInputPrice(inf[m].providers)!=null).map(m=>{
+    const ip=getBestInputPrice(inf[m].providers);
+    const op=getBestOutputPrice(inf[m].providers)||ip;
+    const tok=inf[m].tokens_7d||1;
+    return {x:ip,y:op,r:Math.max(5,Math.sqrt(tok/maxTok)*35),label:m,tokens:tok,params:inf[m].params_b};
+  });
   const ossModels=sorted.filter(m=>inf[m].open_source);
   const propModels=sorted.filter(m=>!inf[m].open_source);
-  if(charts.avs) charts.avs.destroy();
-  charts.avs=new Chart(document.getElementById('chartApiVsSelfHosted'),{type:'scatter',
-    data:{datasets:[
-      {label:'Open-Source',data:ossModels.map(m=>({x:getBestInputPrice(inf[m].providers),y:getBestOutputPrice(inf[m].providers),label:m})),
-        backgroundColor:C.green+'90',borderColor:C.green,borderWidth:1,pointRadius:8,pointHoverRadius:11},
-      {label:'Proprietary',data:propModels.map(m=>({x:getBestInputPrice(inf[m].providers),y:getBestOutputPrice(inf[m].providers),label:m})),
-        backgroundColor:C.purple+'90',borderColor:C.purple,borderWidth:1,pointRadius:8,pointHoverRadius:11},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10}}},tooltip:{callbacks:{label:ctx=>`${ctx.raw.label}: in=${fmtPrice(ctx.raw.x)}, out=${fmtPrice(ctx.raw.y)}`}}},
-      scales:{x:{type:'logarithmic',title:{display:true,text:'Input $/M Tokens (log)'},grid:{color:'rgba(26,34,51,0.4)'}},y:{type:'logarithmic',title:{display:true,text:'Output $/M Tokens (log)'},grid:{color:'rgba(26,34,51,0.4)'}}}}
-  });
-
-  // Chart 3: Cost Frontier — bubble chart (radius = tokens_7d, color = OSS vs proprietary)
-  const maxTok=Math.max(...allModels.map(m=>inf[m].tokens_7d||1));
-  const ossBubble=allModels.filter(m=>inf[m].open_source&&getBestInputPrice(inf[m].providers)!=null).map(m=>{
-    const ip=getBestInputPrice(inf[m].providers);
-    const tok=inf[m].tokens_7d||1;
-    return {x:inf[m].params_b,y:ip,r:Math.max(4,Math.sqrt(tok/maxTok)*30),label:m,tokens:tok};
-  });
-  const propBubble=allModels.filter(m=>!inf[m].open_source&&getBestInputPrice(inf[m].providers)!=null).map(m=>{
-    const ip=getBestInputPrice(inf[m].providers);
-    const tok=inf[m].tokens_7d||1;
-    return {x:inf[m].params_b,y:ip,r:Math.max(4,Math.sqrt(tok/maxTok)*30),label:m,tokens:tok};
-  });
   if(charts.it) charts.it.destroy();
   charts.it=new Chart(document.getElementById('chartInferenceThroughput'),{type:'bubble',
     data:{datasets:[
-      {label:'Open-Source',data:ossBubble,backgroundColor:C.green+'80',borderColor:C.green,borderWidth:1},
-      {label:'Proprietary',data:propBubble,backgroundColor:C.purple+'80',borderColor:C.purple,borderWidth:1},
+      {label:'Open-Source',data:mkBubble(ossModels),backgroundColor:C.green+'70',borderColor:C.green,borderWidth:1.5},
+      {label:'Proprietary',data:mkBubble(propModels),backgroundColor:C.purple+'70',borderColor:C.purple,borderWidth:1.5},
     ]},
     options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10}}},tooltip:{callbacks:{label:ctx=>{const d=ctx.raw;const t=d.tokens;const tl=t>=1000?(t/1000).toFixed(1)+'T':t.toFixed(0)+'B';return `${d.label}: ${d.x}B params, ${fmtPrice(d.y)}/M tok, ${tl} tok/wk`;}}}},
-      scales:{x:{type:'logarithmic',title:{display:true,text:'Parameters (B)'},grid:{color:'rgba(26,34,51,0.4)'}},y:{type:'logarithmic',title:{display:true,text:'Best Input $/M Tokens (log)'},grid:{color:'rgba(26,34,51,0.4)'}}}}
+      plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10}}},
+        tooltip:{callbacks:{label:ctx=>{const d=ctx.raw;const tl=d.tokens>=1000?(d.tokens/1000).toFixed(1)+'T':d.tokens.toFixed(0)+'B';return [`${d.label} (${d.params}B params)`,`Input: ${fmtPrice(d.x)}/M  Output: ${fmtPrice(d.y)}/M`,`Usage: ${tl} tok/wk`];},title:()=>''}}},
+      scales:{x:{type:'logarithmic',title:{display:true,text:'Input $/M Tokens'},grid:{color:'rgba(26,34,51,0.4)'},ticks:{callback:v=>fmtPrice(v)}},
+              y:{type:'logarithmic',title:{display:true,text:'Output $/M Tokens'},grid:{color:'rgba(26,34,51,0.4)'},ticks:{callback:v=>fmtPrice(v)}}}}
   });
 
   // Chart 4: Input vs Output Pricing — grouped bar, top 10
