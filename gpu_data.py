@@ -544,17 +544,17 @@ HISTORICAL_PRICING = {
         "2025-01": {"avg": 6.20, "min": 5.80, "max": 7.00, "availability": "scarce"},
         "2025-02": {"avg": 6.00, "min": 5.60, "max": 6.80, "availability": "scarce"},
         "2025-03": {"avg": 5.80, "min": 5.40, "max": 6.60, "availability": "scarce"},
-        "2025-04": {"avg": 5.60, "min": 5.10, "max": 6.40, "availability": "scarce"},
-        "2025-05": {"avg": 5.40, "min": 4.90, "max": 6.20, "availability": "limited"},
-        "2025-06": {"avg": 5.25, "min": 4.70, "max": 6.00, "availability": "limited"},
-        "2025-07": {"avg": 5.10, "min": 4.50, "max": 5.80, "availability": "limited"},
-        "2025-08": {"avg": 4.95, "min": 4.35, "max": 5.65, "availability": "limited"},
-        "2025-09": {"avg": 4.80, "min": 4.20, "max": 5.50, "availability": "moderate"},
-        "2025-10": {"avg": 4.65, "min": 4.05, "max": 5.35, "availability": "moderate"},
-        "2025-11": {"avg": 4.55, "min": 3.95, "max": 5.25, "availability": "moderate"},
-        "2025-12": {"avg": 4.45, "min": 3.85, "max": 5.15, "availability": "moderate"},
-        "2026-01": {"avg": 4.35, "min": 3.75, "max": 5.05, "availability": "good"},
-        "2026-02": {"avg": 4.25, "min": 3.65, "max": 4.95, "availability": "good"}
+        "2025-04": {"avg": 5.55, "min": 5.10, "max": 6.40, "availability": "scarce"},
+        "2025-05": {"avg": 5.35, "min": 4.85, "max": 6.15, "availability": "scarce"},
+        "2025-06": {"avg": 5.15, "min": 4.60, "max": 5.95, "availability": "scarce"},
+        "2025-07": {"avg": 4.98, "min": 4.40, "max": 5.75, "availability": "limited"},
+        "2025-08": {"avg": 4.82, "min": 4.25, "max": 5.60, "availability": "limited"},
+        "2025-09": {"avg": 4.70, "min": 4.10, "max": 5.50, "availability": "limited"},
+        "2025-10": {"avg": 4.85, "min": 4.20, "max": 5.70, "availability": "scarce"},
+        "2025-11": {"avg": 4.95, "min": 4.30, "max": 5.85, "availability": "scarce"},
+        "2025-12": {"avg": 5.10, "min": 4.40, "max": 6.00, "availability": "scarce"},
+        "2026-01": {"avg": 5.05, "min": 4.35, "max": 5.95, "availability": "scarce"},
+        "2026-02": {"avg": 4.98, "min": 4.30, "max": 5.85, "availability": "scarce"}
     },
     "H100-SXM": {
         "2023-01": {"avg": 4.70, "min": 4.00, "max": 5.80, "availability": "scarce"},
@@ -578,48 +578,48 @@ HISTORICAL_PRICING = {
         "2024-07": {"avg": 2.92, "min": 2.28, "max": 3.85, "availability": "good"},
         "2024-08": {"avg": 2.85, "min": 2.22, "max": 3.78, "availability": "good"},
         "2024-09": {"avg": 2.78, "min": 2.18, "max": 3.65, "availability": "good"},
-        "2024-10": {"avg": 2.70, "min": 2.15, "max": 3.55, "availability": "good"},
-        "2024-11": {"avg": 2.63, "min": 2.10, "max": 3.48, "availability": "good"},
-        "2024-12": {"avg": 2.58, "min": 2.05, "max": 3.40, "availability": "abundant"},
-        "2025-01": {"avg": 2.52, "min": 2.02, "max": 3.35, "availability": "abundant"},
-        "2025-02": {"avg": 2.48, "min": 2.00, "max": 3.30, "availability": "abundant"},
-        "2025-03": {"avg": 2.44, "min": 1.97, "max": 3.25, "availability": "abundant"},
-        "2025-04": {"avg": 2.41, "min": 1.94, "max": 3.22, "availability": "abundant"},
-        "2025-05": {"avg": 2.38, "min": 1.92, "max": 3.18, "availability": "abundant"},
-        "2025-06": {"avg": 2.35, "min": 1.90, "max": 3.15, "availability": "abundant"},
-        "2025-07": {"avg": 2.32, "min": 1.88, "max": 3.12, "availability": "abundant"},
-        "2025-08": {"avg": 2.30, "min": 1.86, "max": 3.10, "availability": "abundant"},
-        "2025-09": {"avg": 2.28, "min": 1.85, "max": 3.08, "availability": "abundant"},
-        "2025-10": {"avg": 2.26, "min": 1.83, "max": 3.05, "availability": "abundant"},
-        "2025-11": {"avg": 2.24, "min": 1.81, "max": 3.02, "availability": "abundant"},
-        "2025-12": {"avg": 2.22, "min": 1.80, "max": 3.00, "availability": "abundant"},
-        "2026-01": {"avg": 2.20, "min": 1.78, "max": 2.97, "availability": "abundant"},
-        "2026-02": {"avg": 2.18, "min": 1.75, "max": 2.95, "availability": "abundant"}
+        "2024-10": {"avg": 2.65, "min": 2.10, "max": 3.50, "availability": "good"},
+        "2024-11": {"avg": 2.55, "min": 2.02, "max": 3.40, "availability": "good"},
+        "2024-12": {"avg": 2.48, "min": 1.95, "max": 3.30, "availability": "moderate"},
+        "2025-01": {"avg": 2.42, "min": 1.90, "max": 3.25, "availability": "moderate"},
+        "2025-02": {"avg": 2.38, "min": 1.88, "max": 3.20, "availability": "moderate"},
+        "2025-03": {"avg": 2.32, "min": 1.85, "max": 3.15, "availability": "moderate"},
+        "2025-04": {"avg": 2.28, "min": 1.82, "max": 3.10, "availability": "moderate"},
+        "2025-05": {"avg": 2.22, "min": 1.78, "max": 3.05, "availability": "moderate"},
+        "2025-06": {"avg": 2.15, "min": 1.72, "max": 2.95, "availability": "moderate"},
+        "2025-07": {"avg": 2.10, "min": 1.68, "max": 2.88, "availability": "moderate"},
+        "2025-08": {"avg": 2.05, "min": 1.62, "max": 2.82, "availability": "moderate"},
+        "2025-09": {"avg": 2.00, "min": 1.55, "max": 2.78, "availability": "limited"},
+        "2025-10": {"avg": 2.08, "min": 1.60, "max": 2.90, "availability": "limited"},
+        "2025-11": {"avg": 2.15, "min": 1.65, "max": 3.00, "availability": "limited"},
+        "2025-12": {"avg": 2.28, "min": 1.72, "max": 3.15, "availability": "limited"},
+        "2026-01": {"avg": 2.35, "min": 1.78, "max": 3.25, "availability": "limited"},
+        "2026-02": {"avg": 2.32, "min": 1.75, "max": 3.20, "availability": "limited"}
     },
     "H200": {
         "2024-04": {"avg": 5.20, "min": 4.70, "max": 6.20, "availability": "scarce"},
         "2024-05": {"avg": 5.05, "min": 4.55, "max": 6.05, "availability": "scarce"},
         "2024-06": {"avg": 4.90, "min": 4.40, "max": 5.90, "availability": "scarce"},
         "2024-07": {"avg": 4.70, "min": 4.10, "max": 5.70, "availability": "scarce"},
-        "2024-08": {"avg": 4.50, "min": 3.90, "max": 5.50, "availability": "limited"},
+        "2024-08": {"avg": 4.50, "min": 3.90, "max": 5.50, "availability": "scarce"},
         "2024-09": {"avg": 4.35, "min": 3.75, "max": 5.30, "availability": "limited"},
         "2024-10": {"avg": 4.15, "min": 3.55, "max": 5.00, "availability": "limited"},
         "2024-11": {"avg": 4.00, "min": 3.40, "max": 4.80, "availability": "limited"},
-        "2024-12": {"avg": 3.85, "min": 3.30, "max": 4.60, "availability": "moderate"},
-        "2025-01": {"avg": 3.70, "min": 3.20, "max": 4.45, "availability": "moderate"},
-        "2025-02": {"avg": 3.60, "min": 3.12, "max": 4.35, "availability": "moderate"},
-        "2025-03": {"avg": 3.52, "min": 3.05, "max": 4.25, "availability": "moderate"},
-        "2025-04": {"avg": 3.45, "min": 2.98, "max": 4.15, "availability": "moderate"},
-        "2025-05": {"avg": 3.40, "min": 2.92, "max": 4.08, "availability": "moderate"},
-        "2025-06": {"avg": 3.35, "min": 2.88, "max": 4.00, "availability": "good"},
-        "2025-07": {"avg": 3.30, "min": 2.84, "max": 3.92, "availability": "good"},
-        "2025-08": {"avg": 3.25, "min": 2.80, "max": 3.85, "availability": "good"},
-        "2025-09": {"avg": 3.22, "min": 2.78, "max": 3.80, "availability": "good"},
-        "2025-10": {"avg": 3.18, "min": 2.74, "max": 3.75, "availability": "good"},
-        "2025-11": {"avg": 3.15, "min": 2.70, "max": 3.70, "availability": "good"},
-        "2025-12": {"avg": 3.12, "min": 2.68, "max": 3.66, "availability": "good"},
-        "2026-01": {"avg": 3.08, "min": 2.65, "max": 3.60, "availability": "good"},
-        "2026-02": {"avg": 3.05, "min": 2.60, "max": 3.55, "availability": "good"}
+        "2024-12": {"avg": 3.85, "min": 3.30, "max": 4.60, "availability": "limited"},
+        "2025-01": {"avg": 3.72, "min": 3.20, "max": 4.45, "availability": "limited"},
+        "2025-02": {"avg": 3.65, "min": 3.15, "max": 4.38, "availability": "limited"},
+        "2025-03": {"avg": 3.58, "min": 3.10, "max": 4.30, "availability": "limited"},
+        "2025-04": {"avg": 3.52, "min": 3.05, "max": 4.22, "availability": "limited"},
+        "2025-05": {"avg": 3.48, "min": 3.00, "max": 4.18, "availability": "limited"},
+        "2025-06": {"avg": 3.42, "min": 2.95, "max": 4.10, "availability": "limited"},
+        "2025-07": {"avg": 3.38, "min": 2.92, "max": 4.05, "availability": "limited"},
+        "2025-08": {"avg": 3.35, "min": 2.88, "max": 3.98, "availability": "limited"},
+        "2025-09": {"avg": 3.40, "min": 2.92, "max": 4.10, "availability": "scarce"},
+        "2025-10": {"avg": 3.52, "min": 3.00, "max": 4.25, "availability": "scarce"},
+        "2025-11": {"avg": 3.60, "min": 3.08, "max": 4.35, "availability": "scarce"},
+        "2025-12": {"avg": 3.68, "min": 3.15, "max": 4.45, "availability": "scarce"},
+        "2026-01": {"avg": 3.72, "min": 3.20, "max": 4.50, "availability": "scarce"},
+        "2026-02": {"avg": 3.70, "min": 3.18, "max": 4.48, "availability": "scarce"}
     },
     "A100-80GB": {
         "2022-01": {"avg": 3.80, "min": 3.20, "max": 4.50, "availability": "scarce"},
@@ -650,20 +650,20 @@ HISTORICAL_PRICING = {
         "2024-10": {"avg": 1.42, "min": 1.06, "max": 2.02, "availability": "abundant"},
         "2024-11": {"avg": 1.39, "min": 1.04, "max": 1.98, "availability": "abundant"},
         "2024-12": {"avg": 1.36, "min": 1.02, "max": 1.95, "availability": "abundant"},
-        "2025-01": {"avg": 1.34, "min": 1.00, "max": 1.92, "availability": "abundant"},
-        "2025-02": {"avg": 1.32, "min": 0.98, "max": 1.90, "availability": "abundant"},
-        "2025-03": {"avg": 1.30, "min": 0.97, "max": 1.88, "availability": "abundant"},
-        "2025-04": {"avg": 1.29, "min": 0.96, "max": 1.86, "availability": "abundant"},
-        "2025-05": {"avg": 1.28, "min": 0.95, "max": 1.85, "availability": "abundant"},
-        "2025-06": {"avg": 1.27, "min": 0.94, "max": 1.84, "availability": "abundant"},
-        "2025-07": {"avg": 1.27, "min": 0.93, "max": 1.82, "availability": "abundant"},
-        "2025-08": {"avg": 1.26, "min": 0.92, "max": 1.80, "availability": "abundant"},
-        "2025-09": {"avg": 1.26, "min": 0.91, "max": 1.79, "availability": "abundant"},
-        "2025-10": {"avg": 1.25, "min": 0.90, "max": 1.78, "availability": "abundant"},
-        "2025-11": {"avg": 1.24, "min": 0.89, "max": 1.76, "availability": "abundant"},
-        "2025-12": {"avg": 1.24, "min": 0.88, "max": 1.75, "availability": "abundant"},
-        "2026-01": {"avg": 1.23, "min": 0.87, "max": 1.73, "availability": "abundant"},
-        "2026-02": {"avg": 1.22, "min": 0.85, "max": 1.70, "availability": "abundant"}
+        "2025-01": {"avg": 1.34, "min": 1.00, "max": 1.92, "availability": "good"},
+        "2025-02": {"avg": 1.30, "min": 0.96, "max": 1.88, "availability": "good"},
+        "2025-03": {"avg": 1.28, "min": 0.94, "max": 1.85, "availability": "good"},
+        "2025-04": {"avg": 1.25, "min": 0.92, "max": 1.82, "availability": "good"},
+        "2025-05": {"avg": 1.22, "min": 0.90, "max": 1.78, "availability": "good"},
+        "2025-06": {"avg": 1.18, "min": 0.88, "max": 1.72, "availability": "good"},
+        "2025-07": {"avg": 1.15, "min": 0.85, "max": 1.68, "availability": "good"},
+        "2025-08": {"avg": 1.12, "min": 0.82, "max": 1.65, "availability": "good"},
+        "2025-09": {"avg": 1.10, "min": 0.80, "max": 1.62, "availability": "moderate"},
+        "2025-10": {"avg": 1.15, "min": 0.84, "max": 1.70, "availability": "moderate"},
+        "2025-11": {"avg": 1.20, "min": 0.88, "max": 1.78, "availability": "moderate"},
+        "2025-12": {"avg": 1.28, "min": 0.92, "max": 1.88, "availability": "moderate"},
+        "2026-01": {"avg": 1.30, "min": 0.95, "max": 1.90, "availability": "moderate"},
+        "2026-02": {"avg": 1.28, "min": 0.92, "max": 1.85, "availability": "moderate"}
     },
     "A100-40GB": {
         "2022-01": {"avg": 2.50, "min": 2.00, "max": 3.00, "availability": "limited"},
@@ -789,9 +789,9 @@ MARKET_INDICATORS = {
                                      "2024-Q1": 850, "2024-Q2": 920, "2024-Q3": 1050, "2024-Q4": 1180,
                                      "2025-Q1": 1320, "2025-Q2": 1450, "2025-Q3": 1580, "2025-Q4": 1700,
                                      "2026-Q1": 1850},
-    "h100_lead_time_weeks": {"2023-01": 52, "2023-03": 46, "2023-06": 40, "2023-09": 36, "2023-12": 28,
+    "flagship_lead_time_weeks": {"2023-01": 52, "2023-03": 46, "2023-06": 40, "2023-09": 36, "2023-12": 28,
                               "2024-03": 20, "2024-06": 16, "2024-09": 12, "2024-12": 8,
-                              "2025-03": 6, "2025-06": 4, "2025-09": 3, "2025-12": 2, "2026-01": 1, "2026-02": 1},
+                              "2025-03": 10, "2025-06": 18, "2025-09": 28, "2025-12": 36, "2026-01": 40, "2026-02": 42},
     "amd_gpu_market_share_pct": {"2023-01": 3, "2023-06": 5, "2024-01": 8, "2024-06": 12, "2025-01": 16, "2025-06": 19, "2026-01": 22}
 }
 
@@ -816,10 +816,10 @@ REGIONAL_DATA = {
             "A100-80GB": {"avg": 1.55, "low": 1.10, "high": 2.52},
 "MI300X": {"avg": 2.30, "low": 1.85, "high": 3.15}
         },
-        "adoption_trend_monthly": {
-            "2024-01": 38.0, "2024-04": 39.2, "2024-07": 40.1, "2024-10": 41.0,
-            "2025-01": 41.5, "2025-04": 41.8, "2025-07": 42.0, "2025-10": 42.3,
-            "2026-01": 42.5, "2026-02": 42.5
+        "adoption_trend_quarterly": {
+            "2024-Q1": 19.5, "2024-Q2": 25.3, "2024-Q3": 33.8, "2024-Q4": 38.2,
+            "2025-Q1": 42.5, "2025-Q2": 62.4, "2025-Q3": 72.8, "2025-Q4": 82.0,
+            "2026-Q1": 88.5
         }
     },
     "Europe": {
@@ -838,10 +838,10 @@ REGIONAL_DATA = {
             "A100-80GB": {"avg": 1.85, "low": 1.25, "high": 2.84},
 "MI300X": {"avg": 2.75, "low": 2.05, "high": 3.47}
         },
-        "adoption_trend_monthly": {
-            "2024-01": 19.5, "2024-04": 20.2, "2024-07": 20.8, "2024-10": 21.4,
-            "2025-01": 21.8, "2025-04": 22.0, "2025-07": 22.3, "2025-10": 22.5,
-            "2026-01": 22.8, "2026-02": 22.8
+        "adoption_trend_quarterly": {
+            "2024-Q1": 2.3, "2024-Q2": 3.0, "2024-Q3": 4.0, "2024-Q4": 4.5,
+            "2025-Q1": 4.3, "2025-Q2": 3.9, "2025-Q3": 4.2, "2025-Q4": 4.8,
+            "2026-Q1": 5.2
         }
     },
     "Asia Pacific": {
@@ -860,10 +860,10 @@ REGIONAL_DATA = {
             "A100-80GB": {"avg": 2.10, "low": 1.35, "high": 3.03},
 "MI300X": {"avg": 2.95, "low": 2.40, "high": 3.68}
         },
-        "adoption_trend_monthly": {
-            "2024-01": 20.5, "2024-04": 21.2, "2024-07": 21.8, "2024-10": 22.5,
-            "2025-01": 23.0, "2025-04": 23.4, "2025-07": 23.7, "2025-10": 24.0,
-            "2026-01": 24.3, "2026-02": 24.5
+        "adoption_trend_quarterly": {
+            "2024-Q1": 4.3, "2024-Q2": 5.6, "2024-Q3": 7.5, "2024-Q4": 8.2,
+            "2025-Q1": 6.3, "2025-Q2": 5.7, "2025-Q3": 6.5, "2025-Q4": 7.2,
+            "2026-Q1": 7.8
         }
     },
     "Middle East & Africa": {
@@ -880,10 +880,10 @@ REGIONAL_DATA = {
             "H100-SXM": {"avg": 4.50, "low": 3.80, "high": 5.50},
             "A100-80GB": {"avg": 2.40, "low": 1.80, "high": 3.20}
         },
-        "adoption_trend_monthly": {
-            "2024-01": 2.5, "2024-04": 2.8, "2024-07": 3.1, "2024-10": 3.4,
-            "2025-01": 3.6, "2025-04": 3.8, "2025-07": 4.0, "2025-10": 4.1,
-            "2026-01": 4.2, "2026-02": 4.3
+        "adoption_trend_quarterly": {
+            "2024-Q1": 0.5, "2024-Q2": 0.7, "2024-Q3": 0.9, "2024-Q4": 1.1,
+            "2025-Q1": 1.3, "2025-Q2": 1.6, "2025-Q3": 2.0, "2025-Q4": 2.4,
+            "2026-Q1": 2.8
         }
     },
     "Latin America": {
@@ -900,10 +900,10 @@ REGIONAL_DATA = {
             "H100-SXM": {"avg": 4.30, "low": 3.60, "high": 5.20},
             "A100-80GB": {"avg": 2.25, "low": 1.65, "high": 3.00}
         },
-        "adoption_trend_monthly": {
-            "2024-01": 2.2, "2024-04": 2.5, "2024-07": 2.8, "2024-10": 3.1,
-            "2025-01": 3.3, "2025-04": 3.5, "2025-07": 3.6, "2025-10": 3.7,
-            "2026-01": 3.8, "2026-02": 3.9
+        "adoption_trend_quarterly": {
+            "2024-Q1": 0.4, "2024-Q2": 0.5, "2024-Q3": 0.7, "2024-Q4": 0.9,
+            "2025-Q1": 1.0, "2025-Q2": 1.2, "2025-Q3": 1.5, "2025-Q4": 1.8,
+            "2026-Q1": 2.1
         }
     },
     "China (Domestic)": {
@@ -920,10 +920,10 @@ REGIONAL_DATA = {
             "A100-80GB": {"avg": 2.80, "low": 2.20, "high": 3.60},
             "A100-40GB": {"avg": 2.10, "low": 1.60, "high": 2.80}
         },
-        "adoption_trend_monthly": {
-            "2024-01": 2.8, "2024-04": 2.7, "2024-07": 2.6, "2024-10": 2.5,
-            "2025-01": 2.5, "2025-04": 2.4, "2025-07": 2.4, "2025-10": 2.4,
-            "2026-01": 2.4, "2026-02": 2.4
+        "adoption_trend_quarterly": {
+            "2024-Q1": 6.6, "2024-Q2": 8.6, "2024-Q3": 11.5, "2024-Q4": 10.2,
+            "2025-Q1": 9.5, "2025-Q2": 9.5, "2025-Q3": 10.2, "2025-Q4": 10.8,
+            "2026-Q1": 11.2
         }
     }
 }
