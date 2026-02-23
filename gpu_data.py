@@ -110,33 +110,6 @@ GPU_SPECS = {
         "msrp_usd": 8000,
         "tier": "mid"
     },
-    "L4": {
-        "name": "NVIDIA L4 24GB",
-        "vendor": "NVIDIA",
-        "vram_gb": 24,
-        "arch": "Ada Lovelace",
-        "fp16_tflops": 121,
-        "fp32_tflops": 30.3,
-        "tdp_watts": 72,
-        "interconnect": "PCIe 4.0",
-        "release_year": 2023,
-        "msrp_usd": 2500,
-        "tier": "inference"
-    },
-    # --- NVIDIA Turing ---
-    "T4": {
-        "name": "NVIDIA T4 16GB",
-        "vendor": "NVIDIA",
-        "vram_gb": 16,
-        "arch": "Turing",
-        "fp16_tflops": 65,
-        "fp32_tflops": 8.1,
-        "tdp_watts": 70,
-        "interconnect": "PCIe 3.0",
-        "release_year": 2018,
-        "msrp_usd": 2200,
-        "tier": "inference"
-    },
     # --- NVIDIA Ampere ---
     "A100-80GB": {
         "name": "NVIDIA A100 80GB",
@@ -297,14 +270,6 @@ CLOUD_PRICING = {
                 "us-east-1": 1.86, "us-east-2": 1.86, "us-west-2": 1.86,
                 "eu-west-1": 2.05, "eu-central-1": 2.12
             }},
-            "L4": {"instance": "g6.xlarge", "gpus_per_instance": 1, "price_per_gpu_hr": 0.81, "regions": {
-                "us-east-1": 0.81, "us-east-2": 0.81, "us-west-2": 0.81,
-                "eu-west-1": 0.89, "eu-central-1": 0.92
-            }},
-            "T4": {"instance": "g4dn.xlarge", "gpus_per_instance": 1, "price_per_gpu_hr": 0.526, "regions": {
-                "us-east-1": 0.526, "us-east-2": 0.526, "us-west-2": 0.526,
-                "eu-west-1": 0.58, "eu-central-1": 0.60
-            }},
             "A10G": {"instance": "g5.xlarge", "gpus_per_instance": 1, "price_per_gpu_hr": 1.006, "regions": {
                 "us-east-1": 1.006, "us-east-2": 1.006, "us-west-2": 1.006,
                 "eu-west-1": 1.11, "eu-central-1": 1.15,
@@ -337,14 +302,6 @@ CLOUD_PRICING = {
                 "us-central1": 3.67, "us-east4": 3.67, "us-west1": 3.67,
                 "europe-west4": 4.04, "europe-west1": 4.00,
                 "asia-east1": 4.22, "asia-northeast1": 4.29
-            }},
-            "L4": {"instance": "g2-standard-4", "gpus_per_instance": 1, "price_per_gpu_hr": 0.71, "regions": {
-                "us-central1": 0.71, "us-east4": 0.71, "us-west1": 0.71,
-                "europe-west4": 0.78, "europe-west1": 0.77
-            }},
-            "T4": {"instance": "n1-standard-4+T4", "gpus_per_instance": 1, "price_per_gpu_hr": 1.14, "regions": {
-                "us-central1": 1.14, "us-east4": 1.14, "us-west1": 1.14,
-                "europe-west4": 1.25
             }},
             "V100": {"instance": "n1-standard-8+V100", "gpus_per_instance": 1, "price_per_gpu_hr": 2.97, "regions": {
                 "us-central1": 2.97, "us-east4": 2.97, "us-west1": 2.97,
@@ -865,9 +822,7 @@ MARKET_INDICATORS = {
         "MI300X": {"weeks": 10, "status": "limited", "note": "Ramping production"},
         "MI325X": {"weeks": 14, "status": "limited", "note": "Recently launched"},
         "L40S": {"weeks": 1, "status": "available", "note": "Broadly available"},
-        "L4": {"weeks": 1, "status": "available", "note": "Broadly available"},
-        "RTX-4090": {"weeks": 1, "status": "available", "note": "Consumer stock available"},
-        "T4": {"weeks": 1, "status": "available", "note": "Commodity"}
+        "RTX-4090": {"weeks": 1, "status": "available", "note": "Consumer stock available"}
     }
 }
 
