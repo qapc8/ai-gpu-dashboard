@@ -1916,7 +1916,13 @@ function renderMarketSupplyChart() {
 function renderProvidersTab() { updateProviderView(); }
 
 function updateProviderView() {
-  const gpuId = document.getElementById('providerGpuSelect').value || 'B200';
+  const sel0=document.getElementById('providerGpuSelect');
+  if(!sel0.value){
+    const pd=DATA.providers, hasMkt=g=>Object.values(pd).some(p=>p.type==='marketplace'&&p.gpus?.[g]);
+    const best=[...sel0.options].find(o=>hasMkt(o.value));
+    if(best) sel0.value=best.value;
+  }
+  const gpuId = sel0.value || 'H100-SXM';
   document.getElementById('providerChartTitle').textContent = `Price Comparison — ${gpuId}`;
   const pd = DATA.providers;
   const rows = [];
@@ -1980,6 +1986,16 @@ function updateProviderView() {
 
   renderProvTable(cloudRows, 'providerCloudTable');
   renderProvTable(mktRows, 'providerMktTable');
+
+  // If marketplace table is empty, show which GPUs are available
+  if(!mktRows.length){
+    const mktGpus=new Set();
+    Object.values(DATA.providers).forEach(p=>{if(p.type==='marketplace'&&p.gpus)Object.keys(p.gpus).forEach(g=>mktGpus.add(g));});
+    if(mktGpus.size){
+      const links=[...mktGpus].sort().map(g=>`<a href="#" style="color:var(--amber);text-decoration:underline;cursor:pointer;" onclick="event.preventDefault();document.getElementById('providerGpuSelect').value='${g}';updateProviderView();">${g}</a>`);
+      document.querySelector('#providerMktTable tbody').innerHTML=`<tr><td colspan="10" class="dim" style="text-align:center;padding:20px;">No marketplace providers offer <strong>${gpuId}</strong>. Try: ${links.join(', ')}</td></tr>`;
+    }
+  }
 }
 
 // ════════════════════════════════════════════════════════════════
