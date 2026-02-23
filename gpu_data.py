@@ -246,10 +246,10 @@ CLOUD_PRICING = {
                 "eu-west-1": 5.63, "eu-central-1": 5.84,
                 "ap-northeast-1": 6.14, "ap-southeast-1": 5.99
             }},
-            "H100-SXM": {"instance": "p5.48xlarge", "gpus_per_instance": 8, "price_per_gpu_hr": 4.15, "regions": {
-                "us-east-1": 4.15, "us-east-2": 4.15, "us-west-2": 4.15,
-                "eu-west-1": 4.56, "eu-central-1": 4.73,
-                "ap-northeast-1": 5.02, "ap-southeast-1": 4.89
+            "H100-SXM": {"instance": "p5.48xlarge", "gpus_per_instance": 8, "price_per_gpu_hr": 3.90, "regions": {
+                "us-east-1": 3.90, "us-east-2": 3.90, "us-west-2": 3.90,
+                "eu-west-1": 4.29, "eu-central-1": 4.45,
+                "ap-northeast-1": 4.72, "ap-southeast-1": 4.59
             }},
             "A100-80GB": {"instance": "p4de.24xlarge", "gpus_per_instance": 8, "price_per_gpu_hr": 2.49, "regions": {
                 "us-east-1": 2.49, "us-east-2": 2.49, "us-west-2": 2.49,
@@ -405,29 +405,29 @@ CLOUD_PRICING = {
         "provider_name": "RunPod",
         "type": "marketplace",
         "gpus": {
-            "H100-SXM": {"instance": "h100-sxm", "gpus_per_instance": 1, "price_per_gpu_hr": 2.69, "regions": {
-                "US": 2.69, "EU": 2.89
+            "H100-SXM": {"instance": "h100-sxm", "gpus_per_instance": 1, "price_per_gpu_hr": 1.99, "regions": {
+                "US": 1.99, "EU": 2.19
             }},
-            "H100-PCIe": {"instance": "h100-pcie", "gpus_per_instance": 1, "price_per_gpu_hr": 2.39, "regions": {
-                "US": 2.39, "EU": 2.59
+            "H100-PCIe": {"instance": "h100-pcie", "gpus_per_instance": 1, "price_per_gpu_hr": 1.79, "regions": {
+                "US": 1.79, "EU": 1.99
             }},
-            "MI300X": {"instance": "mi300x", "gpus_per_instance": 1, "price_per_gpu_hr": 2.19, "regions": {
-                "US": 2.19, "EU": 2.39
+            "MI300X": {"instance": "mi300x", "gpus_per_instance": 1, "price_per_gpu_hr": 1.89, "regions": {
+                "US": 1.89, "EU": 2.09
             }},
-            "A100-80GB": {"instance": "a100-80gb", "gpus_per_instance": 1, "price_per_gpu_hr": 1.64, "regions": {
-                "US": 1.64, "EU": 1.79
+            "A100-80GB": {"instance": "a100-80gb", "gpus_per_instance": 1, "price_per_gpu_hr": 1.29, "regions": {
+                "US": 1.29, "EU": 1.44
             }},
-            "A100-40GB": {"instance": "a100-40gb", "gpus_per_instance": 1, "price_per_gpu_hr": 1.04, "regions": {
-                "US": 1.04, "EU": 1.14
+            "A100-40GB": {"instance": "a100-40gb", "gpus_per_instance": 1, "price_per_gpu_hr": 0.84, "regions": {
+                "US": 0.84, "EU": 0.94
             }},
-            "L40S": {"instance": "l40s", "gpus_per_instance": 1, "price_per_gpu_hr": 0.99, "regions": {
-                "US": 0.99
+            "L40S": {"instance": "l40s", "gpus_per_instance": 1, "price_per_gpu_hr": 0.79, "regions": {
+                "US": 0.79
             }},
-            "RTX-4090": {"instance": "rtx4090", "gpus_per_instance": 1, "price_per_gpu_hr": 0.69, "regions": {
-                "US": 0.69, "EU": 0.74
+            "RTX-4090": {"instance": "rtx4090", "gpus_per_instance": 1, "price_per_gpu_hr": 0.34, "regions": {
+                "US": 0.34, "EU": 0.39
             }},
-            "A10G": {"instance": "a10g", "gpus_per_instance": 1, "price_per_gpu_hr": 0.49, "regions": {
-                "US": 0.49
+            "A10G": {"instance": "a10g", "gpus_per_instance": 1, "price_per_gpu_hr": 0.39, "regions": {
+                "US": 0.39
             }}
         },
         "spot_discount": 0.40,
@@ -438,32 +438,32 @@ CLOUD_PRICING = {
         "provider_name": "Vast.ai",
         "type": "marketplace",
         "gpus": {
-            "H100-SXM": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 2.15, "regions": {
-                "US": 2.15, "EU": 2.35, "APAC": 2.50
+            "H100-SXM": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 1.70, "regions": {
+                "US": 1.70, "EU": 1.90, "APAC": 2.05
             }},
-            "H100-PCIe": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 1.95, "regions": {
-                "US": 1.95, "EU": 2.10
+            "H100-PCIe": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 1.55, "regions": {
+                "US": 1.55, "EU": 1.70
             }},
-            "MI300X": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 1.85, "regions": {
-                "US": 1.85, "EU": 2.05
+            "MI300X": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 1.50, "regions": {
+                "US": 1.50, "EU": 1.70
             }},
-            "A100-80GB": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 1.10, "regions": {
-                "US": 1.10, "EU": 1.25, "APAC": 1.35
+            "A100-80GB": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 0.85, "regions": {
+                "US": 0.85, "EU": 1.00, "APAC": 1.10
             }},
-            "A100-40GB": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 0.70, "regions": {
-                "US": 0.70, "EU": 0.80
-            }},
-            "MI250X": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 0.85, "regions": {
-                "US": 0.85, "EU": 0.95
-            }},
-            "RTX-4090": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 0.35, "regions": {
-                "US": 0.35, "EU": 0.40, "APAC": 0.45
-            }},
-            "L40S": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 0.79, "regions": {
-                "US": 0.79, "EU": 0.89
-            }},
-            "RTX-5090": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 0.55, "regions": {
+            "A100-40GB": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 0.55, "regions": {
                 "US": 0.55, "EU": 0.65
+            }},
+            "MI250X": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 0.65, "regions": {
+                "US": 0.65, "EU": 0.75
+            }},
+            "RTX-4090": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 0.29, "regions": {
+                "US": 0.29, "EU": 0.34, "APAC": 0.38
+            }},
+            "L40S": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 0.55, "regions": {
+                "US": 0.55, "EU": 0.65
+            }},
+            "RTX-5090": {"instance": "community", "gpus_per_instance": 1, "price_per_gpu_hr": 0.45, "regions": {
+                "US": 0.45, "EU": 0.55
             }}
         },
         "spot_discount": 0.0,
@@ -474,20 +474,20 @@ CLOUD_PRICING = {
         "provider_name": "FluidStack",
         "type": "marketplace",
         "gpus": {
-            "H100-SXM": {"instance": "h100_sxm", "gpus_per_instance": 1, "price_per_gpu_hr": 2.45, "regions": {
-                "US": 2.45, "EU": 2.69, "APAC": 2.85
+            "H100-SXM": {"instance": "h100_sxm", "gpus_per_instance": 1, "price_per_gpu_hr": 2.10, "regions": {
+                "US": 2.10, "EU": 2.31, "APAC": 2.45
             }},
-            "MI300X": {"instance": "mi300x", "gpus_per_instance": 1, "price_per_gpu_hr": 2.10, "regions": {
-                "US": 2.10, "EU": 2.30
+            "MI300X": {"instance": "mi300x", "gpus_per_instance": 1, "price_per_gpu_hr": 1.75, "regions": {
+                "US": 1.75, "EU": 1.93
             }},
-            "A100-80GB": {"instance": "a100_80gb", "gpus_per_instance": 1, "price_per_gpu_hr": 1.20, "regions": {
-                "US": 1.20, "EU": 1.35
+            "A100-80GB": {"instance": "a100_80gb", "gpus_per_instance": 1, "price_per_gpu_hr": 0.95, "regions": {
+                "US": 0.95, "EU": 1.10
             }},
-            "A100-40GB": {"instance": "a100_40gb", "gpus_per_instance": 1, "price_per_gpu_hr": 0.80, "regions": {
-                "US": 0.80
+            "A100-40GB": {"instance": "a100_40gb", "gpus_per_instance": 1, "price_per_gpu_hr": 0.65, "regions": {
+                "US": 0.65
             }},
-            "L40S": {"instance": "l40s", "gpus_per_instance": 1, "price_per_gpu_hr": 0.89, "regions": {
-                "US": 0.89
+            "L40S": {"instance": "l40s", "gpus_per_instance": 1, "price_per_gpu_hr": 0.69, "regions": {
+                "US": 0.69
             }}
         },
         "spot_discount": 0.30,
@@ -1146,58 +1146,58 @@ INFERENCE_BENCHMARKS = {
 
 SPOT_MARKET = {
     "H100-SXM": {
-        "bid": 1.82, "ask": 2.05, "spread_pct": 11.2, "last_trade": 1.95,
-        "24h_low": 1.70, "24h_high": 2.18, "24h_volume_gpu_hrs": 48500,
-        "7d_avg": 1.92, "30d_avg": 2.01, "90d_avg": 2.25, "volatility_30d": 8.5,
-        "available_gpus": 2840, "queue_depth": 125,
-        "volume_90d_avg": 32000, "volume_30d_avg": 41000,
-        "inventory_90d": 1800, "inventory_30d": 2300,
-        "hourly_prices_24h": [1.88,1.85,1.82,1.80,1.78,1.82,1.85,1.90,1.95,2.02,2.08,2.12,2.15,2.18,2.12,2.08,2.05,2.00,1.98,1.95,1.92,1.90,1.88,1.85]
+        "bid": 1.55, "ask": 1.78, "spread_pct": 12.9, "last_trade": 1.68,
+        "24h_low": 1.45, "24h_high": 1.92, "24h_volume_gpu_hrs": 52800,
+        "7d_avg": 1.65, "30d_avg": 1.74, "90d_avg": 2.25, "volatility_30d": 9.2,
+        "available_gpus": 3200, "queue_depth": 105,
+        "volume_90d_avg": 32000, "volume_30d_avg": 45000,
+        "inventory_90d": 1800, "inventory_30d": 2600,
+        "hourly_prices_24h": [1.62,1.60,1.58,1.55,1.53,1.55,1.58,1.62,1.68,1.72,1.78,1.82,1.88,1.92,1.85,1.80,1.78,1.74,1.70,1.68,1.65,1.63,1.62,1.60]
     },
     "B200": {
-        "bid": 3.10, "ask": 3.55, "spread_pct": 12.7, "last_trade": 3.35,
-        "24h_low": 2.95, "24h_high": 3.80, "24h_volume_gpu_hrs": 12200,
-        "7d_avg": 3.30, "30d_avg": 3.48, "90d_avg": 4.10, "volatility_30d": 14.2,
-        "available_gpus": 680, "queue_depth": 310,
-        "volume_90d_avg": 3500, "volume_30d_avg": 7800,
-        "inventory_90d": 150, "inventory_30d": 380,
-        "hourly_prices_24h": [3.20,3.15,3.10,3.05,3.10,3.18,3.25,3.35,3.45,3.55,3.65,3.75,3.80,3.72,3.60,3.50,3.45,3.40,3.38,3.35,3.30,3.28,3.25,3.20]
+        "bid": 2.85, "ask": 3.28, "spread_pct": 13.1, "last_trade": 3.10,
+        "24h_low": 2.72, "24h_high": 3.55, "24h_volume_gpu_hrs": 14500,
+        "7d_avg": 3.05, "30d_avg": 3.22, "90d_avg": 4.10, "volatility_30d": 13.8,
+        "available_gpus": 780, "queue_depth": 285,
+        "volume_90d_avg": 3500, "volume_30d_avg": 9200,
+        "inventory_90d": 150, "inventory_30d": 450,
+        "hourly_prices_24h": [2.95,2.92,2.88,2.85,2.88,2.95,3.02,3.10,3.18,3.25,3.35,3.45,3.55,3.48,3.38,3.28,3.22,3.18,3.14,3.10,3.05,3.00,2.98,2.95]
     },
     "H200": {
-        "bid": 2.55, "ask": 2.85, "spread_pct": 10.5, "last_trade": 2.72,
-        "24h_low": 2.45, "24h_high": 3.00, "24h_volume_gpu_hrs": 18900,
-        "7d_avg": 2.68, "30d_avg": 2.78, "90d_avg": 3.15, "volatility_30d": 9.8,
-        "available_gpus": 1250, "queue_depth": 180,
-        "volume_90d_avg": 8500, "volume_30d_avg": 14200,
-        "inventory_90d": 520, "inventory_30d": 880,
-        "hourly_prices_24h": [2.60,2.58,2.55,2.52,2.55,2.60,2.65,2.72,2.78,2.85,2.92,2.98,3.00,2.95,2.88,2.82,2.78,2.75,2.72,2.70,2.68,2.65,2.62,2.60]
+        "bid": 2.25, "ask": 2.55, "spread_pct": 11.8, "last_trade": 2.42,
+        "24h_low": 2.15, "24h_high": 2.72, "24h_volume_gpu_hrs": 22400,
+        "7d_avg": 2.38, "30d_avg": 2.50, "90d_avg": 3.15, "volatility_30d": 10.5,
+        "available_gpus": 1480, "queue_depth": 155,
+        "volume_90d_avg": 8500, "volume_30d_avg": 16800,
+        "inventory_90d": 520, "inventory_30d": 1050,
+        "hourly_prices_24h": [2.32,2.30,2.28,2.25,2.28,2.32,2.38,2.42,2.48,2.55,2.62,2.68,2.72,2.68,2.60,2.55,2.50,2.48,2.44,2.42,2.38,2.35,2.33,2.32]
     },
     "A100-80GB": {
-        "bid": 0.85, "ask": 1.02, "spread_pct": 16.7, "last_trade": 0.95,
-        "24h_low": 0.80, "24h_high": 1.15, "24h_volume_gpu_hrs": 92300,
-        "7d_avg": 0.93, "30d_avg": 0.98, "90d_avg": 1.18, "volatility_30d": 12.3,
-        "available_gpus": 8500, "queue_depth": 45,
-        "volume_90d_avg": 65000, "volume_30d_avg": 78000,
-        "inventory_90d": 5200, "inventory_30d": 7100,
-        "hourly_prices_24h": [0.90,0.88,0.86,0.85,0.85,0.87,0.90,0.92,0.95,0.98,1.02,1.05,1.08,1.12,1.15,1.10,1.05,1.02,0.98,0.96,0.94,0.92,0.91,0.90]
+        "bid": 0.68, "ask": 0.85, "spread_pct": 20.0, "last_trade": 0.78,
+        "24h_low": 0.62, "24h_high": 0.95, "24h_volume_gpu_hrs": 98500,
+        "7d_avg": 0.76, "30d_avg": 0.82, "90d_avg": 1.18, "volatility_30d": 13.8,
+        "available_gpus": 9200, "queue_depth": 38,
+        "volume_90d_avg": 65000, "volume_30d_avg": 84000,
+        "inventory_90d": 5200, "inventory_30d": 7800,
+        "hourly_prices_24h": [0.74,0.72,0.70,0.68,0.68,0.70,0.73,0.76,0.78,0.82,0.85,0.88,0.92,0.95,0.90,0.87,0.85,0.82,0.80,0.78,0.76,0.75,0.74,0.73]
     },
     "MI300X": {
-        "bid": 1.48, "ask": 1.72, "spread_pct": 13.9, "last_trade": 1.62,
-        "24h_low": 1.40, "24h_high": 1.85, "24h_volume_gpu_hrs": 15600,
-        "7d_avg": 1.58, "30d_avg": 1.68, "90d_avg": 1.95, "volatility_30d": 11.5,
-        "available_gpus": 1820, "queue_depth": 95,
-        "volume_90d_avg": 6800, "volume_30d_avg": 11500,
-        "inventory_90d": 850, "inventory_30d": 1350,
-        "hourly_prices_24h": [1.52,1.50,1.48,1.46,1.48,1.52,1.56,1.62,1.68,1.72,1.78,1.82,1.85,1.80,1.75,1.72,1.68,1.65,1.62,1.60,1.58,1.55,1.53,1.52]
+        "bid": 1.22, "ask": 1.45, "spread_pct": 15.9, "last_trade": 1.35,
+        "24h_low": 1.15, "24h_high": 1.58, "24h_volume_gpu_hrs": 18200,
+        "7d_avg": 1.32, "30d_avg": 1.42, "90d_avg": 1.95, "volatility_30d": 12.8,
+        "available_gpus": 2100, "queue_depth": 82,
+        "volume_90d_avg": 6800, "volume_30d_avg": 13500,
+        "inventory_90d": 850, "inventory_30d": 1580,
+        "hourly_prices_24h": [1.28,1.26,1.24,1.22,1.24,1.28,1.32,1.35,1.40,1.45,1.50,1.55,1.58,1.52,1.48,1.45,1.42,1.38,1.35,1.32,1.30,1.28,1.27,1.26]
     },
     "RTX-4090": {
-        "bid": 0.18, "ask": 0.28, "spread_pct": 35.7, "last_trade": 0.24,
-        "24h_low": 0.16, "24h_high": 0.35, "24h_volume_gpu_hrs": 145000,
-        "7d_avg": 0.23, "30d_avg": 0.25, "90d_avg": 0.35, "volatility_30d": 22.5,
-        "available_gpus": 15200, "queue_depth": 12,
-        "volume_90d_avg": 95000, "volume_30d_avg": 120000,
-        "inventory_90d": 9800, "inventory_30d": 12500,
-        "hourly_prices_24h": [0.22,0.20,0.19,0.18,0.18,0.19,0.21,0.23,0.25,0.27,0.29,0.31,0.33,0.35,0.32,0.30,0.28,0.26,0.25,0.24,0.23,0.22,0.21,0.20]
+        "bid": 0.15, "ask": 0.24, "spread_pct": 37.5, "last_trade": 0.20,
+        "24h_low": 0.13, "24h_high": 0.30, "24h_volume_gpu_hrs": 158000,
+        "7d_avg": 0.19, "30d_avg": 0.22, "90d_avg": 0.35, "volatility_30d": 24.0,
+        "available_gpus": 16800, "queue_depth": 10,
+        "volume_90d_avg": 95000, "volume_30d_avg": 132000,
+        "inventory_90d": 9800, "inventory_30d": 13800,
+        "hourly_prices_24h": [0.18,0.17,0.16,0.15,0.15,0.16,0.18,0.19,0.21,0.23,0.24,0.26,0.28,0.30,0.27,0.25,0.24,0.22,0.21,0.20,0.19,0.18,0.17,0.16]
     }
 }
 
