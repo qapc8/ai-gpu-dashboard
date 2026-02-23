@@ -906,27 +906,9 @@ body {
     <div class="card-hd"><span class="card-hd-title">Regional GPU Pricing Comparison ($/hr)</span></div>
     <div class="card-bd-flush"><table class="dt" id="regionalPricingTable"></table></div>
   </div>
-  <div class="grid g-2 mb">
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Regional Adoption Trend</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartRegionAdoption"></canvas></div></div>
-    </div>
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">AMD vs NVIDIA Market Share</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartAmdShare"></canvas></div></div>
-    </div>
-  </div>
-  <div class="grid g-2">
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Demand Index vs Price Premium</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartDemandVsPremium"></canvas></div></div>
-    </div>
-    <div class="card" style="border-color:var(--purple-dim);">
-      <div class="card-hd" style="background:var(--bg-3);">
-        <span class="card-hd-title" style="color:var(--purple);">AI Regional Analysis</span>
-        <button class="btn" onclick="loadAI('regional');document.querySelector('[data-tab=ai-analysis]').click();" style="font-size:10px;">View in AI Hub</button>
-      </div>
-    </div>
+  <div class="card">
+    <div class="card-hd"><span class="card-hd-title">Regional Adoption Trend</span></div>
+    <div class="card-bd"><div class="chart-wrap" style="height:280px;"><canvas id="chartRegionAdoption"></canvas></div></div>
   </div>
 </div>
 
@@ -2017,48 +1999,47 @@ function renderRegionalTab() {
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'YoY Growth %'},grid:{color:'rgba(26,34,51,0.4)'}},y:{grid:{display:false}}}}
   });
 
-  if(charts.dp) charts.dp.destroy();
-  charts.dp = new Chart(document.getElementById('chartDemandVsPremium'),{type:'bubble',
-    data:{datasets:regions.map((r,i)=>({label:r,data:[{x:reg[r].gpu_demand_index,y:reg[r].avg_price_premium_pct,r:Math.sqrt(reg[r].data_centers_count)*1.5}],backgroundColor:CL[i]+'50',borderColor:CL[i]}))},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{x:{title:{display:true,text:'Demand Index'},grid:{color:'rgba(26,34,51,0.4)'}},y:{title:{display:true,text:'Price Premium %'},grid:{color:'rgba(26,34,51,0.4)'}}}}
-  });
-
   let cHtml='';
+  const maxDemand=Math.max(...rd.map(r=>r.gpu_demand_index));
   regions.forEach((r,i) => {
-    const d=reg[r];
+    const d=reg[r], demandPct=(d.gpu_demand_index/maxDemand*100).toFixed(0);
+    const premColor=d.avg_price_premium_pct===0?'var(--green)':d.avg_price_premium_pct<=15?'var(--amber)':'var(--red)';
     cHtml += `<div class="region-tile" style="border-left:3px solid ${CL[i]}">
-      <div class="region-tile-name">${r}</div>
-      <div class="region-row"><span class="region-row-k">Market Share</span><span class="region-row-v">${d.market_share_pct}%</span></div>
-      <div class="region-row"><span class="region-row-k">YoY Growth</span><span class="region-row-v" style="color:var(--green)">+${d.yoy_growth_pct}%</span></div>
-      <div class="region-row"><span class="region-row-k">Demand Index</span><span class="region-row-v">${d.gpu_demand_index}/100</span></div>
-      <div class="region-row"><span class="region-row-k">Price Premium</span><span class="region-row-v">+${d.avg_price_premium_pct}%</span></div>
-      <div class="region-row"><span class="region-row-k">Energy Cost</span><span class="region-row-v">$${d.energy_cost_kwh}/kWh</span></div>
-      <div class="region-row"><span class="region-row-k">Data Centers</span><span class="region-row-v">${d.data_centers_count.toLocaleString()}</span></div>
-      <div class="region-row"><span class="region-row-k">Regulatory</span><span class="region-row-v">${d.regulatory_score}/10</span></div>
-      <div style="margin-top:6px;font-size:10px;color:var(--text-3);">Top: ${d.top_providers.join(', ')}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <div class="region-tile-name" style="margin-bottom:0;">${r}</div>
+        <span style="font-size:10px;font-weight:700;color:${CL[i]};">${d.market_share_pct}%</span>
+      </div>
+      <div style="height:4px;background:var(--bg-3);border-radius:2px;margin-bottom:8px;"><div style="height:100%;width:${demandPct}%;background:${CL[i]};border-radius:2px;"></div></div>
+      <div class="region-row"><span class="region-row-k">Growth</span><span class="region-row-v" style="color:var(--green)">+${d.yoy_growth_pct}%</span></div>
+      <div class="region-row"><span class="region-row-k">Demand</span><span class="region-row-v">${d.gpu_demand_index}<span class="dim">/100</span></span></div>
+      <div class="region-row"><span class="region-row-k">Premium</span><span class="region-row-v" style="color:${premColor}">${d.avg_price_premium_pct===0?'Baseline':'+'+d.avg_price_premium_pct+'%'}</span></div>
+      <div class="region-row"><span class="region-row-k">Energy</span><span class="region-row-v">$${d.energy_cost_kwh}<span class="dim">/kWh</span></span></div>
+      <div style="margin-top:4px;font-size:9px;color:var(--text-3);">${d.top_providers.slice(0,3).join(' · ')}</div>
     </div>`;
   });
   document.getElementById('regionCards').innerHTML = cHtml;
 
   renderRegionalPricingTable(reg, regions);
   renderRegionAdoptionChart(reg, regions);
-  renderAmdShareChart();
 }
 
 function renderRegionalPricingTable(reg, regions) {
   const gs=new Set(); regions.forEach(r=>{const gp=reg[r].gpu_pricing;if(gp)Object.keys(gp).forEach(g=>gs.add(g));});
   const gpus=[...gs];
+  // Find cheapest low price per GPU
+  const cheapest={};
+  gpus.forEach(g=>{let min=Infinity; regions.forEach(r=>{const p=reg[r].gpu_pricing?.[g];if(p&&p.low<min) min=p.low;}); cheapest[g]=min;});
   let h='<thead><tr><th>Region</th>';
-  gpus.forEach(g=>{h+=`<th class="r" colspan="2">${g}</th>`;});
-  h+='</tr><tr><th></th>';
-  gpus.forEach(()=>{h+='<th class="r" style="font-size:9px;">Low</th><th class="r" style="font-size:9px;">High</th>';});
+  gpus.forEach(g=>{h+=`<th class="r">${g} Low</th><th class="r">${g} High</th>`;});
   h+='</tr></thead><tbody>';
   regions.forEach((r,i)=>{
     const gp=reg[r].gpu_pricing||{};
     h+=`<tr><td style="color:${CL[i]};font-weight:700;">${r}</td>`;
     gpus.forEach(g=>{
-      if(gp[g]) h+=`<td class="r c-green">$${gp[g].low.toFixed(2)}</td><td class="r c-red">$${gp[g].high.toFixed(2)}</td>`;
-      else h+='<td class="r dim">--</td><td class="r dim">--</td>';
+      if(gp[g]){
+        const isBest=gp[g].low<=cheapest[g];
+        h+=`<td class="r" style="color:var(--green);${isBest?'font-weight:700;background:rgba(52,211,153,0.08);':''}">$${gp[g].low.toFixed(2)}${isBest?' ★':''}</td><td class="r" style="color:var(--red);">$${gp[g].high.toFixed(2)}</td>`;
+      } else h+='<td class="r dim">--</td><td class="r dim">--</td>';
     });
     h+='</tr>';
   });
@@ -2069,23 +2050,10 @@ function renderRegionalPricingTable(reg, regions) {
 function renderRegionAdoptionChart(reg, regions) {
   const ap=new Set(); regions.forEach(r=>{const at=reg[r].adoption_trend_monthly;if(at)Object.keys(at).forEach(p=>ap.add(p));});
   const periods=[...ap].sort();
-  const ds=regions.map((r,i)=>({label:r,data:periods.map(p=>reg[r].adoption_trend_monthly?.[p]||null),borderColor:CL[i],backgroundColor:CL[i]+'12',tension:0.35,pointRadius:1.5,borderWidth:2,fill:true,spanGaps:true}));
+  const ds=regions.map((r,i)=>({label:r,data:periods.map(p=>reg[r].adoption_trend_monthly?.[p]||null),borderColor:CL[i],tension:0.35,pointRadius:2,borderWidth:2,fill:false,spanGaps:true}));
   if(charts.ra) charts.ra.destroy();
   charts.ra = new Chart(document.getElementById('chartRegionAdoption'),{type:'line',data:{labels:periods,datasets:ds},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{stacked:true,title:{display:true,text:'Share %'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
-  });
-}
-
-function renderAmdShareChart() {
-  const mi=DATA.indicators, as=mi.amd_gpu_market_share_pct; if(!as) return;
-  const p=Object.keys(as).sort();
-  if(charts.amd) charts.amd.destroy();
-  charts.amd = new Chart(document.getElementById('chartAmdShare'),{type:'line',
-    data:{labels:p,datasets:[
-      {label:'AMD',data:p.map(k=>as[k]),borderColor:C.red,backgroundColor:C.red+'25',fill:true,tension:0.35,borderWidth:2},
-      {label:'NVIDIA',data:p.map(k=>100-as[k]),borderColor:C.green,backgroundColor:C.green+'25',fill:true,tension:0.35,borderWidth:2},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{min:0,max:100,title:{display:true,text:'Market Share %'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10}}}},scales:{y:{title:{display:true,text:'Market Share %'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
   });
 }
 
