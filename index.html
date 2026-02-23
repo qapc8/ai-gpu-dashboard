@@ -412,6 +412,16 @@ body {
 .dt tbody tr:hover { background: var(--bg-hover); }
 .dt tbody tr:nth-child(even) { background: rgba(11,15,22,0.4); }
 
+/* ─── PRICE GRID ─── */
+.pg-cloud-hdr { background: rgba(59,130,246,0.12); color: var(--blue); font-weight: 700; text-align: center; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; }
+.pg-mkt-hdr { background: rgba(245,158,11,0.12); color: var(--amber); font-weight: 700; text-align: center; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; }
+.pg-divider { width: 3px; padding: 0 !important; background: var(--border-1); }
+.pg-cell-best { background: rgba(16,185,129,0.12); }
+.pg-cell-worst { background: rgba(239,68,68,0.08); }
+.pg-cell-na { color: var(--text-3); text-align: center; }
+.pg-prov-th { text-align: center; font-size: 10px; white-space: nowrap; padding: 6px 8px !important; }
+.pg-best { border-left: 2px solid var(--green); }
+
 .c-green { color: var(--green); font-weight: 600; }
 .c-red { color: var(--red); font-weight: 600; }
 .c-amber { color: var(--amber); }
@@ -808,8 +818,9 @@ body {
 <div class="tab-panel" id="tab-pricing">
   <div class="card mb">
     <div class="card-hd">
-      <span class="card-hd-title">Complete GPU Price Matrix</span>
-      <span class="dim" style="font-size:10px;font-family:var(--mono);">On-demand $/hr per GPU</span>
+      <span class="card-hd-title">GPU Price Grid</span>
+      <span style="font-size:10px;margin-left:8px;"><span class="tag" style="background:var(--blue-dim);color:var(--blue);font-size:9px;">CLOUD</span> <span class="tag" style="background:var(--amber-dim);color:var(--amber);font-size:9px;">MARKETPLACE</span></span>
+      <span class="dim" style="font-size:10px;font-family:var(--mono);margin-left:auto;">On-demand $/hr per GPU</span>
     </div>
     <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="priceMatrixTable"></table></div>
   </div>
@@ -1725,19 +1736,76 @@ function renderOverviewTable() {
 // ════════════════════════════════════════════════════════════════
 function renderPriceMatrix() {
   const m = DATA.matrix;
-  let h = `<thead><tr><th>GPU</th><th>Vendor</th><th>Arch</th><th class="r">VRAM</th><th>Tier</th><th class="r">Best $/hr</th><th>Provider</th><th>Type</th><th class="r">Avg</th><th class="r">Max</th><th class="r">#Prov</th><th class="r">Spread</th><th class="r">MoM</th><th class="r">TFLOPS/$</th><th class="r">VRAM/$</th></tr></thead><tbody>`;
+  const pd = DATA.providers;
+
+  // Define provider columns in display order
+  const cloudProvs = ['AWS','GCP','Azure','Lambda','CoreWeave','Oracle','Together'];
+  const mktProvs = ['RunPod','Vast.ai','FluidStack'];
+  const cloudLabels = ['AWS','GCP','Azure','Lambda','CoreW.','Oracle','Tog.'];
+  const mktLabels = ['RunPod','Vast.ai','Fluid.'];
+
+  // Build two-row header
+  let h = '<thead>';
+  // Row 1: group headers
+  h += '<tr><th rowspan="2">GPU</th><th rowspan="2" class="r">VRAM</th>';
+  h += `<th colspan="${cloudProvs.length}" class="pg-cloud-hdr">Cloud Providers</th>`;
+  h += '<th rowspan="2" class="pg-divider"></th>';
+  h += `<th colspan="${mktProvs.length}" class="pg-mkt-hdr">Marketplaces</th>`;
+  h += '<th rowspan="2" class="r pg-best">Best $/hr</th></tr>';
+  // Row 2: individual provider names
+  h += '<tr>';
+  cloudLabels.forEach(l => { h += `<th class="pg-prov-th">${l}</th>`; });
+  mktLabels.forEach(l => { h += `<th class="pg-prov-th">${l}</th>`; });
+  h += '</tr></thead><tbody>';
+
   m.forEach(r => {
-    const vc = r.vendor==='AMD'?'tag-vendor-amd':'tag-vendor-nvidia';
-    const mc = r.monthly_change_pct<0?'c-green':'c-red';
-    const isMkt = r.cheapest_provider_type === 'marketplace';
-    const typeBadge = isMkt
-      ? '<span class="tag" style="background:var(--amber-dim);color:var(--amber);font-size:9px;">MKT</span>'
-      : '<span class="tag" style="background:var(--blue-dim);color:var(--blue);font-size:9px;">CLOUD</span>';
-    h += `<tr><td class="gpu-name">${r.name}</td><td><span class="tag ${vc}">${r.vendor}</span></td><td><span class="tag tag-arch">${r.arch}</span></td><td class="r">${r.vram_gb}GB</td><td>${r.tier}</td><td class="r c-green fw">$${r.cheapest_price.toFixed(2)}</td><td>${r.cheapest_provider}</td><td>${typeBadge}</td><td class="r">$${r.avg_price.toFixed(2)}</td><td class="r c-red">$${r.most_expensive.toFixed(2)}</td><td class="r">${r.num_providers}</td><td class="r">${r.price_spread_pct}%</td><td class="r ${mc}">${r.monthly_change_pct>0?'+':''}${r.monthly_change_pct}%</td><td class="r c-purple">${r.flops_per_dollar}</td><td class="r c-cyan">${r.vram_per_dollar}</td></tr>`;
+    const gpuId = r.gpu_id;
+    // Gather all prices for this GPU across providers
+    const allPrices = [];
+    const prices = {};
+    [...cloudProvs,...mktProvs].forEach(prov => {
+      const g = pd[prov]?.gpus?.[gpuId];
+      if (g) {
+        prices[prov] = g.price_per_gpu_hr;
+        allPrices.push(g.price_per_gpu_hr);
+      }
+    });
+    const minP = allPrices.length ? Math.min(...allPrices) : null;
+    const maxP = allPrices.length > 1 ? Math.max(...allPrices) : null;
+
+    h += `<tr><td class="gpu-name">${r.name}</td><td class="r">${r.vram_gb}GB</td>`;
+    // Cloud columns
+    cloudProvs.forEach(prov => {
+      if (prices[prov] != null) {
+        const cls = prices[prov] === minP ? 'pg-cell-best' : (prices[prov] === maxP ? 'pg-cell-worst' : '');
+        const tc = prices[prov] === minP ? ' c-green fw' : '';
+        h += `<td class="r ${cls}${tc}">$${prices[prov].toFixed(2)}</td>`;
+      } else {
+        h += '<td class="pg-cell-na">—</td>';
+      }
+    });
+    // Divider
+    h += '<td class="pg-divider"></td>';
+    // Marketplace columns
+    mktProvs.forEach(prov => {
+      if (prices[prov] != null) {
+        const cls = prices[prov] === minP ? 'pg-cell-best' : (prices[prov] === maxP ? 'pg-cell-worst' : '');
+        const tc = prices[prov] === minP ? ' c-green fw' : '';
+        h += `<td class="r ${cls}${tc}">$${prices[prov].toFixed(2)}</td>`;
+      } else {
+        h += '<td class="pg-cell-na">—</td>';
+      }
+    });
+    // Best column with MoM
+    const mc = r.monthly_change_pct < 0 ? 'c-green' : 'c-red';
+    const momStr = `${r.monthly_change_pct > 0 ? '+' : ''}${r.monthly_change_pct}%`;
+    h += `<td class="r pg-best c-green fw">$${r.cheapest_price.toFixed(2)} <span class="${mc}" style="font-size:10px;font-weight:400;">${momStr}</span></td>`;
+    h += '</tr>';
   });
   h += '</tbody>';
   document.getElementById('priceMatrixTable').innerHTML = h;
 
+  // Charts remain unchanged
   if(charts.pd) charts.pd.destroy();
   charts.pd = new Chart(document.getElementById('chartPriceDist'),{type:'bar',
     data:{labels:m.map(r=>r.gpu_id),datasets:[
