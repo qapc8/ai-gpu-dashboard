@@ -496,6 +496,33 @@ body {
 }
 .btn-accent:hover { background: #e07d2a; }
 
+/* ─── DATA AUDIT ─── */
+.da-section { margin-bottom: 10px; }
+.da-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px; background: var(--bg-3); border: 1px solid var(--border-0);
+  border-radius: var(--radius); cursor: pointer; transition: all 0.15s; user-select: none;
+}
+.da-header:hover { border-color: var(--border-1); background: var(--bg-4); }
+.da-header.open { border-radius: var(--radius) var(--radius) 0 0; border-bottom-color: transparent; }
+.da-header-left { display: flex; align-items: center; gap: 10px; }
+.da-chevron { color: var(--text-3); font-size: 12px; transition: transform 0.2s; font-family: var(--mono); }
+.da-header.open .da-chevron { transform: rotate(90deg); }
+.da-title { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--text-0); }
+.da-meta { display: flex; gap: 8px; align-items: center; }
+.da-badge { font-size: 9px; font-weight: 600; padding: 2px 8px; border-radius: 3px; font-family: var(--mono); letter-spacing: 0.5px; }
+.da-body {
+  display: none; border: 1px solid var(--border-0); border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius); background: var(--bg-2);
+  overflow-x: auto; max-height: 500px; overflow-y: auto;
+}
+.da-body.open { display: block; }
+.da-body .dt { font-size: 11px; }
+.da-body .dt thead th { position: sticky; top: 0; z-index: 2; }
+.da-raw { padding: 12px 16px; font-family: var(--mono); font-size: 11px; color: var(--text-1);
+  white-space: pre-wrap; word-break: break-all; max-height: 400px; overflow-y: auto; line-height: 1.5; }
+.da-highlight { background: rgba(251,191,36,0.2); border-radius: 2px; }
+
 /* ─── AI PANELS ─── */
 /* ─── AI PANELS ─── */
 .ai-panel {
@@ -695,6 +722,7 @@ body {
   <div class="nav-item" data-tab="sustainability">Sustainability</div>
   <div class="nav-item" data-tab="model-fit">Model Fit</div>
   <div class="nav-item" data-tab="ai-analysis">AI Analysis</div>
+  <div class="nav-item" data-tab="data-audit">Data</div>
 </div>
 
 <!-- ═══ MAIN ═══ -->
@@ -1238,6 +1266,27 @@ body {
 
 </div>
 
+<!-- ── DATA AUDIT ── -->
+<div class="tab-panel" id="tab-data-audit">
+
+  <div class="ai-cmdbar mb">
+    <div class="ai-cmdbar-label">Data Audit</div>
+    <div class="ai-cmdbar-sep"></div>
+    <input class="ctrl-input" id="dataAuditSearch" placeholder="Search across all datasets..." style="max-width:360px;">
+    <div class="ai-cmdbar-sep"></div>
+    <button class="btn" onclick="expandAllDataSections(true)">Expand All</button>
+    <button class="btn" onclick="expandAllDataSections(false)">Collapse All</button>
+    <button class="btn btn-primary" onclick="exportAllDataJSON()">Export JSON</button>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+      <span class="ai-cmdbar-label" style="font-size:9px;">DATASETS</span>
+      <span class="tag" style="background:var(--cyan-dim);color:var(--cyan);" id="dataAuditCount">0</span>
+    </div>
+  </div>
+
+  <div id="dataAuditContainer"></div>
+
+</div>
+
 </div><!-- /main -->
 
 <script>
@@ -1341,6 +1390,7 @@ function renderAll() {
   renderForecastingTab();
   renderSustainabilityTab();
   renderModelFitTab();
+  renderDataAudit();
   populateSelectors();
   updateTime();
   setInterval(updateTime, 1000);
@@ -2743,6 +2793,213 @@ document.addEventListener('click', function(e) {
   if(aiTabAutoLoad[tabId] && !aiLoadedSet.has(aiTabAutoLoad[tabId])) {
     loadAI(aiTabAutoLoad[tabId]);
   }
+});
+
+// ════════════════════════════════════════════════════════════════
+// DATA AUDIT
+// ════════════════════════════════════════════════════════════════
+
+const DATA_SECTIONS = [
+  { key:'matrix',         label:'GPU Price Matrix',       color:'blue',   type:'array' },
+  { key:'specs',          label:'GPU Specifications',     color:'cyan',   type:'dict-of-objects' },
+  { key:'providers',      label:'Cloud Providers',        color:'orange', type:'dict-of-objects' },
+  { key:'historical',     label:'Historical Pricing',     color:'purple', type:'dict-of-objects' },
+  { key:'indicators',     label:'Market Indicators',      color:'green',  type:'flat-object' },
+  { key:'regional',       label:'Regional Markets',       color:'amber',  type:'dict-of-objects' },
+  { key:'workloads',      label:'Workload Recommendations', color:'pink', type:'dict-of-objects' },
+  { key:'tco',            label:'TCO Breakdown',          color:'red',    type:'dict-of-objects' },
+  { key:'inference',      label:'Inference Model Pricing',color:'blue',   type:'dict-of-objects' },
+  { key:'spot',           label:'Spot Market',            color:'cyan',   type:'dict-of-objects' },
+  { key:'news',           label:'News Feed',              color:'amber',  type:'array' },
+  { key:'utilization',    label:'Utilization Metrics',    color:'green',  type:'dict-of-objects' },
+  { key:'reservations',   label:'Reservation Economics',  color:'purple', type:'dict-of-objects' },
+  { key:'forecasts',      label:'Price Forecasts',        color:'orange', type:'dict-of-objects' },
+  { key:'competitive',    label:'Competitive Landscape',  color:'blue',   type:'dict-of-objects' },
+  { key:'sustainability', label:'Sustainability Metrics', color:'green',  type:'dict-of-objects' },
+  { key:'supplychain',    label:'Supply Chain',           color:'red',    type:'dict-of-objects' },
+  { key:'modelfit',       label:'Model Fit / GPU Sizing', color:'purple', type:'dict-of-objects' },
+];
+
+function countEntries(val, type) {
+  if (!val) return 0;
+  if (type === 'array') return val.length;
+  if (type === 'flat-object') return Object.keys(val).length;
+  return Object.keys(val).length;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function flattenValue(v) {
+  if (v === null || v === undefined) return '';
+  if (typeof v === 'object') return JSON.stringify(v);
+  return String(v);
+}
+
+function buildArrayTable(arr, searchTerm) {
+  if (!arr || !arr.length) return '<div class="da-raw dim">No data</div>';
+  const cols = Object.keys(arr[0]);
+  let html = '<table class="dt"><thead><tr>';
+  cols.forEach(c => html += `<th>${escHtml(c)}</th>`);
+  html += '</tr></thead><tbody>';
+  arr.forEach(row => {
+    const vals = cols.map(c => flattenValue(row[c]));
+    const rowStr = vals.join(' ').toLowerCase();
+    if (searchTerm && !rowStr.includes(searchTerm)) return;
+    html += '<tr>';
+    vals.forEach(v => {
+      let display = escHtml(v);
+      if (searchTerm && display.toLowerCase().includes(searchTerm)) {
+        const re = new RegExp('(' + searchTerm.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+        display = display.replace(re, '<span class="da-highlight">$1</span>');
+      }
+      html += `<td>${display}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  return html;
+}
+
+function buildFlatObjectTable(obj, searchTerm) {
+  if (!obj) return '<div class="da-raw dim">No data</div>';
+  let html = '<table class="dt"><thead><tr><th>Key</th><th>Value</th></tr></thead><tbody>';
+  Object.entries(obj).forEach(([k, v]) => {
+    const valStr = flattenValue(v);
+    const rowStr = (k + ' ' + valStr).toLowerCase();
+    if (searchTerm && !rowStr.includes(searchTerm)) return;
+    let dispK = escHtml(k), dispV = escHtml(valStr);
+    if (searchTerm) {
+      const re = new RegExp('(' + searchTerm.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+      dispK = dispK.replace(re, '<span class="da-highlight">$1</span>');
+      dispV = dispV.replace(re, '<span class="da-highlight">$1</span>');
+    }
+    html += `<tr><td class="gpu-name">${dispK}</td><td>${dispV}</td></tr>`;
+  });
+  html += '</tbody></table>';
+  return html;
+}
+
+function buildDictOfObjectsTable(obj, searchTerm) {
+  if (!obj) return '<div class="da-raw dim">No data</div>';
+  const keys = Object.keys(obj);
+  if (!keys.length) return '<div class="da-raw dim">No data</div>';
+  const first = obj[keys[0]];
+
+  // If values are simple objects, show as a combined table
+  if (first && typeof first === 'object' && !Array.isArray(first)) {
+    const subKeys = Object.keys(first);
+    const isSimple = subKeys.every(sk => typeof first[sk] !== 'object' || first[sk] === null);
+    if (isSimple) {
+      let html = '<table class="dt"><thead><tr><th>ID</th>';
+      subKeys.forEach(sk => html += `<th>${escHtml(sk)}</th>`);
+      html += '</tr></thead><tbody>';
+      keys.forEach(id => {
+        const row = obj[id];
+        const vals = subKeys.map(sk => flattenValue(row[sk]));
+        const rowStr = (id + ' ' + vals.join(' ')).toLowerCase();
+        if (searchTerm && !rowStr.includes(searchTerm)) return;
+        const re = searchTerm ? new RegExp('(' + searchTerm.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi') : null;
+        let dispId = escHtml(id);
+        if (re) dispId = dispId.replace(re, '<span class="da-highlight">$1</span>');
+        html += `<tr><td class="gpu-name">${dispId}</td>`;
+        vals.forEach(v => {
+          let d = escHtml(v);
+          if (re) d = d.replace(re, '<span class="da-highlight">$1</span>');
+          html += `<td>${d}</td>`;
+        });
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      return html;
+    }
+  }
+
+  // Complex nested: show JSON per key
+  let html = '';
+  keys.forEach(id => {
+    const jsonStr = JSON.stringify(obj[id], null, 2);
+    const rowStr = (id + ' ' + jsonStr).toLowerCase();
+    if (searchTerm && !rowStr.includes(searchTerm)) return;
+    let dispJson = escHtml(jsonStr);
+    if (searchTerm) {
+      const re = new RegExp('(' + searchTerm.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+      dispJson = dispJson.replace(re, '<span class="da-highlight">$1</span>');
+    }
+    html += `<div style="border-bottom:1px solid var(--border-0);padding:8px 16px;">
+      <span class="gpu-name" style="display:block;margin-bottom:4px;color:var(--cyan);">${escHtml(id)}</span>
+      <pre class="da-raw" style="padding:4px 0;margin:0;">${dispJson}</pre>
+    </div>`;
+  });
+  return html || '<div class="da-raw dim">No matching entries</div>';
+}
+
+function renderDataAudit(searchTerm) {
+  const container = document.getElementById('dataAuditContainer');
+  if (!container) return;
+  const st = (searchTerm || '').toLowerCase().trim();
+  let totalEntries = 0;
+  let html = '';
+
+  DATA_SECTIONS.forEach((sec, idx) => {
+    const val = DATA[sec.key];
+    const count = countEntries(val, sec.type);
+    totalEntries += count;
+
+    // Build body content
+    let bodyContent;
+    if (sec.type === 'array') bodyContent = buildArrayTable(val, st);
+    else if (sec.type === 'flat-object') bodyContent = buildFlatObjectTable(val, st);
+    else bodyContent = buildDictOfObjectsTable(val, st);
+
+    const isOpen = st ? true : false;
+    const typeLabel = sec.type === 'array' ? 'ARRAY' : sec.type === 'flat-object' ? 'OBJECT' : 'COLLECTION';
+
+    html += `<div class="da-section" data-da-idx="${idx}">
+      <div class="da-header${isOpen ? ' open' : ''}" onclick="toggleDataSection(this)">
+        <div class="da-header-left">
+          <span class="da-chevron">&#9654;</span>
+          <span class="da-title">${escHtml(sec.label)}</span>
+          <span class="da-badge" style="background:var(--${sec.color}-dim);color:var(--${sec.color});">${typeLabel}</span>
+        </div>
+        <div class="da-meta">
+          <span class="da-badge" style="background:var(--bg-2);color:var(--text-2);">${count} entries</span>
+          <span class="da-badge" style="background:var(--bg-2);color:var(--text-3);">DATA.${sec.key}</span>
+        </div>
+      </div>
+      <div class="da-body${isOpen ? ' open' : ''}">${bodyContent}</div>
+    </div>`;
+  });
+
+  container.innerHTML = html;
+  document.getElementById('dataAuditCount').textContent = totalEntries + ' entries / ' + DATA_SECTIONS.length + ' datasets';
+}
+
+function toggleDataSection(headerEl) {
+  headerEl.classList.toggle('open');
+  headerEl.nextElementSibling.classList.toggle('open');
+}
+
+function expandAllDataSections(open) {
+  document.querySelectorAll('.da-header').forEach(h => {
+    h.classList.toggle('open', open);
+    h.nextElementSibling.classList.toggle('open', open);
+  });
+}
+
+function exportAllDataJSON() {
+  const blob = new Blob([JSON.stringify(DATA, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'gpu-intel-pro-data-export.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// Wire up search
+document.getElementById('dataAuditSearch').addEventListener('input', function() {
+  renderDataAudit(this.value);
 });
 
 // ════════════════════════════════════════════════════════════════
