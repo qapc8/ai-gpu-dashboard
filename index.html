@@ -847,23 +847,19 @@ body {
       <div class="card-bd"><div class="chart-wrap" style="height:340px;"><canvas id="chartTrends"></canvas></div></div>
     </div>
     <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Availability Over Time</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:340px;"><canvas id="chartAvailability"></canvas></div></div>
+      <div class="card-hd"><span class="card-hd-title">GPU Market Price Index</span></div>
+      <div class="card-bd"><div class="chart-wrap" style="height:340px;"><canvas id="chartPriceIndex"></canvas></div></div>
     </div>
   </div>
   <div class="grid g-2 mb">
     <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Data Center GPU Shipments (K units)</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:260px;"><canvas id="chartShipments"></canvas></div></div>
+      <div class="card-hd"><span class="card-hd-title">Price Decay Since Launch</span></div>
+      <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartDecay"></canvas></div></div>
     </div>
     <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Flagship GPU Lead Time (weeks)</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:260px;"><canvas id="chartLeadTime"></canvas></div></div>
+      <div class="card-hd"><span class="card-hd-title">Market Supply &amp; Competition</span></div>
+      <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartMarketSupply"></canvas></div></div>
     </div>
-  </div>
-  <div class="card">
-    <div class="card-hd"><span class="card-hd-title">All GPU Historical Comparison</span></div>
-    <div class="card-bd"><div class="chart-wrap" style="height:340px;"><canvas id="chartAllTrends"></canvas></div></div>
   </div>
 </div>
 
@@ -1830,37 +1826,25 @@ function renderPriceMatrix() {
 // TRENDS
 // ════════════════════════════════════════════════════════════════
 function renderTrendsTab() {
-  const hist=DATA.historical, mi=DATA.indicators;
-
-  if(mi.data_center_gpu_shipments_k){
-    const s=mi.data_center_gpu_shipments_k, lbl=Object.keys(s).sort();
-    if(charts.sh) charts.sh.destroy();
-    charts.sh = new Chart(document.getElementById('chartShipments'),{type:'bar',
-      data:{labels:lbl,datasets:[{label:'Shipments (K)',data:lbl.map(l=>s[l]),backgroundColor:C.cyan+'60',borderColor:C.cyan,borderWidth:1}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
-    });
-  }
-  if(mi.flagship_lead_time_weeks){
-    const lt=mi.flagship_lead_time_weeks, lbl=Object.keys(lt).sort();
-    if(charts.lt) charts.lt.destroy();
-    charts.lt = new Chart(document.getElementById('chartLeadTime'),{type:'line',
-      data:{labels:lbl,datasets:[{label:'Lead Time (wk)',data:lbl.map(l=>lt[l]),borderColor:C.red,backgroundColor:C.red+'18',fill:true,tension:0.35,pointRadius:3}]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'Weeks'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
-    });
-  }
-  renderAllTrendsChart();
   updateTrendChart();
-  renderAvailabilityChart();
+  renderPriceIndexChart();
+  renderDecayChart();
+  renderMarketSupplyChart();
 }
 
-function renderAllTrendsChart() {
+function renderPriceIndexChart() {
   const hist=DATA.historical, gpus=Object.keys(hist);
   const ap=new Set(); gpus.forEach(g=>Object.keys(hist[g]).forEach(p=>ap.add(p)));
   const periods=[...ap].sort();
-  const ds=gpus.map((g,i)=>({label:g,data:periods.map(p=>hist[g]?.[p]?.avg||null),borderColor:CL[i%CL.length],tension:0.35,pointRadius:1.5,borderWidth:2,fill:false,spanGaps:true}));
-  if(charts.at) charts.at.destroy();
-  charts.at = new Chart(document.getElementById('chartAllTrends'),{type:'line',data:{labels:periods,datasets:ds},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
+  const means=periods.map(p=>{
+    const vals=gpus.map(g=>hist[g]?.[p]?.avg).filter(v=>v!=null);
+    return vals.length? vals.reduce((a,b)=>a+b,0)/vals.length : null;
+  });
+  if(charts.pi) charts.pi.destroy();
+  charts.pi = new Chart(document.getElementById('chartPriceIndex'),{type:'line',
+    data:{labels:periods,datasets:[{label:'Market Mean $/hr',data:means,borderColor:C.cyan,backgroundColor:C.cyan+'18',fill:true,tension:0.35,borderWidth:2,pointRadius:2}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:'Mean GPU Price Across All Models',color:C.cyan,font:{size:12}}},
+      scales:{y:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
   });
 }
 
@@ -1879,16 +1863,50 @@ function updateTrendChart() {
   });
 }
 
-function renderAvailabilityChart() {
-  const hist=DATA.historical;
-  const am={'scarce':1,'limited':2,'moderate':3,'good':4,'abundant':5};
-  const gpus=['B200','H200','H100-SXM','A100-80GB','MI300X','RTX-4090'];
-  const ap=new Set(); gpus.forEach(g=>{if(hist[g])Object.keys(hist[g]).forEach(p=>ap.add(p));});
-  const periods=[...ap].sort().slice(-8);
-  const ds=gpus.map((g,i)=>({label:g,data:periods.map(p=>hist[g]?.[p]?am[hist[g][p].availability]||0:null),borderColor:CL[i],tension:0.35,pointRadius:3,borderWidth:2,spanGaps:true}));
-  if(charts.av) charts.av.destroy();
-  charts.av = new Chart(document.getElementById('chartAvailability'),{type:'line',data:{labels:periods,datasets:ds},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{min:0,max:5.5,ticks:{callback:v=>['','Scarce','Limited','Moderate','Good','Abundant'][v]||''},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
+function renderDecayChart() {
+  const hist=DATA.historical, gpus=Object.keys(hist);
+  const ds=[];
+  gpus.forEach((g,i)=>{
+    const periods=Object.keys(hist[g]).sort();
+    if(periods.length<6) return;
+    const base=hist[g][periods[0]].avg;
+    if(!base) return;
+    const pts=periods.map((p,j)=>({x:j,y:(hist[g][p].avg/base)*100}));
+    ds.push({label:g,data:pts,borderColor:CL[i%CL.length],tension:0.35,pointRadius:1.5,borderWidth:2,fill:false});
+  });
+  if(charts.dc) charts.dc.destroy();
+  charts.dc = new Chart(document.getElementById('chartDecay'),{type:'line',
+    data:{datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10}}}},
+      scales:{x:{type:'linear',title:{display:true,text:'Months Since Launch'},ticks:{stepSize:6},grid:{display:false}},
+        y:{title:{display:true,text:'% of Launch Price'},grid:{color:'rgba(26,34,51,0.4)'}}}}
+  });
+}
+
+function renderMarketSupplyChart() {
+  const mi=DATA.indicators;
+  const ship=mi.data_center_gpu_shipments_k, amd=mi.amd_gpu_market_share_pct;
+  if(!ship) return;
+  const qMap={'Q1':'01','Q2':'04','Q3':'07','Q4':'10'};
+  const sLbl=Object.keys(ship).sort();
+  const monthLabels=sLbl.map(q=>{const[y,qn]=q.split('-');return y+'-'+qMap[qn];});
+  const amdVals=monthLabels.map(m=>{
+    if(!amd) return null;
+    const keys=Object.keys(amd).sort();
+    let best=null,bestDist=Infinity;
+    keys.forEach(k=>{const d=Math.abs(new Date(k+'-01')-new Date(m+'-01'));if(d<bestDist){bestDist=d;best=k;}});
+    return best?amd[best]:null;
+  });
+  if(charts.sc) charts.sc.destroy();
+  charts.sc = new Chart(document.getElementById('chartMarketSupply'),{type:'bar',
+    data:{labels:monthLabels,datasets:[
+      {label:'GPU Shipments (K)',data:sLbl.map(l=>ship[l]),backgroundColor:C.cyan+'60',borderColor:C.cyan,borderWidth:1,yAxisID:'y',order:2},
+      {label:'AMD Share %',data:amdVals,type:'line',borderColor:C.red,backgroundColor:C.red+'18',fill:false,tension:0.35,borderWidth:2,pointRadius:3,yAxisID:'y1',order:1}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10}}}},
+      scales:{y:{title:{display:true,text:'Shipments (K)'},grid:{color:'rgba(26,34,51,0.4)'}},
+        y1:{position:'right',max:30,title:{display:true,text:'AMD Share %'},grid:{display:false}},
+        x:{grid:{display:false}}}}
   });
 }
 
