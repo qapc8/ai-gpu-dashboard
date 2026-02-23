@@ -834,7 +834,22 @@ MARKET_INDICATORS = {
     "flagship_lead_time_weeks": {"2023-01": 48, "2023-03": 48, "2023-06": 40, "2023-09": 36, "2023-12": 28,
                               "2024-03": 16, "2024-06": 10, "2024-09": 8, "2024-11": 52,
                               "2025-01": 48, "2025-03": 44, "2025-06": 40, "2025-09": 36, "2025-12": 36, "2026-01": 36, "2026-02": 36},
-    "amd_gpu_market_share_pct": {"2023-01": 3, "2023-06": 5, "2024-01": 8, "2024-06": 12, "2025-01": 16, "2025-06": 19, "2026-01": 22}
+    "amd_gpu_market_share_pct": {"2023-01": 3, "2023-06": 5, "2024-01": 8, "2024-06": 12, "2025-01": 16, "2025-06": 19, "2026-01": 22},
+    "gpu_lead_times": {
+        "B200": {"weeks": 36, "status": "constrained", "note": "Sold out through mid-2026"},
+        "GB200": {"weeks": 40, "status": "constrained", "note": "NVL72 racks backordered"},
+        "H200": {"weeks": 12, "status": "limited", "note": "8-20 wk depending on volume"},
+        "H100-SXM": {"weeks": 2, "status": "available", "note": "Broadly available"},
+        "H100-PCIe": {"weeks": 2, "status": "available", "note": "Broadly available"},
+        "A100-80GB": {"weeks": 1, "status": "available", "note": "Commodity"},
+        "A100-40GB": {"weeks": 1, "status": "available", "note": "Commodity"},
+        "MI300X": {"weeks": 10, "status": "limited", "note": "Ramping production"},
+        "MI325X": {"weeks": 14, "status": "limited", "note": "Recently launched"},
+        "L40S": {"weeks": 1, "status": "available", "note": "Broadly available"},
+        "L4": {"weeks": 1, "status": "available", "note": "Broadly available"},
+        "RTX-4090": {"weeks": 1, "status": "available", "note": "Consumer stock available"},
+        "T4": {"weeks": 1, "status": "available", "note": "Commodity"}
+    }
 }
 
 # ============================================================================
