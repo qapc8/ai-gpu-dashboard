@@ -757,7 +757,7 @@ body {
   </div>
   <div class="grid g-6-4 mb">
     <div class="card">
-      <div class="card-hd"><span class="card-hd-title">GPU Pricing Overview</span><span class="dim" style="font-size:10px;font-family:var(--mono);">Cloud vs Marketplace — on-demand $/hr</span></div>
+      <div class="card-hd"><span class="card-hd-title">GPU Pricing Overview</span><span class="dim" style="font-size:10px;font-family:var(--mono);">On-demand price range across all providers</span></div>
       <div class="card-bd-flush"><table class="dt" id="overviewTopTable"></table></div>
     </div>
     <div class="ai-panel">
@@ -1640,47 +1640,47 @@ function renderOverviewLeadChart() {
 }
 
 function renderOverviewTable() {
-  const m = DATA.matrix, prov = DATA.providers, hist = DATA.historical;
-
-  // Compute cloud vs marketplace best price per GPU
-  const pricing = {};
-  m.forEach(r => {
-    const gid = r.gpu_id;
-    let cloudBest = null, cloudProv = '', mktBest = null, mktProv = '';
-    for (const [pName, pInfo] of Object.entries(prov)) {
-      if (!pInfo.gpus || !pInfo.gpus[gid]) continue;
-      const price = pInfo.gpus[gid].price_per_gpu_hr;
-      const isCloud = pInfo.type !== 'marketplace';
-      if (isCloud && (cloudBest === null || price < cloudBest)) { cloudBest = price; cloudProv = pName; }
-      if (!isCloud && (mktBest === null || price < mktBest)) { mktBest = price; mktProv = pName; }
-    }
-    // Get last 6 months of avg prices for sparkline
-    const h = hist[gid] || {};
-    const periods = Object.keys(h).sort().slice(-6);
-    const trend = periods.map(p => h[p]?.avg).filter(v => v != null);
-    pricing[gid] = { cloudBest, cloudProv, mktBest, mktProv, trend };
-  });
+  const m = DATA.matrix, hist = DATA.historical;
 
   // SVG sparkline helper
-  const spark = (prices, w=48, h=14) => {
-    if (!prices || prices.length < 2) return '';
+  const spark = (prices, w=52, h=16) => {
+    if (!prices || prices.length < 2) return '<span class="dim">—</span>';
     const mn = Math.min(...prices), mx = Math.max(...prices), rng = mx - mn || 1;
     const pts = prices.map((p,i) => `${(i/(prices.length-1))*w},${h-((p-mn)/rng)*(h-2)-1}`).join(' ');
     const clr = prices[prices.length-1] <= prices[0] ? 'var(--green)' : 'var(--red)';
     return `<svg width="${w}" height="${h}" style="vertical-align:middle;"><polyline points="${pts}" fill="none" stroke="${clr}" stroke-width="1.5"/></svg>`;
   };
 
-  let h = '<thead><tr><th>GPU</th><th class="r">VRAM</th><th class="r">Cloud Best</th><th>Provider</th><th class="r">Mkt Best</th><th>Provider</th><th class="r">Avg</th><th class="r">MoM</th><th class="r">TFLOPS/$</th><th>6mo Trend</th></tr></thead><tbody>';
+  // Price bar helper — visual range indicator
+  const priceBar = (low, avg, high) => {
+    if (!high || high === low) return '';
+    const pct = ((avg - low) / (high - low)) * 100;
+    return `<div style="width:60px;height:4px;background:var(--bg-4);border-radius:2px;display:inline-block;vertical-align:middle;margin-left:6px;position:relative;">` +
+      `<div style="position:absolute;left:0;top:0;height:100%;width:100%;border-radius:2px;background:linear-gradient(90deg,var(--green),var(--amber),var(--red));opacity:0.3;"></div>` +
+      `<div style="position:absolute;left:${pct}%;top:-2px;width:3px;height:8px;background:var(--text-0);border-radius:1px;transform:translateX(-50%);"></div></div>`;
+  };
+
+  let h = '<thead><tr><th>GPU</th><th class="r">VRAM</th><th class="r">From</th><th class="r">Avg</th><th class="r">To</th><th>Range</th><th class="r">Providers</th><th class="r">MoM</th><th class="r">TFLOPS/$</th><th>6mo</th></tr></thead><tbody>';
   m.forEach(r => {
-    const p = pricing[r.gpu_id];
     const mc = r.monthly_change_pct < 0 ? 'c-green' : r.monthly_change_pct > 0 ? 'c-red' : '';
-    const cloudCell = p.cloudBest != null
-      ? `<td class="r c-blue fw">$${p.cloudBest.toFixed(2)}</td><td>${p.cloudProv}</td>`
-      : '<td class="r dim">—</td><td class="dim">—</td>';
-    const mktCell = p.mktBest != null
-      ? `<td class="r c-amber fw">$${p.mktBest.toFixed(2)}</td><td>${p.mktProv}</td>`
-      : '<td class="r dim">—</td><td class="dim">—</td>';
-    h += `<tr><td class="gpu-name">${r.name}</td><td class="r">${r.vram_gb}GB</td>${cloudCell}${mktCell}<td class="r">$${r.avg_price.toFixed(2)}</td><td class="r ${mc}">${r.monthly_change_pct>0?'+':''}${r.monthly_change_pct}%</td><td class="r c-purple">${r.flops_per_dollar}</td><td>${spark(p.trend)}</td></tr>`;
+    const momSign = r.monthly_change_pct > 0 ? '+' : '';
+    // Get trend data
+    const hd = hist[r.gpu_id] || {};
+    const periods = Object.keys(hd).sort().slice(-6);
+    const trend = periods.map(p => hd[p]?.avg).filter(v => v != null);
+
+    h += `<tr>` +
+      `<td class="gpu-name">${r.name}</td>` +
+      `<td class="r">${r.vram_gb}GB</td>` +
+      `<td class="r c-green fw">$${r.cheapest_price.toFixed(2)}</td>` +
+      `<td class="r fw">$${r.avg_price.toFixed(2)}</td>` +
+      `<td class="r c-red">$${r.most_expensive.toFixed(2)}</td>` +
+      `<td>${priceBar(r.cheapest_price, r.avg_price, r.most_expensive)}</td>` +
+      `<td class="r c-cyan">${r.num_providers}</td>` +
+      `<td class="r ${mc}">${momSign}${r.monthly_change_pct}%</td>` +
+      `<td class="r c-purple">${r.flops_per_dollar}</td>` +
+      `<td>${spark(trend)}</td>` +
+      `</tr>`;
   });
   h += '</tbody>';
   document.getElementById('overviewTopTable').innerHTML = h;
