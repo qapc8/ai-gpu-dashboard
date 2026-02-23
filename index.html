@@ -743,14 +743,13 @@ body {
 <div class="nav" id="navTabs">
   <div class="nav-item active" data-tab="overview">Overview</div>
   <div class="nav-item" data-tab="pricing">Pricing</div>
-  <div class="nav-item" data-tab="trends">Trends</div>
+  <div class="nav-item" data-tab="trends">Trends & Forecast</div>
   <div class="nav-item" data-tab="providers">Providers</div>
   <div class="nav-item" data-tab="regional">Regional</div>
   <div class="nav-item" data-tab="inference">Inference</div>
   <div class="nav-item" data-tab="tco">TCO</div>
   <div class="nav-item" data-tab="workloads">Workloads</div>
   <div class="nav-item" data-tab="efficiency">Efficiency</div>
-  <div class="nav-item" data-tab="forecasting">Forecasting</div>
   <div class="nav-item" data-tab="sustainability">Sustainability</div>
   <div class="nav-item" data-tab="model-fit">Model Fit</div>
   <div class="nav-item" data-tab="ai-analysis">AI Analysis</div>
@@ -844,18 +843,13 @@ body {
 
 <!-- ── TRENDS ── -->
 <div class="tab-panel" id="tab-trends">
-  <div class="grid g-2 mb">
-    <div class="card">
-      <div class="card-hd">
-        <span class="card-hd-title">Historical Price Trends</span>
-        <select class="ctrl-select" id="trendGpuSelect" onchange="updateTrendChart()"></select>
-      </div>
-      <div class="card-bd"><div class="chart-wrap" style="height:340px;"><canvas id="chartTrends"></canvas></div></div>
+  <div class="kpi-strip mb" id="trendForecastStats"></div>
+  <div class="card mb">
+    <div class="card-hd">
+      <span class="card-hd-title">Historical Prices + Forecast</span>
+      <select class="ctrl-select" id="trendGpuSelect" onchange="updateTrendChart()"></select>
     </div>
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">GPU Market Price Index</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:340px;"><canvas id="chartPriceIndex"></canvas></div></div>
-    </div>
+    <div class="card-bd"><div class="chart-wrap" style="height:360px;"><canvas id="chartTrends"></canvas></div></div>
   </div>
   <div class="grid g-2 mb">
     <div class="card">
@@ -863,8 +857,18 @@ body {
       <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartDecay"></canvas></div></div>
     </div>
     <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Market Supply &amp; Competition</span></div>
+      <div class="card-hd"><span class="card-hd-title">12-Month Price Targets</span></div>
+      <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartForecast"></canvas></div></div>
+    </div>
+  </div>
+  <div class="grid g-2 mb">
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">Market Supply &amp; Shipments</span></div>
       <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartMarketSupply"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">Competitive Moat Radar</span></div>
+      <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartMoatRadar"></canvas></div></div>
     </div>
   </div>
 </div>
@@ -1041,29 +1045,6 @@ body {
 </div>
 
 <!-- ── FORECASTING ── -->
-<div class="tab-panel" id="tab-forecasting">
-  <div class="kpi-strip mb" id="forecastStats"></div>
-  <div class="grid g-2 mb">
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Price Forecasts (3/6/12 Month)</span></div><div class="card-bd" style="height:360px;"><canvas id="chartForecast"></canvas></div></div>
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Price Elasticity Coefficients</span></div><div class="card-bd" style="height:360px;"><canvas id="chartElasticity"></canvas></div></div>
-  </div>
-  <div class="grid g-2 mb">
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Competitive Moat Radar</span></div><div class="card-bd" style="height:360px;"><canvas id="chartMoatRadar"></canvas></div></div>
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Market Share Trends</span></div><div class="card-bd" style="height:360px;"><canvas id="chartMoatShare"></canvas></div></div>
-  </div>
-  <div class="card mb">
-    <div class="card-hd"><span class="card-hd-title">Competitive Landscape Detail</span></div>
-    <div class="card-bd"><div id="competitiveTable"></div></div>
-  </div>
-  <div class="card" style="border-color:var(--purple-dim);">
-    <div class="card-hd" style="background:var(--bg-3);">
-      <span class="card-hd-title" style="color:var(--purple);">AI Price Forecast & Competitive Analysis</span>
-      <div style="display:flex;gap:6px;align-items:center;">
-        <button class="btn" onclick="loadAI('forecast');document.querySelector('[data-tab=ai-analysis]').click();" style="font-size:10px;">View in AI Hub</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- ── SUSTAINABILITY ── -->
 <div class="tab-panel" id="tab-sustainability">
@@ -1385,7 +1366,6 @@ function renderAll() {
   renderInferenceTab();
   renderTcoTab();
   renderEfficiencyTab();
-  renderForecastingTab();
   renderSustainabilityTab();
   renderModelFitTab();
   renderSentimentPanel();
@@ -1862,57 +1842,91 @@ function renderPriceMatrix() {
 // TRENDS
 // ════════════════════════════════════════════════════════════════
 function renderTrendsTab() {
-  updateTrendChart();
-  renderPriceIndexChart();
-  renderDecayChart();
-  renderMarketSupplyChart();
-}
+  const fc=DATA.forecasts||{};
+  const gpuIds=Object.keys(fc);
 
-function renderPriceIndexChart() {
-  const hist=DATA.historical, specs=DATA.specs, gpus=Object.keys(hist);
-  const ap=new Set(); gpus.forEach(g=>Object.keys(hist[g]).forEach(p=>ap.add(p)));
-  const periods=[...ap].sort();
-  // Mean $/hr
-  const means=periods.map(p=>{
-    const vals=gpus.map(g=>hist[g]?.[p]?.avg).filter(v=>v!=null);
-    return vals.length? +(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(3) : null;
-  });
-  // Mean $/TFLOPS (lower = better value) — cents per TFLOPS
-  const cptf=periods.map(p=>{
-    const vals=gpus.map(g=>{const a=hist[g]?.[p]?.avg,tf=specs[g]?.fp16_tflops;return (a!=null&&tf)?a/tf*100:null;}).filter(v=>v!=null);
-    return vals.length? +(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2) : null;
-  });
-  // Mean $/GB VRAM (lower = better) — cents per GB
-  const cpgb=periods.map(p=>{
-    const vals=gpus.map(g=>{const a=hist[g]?.[p]?.avg,vr=specs[g]?.vram_gb;return (a!=null&&vr)?a/vr*100:null;}).filter(v=>v!=null);
-    return vals.length? +(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2) : null;
-  });
-  if(charts.pi) charts.pi.destroy();
-  charts.pi = new Chart(document.getElementById('chartPriceIndex'),{type:'line',
-    data:{labels:periods,datasets:[
-      {label:'Avg $/hr',data:means,borderColor:C.cyan,backgroundColor:C.cyan+'18',fill:true,tension:0.35,borderWidth:2,pointRadius:1.5,yAxisID:'y'},
-      {label:'¢/TFLOPS',data:cptf,borderColor:C.green,tension:0.35,borderWidth:1.5,pointRadius:1,borderDash:[4,3],yAxisID:'y1'},
-      {label:'¢/GB VRAM',data:cpgb,borderColor:C.amber,tension:0.35,borderWidth:1.5,pointRadius:1,borderDash:[6,3],yAxisID:'y1'}
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:8,padding:10}},title:{display:true,text:'GPU Market Price Index',color:C.cyan,font:{size:12}}},
-      scales:{y:{position:'left',title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}},
-              y1:{position:'right',title:{display:true,text:'¢/TFLOPS · ¢/GB'},grid:{display:false}},
-              x:{grid:{display:false}}}}
-  });
+  // KPIs
+  if(gpuIds.length) {
+    const avgPrice=gpuIds.reduce((s,g)=>s+fc[g].current_avg,0)/gpuIds.length;
+    const avgDrop=gpuIds.reduce((s,g)=>s+((fc[g].current_avg-fc[g].forecast_12mo.mid)/fc[g].current_avg)*100,0)/gpuIds.length;
+    const bigDrop=gpuIds.reduce((a,b)=>{
+      const da=(fc[a].current_avg-fc[a].forecast_12mo.mid)/fc[a].current_avg;
+      const db=(fc[b].current_avg-fc[b].forecast_12mo.mid)/fc[b].current_avg;
+      return da>db?a:b;
+    });
+    const bigPct=((fc[bigDrop].current_avg-fc[bigDrop].forecast_12mo.mid)/fc[bigDrop].current_avg*100).toFixed(0);
+    const mostEl=gpuIds.reduce((a,b)=>fc[a].elasticity_coefficient<fc[b].elasticity_coefficient?a:b);
+    document.getElementById('trendForecastStats').innerHTML=`
+      <div class="kpi kpi-cyan"><div class="kpi-label">Avg GPU Price</div><div class="kpi-value">$${avgPrice.toFixed(2)}/hr</div><div class="kpi-sub">Across ${gpuIds.length} tracked GPUs</div></div>
+      <div class="kpi kpi-amber"><div class="kpi-label">12mo Outlook</div><div class="kpi-value">-${avgDrop.toFixed(0)}%</div><div class="kpi-sub">Avg projected decline</div></div>
+      <div class="kpi kpi-red"><div class="kpi-label">Biggest 12mo Drop</div><div class="kpi-value">${bigDrop}</div><div class="kpi-sub">-${bigPct}% projected</div></div>
+      <div class="kpi kpi-green"><div class="kpi-label">Most Elastic</div><div class="kpi-value">${mostEl}</div><div class="kpi-sub">Coeff: ${fc[mostEl].elasticity_coefficient}</div></div>`;
+  }
+
+  updateTrendChart();
+  renderDecayChart();
+  renderForecastBarsChart();
+  renderMarketSupplyChart();
+  renderMoatRadar();
 }
 
 function updateTrendChart() {
   const sel=document.getElementById('trendGpuSelect');
   const gpuId=sel.value; const hist=DATA.historical[gpuId]; if(!hist) return;
-  const p=Object.keys(hist).sort();
+  const fc=DATA.forecasts||{};
+  const periods=Object.keys(hist).sort();
+  const lastPeriod=periods[periods.length-1];
+
+  // Build datasets: historical solid lines
+  const datasets=[
+    {label:'Average',data:periods.map(k=>hist[k].avg),borderColor:C.cyan,backgroundColor:C.cyan+'18',fill:true,tension:0.35,borderWidth:2},
+    {label:'Min',data:periods.map(k=>hist[k].min),borderColor:C.green,borderDash:[5,5],tension:0.35,borderWidth:1,pointRadius:0},
+    {label:'Max',data:periods.map(k=>hist[k].max),borderColor:C.red,borderDash:[5,5],tension:0.35,borderWidth:1,pointRadius:0},
+  ];
+
+  // Extend with forecast if available
+  const labels=[...periods];
+  const f=fc[gpuId];
+  if(f) {
+    const lastAvg=hist[lastPeriod].avg;
+    // Add forecast points at 3, 6, 12 months out
+    const [y,mo]=lastPeriod.split('-').map(Number);
+    const fmtDate=(y,m)=>{if(m>12){y+=Math.floor((m-1)/12);m=((m-1)%12)+1;} return y+'-'+String(m).padStart(2,'0');};
+    const fp=[{off:3,d:f.forecast_3mo},{off:6,d:f.forecast_6mo},{off:12,d:f.forecast_12mo}];
+
+    // Forecast mid line (dashed, extends from last avg)
+    const fcMid=new Array(periods.length).fill(null);
+    fcMid[fcMid.length-1]=lastAvg; // connect to last historical point
+    const fcLow=new Array(periods.length).fill(null);
+    const fcHigh=new Array(periods.length).fill(null);
+    const floorArr=new Array(periods.length).fill(null);
+
+    fp.forEach(({off,d})=>{
+      const lbl=fmtDate(y,mo+off);
+      labels.push(lbl);
+      datasets[0].data.push(null); // avg
+      datasets[1].data.push(null); // min
+      datasets[2].data.push(null); // max
+      fcMid.push(d.mid);
+      fcLow.push(d.low);
+      fcHigh.push(d.high);
+      floorArr.push(f.price_floor);
+    });
+
+    datasets.push({label:'Forecast (mid)',data:fcMid,borderColor:C.purple,borderDash:[6,4],tension:0.35,borderWidth:2.5,pointRadius:5,pointBackgroundColor:C.purple});
+    datasets.push({label:'Forecast range',data:fcHigh,borderColor:C.purple+'40',backgroundColor:C.purple+'12',fill:'+1',tension:0.35,borderWidth:1,pointRadius:0});
+    datasets.push({label:'_low',data:fcLow,borderColor:C.purple+'40',tension:0.35,borderWidth:1,pointRadius:0});
+    datasets.push({label:'Price floor',data:floorArr,borderColor:C.red+'80',borderDash:[3,3],borderWidth:1.5,pointRadius:0,fill:false});
+  }
+
   if(charts.tr) charts.tr.destroy();
   charts.tr = new Chart(document.getElementById('chartTrends'),{type:'line',
-    data:{labels:p,datasets:[
-      {label:'Average',data:p.map(k=>hist[k].avg),borderColor:C.cyan,backgroundColor:C.cyan+'18',fill:true,tension:0.35,borderWidth:2},
-      {label:'Min',data:p.map(k=>hist[k].min),borderColor:C.green,borderDash:[5,5],tension:0.35,borderWidth:1,pointRadius:0},
-      {label:'Max',data:p.map(k=>hist[k].max),borderColor:C.red,borderDash:[5,5],tension:0.35,borderWidth:1,pointRadius:0},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{title:{display:true,text:gpuId+' Price Band ($/hr)',color:C.cyan,font:{size:12}}},scales:{y:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
+    data:{labels,datasets},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10},filter:item=>!item.text.startsWith('_')}},
+        title:{display:true,text:gpuId+' — Historical + Forecast ($/hr)',color:C.cyan,font:{size:12}},
+        tooltip:{callbacks:{label:ctx=>{const v=ctx.raw;return v!=null?ctx.dataset.label.replace(/^_/,'')+': $'+v.toFixed(2)+'/hr':'';}}}},
+      scales:{y:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false},ticks:{maxRotation:45,font:{size:9}}}}}
   });
 }
 
@@ -1933,6 +1947,23 @@ function renderDecayChart() {
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10}}}},
       scales:{x:{type:'linear',title:{display:true,text:'Months Since Launch'},ticks:{stepSize:6},grid:{display:false}},
         y:{title:{display:true,text:'% of Launch Price'},grid:{color:'rgba(26,34,51,0.4)'}}}}
+  });
+}
+
+function renderForecastBarsChart() {
+  const fc=DATA.forecasts; if(!fc||!Object.keys(fc).length) return;
+  const gpuIds=Object.keys(fc);
+  if(charts.pfc) charts.pfc.destroy();
+  charts.pfc=new Chart(document.getElementById('chartForecast'),{type:'bar',
+    data:{labels:gpuIds,datasets:[
+      {label:'Current',data:gpuIds.map(g=>fc[g].current_avg),backgroundColor:C.blue+'70',borderColor:C.blue,borderWidth:1},
+      {label:'3mo',data:gpuIds.map(g=>fc[g].forecast_3mo.mid),backgroundColor:C.cyan+'70',borderColor:C.cyan,borderWidth:1},
+      {label:'6mo',data:gpuIds.map(g=>fc[g].forecast_6mo.mid),backgroundColor:C.amber+'70',borderColor:C.amber,borderWidth:1},
+      {label:'12mo',data:gpuIds.map(g=>fc[g].forecast_12mo.mid),backgroundColor:C.green+'70',borderColor:C.green,borderWidth:1},
+      {label:'Floor',data:gpuIds.map(g=>fc[g].price_floor),type:'line',borderColor:C.red,borderDash:[5,5],pointRadius:4,borderWidth:2,fill:false},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:8,font:{size:9}}}},
+      scales:{y:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false},ticks:{font:{size:9}}}}}
   });
 }
 
@@ -1960,6 +1991,19 @@ function renderMarketSupplyChart() {
       scales:{y:{title:{display:true,text:'Shipments (K)'},grid:{color:'rgba(26,34,51,0.4)'}},
         y1:{position:'right',max:30,title:{display:true,text:'AMD Share %'},grid:{display:false}},
         x:{grid:{display:false}}}}
+  });
+}
+
+function renderMoatRadar() {
+  const comp=DATA.competitive;
+  if(!comp||!Object.keys(comp).length) return;
+  const vendors=Object.keys(comp);
+  const dims=['performance_score','ecosystem_maturity','software_compatibility','price_performance_ratio','moat_strength_score'];
+  const dimLabels=['Performance','Ecosystem','Software','Price/Perf','Moat Strength'];
+  if(charts.mrd) charts.mrd.destroy();
+  charts.mrd=new Chart(document.getElementById('chartMoatRadar'),{type:'radar',
+    data:{labels:dimLabels,datasets:vendors.map((v,i)=>({label:v.replace('_',' '),data:dims.map(d=>comp[v][d]),borderColor:CL[i],backgroundColor:CL[i]+'18',pointBackgroundColor:CL[i],borderWidth:2}))},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:8,font:{size:9}}}},scales:{r:{min:0,max:100,ticks:{stepSize:25,color:'#5c6980'},grid:{color:'rgba(26,34,51,0.4)'},pointLabels:{color:'#8a95a6',font:{size:10}}}}}
   });
 }
 
@@ -2532,85 +2576,7 @@ function renderEfficiencyTab() {
 // ════════════════════════════════════════════════════════════════
 // FORECASTING TAB
 // ════════════════════════════════════════════════════════════════
-function renderForecastingTab() {
-  const fc=DATA.forecasts, comp=DATA.competitive;
-  if(!fc||!Object.keys(fc).length) return;
-
-  const gpuIds=Object.keys(fc);
-
-  // KPI stats
-  const avgDecline=gpuIds.reduce((s,g)=>s+fc[g].elasticity_coefficient,0)/gpuIds.length;
-  const mostElastic=gpuIds.reduce((a,b)=>fc[a].elasticity_coefficient<fc[b].elasticity_coefficient?a:b);
-  const biggestDrop=gpuIds.reduce((a,b)=>{
-    const da=(fc[a].current_avg-fc[a].forecast_12mo.mid)/fc[a].current_avg;
-    const db=(fc[b].current_avg-fc[b].forecast_12mo.mid)/fc[b].current_avg;
-    return da>db?a:b;
-  });
-  const dropPct=((fc[biggestDrop].current_avg-fc[biggestDrop].forecast_12mo.mid)/fc[biggestDrop].current_avg*100).toFixed(0);
-  document.getElementById('forecastStats').innerHTML=`
-    <div class="kpi kpi-blue"><div class="kpi-label">Avg Elasticity</div><div class="kpi-value">${avgDecline.toFixed(2)}</div><div class="kpi-sub">Price sensitivity coefficient</div></div>
-    <div class="kpi kpi-red"><div class="kpi-label">Most Elastic</div><div class="kpi-value">${mostElastic}</div><div class="kpi-sub">Coeff: ${fc[mostElastic].elasticity_coefficient}</div></div>
-    <div class="kpi kpi-amber"><div class="kpi-label">Biggest 12mo Decline</div><div class="kpi-value">${biggestDrop}</div><div class="kpi-sub">-${dropPct}% projected</div></div>
-    <div class="kpi kpi-green"><div class="kpi-label">GPUs Tracked</div><div class="kpi-value">${gpuIds.length}</div><div class="kpi-sub">With forecast models</div></div>`;
-
-  // Price forecast chart
-  if(charts.pfc) charts.pfc.destroy();
-  charts.pfc=new Chart(document.getElementById('chartForecast'),{type:'bar',
-    data:{labels:gpuIds,datasets:[
-      {label:'Current',data:gpuIds.map(g=>fc[g].current_avg),backgroundColor:C.blue+'70',borderColor:C.blue,borderWidth:1},
-      {label:'3mo Forecast',data:gpuIds.map(g=>fc[g].forecast_3mo.mid),backgroundColor:C.cyan+'70',borderColor:C.cyan,borderWidth:1},
-      {label:'6mo Forecast',data:gpuIds.map(g=>fc[g].forecast_6mo.mid),backgroundColor:C.amber+'70',borderColor:C.amber,borderWidth:1},
-      {label:'12mo Forecast',data:gpuIds.map(g=>fc[g].forecast_12mo.mid),backgroundColor:C.green+'70',borderColor:C.green,borderWidth:1},
-      {label:'Price Floor',data:gpuIds.map(g=>fc[g].price_floor),type:'line',borderColor:C.red,borderDash:[5,5],pointRadius:4,borderWidth:2,fill:false},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
-  });
-
-  // Elasticity chart
-  if(charts.elc) charts.elc.destroy();
-  const sorted=[...gpuIds].sort((a,b)=>fc[a].elasticity_coefficient-fc[b].elasticity_coefficient);
-  charts.elc=new Chart(document.getElementById('chartElasticity'),{type:'bar',
-    data:{labels:sorted,datasets:[{label:'Elasticity Coefficient',data:sorted.map(g=>fc[g].elasticity_coefficient),backgroundColor:sorted.map(g=>fc[g].elasticity_coefficient<-0.4?C.red+'70':fc[g].elasticity_coefficient<-0.25?C.amber+'70':C.green+'70'),borderColor:sorted.map(g=>fc[g].elasticity_coefficient<-0.4?C.red:fc[g].elasticity_coefficient<-0.25?C.amber:C.green),borderWidth:1}]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:'More negative = more price sensitive',color:'#5c6980'}},scales:{x:{title:{display:true,text:'Elasticity'},grid:{color:'rgba(26,34,51,0.4)'}},y:{grid:{display:false}}}}
-  });
-
-  // Competitive moat radar
-  if(comp&&Object.keys(comp).length) {
-    const vendors=Object.keys(comp);
-    const dims=['performance_score','ecosystem_maturity','software_compatibility','price_performance_ratio','moat_strength_score'];
-    const dimLabels=['Performance','Ecosystem','Software','Price/Perf','Moat Strength'];
-    if(charts.mrd) charts.mrd.destroy();
-    charts.mrd=new Chart(document.getElementById('chartMoatRadar'),{type:'radar',
-      data:{labels:dimLabels,datasets:vendors.map((v,i)=>({label:v.replace('_',' '),data:dims.map(d=>comp[v][d]),borderColor:CL[i],backgroundColor:CL[i]+'18',pointBackgroundColor:CL[i],borderWidth:2}))},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{r:{min:0,max:100,ticks:{stepSize:25,color:'#5c6980'},grid:{color:'rgba(26,34,51,0.4)'},pointLabels:{color:'#8a95a6',font:{size:11}}}}}
-    });
-
-    // Market share trend
-    const periods=['2022','2023','2024','H1-25','2025'];
-    if(charts.msh) charts.msh.destroy();
-    charts.msh=new Chart(document.getElementById('chartMoatShare'),{type:'line',
-      data:{labels:periods,datasets:vendors.map((v,i)=>({label:v.replace('_',' '),data:comp[v].market_share_trend,borderColor:CL[i],tension:0.3,pointRadius:4,borderWidth:2.5,fill:false}))},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'Market Share %'},grid:{color:'rgba(26,34,51,0.4)'},max:100},x:{grid:{display:false}}}}
-    });
-
-    // Competitive table
-    let h='<table class="dt"><thead><tr><th>Vendor</th><th>Perf</th><th>Ecosystem</th><th>Software</th><th>Price/Perf</th><th>Moat</th><th>Share</th><th>Products</th></tr></thead><tbody>';
-    vendors.forEach(v=>{
-      const d=comp[v];
-      const sc=c=>c>=80?'var(--green)':c>=60?'var(--amber)':'var(--red)';
-      h+=`<tr><td style="color:var(--cyan);font-weight:700;">${v.replace('_',' ')}</td>
-        <td style="color:${sc(d.performance_score)}">${d.performance_score}</td>
-        <td style="color:${sc(d.ecosystem_maturity)}">${d.ecosystem_maturity}</td>
-        <td style="color:${sc(d.software_compatibility)}">${d.software_compatibility}</td>
-        <td style="color:${sc(d.price_performance_ratio)}">${d.price_performance_ratio}</td>
-        <td style="color:${sc(d.moat_strength_score)};font-weight:700;">${d.moat_strength_score}</td>
-        <td>${d.market_share_pct}%</td>
-        <td style="font-size:10px;">${d.key_products.join(', ')}</td></tr>`;
-    });
-    h+='</tbody></table>';
-    document.getElementById('competitiveTable').innerHTML=h;
-  }
-}
+// renderForecastingTab merged into renderTrendsTab above
 
 // ════════════════════════════════════════════════════════════════
 // SUSTAINABILITY TAB
