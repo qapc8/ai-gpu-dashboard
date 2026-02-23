@@ -871,7 +871,7 @@ body {
   </div>
   <div class="grid g-2 mb">
     <div class="card">
-      <div class="card-hd"><span class="card-hd-title" id="providerChartTitle">Price Comparison</span><span class="card-hd-badge" style="background:var(--blue-dim);color:var(--blue);">Cloud</span><span class="card-hd-badge" style="background:var(--amber-dim);color:var(--amber);margin-left:4px;">Marketplace</span></div>
+      <div class="card-hd"><span class="card-hd-title" id="providerChartTitle">Price Comparison</span><span class="card-hd-badge" style="background:var(--cyan-dim,rgba(34,211,238,0.12));color:var(--cyan,#22d3ee);">Cloud</span><span class="card-hd-badge" style="background:var(--amber-dim);color:var(--amber);margin-left:4px;">Marketplace</span></div>
       <div class="card-bd"><div class="chart-wrap" style="height:340px;"><canvas id="chartProviders"></canvas></div></div>
     </div>
     <div class="card">
@@ -1933,17 +1933,23 @@ function updateProviderView() {
   const cloudRows = rows.filter(r => r.type === 'cloud');
   const mktRows = rows.filter(r => r.type === 'marketplace');
 
-  // Bar chart: color-coded by type (blue=cloud, amber=marketplace)
+  // Horizontal range bars: best price → on-demand per provider
   if(charts.pv) charts.pv.destroy();
+  const rangeData=rows.map(r=>{
+    const best=Math.min(r.ondemand, r.spot||Infinity, r.res3||Infinity, r.res1||Infinity);
+    return [+best.toFixed(3), +r.ondemand.toFixed(3)];
+  });
   charts.pv = new Chart(document.getElementById('chartProviders'),{type:'bar',
-    data:{labels:rows.map(r=>r.provider),datasets:[{label:'On-Demand $/hr',data:rows.map(r=>r.ondemand),
-      backgroundColor:rows.map(r=> r.type==='marketplace' ? C.amber+'70' : (PC[r.provider]||C.blue)+'70'),
-      borderColor:rows.map(r=> r.type==='marketplace' ? C.amber : (PC[r.provider]||C.blue)),borderWidth:1,
-      borderDash: rows.map(r=> r.type==='marketplace' ? [3,3] : [])
+    data:{labels:rows.map(r=>r.provider),datasets:[{label:'Price Range $/hr',data:rangeData,
+      backgroundColor:rows.map(r=> r.type==='marketplace' ? C.amber+'60' : C.cyan+'60'),
+      borderColor:rows.map(r=> r.type==='marketplace' ? C.amber : C.cyan),borderWidth:1,borderSkipped:false
     }]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
-      tooltip:{callbacks:{afterLabel:(ctx)=>rows[ctx.dataIndex]?.type==='marketplace'?'(Marketplace)':'(Cloud Provider)'}}},
-      scales:{y:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+      tooltip:{callbacks:{
+        label:(ctx)=>{const r=rows[ctx.dataIndex],d=ctx.raw;return `Best: $${d[0].toFixed(2)} → On-Demand: $${d[1].toFixed(2)}`;},
+        afterLabel:(ctx)=>{const r=rows[ctx.dataIndex];const save=((1-ctx.raw[0]/ctx.raw[1])*100);return (r.type==='marketplace'?'Marketplace':'Cloud')+(save>0?' · Save up to '+save.toFixed(0)+'%':'');}
+      }}},
+      scales:{x:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}},y:{grid:{display:false}}}}
   });
 
   // Grouped bar: on-demand/spot/reserved
@@ -2126,12 +2132,14 @@ function calcCost() {
 // ════════════════════════════════════════════════════════════════
 function populateSelectors() {
   const gpus=Object.keys(DATA.specs), provs=Object.keys(DATA.providers);
+  const provGpus=new Set(); Object.values(DATA.providers).forEach(p=>{if(p.gpus)Object.keys(p.gpus).forEach(g=>provGpus.add(g));});
   [document.getElementById('trendGpuSelect'),document.getElementById('providerGpuSelect'),
    document.getElementById('calcGpu'),document.getElementById('aiGpuSelect')].forEach(sel=>{
     if(!sel) return;
     const ex=sel.value, hb=sel.id==='aiGpuSelect';
+    const isProv=sel.id==='providerGpuSelect';
     sel.innerHTML=(hb?'<option value="">-- Select GPU --</option>':'')+
-      gpus.filter(g=>DATA.historical[g]||sel.id!=='trendGpuSelect')
+      gpus.filter(g=>{if(sel.id==='trendGpuSelect')return DATA.historical[g]; if(isProv)return provGpus.has(g); return true;})
         .map(g=>`<option value="${g}" ${g===ex?'selected':''}>${DATA.specs[g]?.name||g}</option>`).join('');
     if(!ex&&!hb&&sel.options.length) sel.value=sel.options[0].value;
   });
