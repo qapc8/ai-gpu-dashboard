@@ -748,10 +748,9 @@ body {
   <div class="nav-item" data-tab="regional">Regional</div>
   <div class="nav-item" data-tab="inference">Inference</div>
   <div class="nav-item" data-tab="tco">TCO</div>
-  <div class="nav-item" data-tab="workloads">Workloads</div>
+  <div class="nav-item" data-tab="workloads">Workloads & Fit</div>
   <div class="nav-item" data-tab="efficiency">Efficiency</div>
   <div class="nav-item" data-tab="sustainability">Sustainability</div>
-  <div class="nav-item" data-tab="model-fit">Model Fit</div>
   <div class="nav-item" data-tab="ai-analysis">AI Analysis</div>
   <div class="nav-item" data-tab="data-audit">Data</div>
 </div>
@@ -981,16 +980,17 @@ body {
   </div>
 </div>
 
-<!-- ── WORKLOADS ── -->
+<!-- ── WORKLOADS & FIT ── -->
 <div class="tab-panel" id="tab-workloads">
+  <div class="kpi-strip mb" id="fitStats"></div>
   <div class="card mb">
     <div class="card-hd"><span class="card-hd-title">Workload-Based GPU Recommendations</span></div>
     <div class="card-bd-flush"><table class="dt" id="workloadTable"></table></div>
   </div>
-  <div class="grid g-2">
+  <div class="grid g-2 mb">
     <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Monthly Cost by Workload</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:340px;"><canvas id="chartWorkloadCost"></canvas></div></div>
+      <div class="card-hd"><span class="card-hd-title">Throughput vs Cost Frontier</span></div>
+      <div class="card-bd"><div class="chart-wrap" style="height:340px;"><canvas id="chartFitFrontier"></canvas></div></div>
     </div>
     <div class="card">
       <div class="card-hd"><span class="card-hd-title">Cost Calculator</span></div>
@@ -1016,6 +1016,10 @@ body {
         <div id="calcResult" style="background:var(--bg-3);border-radius:var(--radius-sm);padding:16px;font-family:var(--mono);border:1px solid var(--border-0);"></div>
       </div>
     </div>
+  </div>
+  <div class="card">
+    <div class="card-hd"><span class="card-hd-title">Model-to-Hardware Fit Matrix</span></div>
+    <div class="card-bd"><div id="fitTable"></div></div>
   </div>
 </div>
 
@@ -1071,22 +1075,6 @@ body {
   </div>
 </div>
 
-<!-- ── MODEL FIT ── -->
-<div class="tab-panel" id="tab-model-fit">
-  <div class="kpi-strip mb" id="fitStats"></div>
-  <div class="grid g-2 mb">
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Cost per 1M Tokens by Model Size & GPU</span></div><div class="card-bd" style="height:360px;"><canvas id="chartFitCost"></canvas></div></div>
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Fit Score by Model Size & GPU</span></div><div class="card-bd" style="height:360px;"><canvas id="chartFitScore"></canvas></div></div>
-  </div>
-  <div class="grid g-2 mb">
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Throughput vs Cost Frontier</span></div><div class="card-bd" style="height:340px;"><canvas id="chartFitFrontier"></canvas></div></div>
-    <div class="card"><div class="card-hd"><span class="card-hd-title">VRAM Headroom by Configuration</span></div><div class="card-bd" style="height:340px;"><canvas id="chartFitVram"></canvas></div></div>
-  </div>
-  <div class="card mb">
-    <div class="card-hd"><span class="card-hd-title">Model-to-Hardware Fit Matrix</span></div>
-    <div class="card-bd"><div id="fitTable"></div></div>
-  </div>
-</div>
 
 <!-- ── AI ANALYSIS ── -->
 <div class="tab-panel" id="tab-ai-analysis">
@@ -1367,7 +1355,6 @@ function renderAll() {
   renderTcoTab();
   renderEfficiencyTab();
   renderSustainabilityTab();
-  renderModelFitTab();
   renderSentimentPanel();
   renderDataAudit();
   updateTime();
@@ -2180,24 +2167,77 @@ function renderRegionAdoptionChart(reg, regions) {
 // WORKLOADS
 // ════════════════════════════════════════════════════════════════
 function renderWorkloadsTab() {
-  const wl=DATA.workloads; if(!wl) return;
-  let h=`<thead><tr><th>Workload</th><th>Recommended GPUs</th><th class="r">Min GPUs</th><th class="r">Budget/mo Low</th><th class="r">Budget/mo High</th><th>Best Value</th></tr></thead><tbody>`;
-  const labels=[],lows=[],highs=[];
-  for(const [name,rec] of Object.entries(wl)){
-    labels.push(name); lows.push(rec.budget_monthly_low); highs.push(rec.budget_monthly_high);
-    h+=`<tr><td class="gpu-name">${name}</td><td>${rec.recommended.join(', ')}</td><td class="r">${rec.min_gpus}</td><td class="r c-green">$${rec.budget_monthly_low.toLocaleString()}</td><td class="r c-red">$${rec.budget_monthly_high.toLocaleString()}</td><td class="c-cyan">${rec.best_value}</td></tr>`;
+  const wl=DATA.workloads, mf=DATA.modelfit;
+
+  // KPIs from model fit data
+  if(mf&&Object.keys(mf).length) {
+    const sizes=Object.keys(mf);
+    let bestOverall={score:0,gpu:'',size:''}, cheapest={cost:999,gpu:'',size:''};
+    sizes.forEach(s=>{
+      Object.entries(mf[s].gpus).forEach(([g,d])=>{
+        if(d.fit_score>bestOverall.score) bestOverall={score:d.fit_score,gpu:g,size:s};
+        if(d.cost_per_1m_tokens<cheapest.cost) cheapest={cost:d.cost_per_1m_tokens,gpu:g,size:s};
+      });
+    });
+    document.getElementById('fitStats').innerHTML=`
+      <div class="kpi kpi-green"><div class="kpi-label">Best Overall Fit</div><div class="kpi-value">${bestOverall.gpu}</div><div class="kpi-sub">${bestOverall.size} params · score ${bestOverall.score}</div></div>
+      <div class="kpi kpi-cyan"><div class="kpi-label">Cheapest Inference</div><div class="kpi-value">$${cheapest.cost}</div><div class="kpi-sub">${cheapest.gpu} for ${cheapest.size} models</div></div>
+      <div class="kpi kpi-amber"><div class="kpi-label">Model Sizes</div><div class="kpi-value">${sizes.length}</div><div class="kpi-sub">${sizes.join(', ')}</div></div>
+      <div class="kpi kpi-purple"><div class="kpi-label">Configurations</div><div class="kpi-value">${sizes.reduce((s,sz)=>s+Object.keys(mf[sz].gpus).length,0)}</div><div class="kpi-sub">GPU + model combos tested</div></div>`;
   }
-  h+='</tbody>';
-  document.getElementById('workloadTable').innerHTML=h;
-  if(charts.wc) charts.wc.destroy();
-  charts.wc = new Chart(document.getElementById('chartWorkloadCost'),{type:'bar',
-    data:{labels,datasets:[
-      {label:'Low Budget',data:lows,backgroundColor:C.green+'70',borderColor:C.green,borderWidth:1},
-      {label:'High Budget',data:highs,backgroundColor:C.red+'50',borderColor:C.red,borderWidth:1},
-    ]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},
-      scales:{x:{type:'logarithmic',title:{display:true,text:'$/month (log)'},grid:{color:'rgba(26,34,51,0.4)'}},y:{grid:{display:false}}}}
-  });
+
+  // Workload recommendations table
+  if(wl) {
+    let h=`<thead><tr><th>Workload</th><th>Recommended GPUs</th><th class="r">Min GPUs</th><th class="r">Budget/mo Low</th><th class="r">Budget/mo High</th><th>Best Value</th></tr></thead><tbody>`;
+    for(const [name,rec] of Object.entries(wl)){
+      h+=`<tr><td class="gpu-name">${name}</td><td>${rec.recommended.join(', ')}</td><td class="r">${rec.min_gpus}</td><td class="r c-green">$${rec.budget_monthly_low.toLocaleString()}</td><td class="r c-red">$${rec.budget_monthly_high.toLocaleString()}</td><td class="c-cyan">${rec.best_value}</td></tr>`;
+    }
+    h+='</tbody>';
+    document.getElementById('workloadTable').innerHTML=h;
+  }
+
+  // Throughput vs Cost Frontier scatter
+  if(mf&&Object.keys(mf).length) {
+    const sizes=Object.keys(mf);
+    const scatterData=[];
+    sizes.forEach((s,si)=>{
+      Object.entries(mf[s].gpus).forEach(([g,d])=>{
+        scatterData.push({x:d.cost_per_1m_tokens,y:d.throughput_tok_s,label:`${g} (${s})`,size:s,gpu:g,score:d.fit_score,vram:d.vram_headroom_pct,sizeIdx:si});
+      });
+    });
+    if(charts.fft) charts.fft.destroy();
+    charts.fft=new Chart(document.getElementById('chartFitFrontier'),{type:'scatter',
+      data:{datasets:sizes.map((s,i)=>({
+        label:s+' params',
+        data:scatterData.filter(d=>d.size===s).map(d=>({x:d.x,y:d.y})),
+        backgroundColor:CL[i]+'90',borderColor:CL[i],borderWidth:1.5,pointRadius:7,pointHoverRadius:10,
+      }))},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10}}},
+          tooltip:{callbacks:{label:function(ctx){const d=scatterData.filter(d=>d.size===sizes[ctx.datasetIndex])[ctx.dataIndex];return d?[`${d.gpu}: $${d.x}/M tok, ${d.y} tok/s`,`Fit: ${d.score}/100 · VRAM headroom: ${d.vram}%`]:'';}}}},
+        scales:{x:{title:{display:true,text:'Cost ($/M tokens)'},grid:{color:'rgba(26,34,51,0.4)'}},y:{title:{display:true,text:'Throughput (tok/s)'},grid:{color:'rgba(26,34,51,0.4)'}}}}
+    });
+
+    // Fit matrix table
+    let h='<table class="dt"><thead><tr><th>Model Size</th><th>GPU</th><th>Config</th><th class="r">Throughput</th><th class="r">Cost/1M Tok</th><th class="r">VRAM Headroom</th><th class="r">Fit Score</th><th>Notes</th></tr></thead><tbody>';
+    sizes.forEach(s=>{
+      const entries=Object.entries(mf[s].gpus).sort((a,b)=>b[1].fit_score-a[1].fit_score);
+      entries.forEach(([g,d],idx)=>{
+        const sc=d.fit_score>=85?'var(--green)':d.fit_score>=70?'var(--amber)':'var(--red)';
+        const vr=d.vram_headroom_pct>50?'var(--green)':d.vram_headroom_pct>20?'var(--amber)':'var(--red)';
+        h+=`<tr><td style="color:var(--purple);font-weight:600;">${idx===0?s:''}</td>
+          <td style="color:var(--cyan);font-weight:600;">${g}</td>
+          <td style="font-family:var(--mono);font-size:10px;">${d.optimal_config}</td>
+          <td class="r">${d.throughput_tok_s} tok/s</td>
+          <td class="r" style="font-weight:600;">$${d.cost_per_1m_tokens}</td>
+          <td class="r" style="color:${vr}">${d.vram_headroom_pct}%</td>
+          <td class="r" style="color:${sc};font-weight:700;">${d.fit_score}/100</td>
+          <td style="font-size:10px;color:var(--text-3);">${d.notes}</td></tr>`;
+      });
+    });
+    h+='</tbody></table>';
+    document.getElementById('fitTable').innerHTML=h;
+  }
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -2677,93 +2717,7 @@ function renderSustainabilityTab() {
 // ════════════════════════════════════════════════════════════════
 // MODEL FIT TAB
 // ════════════════════════════════════════════════════════════════
-function renderModelFitTab() {
-  const mf=DATA.modelfit;
-  if(!mf||!Object.keys(mf).length) return;
-
-  const sizes=Object.keys(mf);
-
-  // KPI stats
-  let bestOverall={score:0,gpu:'',size:''};
-  let cheapest={cost:999,gpu:'',size:''};
-  sizes.forEach(s=>{
-    Object.entries(mf[s].gpus).forEach(([g,d])=>{
-      if(d.fit_score>bestOverall.score) bestOverall={score:d.fit_score,gpu:g,size:s};
-      if(d.cost_per_1m_tokens<cheapest.cost) cheapest={cost:d.cost_per_1m_tokens,gpu:g,size:s};
-    });
-  });
-  document.getElementById('fitStats').innerHTML=`
-    <div class="kpi kpi-green"><div class="kpi-label">Best Overall Fit</div><div class="kpi-value">${bestOverall.gpu}</div><div class="kpi-sub">${bestOverall.size} params, score: ${bestOverall.score}</div></div>
-    <div class="kpi kpi-cyan"><div class="kpi-label">Cheapest Inference</div><div class="kpi-value">$${cheapest.cost}</div><div class="kpi-sub">${cheapest.gpu} for ${cheapest.size} models</div></div>
-    <div class="kpi kpi-amber"><div class="kpi-label">Model Sizes</div><div class="kpi-value">${sizes.length}</div><div class="kpi-sub">${sizes.join(', ')} params</div></div>
-    <div class="kpi kpi-purple"><div class="kpi-label">Configurations</div><div class="kpi-value">${sizes.reduce((s,sz)=>s+Object.keys(mf[sz].gpus).length,0)}</div><div class="kpi-sub">GPU+model combos</div></div>`;
-
-  // Cost per 1M tokens by size
-  const allGpus=new Set();
-  sizes.forEach(s=>Object.keys(mf[s].gpus).forEach(g=>allGpus.add(g)));
-  const gpuArr=[...allGpus];
-  if(charts.fcc) charts.fcc.destroy();
-  charts.fcc=new Chart(document.getElementById('chartFitCost'),{type:'bar',
-    data:{labels:sizes.map(s=>s+' params'),datasets:gpuArr.map((g,i)=>({label:g,data:sizes.map(s=>mf[s].gpus[g]?.cost_per_1m_tokens||null),backgroundColor:CL[i%CL.length]+'70',borderColor:CL[i%CL.length],borderWidth:1}))},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'$/M Tokens'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
-  });
-
-  // Fit score chart
-  if(charts.fsc) charts.fsc.destroy();
-  charts.fsc=new Chart(document.getElementById('chartFitScore'),{type:'bar',
-    data:{labels:sizes.map(s=>s+' params'),datasets:gpuArr.map((g,i)=>({label:g,data:sizes.map(s=>mf[s].gpus[g]?.fit_score||null),backgroundColor:CL[i%CL.length]+'70',borderColor:CL[i%CL.length],borderWidth:1}))},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'Fit Score (0-100)'},grid:{color:'rgba(26,34,51,0.4)'},max:100},x:{grid:{display:false}}}}
-  });
-
-  // Throughput vs cost scatter (frontier)
-  const scatterData=[];
-  sizes.forEach((s,si)=>{
-    Object.entries(mf[s].gpus).forEach(([g,d])=>{
-      scatterData.push({x:d.cost_per_1m_tokens,y:d.throughput_tok_s,label:`${g} (${s})`,size:s,gpu:g,sizeIdx:si});
-    });
-  });
-  if(charts.fft) charts.fft.destroy();
-  charts.fft=new Chart(document.getElementById('chartFitFrontier'),{type:'scatter',
-    data:{datasets:sizes.map((s,i)=>({
-      label:s+' params',
-      data:scatterData.filter(d=>d.size===s).map(d=>({x:d.x,y:d.y})),
-      backgroundColor:CL[i]+'90',
-      borderColor:CL[i],
-      borderWidth:1.5,
-      pointRadius:6,
-    }))},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'},tooltip:{callbacks:{label:function(ctx){const d=scatterData.filter(d=>d.size===sizes[ctx.datasetIndex])[ctx.dataIndex];return d?`${d.gpu}: $${d.x}/M tok, ${d.y} tok/s`:'';}}}},
-      scales:{x:{title:{display:true,text:'Cost ($/M tokens)'},grid:{color:'rgba(26,34,51,0.4)'}},y:{title:{display:true,text:'Throughput (tok/s)'},grid:{color:'rgba(26,34,51,0.4)'}}}}
-  });
-
-  // VRAM headroom chart
-  if(charts.fvr) charts.fvr.destroy();
-  const vramData=[];sizes.forEach(s=>{Object.entries(mf[s].gpus).forEach(([g,d])=>{vramData.push({label:`${g}\n(${s})`,val:d.vram_headroom_pct});});});
-  charts.fvr=new Chart(document.getElementById('chartFitVram'),{type:'bar',
-    data:{labels:vramData.map(d=>d.label),datasets:[{label:'VRAM Headroom %',data:vramData.map(d=>d.val),backgroundColor:vramData.map(d=>d.val>50?C.green+'70':d.val>20?C.amber+'70':C.red+'70'),borderColor:vramData.map(d=>d.val>50?C.green:d.val>20?C.amber:C.red),borderWidth:1}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'VRAM Headroom %'},grid:{color:'rgba(26,34,51,0.4)'},max:100},x:{grid:{display:false},ticks:{font:{size:8},maxRotation:90}}}}
-  });
-
-  // Fit matrix table
-  let h='<table class="dt"><thead><tr><th>Model Size</th><th>GPU</th><th>Config</th><th>Throughput</th><th>Cost/1M Tok</th><th>VRAM Headroom</th><th>Fit Score</th><th>Notes</th></tr></thead><tbody>';
-  sizes.forEach(s=>{
-    const entries=Object.entries(mf[s].gpus).sort((a,b)=>b[1].fit_score-a[1].fit_score);
-    entries.forEach(([g,d],idx)=>{
-      const sc=d.fit_score>=85?'var(--green)':d.fit_score>=70?'var(--amber)':'var(--red)';
-      const vr=d.vram_headroom_pct>50?'var(--green)':d.vram_headroom_pct>20?'var(--amber)':'var(--red)';
-      h+=`<tr><td style="color:var(--purple);font-weight:600;">${idx===0?s:''}</td>
-        <td style="color:var(--cyan);font-weight:600;">${g}</td>
-        <td style="font-family:var(--mono);font-size:10px;">${d.optimal_config}</td>
-        <td>${d.throughput_tok_s} tok/s</td>
-        <td style="font-weight:600;">$${d.cost_per_1m_tokens}</td>
-        <td style="color:${vr}">${d.vram_headroom_pct}%</td>
-        <td style="color:${sc};font-weight:700;">${d.fit_score}/100</td>
-        <td style="font-size:10px;color:var(--text-3);">${d.notes}</td></tr>`;
-    });
-  });
-  h+='</tbody></table>';
-  document.getElementById('fitTable').innerHTML=h;
-}
+// renderModelFitTab merged into renderWorkloadsTab above
 
 // ════════════════════════════════════════════════════════════════
 // AI INTELLIGENCE SYSTEM
