@@ -749,8 +749,7 @@ body {
   <div class="nav-item" data-tab="inference">Inference</div>
   <div class="nav-item" data-tab="tco">TCO</div>
   <div class="nav-item" data-tab="workloads">Workloads & Fit</div>
-  <div class="nav-item" data-tab="efficiency">Efficiency</div>
-  <div class="nav-item" data-tab="sustainability">Sustainability</div>
+  <div class="nav-item" data-tab="efficiency">Ops & Sustainability</div>
   <div class="nav-item" data-tab="ai-analysis">AI Analysis</div>
   <div class="nav-item" data-tab="data-audit">Data</div>
 </div>
@@ -1023,55 +1022,24 @@ body {
   </div>
 </div>
 
-<!-- ── EFFICIENCY ── -->
+<!-- ── OPS & SUSTAINABILITY ── -->
 <div class="tab-panel" id="tab-efficiency">
-  <div class="kpi-strip mb" id="effStats"></div>
+  <div class="kpi-strip mb" id="opsStats"></div>
   <div class="grid g-2 mb">
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Utilization by Provider</span></div><div class="card-bd" style="height:320px;"><canvas id="chartUtilByProvider"></canvas></div></div>
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Efficiency Scores</span></div><div class="card-bd" style="height:320px;"><canvas id="chartEfficiency"></canvas></div></div>
+    <div class="card"><div class="card-hd"><span class="card-hd-title">GPU Utilization by Provider</span></div><div class="card-bd" style="height:320px;"><canvas id="chartUtilByProvider"></canvas></div></div>
+    <div class="card"><div class="card-hd"><span class="card-hd-title">Carbon Footprint by GPU (Annual)</span></div><div class="card-bd" style="height:320px;"><canvas id="chartCarbonByGpu"></canvas></div></div>
   </div>
   <div class="grid g-2 mb">
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Utilization Trends (5-month)</span></div><div class="card-bd" style="height:300px;"><canvas id="chartUtilTrend"></canvas></div></div>
+    <div class="card"><div class="card-hd"><span class="card-hd-title">PUE &amp; Green Energy by Provider</span></div><div class="card-bd" style="height:300px;"><canvas id="chartPueGreen"></canvas></div></div>
     <div class="card"><div class="card-hd"><span class="card-hd-title">Reservation Breakeven Analysis</span></div><div class="card-bd" style="height:300px;"><canvas id="chartBreakeven"></canvas></div></div>
   </div>
-  <div class="grid g-2 mb">
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Recommended Allocation by Utilization</span></div><div class="card-bd"><div id="reservationTable"></div></div></div>
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Savings by Commitment Type</span></div><div class="card-bd" style="height:300px;"><canvas id="chartSavings"></canvas></div></div>
+  <div class="card mb">
+    <div class="card-hd"><span class="card-hd-title">Reservation Pricing &amp; Recommended Commitment</span></div>
+    <div class="card-bd"><div id="reservationTable"></div></div>
   </div>
-  <div class="card" style="border-color:var(--purple-dim);">
-    <div class="card-hd" style="background:var(--bg-3);">
-      <span class="card-hd-title" style="color:var(--purple);">AI Efficiency Analysis</span>
-      <div style="display:flex;gap:6px;align-items:center;">
-        <button class="btn" onclick="loadAI('efficiency');document.querySelector('[data-tab=ai-analysis]').click();" style="font-size:10px;">View in AI Hub</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ── FORECASTING ── -->
-
-<!-- ── SUSTAINABILITY ── -->
-<div class="tab-panel" id="tab-sustainability">
-  <div class="kpi-strip mb" id="susStats"></div>
-  <div class="grid g-2 mb">
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Carbon Footprint by GPU (Annual, US avg)</span></div><div class="card-bd" style="height:320px;"><canvas id="chartCarbonByGpu"></canvas></div></div>
-    <div class="card"><div class="card-hd"><span class="card-hd-title">PUE & Green Energy by Provider</span></div><div class="card-bd" style="height:320px;"><canvas id="chartPueGreen"></canvas></div></div>
-  </div>
-  <div class="grid g-2 mb">
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Supply Chain Risk Scores</span></div><div class="card-bd" style="height:300px;"><canvas id="chartSupplyRisk"></canvas></div></div>
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Lead Time Trends (weeks)</span></div><div class="card-bd" style="height:300px;"><canvas id="chartRiskTrend"></canvas></div></div>
-  </div>
-  <div class="grid g-2 mb">
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Sustainability Scores by Region</span></div><div class="card-bd"><div id="sustainabilityTable"></div></div></div>
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Export Control Timeline</span></div><div class="card-bd"><div id="exportControlTable"></div></div></div>
-  </div>
-  <div class="card" style="border-color:var(--purple-dim);">
-    <div class="card-hd" style="background:var(--bg-3);">
-      <span class="card-hd-title" style="color:var(--purple);">AI Sustainability & Risk Analysis</span>
-      <div style="display:flex;gap:6px;align-items:center;">
-        <button class="btn" onclick="loadAI('sustainability');document.querySelector('[data-tab=ai-analysis]').click();" style="font-size:10px;">View in AI Hub</button>
-      </div>
-    </div>
+  <div class="card">
+    <div class="card-hd"><span class="card-hd-title">Export Control &amp; Regulatory Timeline</span></div>
+    <div class="card-bd"><div id="exportControlTable"></div></div>
   </div>
 </div>
 
@@ -1354,7 +1322,6 @@ function renderAll() {
   renderInferenceTab();
   renderTcoTab();
   renderEfficiencyTab();
-  renderSustainabilityTab();
   renderSentimentPanel();
   renderDataAudit();
   updateTime();
@@ -2527,50 +2494,62 @@ function renderTcoTab() {
 // ════════════════════════════════════════════════════════════════
 function renderEfficiencyTab() {
   const util=DATA.utilization, res=DATA.reservations;
-  if(!util||!Object.keys(util).length) return;
+  const sus=DATA.sustainability, sc=DATA.supplychain;
 
-  // KPI stats
-  const gpuIds=Object.keys(util);
-  const avgUtil=gpuIds.reduce((s,g)=>s+(util[g].avg_utilization||0),0)/gpuIds.length;
-  const avgEff=gpuIds.reduce((s,g)=>s+(util[g].avg_efficiency||0),0)/gpuIds.length;
-  const bestGpu=gpuIds.reduce((a,b)=>(util[a].avg_efficiency||0)>(util[b].avg_efficiency||0)?a:b);
-  const bestProvEntries=Object.entries(util[bestGpu]?.providers||{}).filter(e=>e[1]?.efficiency_score).sort((a,b)=>b[1].efficiency_score-a[1].efficiency_score);
-  const bestProv=bestProvEntries[0]||['--',{efficiency_score:0}];
-  document.getElementById('effStats').innerHTML=`
+  // KPIs — merge efficiency + sustainability headlines
+  const gpuIds=util?Object.keys(util):[];
+  const avgUtil=gpuIds.length?gpuIds.reduce((s,g)=>s+(util[g].avg_utilization||0),0)/gpuIds.length:0;
+  const bestGpu=gpuIds.length?gpuIds.reduce((a,b)=>(util[a].avg_efficiency||0)>(util[b].avg_efficiency||0)?a:b):'—';
+  const provs=sus?.providers?Object.keys(sus.providers):[];
+  const greenest=provs.length?provs.reduce((a,b)=>sus.providers[a].avg_sustainability_score>sus.providers[b].avg_sustainability_score?a:b):'—';
+  const avgPue=provs.length?provs.reduce((s,p)=>s+sus.providers[p].avg_pue,0)/provs.length:0;
+  document.getElementById('opsStats').innerHTML=`
     <div class="kpi kpi-cyan"><div class="kpi-label">Avg Utilization</div><div class="kpi-value">${avgUtil.toFixed(1)}%</div><div class="kpi-sub">Across ${gpuIds.length} GPU types</div></div>
-    <div class="kpi kpi-green"><div class="kpi-label">Avg Efficiency</div><div class="kpi-value">${avgEff.toFixed(1)}</div><div class="kpi-sub">Score out of 100</div></div>
-    <div class="kpi kpi-amber"><div class="kpi-label">Most Efficient GPU</div><div class="kpi-value">${bestGpu}</div><div class="kpi-sub">${util[bestGpu].avg_efficiency}/100</div></div>
-    <div class="kpi kpi-purple"><div class="kpi-label">Top Provider</div><div class="kpi-value">${bestProv[0]}</div><div class="kpi-sub">${bestProv[1].efficiency_score}/100 on ${bestGpu}</div></div>`;
+    <div class="kpi kpi-amber"><div class="kpi-label">Most Efficient GPU</div><div class="kpi-value">${bestGpu}</div><div class="kpi-sub">${util?.[bestGpu]?.avg_efficiency||'—'}/100</div></div>
+    <div class="kpi kpi-green"><div class="kpi-label">Greenest Provider</div><div class="kpi-value">${greenest}</div><div class="kpi-sub">${sus?.providers?.[greenest]?.avg_sustainability_score||'—'}/100</div></div>
+    <div class="kpi kpi-purple"><div class="kpi-label">Avg PUE</div><div class="kpi-value">${avgPue?avgPue.toFixed(2):'—'}</div><div class="kpi-sub">Power Usage Effectiveness</div></div>`;
 
-  // Utilization by Provider chart
-  const providers=new Set();
-  gpuIds.forEach(g=>Object.keys(util[g].providers).forEach(p=>providers.add(p)));
-  const provArr=[...providers];
-  if(charts.ubp) charts.ubp.destroy();
-  charts.ubp=new Chart(document.getElementById('chartUtilByProvider'),{type:'bar',
-    data:{labels:gpuIds,datasets:provArr.slice(0,6).map((p,i)=>({label:p,data:gpuIds.map(g=>util[g].providers[p]?.avg_utilization_pct||null),backgroundColor:CL[i]+'70',borderColor:CL[i],borderWidth:1}))},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'Utilization %'},grid:{color:'rgba(26,34,51,0.4)'},max:100},x:{grid:{display:false}}}}
-  });
+  // Chart 1: Utilization by Provider
+  if(util&&gpuIds.length) {
+    const providers=new Set();
+    gpuIds.forEach(g=>Object.keys(util[g].providers).forEach(p=>providers.add(p)));
+    const provArr=[...providers];
+    if(charts.ubp) charts.ubp.destroy();
+    charts.ubp=new Chart(document.getElementById('chartUtilByProvider'),{type:'bar',
+      data:{labels:gpuIds,datasets:provArr.slice(0,6).map((p,i)=>({label:p,data:gpuIds.map(g=>util[g].providers[p]?.avg_utilization_pct||null),backgroundColor:CL[i]+'70',borderColor:CL[i],borderWidth:1}))},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:8,font:{size:9}}}},scales:{y:{title:{display:true,text:'Utilization %'},grid:{color:'rgba(26,34,51,0.4)'},max:100},x:{grid:{display:false}}}}
+    });
+  }
 
-  // Efficiency scores
-  if(charts.eff) charts.eff.destroy();
-  charts.eff=new Chart(document.getElementById('chartEfficiency'),{type:'radar',
-    data:{labels:gpuIds,datasets:provArr.slice(0,5).map((p,i)=>({label:p,data:gpuIds.map(g=>util[g].providers[p]?.efficiency_score||0),borderColor:CL[i],backgroundColor:CL[i]+'20',pointBackgroundColor:CL[i],borderWidth:2}))},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{r:{min:0,max:100,ticks:{stepSize:20,color:'#5c6980'},grid:{color:'rgba(26,34,51,0.4)'},pointLabels:{color:'#8a95a6',font:{size:10}}}}}
-  });
+  // Chart 2: Carbon Footprint by GPU
+  if(sus?.gpu_carbon) {
+    const carbon=sus.gpu_carbon, carbonGpus=Object.keys(carbon);
+    if(charts.cbg) charts.cbg.destroy();
+    charts.cbg=new Chart(document.getElementById('chartCarbonByGpu'),{type:'bar',
+      data:{labels:carbonGpus,datasets:[
+        {label:'US Average (kg CO2/yr)',data:carbonGpus.map(g=>carbon[g].carbon_kg_per_year_us_avg),backgroundColor:C.red+'70',borderColor:C.red,borderWidth:1},
+        {label:'EU Nordic (kg CO2/yr)',data:carbonGpus.map(g=>carbon[g].carbon_kg_per_year_eu_nordic),backgroundColor:C.green+'70',borderColor:C.green,borderWidth:1},
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:8,font:{size:9}}}},scales:{y:{title:{display:true,text:'kg CO2/year'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
+    });
+  }
 
-  // Utilization trend lines
-  const months=['Oct','Nov','Dec','Jan','Feb'];
-  if(charts.utr) charts.utr.destroy();
-  charts.utr=new Chart(document.getElementById('chartUtilTrend'),{type:'line',
-    data:{labels:months,datasets:gpuIds.map((g,i)=>{
-      const trend=util[g].providers[provArr[0]]?.utilization_trend||[];
-      return {label:g,data:trend,borderColor:CL[i],tension:0.3,pointRadius:3,borderWidth:2,fill:false};
-    })},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'Utilization %'},grid:{color:'rgba(26,34,51,0.4)'},max:100},x:{grid:{display:false}}}}
-  });
+  // Chart 3: PUE & Green Energy by Provider
+  if(provs.length) {
+    if(charts.pge) charts.pge.destroy();
+    charts.pge=new Chart(document.getElementById('chartPueGreen'),{type:'bar',
+      data:{labels:provs,datasets:[
+        {label:'Green Energy %',data:provs.map(p=>sus.providers[p].avg_green_energy_pct),backgroundColor:C.green+'70',borderColor:C.green,borderWidth:1,yAxisID:'y'},
+        {label:'PUE',data:provs.map(p=>sus.providers[p].avg_pue),type:'line',borderColor:C.amber,borderWidth:2.5,pointRadius:4,yAxisID:'y1',fill:false},
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:8,font:{size:9}}}},scales:{
+        y:{title:{display:true,text:'Green Energy %'},grid:{color:'rgba(26,34,51,0.4)'},max:100},
+        y1:{position:'right',title:{display:true,text:'PUE'},min:1.0,max:1.25,grid:{display:false}},
+        x:{grid:{display:false}}}}
+    });
+  }
 
-  // Breakeven chart
+  // Chart 4: Reservation Breakeven
   if(res&&Object.keys(res).length) {
     const rGpus=Object.keys(res);
     if(charts.bev) charts.bev.destroy();
@@ -2581,35 +2560,39 @@ function renderEfficiencyTab() {
         {label:'3yr Reserved',data:rGpus.map(g=>res[g].reserved_3yr_rate),backgroundColor:C.green+'70',borderColor:C.green,borderWidth:1},
         {label:'Spot Avg',data:rGpus.map(g=>res[g].spot_avg_rate),backgroundColor:C.cyan+'70',borderColor:C.cyan,borderWidth:1},
       ]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
-    });
-
-    // Savings chart (80% utilization)
-    if(charts.sav) charts.sav.destroy();
-    charts.sav=new Chart(document.getElementById('chartSavings'),{type:'bar',
-      data:{labels:rGpus,datasets:[
-        {label:'Spot Savings %',data:rGpus.map(g=>res[g].savings_at_utilization['80_pct']?.spot||0),backgroundColor:C.cyan+'70',borderColor:C.cyan,borderWidth:1},
-        {label:'1yr Reserved %',data:rGpus.map(g=>res[g].savings_at_utilization['80_pct']?.reserved_1yr||0),backgroundColor:C.amber+'70',borderColor:C.amber,borderWidth:1},
-        {label:'3yr Reserved %',data:rGpus.map(g=>res[g].savings_at_utilization['80_pct']?.reserved_3yr||0),backgroundColor:C.green+'70',borderColor:C.green,borderWidth:1},
-      ]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'},title:{display:true,text:'Savings at 80% Utilization',color:'#8a95a6'}},scales:{y:{title:{display:true,text:'Savings %'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:8,font:{size:9}}}},scales:{y:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
     });
 
     // Reservation table
-    let h='<table class="dt"><thead><tr><th>GPU</th><th>On-Demand</th><th>Spot</th><th>1yr Reserved</th><th>3yr Reserved</th><th>Low Util</th><th>Med Util</th><th>High Util</th></tr></thead><tbody>';
+    let h='<table class="dt"><thead><tr><th>GPU</th><th class="r">On-Demand</th><th class="r">Spot</th><th class="r">1yr Reserved</th><th class="r">3yr Reserved</th><th>Low Util</th><th>Med Util</th><th>High Util</th></tr></thead><tbody>';
     rGpus.forEach(g=>{
       const r=res[g];
       h+=`<tr><td style="color:var(--cyan);font-weight:600;">${g}</td>
-        <td>$${r.on_demand_rate.toFixed(2)}/hr</td>
-        <td style="color:var(--green);">$${r.spot_avg_rate.toFixed(2)}/hr</td>
-        <td>$${r.reserved_1yr_rate.toFixed(2)}/hr</td>
-        <td style="color:var(--green);">$${r.reserved_3yr_rate.toFixed(2)}/hr</td>
+        <td class="r">$${r.on_demand_rate.toFixed(2)}/hr</td>
+        <td class="r" style="color:var(--green);">$${r.spot_avg_rate.toFixed(2)}/hr</td>
+        <td class="r">$${r.reserved_1yr_rate.toFixed(2)}/hr</td>
+        <td class="r" style="color:var(--green);">$${r.reserved_3yr_rate.toFixed(2)}/hr</td>
         <td><span style="color:var(--amber);">${r.recommended_commitment.low_util.type}</span></td>
         <td><span style="color:var(--blue);">${r.recommended_commitment.medium_util.type}</span></td>
         <td><span style="color:var(--green);">${r.recommended_commitment.high_util.type}</span></td></tr>`;
     });
     h+='</tbody></table>';
     document.getElementById('reservationTable').innerHTML=h;
+  }
+
+  // Export control timeline
+  if(sc?.export_controls) {
+    let eh='<table class="dt"><thead><tr><th>Date</th><th>Regulation</th><th>Target</th><th>Impact</th><th>Description</th></tr></thead><tbody>';
+    sc.export_controls.forEach(e=>{
+      const ic=e.impact==='high'?'var(--red)':e.impact==='medium'?'var(--amber)':'var(--green)';
+      eh+=`<tr><td style="font-family:var(--mono);color:var(--text-2);">${e.date}</td>
+        <td style="color:var(--cyan);font-weight:600;">${e.regulation}</td>
+        <td>${e.target}</td>
+        <td style="color:${ic};font-weight:700;text-transform:uppercase;">${e.impact}</td>
+        <td style="font-size:11px;">${e.description}</td></tr>`;
+    });
+    eh+='</tbody></table>';
+    document.getElementById('exportControlTable').innerHTML=eh;
   }
 }
 
@@ -2618,101 +2601,7 @@ function renderEfficiencyTab() {
 // ════════════════════════════════════════════════════════════════
 // renderForecastingTab merged into renderTrendsTab above
 
-// ════════════════════════════════════════════════════════════════
-// SUSTAINABILITY TAB
-// ════════════════════════════════════════════════════════════════
-function renderSustainabilityTab() {
-  const sus=DATA.sustainability, sc=DATA.supplychain;
-  if(!sus||!sus.providers) return;
-
-  const provs=Object.keys(sus.providers);
-  const carbon=sus.gpu_carbon||{};
-  const carbonGpus=Object.keys(carbon);
-
-  // KPI stats
-  const avgScore=provs.reduce((s,p)=>s+sus.providers[p].avg_sustainability_score,0)/provs.length;
-  const greenest=provs.reduce((a,b)=>sus.providers[a].avg_sustainability_score>sus.providers[b].avg_sustainability_score?a:b);
-  const avgPue=provs.reduce((s,p)=>s+sus.providers[p].avg_pue,0)/provs.length;
-  document.getElementById('susStats').innerHTML=`
-    <div class="kpi kpi-green"><div class="kpi-label">Avg Sustainability</div><div class="kpi-value">${avgScore.toFixed(0)}</div><div class="kpi-sub">Score across ${provs.length} providers</div></div>
-    <div class="kpi kpi-cyan"><div class="kpi-label">Greenest Provider</div><div class="kpi-value">${greenest}</div><div class="kpi-sub">${sus.providers[greenest].avg_sustainability_score}/100</div></div>
-    <div class="kpi kpi-amber"><div class="kpi-label">Avg PUE</div><div class="kpi-value">${avgPue.toFixed(2)}</div><div class="kpi-sub">Power Usage Effectiveness</div></div>
-    <div class="kpi kpi-purple"><div class="kpi-label">Supply Vendors</div><div class="kpi-value">${sc?.vendors?Object.keys(sc.vendors).length:'--'}</div><div class="kpi-sub">Tracked for risk</div></div>`;
-
-  // Carbon by GPU
-  if(charts.cbg) charts.cbg.destroy();
-  charts.cbg=new Chart(document.getElementById('chartCarbonByGpu'),{type:'bar',
-    data:{labels:carbonGpus,datasets:[
-      {label:'US Average (kg CO2/yr)',data:carbonGpus.map(g=>carbon[g].carbon_kg_per_year_us_avg),backgroundColor:C.red+'70',borderColor:C.red,borderWidth:1},
-      {label:'EU Nordic (kg CO2/yr)',data:carbonGpus.map(g=>carbon[g].carbon_kg_per_year_eu_nordic),backgroundColor:C.green+'70',borderColor:C.green,borderWidth:1},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'kg CO2/year'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
-  });
-
-  // PUE & Green Energy by provider
-  if(charts.pge) charts.pge.destroy();
-  charts.pge=new Chart(document.getElementById('chartPueGreen'),{type:'bar',
-    data:{labels:provs,datasets:[
-      {label:'Green Energy %',data:provs.map(p=>sus.providers[p].avg_green_energy_pct),backgroundColor:C.green+'70',borderColor:C.green,borderWidth:1,yAxisID:'y'},
-      {label:'PUE',data:provs.map(p=>sus.providers[p].avg_pue),type:'line',borderColor:C.amber,borderWidth:2.5,pointRadius:4,yAxisID:'y1',fill:false},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{
-      y:{title:{display:true,text:'Green Energy %'},grid:{color:'rgba(26,34,51,0.4)'},max:100},
-      y1:{position:'right',title:{display:true,text:'PUE'},min:1.0,max:1.25,grid:{display:false}},
-      x:{grid:{display:false}}}}
-  });
-
-  // Supply chain risk
-  if(sc&&sc.vendors) {
-    const vendors=Object.keys(sc.vendors);
-    if(charts.scr) charts.scr.destroy();
-    charts.scr=new Chart(document.getElementById('chartSupplyRisk'),{type:'bar',
-      data:{labels:vendors,datasets:[
-        {label:'Supply Risk Score',data:vendors.map(v=>sc.vendors[v].supply_risk_score),backgroundColor:vendors.map(v=>{const s=sc.vendors[v].supply_risk_score;return s>50?C.red+'70':s>35?C.amber+'70':C.green+'70';}),borderColor:vendors.map(v=>{const s=sc.vendors[v].supply_risk_score;return s>50?C.red:s>35?C.amber:C.green;}),borderWidth:1},
-        {label:'TSMC Dependency %',data:vendors.map(v=>sc.vendors[v].tsmc_dependency_pct),backgroundColor:C.purple+'50',borderColor:C.purple,borderWidth:1},
-      ]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'Score / %'},grid:{color:'rgba(26,34,51,0.4)'},max:100},x:{grid:{display:false}}}}
-    });
-
-    // Lead time trend
-    const periods=['2023-Q1','2023-Q3','2024-Q1','2024-Q3','2025-Q1'];
-    if(charts.ltt) charts.ltt.destroy();
-    charts.ltt=new Chart(document.getElementById('chartRiskTrend'),{type:'line',
-      data:{labels:periods,datasets:vendors.map((v,i)=>({label:v,data:sc.vendors[v].lead_time_trend,borderColor:CL[i],tension:0.35,pointRadius:4,borderWidth:2.5,fill:false}))},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'Lead Time (weeks)'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
-    });
-
-    // Sustainability score table
-    let h='<table class="dt"><thead><tr><th>Provider</th><th>Region</th><th>Score</th><th>Green %</th><th>PUE</th><th>CO2 g/kWh</th><th>Water L/kWh</th></tr></thead><tbody>';
-    provs.forEach(p=>{
-      const regions=sus.providers[p].regions;
-      Object.entries(regions).forEach(([reg,d])=>{
-        const sc2=d.sustainability_score>=80?'var(--green)':d.sustainability_score>=60?'var(--amber)':'var(--red)';
-        h+=`<tr><td style="color:var(--cyan);font-weight:600;">${p}</td><td>${reg}</td>
-          <td style="color:${sc2};font-weight:700;">${d.sustainability_score}</td>
-          <td>${d.green_energy_pct}%</td><td>${d.pue}</td>
-          <td>${d.carbon_gco2_per_kwh}</td><td>${d.water_usage_l_per_kwh}</td></tr>`;
-      });
-    });
-    h+='</tbody></table>';
-    document.getElementById('sustainabilityTable').innerHTML=h;
-
-    // Export control timeline
-    if(sc.export_controls) {
-      let eh='<table class="dt"><thead><tr><th>Date</th><th>Regulation</th><th>Target</th><th>Impact</th><th>Description</th></tr></thead><tbody>';
-      sc.export_controls.forEach(e=>{
-        const ic=e.impact==='high'?'var(--red)':e.impact==='medium'?'var(--amber)':'var(--green)';
-        eh+=`<tr><td style="font-family:var(--mono);color:var(--text-2);">${e.date}</td>
-          <td style="color:var(--cyan);font-weight:600;">${e.regulation}</td>
-          <td>${e.target}</td>
-          <td style="color:${ic};font-weight:700;text-transform:uppercase;">${e.impact}</td>
-          <td style="font-size:11px;">${e.description}</td></tr>`;
-      });
-      eh+='</tbody></table>';
-      document.getElementById('exportControlTable').innerHTML=eh;
-    }
-  }
-}
+// renderSustainabilityTab merged into renderEfficiencyTab above
 
 // ════════════════════════════════════════════════════════════════
 // MODEL FIT TAB
