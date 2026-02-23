@@ -150,7 +150,7 @@ body {
   align-items: center;
   gap: 6px;
 }
-.indicator-value { color: var(--text-0); font-weight: 700; font-size: 12px; line-height: 1; }
+.indicator-value { color: var(--text-0); font-weight: 700; font-size: 12px; line-height: 1; transition: opacity 0.15s ease; }
 .indicator-change { font-weight: 600; font-size: 9.5px; padding: 1px 4px; border-radius: 3px; line-height: 1; }
 .indicator-change.up { color: var(--green); background: rgba(34,197,94,0.12); }
 .indicator-change.down { color: var(--red); background: rgba(239,68,68,0.12); }
@@ -1546,17 +1546,23 @@ function renderTicker() {
 
   // Start rotation: best ↔ hyperscaler avg every 4s
   if (window._tickerInterval) clearInterval(window._tickerInterval);
-  let tickState = 0;
-  window._tickerInterval = setInterval(() => {
-    tickState = 1 - tickState;
-    tickerRotators.forEach(r => {
-      const lbl = document.getElementById(r.id+'_lbl');
-      const val = document.getElementById(r.id+'_val');
-      if (lbl && val) {
-        lbl.textContent = tickState ? r.shortName+' HYPER' : r.shortName+' BEST';
-        val.textContent = tickState ? r.hsStr : r.bestStr;
-      }
-    });
+  window._tickerRotators = tickerRotators;
+  window._tickState = 0;
+  window._tickerInterval = setInterval(function() {
+    try {
+      window._tickState = 1 - window._tickState;
+      var st = window._tickState;
+      (window._tickerRotators || []).forEach(function(r) {
+        var lbl = document.getElementById(r.id+'_lbl');
+        var val = document.getElementById(r.id+'_val');
+        if (lbl && val) {
+          lbl.textContent = st ? r.shortName+' HYPER' : r.shortName+' BEST';
+          val.textContent = st ? r.hsStr : r.bestStr;
+          val.style.opacity = '0.5';
+          setTimeout(function(){ val.style.opacity = '1'; }, 150);
+        }
+      });
+    } catch(e) { console.error('Ticker rotation error:', e); }
   }, 4000);
 }
 
