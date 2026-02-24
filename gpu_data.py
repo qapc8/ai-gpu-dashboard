@@ -1079,53 +1079,184 @@ WORKLOAD_RECOMMENDATIONS = {
 # TCO (TOTAL COST OF OWNERSHIP) MODEL
 # ============================================================================
 
-TCO_COMPONENTS = {
-    "networking": {
-        "description": "Inter-node networking (InfiniBand/RoCE)",
-        "cost_per_gpu_hr": {
-            "H100-SXM": 0.35, "B200": 0.45, "H200": 0.38, "GB200": 0.55,
-            "A100-80GB": 0.25, "A100-40GB": 0.20, "MI300X": 0.30, "MI325X": 0.35,
-            "L40S": 0.12, "A10G": 0.05,
-            "RTX-4090": 0.08, "RTX-5090": 0.10, "MI250X": 0.22
-        }
+# Per-GPU profiles: purchase price, cloud pricing tiers, self-hosted opex,
+# and headline perf numbers — everything needed for TCO scenario comparison.
+TCO_PROFILES = {
+    "H100-SXM": {
+        "gpu_price_usd": 30000,
+        "useful_life_years": 4,
+        "cloud_on_demand_hr": 2.49,
+        "cloud_reserved_1yr_hr": 1.74,
+        "cloud_reserved_3yr_hr": 1.12,
+        "cloud_spot_hr": 1.70,
+        "self_hosted": {
+            "power_kwh": 0.58,
+            "power_cost_kwh": 0.08,
+            "pue": 1.3,
+            "networking_hr": 0.12,
+            "storage_hr": 0.08,
+            "colo_rack_hr": 0.15,
+            "ops_staff_hr": 0.10,
+        },
+        "perf_fp16_tflops": 989.5,
+        "vram_gb": 80,
     },
-    "storage": {
-        "description": "NVMe/SSD storage (per GPU allocation)",
-        "cost_per_gpu_hr": {
-            "H100-SXM": 0.18, "B200": 0.22, "H200": 0.20, "GB200": 0.30,
-            "A100-80GB": 0.15, "A100-40GB": 0.12, "MI300X": 0.16, "MI325X": 0.18,
-            "L40S": 0.08, "A10G": 0.04,
-            "RTX-4090": 0.05, "RTX-5090": 0.06, "MI250X": 0.12
-        }
+    "B200": {
+        "gpu_price_usd": 40000,
+        "useful_life_years": 4,
+        "cloud_on_demand_hr": 3.97,
+        "cloud_reserved_1yr_hr": 2.78,
+        "cloud_reserved_3yr_hr": 1.79,
+        "cloud_spot_hr": 2.67,
+        "self_hosted": {
+            "power_kwh": 0.82,
+            "power_cost_kwh": 0.08,
+            "pue": 1.3,
+            "networking_hr": 0.15,
+            "storage_hr": 0.10,
+            "colo_rack_hr": 0.18,
+            "ops_staff_hr": 0.12,
+        },
+        "perf_fp16_tflops": 2250,
+        "vram_gb": 192,
     },
-    "egress": {
-        "description": "Data egress (avg per GPU-hr at typical workloads)",
-        "cost_per_gpu_hr": {
-            "H100-SXM": 0.08, "B200": 0.10, "H200": 0.09, "GB200": 0.12,
-            "A100-80GB": 0.06, "A100-40GB": 0.05, "MI300X": 0.07, "MI325X": 0.08,
-            "L40S": 0.04, "A10G": 0.02,
-            "RTX-4090": 0.03, "RTX-5090": 0.03, "MI250X": 0.05
-        }
+    "H200": {
+        "gpu_price_usd": 35000,
+        "useful_life_years": 4,
+        "cloud_on_demand_hr": 2.89,
+        "cloud_reserved_1yr_hr": 2.02,
+        "cloud_reserved_3yr_hr": 1.30,
+        "cloud_spot_hr": 1.97,
+        "self_hosted": {
+            "power_kwh": 0.58,
+            "power_cost_kwh": 0.08,
+            "pue": 1.3,
+            "networking_hr": 0.13,
+            "storage_hr": 0.09,
+            "colo_rack_hr": 0.16,
+            "ops_staff_hr": 0.10,
+        },
+        "perf_fp16_tflops": 989.5,
+        "vram_gb": 141,
     },
-    "energy_overhead": {
-        "description": "Energy + cooling beyond GPU TDP (PUE ~1.3)",
-        "cost_per_gpu_hr": {
-            "H100-SXM": 0.14, "B200": 0.20, "H200": 0.14, "GB200": 0.42,
-            "A100-80GB": 0.08, "A100-40GB": 0.08, "MI300X": 0.15, "MI325X": 0.16,
-            "L40S": 0.07, "A10G": 0.03,
-            "RTX-4090": 0.09, "RTX-5090": 0.12, "MI250X": 0.11
-        }
+    "GB200": {
+        "gpu_price_usd": 70000,
+        "useful_life_years": 4,
+        "cloud_on_demand_hr": 7.50,
+        "cloud_reserved_1yr_hr": 5.25,
+        "cloud_reserved_3yr_hr": 3.38,
+        "cloud_spot_hr": 5.00,
+        "self_hosted": {
+            "power_kwh": 2.20,
+            "power_cost_kwh": 0.08,
+            "pue": 1.3,
+            "networking_hr": 0.20,
+            "storage_hr": 0.15,
+            "colo_rack_hr": 0.25,
+            "ops_staff_hr": 0.15,
+        },
+        "perf_fp16_tflops": 4500,
+        "vram_gb": 384,
     },
-    "ops_management": {
-        "description": "Platform/management overhead per GPU-hr",
-        "cost_per_gpu_hr": {
-            "H100-SXM": 0.10, "B200": 0.12, "H200": 0.10, "GB200": 0.15,
-            "A100-80GB": 0.08, "A100-40GB": 0.06, "MI300X": 0.10, "MI325X": 0.10,
-            "L40S": 0.05, "A10G": 0.03,
-            "RTX-4090": 0.04, "RTX-5090": 0.05, "MI250X": 0.06
-        }
-    }
+    "A100-80GB": {
+        "gpu_price_usd": 15000,
+        "useful_life_years": 4,
+        "cloud_on_demand_hr": 1.89,
+        "cloud_reserved_1yr_hr": 1.32,
+        "cloud_reserved_3yr_hr": 0.85,
+        "cloud_spot_hr": 0.85,
+        "self_hosted": {
+            "power_kwh": 0.33,
+            "power_cost_kwh": 0.08,
+            "pue": 1.3,
+            "networking_hr": 0.10,
+            "storage_hr": 0.07,
+            "colo_rack_hr": 0.12,
+            "ops_staff_hr": 0.08,
+        },
+        "perf_fp16_tflops": 312,
+        "vram_gb": 80,
+    },
+    "MI300X": {
+        "gpu_price_usd": 15000,
+        "useful_life_years": 4,
+        "cloud_on_demand_hr": 2.19,
+        "cloud_reserved_1yr_hr": 1.53,
+        "cloud_reserved_3yr_hr": 0.99,
+        "cloud_spot_hr": 1.50,
+        "self_hosted": {
+            "power_kwh": 0.62,
+            "power_cost_kwh": 0.08,
+            "pue": 1.3,
+            "networking_hr": 0.12,
+            "storage_hr": 0.08,
+            "colo_rack_hr": 0.14,
+            "ops_staff_hr": 0.10,
+        },
+        "perf_fp16_tflops": 1307,
+        "vram_gb": 192,
+    },
+    "MI325X": {
+        "gpu_price_usd": 20000,
+        "useful_life_years": 4,
+        "cloud_on_demand_hr": 3.20,
+        "cloud_reserved_1yr_hr": 2.24,
+        "cloud_reserved_3yr_hr": 1.44,
+        "cloud_spot_hr": 2.10,
+        "self_hosted": {
+            "power_kwh": 0.83,
+            "power_cost_kwh": 0.08,
+            "pue": 1.3,
+            "networking_hr": 0.13,
+            "storage_hr": 0.09,
+            "colo_rack_hr": 0.15,
+            "ops_staff_hr": 0.10,
+        },
+        "perf_fp16_tflops": 1307.4,
+        "vram_gb": 256,
+    },
+    "RTX-4090": {
+        "gpu_price_usd": 1599,
+        "useful_life_years": 4,
+        "cloud_on_demand_hr": 0.74,
+        "cloud_reserved_1yr_hr": 0.52,
+        "cloud_reserved_3yr_hr": 0.33,
+        "cloud_spot_hr": 0.29,
+        "self_hosted": {
+            "power_kwh": 0.37,
+            "power_cost_kwh": 0.08,
+            "pue": 1.3,
+            "networking_hr": 0.04,
+            "storage_hr": 0.03,
+            "colo_rack_hr": 0.06,
+            "ops_staff_hr": 0.04,
+        },
+        "perf_fp16_tflops": 330,
+        "vram_gb": 24,
+    },
+    "L40S": {
+        "gpu_price_usd": 8000,
+        "useful_life_years": 4,
+        "cloud_on_demand_hr": 1.49,
+        "cloud_reserved_1yr_hr": 1.04,
+        "cloud_reserved_3yr_hr": 0.67,
+        "cloud_spot_hr": 1.14,
+        "self_hosted": {
+            "power_kwh": 0.30,
+            "power_cost_kwh": 0.08,
+            "pue": 1.3,
+            "networking_hr": 0.05,
+            "storage_hr": 0.04,
+            "colo_rack_hr": 0.08,
+            "ops_staff_hr": 0.05,
+        },
+        "perf_fp16_tflops": 362,
+        "vram_gb": 48,
+    },
 }
+
+# Backward-compat alias — /api/tco endpoint still returns this
+TCO_COMPONENTS = TCO_PROFILES
 
 # ============================================================================
 # INFERENCE ECONOMICS — $/M tokens by model and GPU

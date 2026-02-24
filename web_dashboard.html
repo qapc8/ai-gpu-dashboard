@@ -931,21 +931,21 @@ body {
   <div class="kpi-strip mb" id="tcoStats"></div>
   <div class="grid g-2 mb">
     <div class="card">
-      <div class="card-hd"><span class="card-hd-title">TCO Breakdown ($/hr per GPU)</span></div>
+      <div class="card-hd"><span class="card-hd-title">Cloud vs Self-Hosted TCO — $/hr</span></div>
       <div class="card-bd"><div class="chart-wrap" style="height:380px;"><canvas id="chartTcoStack"></canvas></div></div>
     </div>
     <div class="card">
-      <div class="card-hd"><span class="card-hd-title">TCO Component Share (H100-SXM)</span></div>
+      <div class="card-hd"><span class="card-hd-title" id="tcoPieTitle">Break-Even Timeline — Self-Hosted vs Cloud</span></div>
       <div class="card-bd"><div class="chart-wrap" style="height:380px;"><canvas id="chartTcoPie"></canvas></div></div>
     </div>
   </div>
   <div class="card mb">
-    <div class="card-hd"><span class="card-hd-title">Full TCO Breakdown by GPU</span></div>
+    <div class="card-hd"><span class="card-hd-title">TCO Comparison by GPU</span></div>
     <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="tcoTable"></table></div>
   </div>
   <div class="card">
-    <div class="card-hd"><span class="card-hd-title">Monthly TCO — GPU Compute vs Hidden Costs</span></div>
-    <div class="card-bd"><div class="chart-wrap" style="height:280px;"><canvas id="chartTcoMonthly"></canvas></div></div>
+    <div class="card-hd"><span class="card-hd-title">Key Assumptions</span></div>
+    <div class="card-bd" id="tcoAssumptions" style="font-size:.85rem;line-height:1.6;color:var(--c-sub);"></div>
   </div>
 </div>
 
@@ -2135,67 +2135,105 @@ document.getElementById('inferCatFilter')?.addEventListener('change',function(){
 // ════════════════════════════════════════════════════════════════
 function renderTcoTab() {
   const tco=DATA.tco; if(!tco||!Object.keys(tco).length) return;
-  const comps=Object.keys(tco);
-  const compC=[C.cyan,C.purple,C.orange,C.amber,C.pink];
-  const compL={'networking':'Networking','storage':'Storage','egress':'Egress','energy_overhead':'Energy','ops_management':'Ops/Mgmt'};
-  const gs=new Set(); comps.forEach(c=>{if(tco[c]?.cost_per_gpu_hr)Object.keys(tco[c].cost_per_gpu_hr).forEach(g=>gs.add(g));});
-  const gpus=[...gs];
-  const totals={}, bdowns={};
-  gpus.forEach(g=>{
-    let t=0; const bd={};
-    comps.forEach(c=>{const cost=tco[c]?.cost_per_gpu_hr?.[g]||0;t+=cost;bd[c]=cost;});
-    const base=DATA.matrix.find(r=>r.gpu_id===g)?.cheapest_price||0;
-    totals[g]={base,overhead:t,total:base+t}; bdowns[g]=bd;
-  });
+  // New TCO_PROFILES format: keyed by GPU name
+  const gpus=Object.keys(tco).filter(k=>tco[k].gpu_price_usd!==undefined);
+  if(!gpus.length) return;
 
-  const h100T=totals['H100-SXM'];
-  const ohPct=h100T?((h100T.overhead/h100T.total)*100).toFixed(0):'--';
+  // ── Compute derived values per GPU ──
+  const rows=gpus.map(g=>{
+    const p=tco[g], sh=p.self_hosted;
+    const powerCost=sh.power_kwh*sh.power_cost_kwh*sh.pue;
+    const depreciation=p.gpu_price_usd/(p.useful_life_years*8760);
+    const opex=powerCost+sh.networking_hr+sh.storage_hr+sh.colo_rack_hr+sh.ops_staff_hr;
+    const selfTotal=opex+depreciation;
+    const beMonths=p.cloud_on_demand_hr>opex?p.gpu_price_usd/((p.cloud_on_demand_hr-opex)*730):Infinity;
+    const perfDollar=selfTotal>0?p.perf_fp16_tflops/selfTotal:0;
+    return {gpu:g,price:p.gpu_price_usd,life:p.useful_life_years,
+      cloudOD:p.cloud_on_demand_hr,cloud1yr:p.cloud_reserved_1yr_hr,
+      cloud3yr:p.cloud_reserved_3yr_hr,cloudSpot:p.cloud_spot_hr,
+      selfTotal,opex,depreciation,powerCost,
+      beMonths,perfDollar,
+      perf:p.perf_fp16_tflops,vram:p.vram_gb,
+      sh};
+  }).sort((a,b)=>a.selfTotal-b.selfTotal);
+
+  // ── KPIs ──
+  const cheapCloud=rows.reduce((a,b)=>a.cloudOD<b.cloudOD?a:b);
+  const cheapSelf=rows[0];
+  const fastBE=rows.filter(r=>isFinite(r.beMonths)).reduce((a,b)=>a.beMonths<b.beMonths?a:b,{beMonths:Infinity});
+  const bestPerf=rows.reduce((a,b)=>a.perfDollar>b.perfDollar?a:b);
   document.getElementById('tcoStats').innerHTML=`
-    <div class="kpi kpi-cyan"><div class="kpi-label">H100 Total TCO/hr</div><div class="kpi-value">$${h100T?h100T.total.toFixed(2):'--'}</div><div class="kpi-sub">GPU + overhead</div></div>
-    <div class="kpi kpi-red"><div class="kpi-label">Hidden Cost %</div><div class="kpi-value">${ohPct}%</div><div class="kpi-sub">Non-GPU overhead (H100)</div></div>
-    <div class="kpi kpi-green"><div class="kpi-label">GPUs Analyzed</div><div class="kpi-value">${gpus.length}</div><div class="kpi-sub">${comps.length} cost components</div></div>
-    <div class="kpi kpi-amber"><div class="kpi-label">Monthly TCO (8xH100)</div><div class="kpi-value">$${h100T?(h100T.total*8*730).toLocaleString('en',{maximumFractionDigits:0}):'--'}</div><div class="kpi-sub">24/7 operation</div></div>`;
+    <div class="kpi kpi-cyan"><div class="kpi-label">Cheapest Cloud $/hr</div><div class="kpi-value">$${cheapCloud.cloudOD.toFixed(2)}</div><div class="kpi-sub">${cheapCloud.gpu} on-demand</div></div>
+    <div class="kpi kpi-green"><div class="kpi-label">Cheapest Self-Hosted</div><div class="kpi-value">$${cheapSelf.selfTotal.toFixed(2)}/hr</div><div class="kpi-sub">${cheapSelf.gpu} fully loaded</div></div>
+    <div class="kpi kpi-amber"><div class="kpi-label">Fastest Break-Even</div><div class="kpi-value">${isFinite(fastBE.beMonths)?fastBE.beMonths.toFixed(0)+'mo':'N/A'}</div><div class="kpi-sub">${isFinite(fastBE.beMonths)?fastBE.gpu+' vs cloud OD':'—'}</div></div>
+    <div class="kpi kpi-purple"><div class="kpi-label">Best Perf/$ (TFLOPS/$)</div><div class="kpi-value">${bestPerf.perfDollar.toFixed(0)}</div><div class="kpi-sub">${bestPerf.gpu} FP16</div></div>`;
 
+  // ── Chart 1: Grouped bar — 4 scenarios per GPU ──
   if(charts.ts) charts.ts.destroy();
+  const labels=rows.map(r=>r.gpu);
   charts.ts=new Chart(document.getElementById('chartTcoStack'),{type:'bar',
-    data:{labels:gpus,datasets:[
-      {label:'GPU Compute',data:gpus.map(g=>totals[g].base),backgroundColor:C.green+'70',borderColor:C.green,borderWidth:1},
-      ...comps.map((c,i)=>({label:compL[c]||c,data:gpus.map(g=>bdowns[g]?.[c]||0),backgroundColor:compC[i]+'70',borderColor:compC[i],borderWidth:1}))
+    data:{labels,datasets:[
+      {label:'Cloud On-Demand',data:rows.map(r=>r.cloudOD),backgroundColor:C.red+'80',borderColor:C.red,borderWidth:1},
+      {label:'Cloud 1yr Reserved',data:rows.map(r=>r.cloud1yr),backgroundColor:C.orange+'80',borderColor:C.orange,borderWidth:1},
+      {label:'Cloud 3yr Reserved',data:rows.map(r=>r.cloud3yr),backgroundColor:C.amber+'80',borderColor:C.amber,borderWidth:1},
+      {label:'Self-Hosted',data:rows.map(r=>r.selfTotal),backgroundColor:C.green+'80',borderColor:C.green,borderWidth:1},
     ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,title:{display:true,text:'$/hr (Total)'},grid:{color:'rgba(26,34,51,0.4)'}}}}
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top'},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': $'+ctx.parsed.y.toFixed(2)+'/hr';}}}},
+      scales:{x:{grid:{display:false}},y:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}}}}
   });
 
+  // ── Chart 2: Break-even cumulative cost lines (reference GPU = B200 or first) ──
   if(charts.tp) charts.tp.destroy();
-  const ref='H100-SXM';
-  const pL=['GPU Compute',...comps.map(c=>compL[c]||c)];
-  const pD=[totals[ref]?.base||0,...comps.map(c=>bdowns[ref]?.[c]||0)];
-  const pC2=[C.green,...compC];
-  charts.tp=new Chart(document.getElementById('chartTcoPie'),{type:'doughnut',
-    data:{labels:pL,datasets:[{data:pD,backgroundColor:pC2.map(c=>c+'80'),borderColor:pC2,borderWidth:2}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right'},title:{display:true,text:ref+' TCO Breakdown',color:C.cyan,font:{size:12}}}}
+  const refRow=rows.find(r=>r.gpu==='B200')||rows[0];
+  document.getElementById('tcoPieTitle').textContent='Break-Even Timeline — '+refRow.gpu+' Self-Hosted vs Cloud';
+  const months=Array.from({length:49},(_,i)=>i);
+  const cumOD=months.map(m=>refRow.cloudOD*730*m);
+  const cum3yr=months.map(m=>refRow.cloud3yr*730*m);
+  const cumSelf=months.map(m=>refRow.price+refRow.opex*730*m);
+  charts.tp=new Chart(document.getElementById('chartTcoPie'),{type:'line',
+    data:{labels:months,datasets:[
+      {label:'Cloud On-Demand',data:cumOD,borderColor:C.red,backgroundColor:C.red+'20',fill:false,tension:0,pointRadius:0,borderWidth:2},
+      {label:'Cloud 3yr Reserved',data:cum3yr,borderColor:C.amber,backgroundColor:C.amber+'20',fill:false,tension:0,pointRadius:0,borderWidth:2},
+      {label:'Self-Hosted',data:cumSelf,borderColor:C.green,backgroundColor:C.green+'20',fill:false,tension:0,pointRadius:0,borderWidth:2},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'top'},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': $'+Math.round(ctx.parsed.y).toLocaleString();}}}},
+      scales:{x:{title:{display:true,text:'Months'},grid:{color:'rgba(26,34,51,0.2)'}},
+              y:{title:{display:true,text:'Cumulative Cost ($)'},grid:{color:'rgba(26,34,51,0.4)'},ticks:{callback:function(v){return '$'+Math.round(v/1000)+'k';}}}}}
   });
 
-  let h='<thead><tr><th>GPU</th><th class="r">GPU $/hr</th>';
-  comps.forEach(c=>{h+=`<th class="r">${compL[c]||c}</th>`;});
-  h+='<th class="r">Total TCO</th><th class="r">Overhead %</th><th class="r">Monthly</th></tr></thead><tbody>';
-  gpus.forEach(g=>{
-    const t=totals[g],b=bdowns[g];
-    const op=t.total>0?((t.overhead/t.total)*100).toFixed(1):0;
-    h+=`<tr><td class="gpu-name">${g}</td><td class="r c-green fw">$${t.base.toFixed(2)}</td>`;
-    comps.forEach(c=>{h+=`<td class="r dim">$${(b[c]||0).toFixed(2)}</td>`;});
-    h+=`<td class="r c-amber fw">$${t.total.toFixed(2)}</td><td class="r c-red">${op}%</td><td class="r">$${(t.total*730).toLocaleString('en',{maximumFractionDigits:0})}</td></tr>`;
+  // ── Table: 9 columns ──
+  let h='<thead><tr><th>GPU</th><th class="r">VRAM</th><th class="r">FP16 TFLOPS</th><th class="r">Cloud OD</th><th class="r">Cloud 1yr</th><th class="r">Cloud 3yr</th><th class="r">Self-Hosted</th><th class="r">Break-Even</th><th class="r">Perf/$</th></tr></thead><tbody>';
+  rows.forEach(r=>{
+    const costs=[r.cloudOD,r.cloud1yr,r.cloud3yr,r.selfTotal];
+    const minCost=Math.min(...costs);
+    const fmt=(v)=>{const s='$'+v.toFixed(2);return v===minCost?`<span class="c-green fw">${s}</span>`:s;};
+    h+=`<tr><td class="gpu-name">${r.gpu}</td>`;
+    h+=`<td class="r">${r.vram} GB</td>`;
+    h+=`<td class="r">${r.perf.toLocaleString()}</td>`;
+    h+=`<td class="r">${fmt(r.cloudOD)}</td>`;
+    h+=`<td class="r">${fmt(r.cloud1yr)}</td>`;
+    h+=`<td class="r">${fmt(r.cloud3yr)}</td>`;
+    h+=`<td class="r">${fmt(r.selfTotal)}</td>`;
+    h+=`<td class="r">${isFinite(r.beMonths)?r.beMonths.toFixed(0)+' mo':'—'}</td>`;
+    h+=`<td class="r c-purple fw">${r.perfDollar.toFixed(0)}</td></tr>`;
   });
   h+='</tbody>';
   document.getElementById('tcoTable').innerHTML=h;
 
-  if(charts.tm) charts.tm.destroy();
-  charts.tm=new Chart(document.getElementById('chartTcoMonthly'),{type:'bar',
-    data:{labels:gpus,datasets:[
-      {label:'GPU Cost ($/mo)',data:gpus.map(g=>totals[g].base*730),backgroundColor:C.green+'70',borderColor:C.green,borderWidth:1},
-      {label:'Hidden Costs ($/mo)',data:gpus.map(g=>totals[g].overhead*730),backgroundColor:C.red+'50',borderColor:C.red,borderWidth:1},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,title:{display:true,text:'$/month'},grid:{color:'rgba(26,34,51,0.4)'}}}}
-  });
+  // ── Assumptions card ──
+  const el=document.getElementById('tcoAssumptions');
+  if(el) el.innerHTML=
+    '<b>Self-hosted assumptions:</b> '+
+    'Power cost $0.08/kWh (US industrial avg) · PUE 1.3 · '+
+    'Useful life '+rows[0].life+' yr straight-line depreciation · '+
+    'Colo/rack, networking, storage, and ops amortised per GPU-hr<br>'+
+    '<b>Cloud pricing:</b> '+
+    'On-demand = typical major-provider list price · '+
+    '1yr reserved ≈ 30% discount · 3yr reserved ≈ 55% discount · '+
+    'Break-even = months until self-hosted cumulative cost &lt; cloud on-demand<br>'+
+    '<b>Hours/month:</b> 730 (24/7 operation)';
 }
 
 // ════════════════════════════════════════════════════════════════
