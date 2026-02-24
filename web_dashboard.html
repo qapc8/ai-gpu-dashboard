@@ -62,8 +62,8 @@ body {
 .topbar {
   background: var(--bg-1);
   border-bottom: 1px solid var(--border-0);
-  padding: 0 20px;
-  height: 56px;
+  padding: 0 14px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -75,20 +75,20 @@ body {
 .topbar-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-shrink: 0;
 }
 .topbar-logo {
-  width: 30px;
-  height: 30px;
-  border-radius: 7px;
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
   background: var(--blue);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--sans);
   font-weight: 800;
-  font-size: 14px;
+  font-size: 11px;
   color: var(--bg-0);
 }
 .topbar-name {
@@ -98,73 +98,62 @@ body {
 }
 .topbar-title {
   font-family: var(--sans);
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--text-0);
   letter-spacing: -0.2px;
   white-space: nowrap;
 }
 .topbar-subtitle {
-  font-size: 10px;
-  color: var(--text-3);
-  font-weight: 500;
-  font-family: var(--mono);
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
+  display: none;
 }
 .topbar-indicators {
   display: flex;
   align-items: center;
   gap: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-  margin: 0 16px;
-  flex: 1;
-  justify-content: center;
+  flex-shrink: 0;
+  margin: 0 10px;
 }
-.topbar-indicators::-webkit-scrollbar { display: none; }
 .indicator {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1px;
+  align-items: center;
+  gap: 5px;
   font-family: var(--mono);
-  padding: 5px 16px;
+  padding: 0 10px;
   white-space: nowrap;
   border-right: 1px solid var(--border-0);
-  transition: background 0.15s;
-  min-width: 0;
+  height: 36px;
 }
-.indicator:hover { background: var(--bg-hover); }
 .indicator:last-child { border-right: none; }
 .indicator-label {
   color: var(--text-3);
-  font-weight: 600;
-  font-size: 9px;
+  font-weight: 700;
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
-  line-height: 1;
+  letter-spacing: 0.3px;
 }
-.indicator-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.indicator-value { color: var(--text-0); font-weight: 700; font-size: 12px; line-height: 1; }
+.indicator-value { color: var(--text-0); font-weight: 700; font-size: 11px; }
 .indicator-change { font-weight: 600; font-size: 9.5px; padding: 1px 4px; border-radius: 3px; line-height: 1; }
 .indicator-change.up { color: var(--green); background: rgba(34,197,94,0.12); }
 .indicator-change.down { color: var(--red); background: rgba(239,68,68,0.12); }
-.indicator-spark-svg { display: block; flex-shrink: 0; }
-.indicator-sub { font-size: 9px; font-weight: 600; padding: 1px 4px; border-radius: 3px; letter-spacing: 0.3px; line-height: 1; }
-.indicator-sub.up { color: var(--green); }
-.indicator-sub.tag-green { color: var(--green); background: rgba(34,197,94,0.12); }
-.indicator-sub.tag-amber { color: var(--amber); background: rgba(251,191,36,0.12); }
-.indicator-sub.tag-red { color: var(--red); background: rgba(239,68,68,0.12); }
-.indicator-divider { width: 1px; height: 32px; background: var(--border-1); margin: 0; flex-shrink: 0; }
+.news-headline {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0 14px;
+  transition: opacity 0.4s ease;
+}
+.news-headline .nh-src { color: var(--cyan); font-weight: 600; font-family: var(--mono); font-size: 10px; }
+@media (max-width: 900px) { .news-headline { display: none; } }
 .topbar-meta {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-shrink: 0;
 }
 .live-dot {
@@ -183,65 +172,6 @@ body {
   text-align: right;
 }
 
-/* ─── NEWS TICKER ─── */
-.news-bar {
-  background: var(--bg-1);
-  border-bottom: 1px solid var(--border-0);
-  height: 30px;
-  overflow: hidden;
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-.news-label {
-  position: absolute;
-  left: 0; top: 0;
-  height: 30px;
-  padding: 0 12px;
-  display: flex;
-  align-items: center;
-  background: var(--red);
-  color: white;
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  z-index: 2;
-}
-.news-track {
-  display: flex;
-  align-items: center;
-  height: 30px;
-  white-space: nowrap;
-  padding-left: 72px;
-  animation: ticker 180s linear infinite;
-}
-.news-track:hover { animation-play-state: paused; }
-.news-entry {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-right: 48px;
-  font-size: 11.5px;
-}
-.news-src { color: var(--cyan); font-weight: 600; font-family: var(--mono); font-size: 10px; }
-.news-txt { color: var(--text-1); }
-.news-tag {
-  font-size: 8px;
-  font-weight: 700;
-  font-family: var(--mono);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 1px 5px;
-  border-radius: 3px;
-}
-.news-tag-high { background: var(--red-dim); color: var(--red); }
-.news-tag-medium { background: var(--amber-dim); color: var(--amber); }
-.news-tag-low { background: var(--green-dim); color: var(--green); }
-@keyframes ticker {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
 
 /* ─── NAV ─── */
 .nav {
@@ -659,16 +589,11 @@ body {
     </div>
   </div>
   <div class="topbar-indicators" id="tickerBar"></div>
+  <div class="news-headline" id="newsHeadline"></div>
   <div class="topbar-meta">
     <div class="live-dot"></div>
     <div class="topbar-time" id="headerTime"></div>
   </div>
-</div>
-
-<!-- ═══ NEWS TICKER ═══ -->
-<div class="news-bar">
-  <div class="news-label">LIVE</div>
-  <div class="news-track" id="newsScroll"></div>
 </div>
 
 <!-- ═══ NAV ═══ -->
@@ -1308,7 +1233,7 @@ document.querySelectorAll('.nav-item').forEach(tab => {
 // ════════════════════════════════════════════════════════════════
 function renderAll() {
   renderTicker();
-  renderNewsBanner();
+  renderNewsHeadline();
   renderOverview();
   renderPriceMatrix();
   renderTrendsTab();
@@ -1342,106 +1267,46 @@ function renderTicker() {
   const tb = document.getElementById('tickerBar');
   if (!mi || !mi.nvidia_stock) return;
 
-  // SVG sparkline from price array
-  const spark = (prices, color, w=44, h=14) => {
-    if (!prices || prices.length < 2) return '';
-    const mn = Math.min(...prices), mx = Math.max(...prices), rng = mx - mn || 1;
-    const pts = prices.map((p,i) => `${(i/(prices.length-1))*w},${h-((p-mn)/rng)*(h-2)-1}`).join(' ');
-    return `<svg width="${w}" height="${h}" class="indicator-spark-svg"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/></svg>`;
-  };
-
-  // 24h % change from hourly prices
-  const pctChg = (s) => {
-    if (!s?.hourly_prices_24h?.length) return 0;
-    const p = s.hourly_prices_24h;
-    return ((p[p.length-1] - p[0]) / p[0] * 100).toFixed(1);
-  };
-
   const chgBadge = (val, suffix='%') => {
     const cls = val >= 0 ? 'up' : 'down';
     return `<span class="indicator-change ${cls}">${val > 0 ? '+' : ''}${val}${suffix}</span>`;
   };
 
-  // Stock: label on top, value + change on bottom row
-  const mkStock = (label, price, ytdChg) => {
+  const mkTick = (label, price, chg) => {
     return `<div class="indicator">
       <span class="indicator-label">${label}</span>
-      <div class="indicator-row">
-        <span class="indicator-value">$${price}</span>
-        ${chgBadge(ytdChg)}
-      </div>
+      <span class="indicator-value">${price}</span>
+      ${chgBadge(chg)}
     </div>`;
   };
 
-  // Spot: label on top, sparkline + value + change on bottom row
-  const mkSpot = (label, s, color) => {
-    if (!s) return '';
-    const chg = parseFloat(pctChg(s));
-    return `<div class="indicator">
-      <span class="indicator-label">${label}</span>
-      <div class="indicator-row">
-        ${spark(s.hourly_prices_24h, color)}
-        <span class="indicator-value">$${s.last_trade.toFixed(2)}</span>
-        ${chgBadge(chg)}
-      </div>
-    </div>`;
-  };
-
-  // Metric: label on top, value + sub-badge on bottom row
-  const mkMetric = (label, value, sub, subCls) => {
-    return `<div class="indicator">
-      <span class="indicator-label">${label}</span>
-      <div class="indicator-row">
-        <span class="indicator-value">${value}</span>
-        ${sub ? `<span class="indicator-sub ${subCls||''}">${sub}</span>` : ''}
-      </div>
-    </div>`;
-  };
-
-  // Derived data
-  const leadKeys = Object.keys(mi.h100_lead_time_weeks).sort();
-  const lead = mi.h100_lead_time_weeks[leadKeys[leadKeys.length-1]];
-  const leadTag = lead <= 2 ? ['AVAILABLE','tag-green'] : lead <= 8 ? ['MODERATE','tag-amber'] : ['CONSTRAINED','tag-red'];
-
-  const shipKeys = Object.keys(mi.data_center_gpu_shipments_k).sort();
-  const latestShip = mi.data_center_gpu_shipments_k[shipKeys[shipKeys.length-1]];
-
-  const amdKeys = Object.keys(mi.amd_gpu_market_share_pct).sort();
-  const amdShare = mi.amd_gpu_market_share_pct[amdKeys[amdKeys.length-1]];
-
-  const totalVol = spot ? Object.values(spot).reduce((s,g) => s + (g['24h_volume_gpu_hrs']||0), 0) : 0;
-
-  const div = '<div class="indicator-divider"></div>';
+  const h100 = spot?.['H100-SXM'];
+  const b200 = spot?.['B200'];
+  const h100Price = h100 ? '$'+h100.last_trade.toFixed(2) : '--';
+  const b200Price = b200 ? '$'+b200.last_trade.toFixed(2) : '--';
+  const h100Chg = h100?.hourly_prices_24h?.length > 1 ? ((h100.hourly_prices_24h.at(-1) - h100.hourly_prices_24h[0]) / h100.hourly_prices_24h[0] * 100).toFixed(1) : 0;
+  const b200Chg = b200?.hourly_prices_24h?.length > 1 ? ((b200.hourly_prices_24h.at(-1) - b200.hourly_prices_24h[0]) / b200.hourly_prices_24h[0] * 100).toFixed(1) : 0;
 
   tb.innerHTML =
-    mkStock('NVDA', mi.nvidia_stock.current, mi.nvidia_stock.ytd_change) +
-    mkStock('AMD', mi.amd_stock.current, mi.amd_stock.ytd_change) +
-    div +
-    mkSpot('H100 SPOT', spot?.['H100-SXM'], '#22d3ee') +
-    mkSpot('B200 SPOT', spot?.['B200'], '#a78bfa') +
-    mkSpot('H200 SPOT', spot?.['H200'], '#4e8ff7') +
-    div +
-    mkMetric('AI CAPEX \'26', '$'+mi.ai_capex_bn['2026_est']+'B', '+40% YoY', 'up') +
-    mkMetric('GPU MKT', '$'+mi.gpu_market_size_bn['2025']+'B', '+35%', 'up') +
-    div +
-    mkMetric('H100 LEAD', lead+'wk', leadTag[0], leadTag[1]) +
-    mkMetric('AMD DC', amdShare+'%', 'mkt share', '') +
-    mkMetric('SPOT VOL', (totalVol/1000).toFixed(0)+'K hrs', '', '');
+    mkTick('NVDA', '$'+mi.nvidia_stock.current, mi.nvidia_stock.ytd_change) +
+    mkTick('AMD', '$'+mi.amd_stock.current, mi.amd_stock.ytd_change) +
+    mkTick('H100', h100Price, parseFloat(h100Chg)) +
+    mkTick('B200', b200Price, parseFloat(b200Chg));
 }
 
 // ════════════════════════════════════════════════════════════════
 // NEWS
 // ════════════════════════════════════════════════════════════════
-function renderNewsBanner() {
+function renderNewsHeadline() {
   const news = DATA.news;
   if (!news || !news.length) return;
 
-  // Shift dates so news always appears recent (especially for static/embedded mode)
+  // Shift dates so news always appears recent
   const today = new Date();
   today.setHours(0,0,0,0);
   const mostRecent = new Date(Math.max(...news.map(n => new Date(n.date+'T00:00:00').getTime())));
   const gapMs = today.getTime() - mostRecent.getTime();
-  if (gapMs > 86400000) { // more than 1 day stale
+  if (gapMs > 86400000) {
     news.forEach(n => {
       const orig = new Date(n.date+'T00:00:00');
       const shifted = new Date(orig.getTime() + gapMs);
@@ -1449,14 +1314,20 @@ function renderNewsBanner() {
     });
   }
 
-  const items = [...news, ...news];
-  document.getElementById('newsScroll').innerHTML = items.map(n =>
-    `<span class="news-entry">
-      <span class="news-src">${n.source}</span>
-      <span class="news-txt">${n.headline}</span>
-      <span class="news-tag news-tag-${n.impact}">${n.impact}</span>
-    </span>`
-  ).join('');
+  const el = document.getElementById('newsHeadline');
+  let idx = 0;
+  const show = () => {
+    const n = news[idx % news.length];
+    el.style.opacity = '0';
+    setTimeout(() => {
+      el.innerHTML = `▸ <span class="nh-src">${n.source}:</span> ${n.headline}`;
+      el.style.opacity = '1';
+    }, 400);
+    idx++;
+  };
+  show();
+  if (window._newsInterval) clearInterval(window._newsInterval);
+  window._newsInterval = setInterval(show, 6000);
 }
 
 // ════════════════════════════════════════════════════════════════
