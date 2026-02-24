@@ -327,6 +327,10 @@ CLOUD_PRICING = {
                 "westeurope": 13.52, "northeurope": 13.38,
                 "japaneast": 14.75, "southeastasia": 14.34
             }},
+            "MI325X": {"instance": "ND96isr_MI325X_v5", "gpus_per_instance": 8, "price_per_gpu_hr": 7.20, "regions": {
+                "eastus": 7.20, "eastus2": 7.20, "westus2": 7.20,
+                "westeurope": 7.92, "southeastasia": 8.40
+            }},
             "MI300X": {"instance": "ND96isr_MI300X_v5", "gpus_per_instance": 8, "price_per_gpu_hr": 6.00, "regions": {
                 "eastus": 6.00, "eastus2": 6.00, "westus2": 6.00,
                 "westeurope": 6.60, "southeastasia": 7.00
@@ -355,7 +359,7 @@ CLOUD_PRICING = {
             "B200": {"instance": "gpu_8x_b200", "gpus_per_instance": 8, "price_per_gpu_hr": 5.74, "regions": {
                 "us-west-1": 5.74, "us-south-1": 5.74
             }},
-            "H100-SXM": {"instance": "gpu_8x_h100_sxm5", "gpus_per_instance": 8, "price_per_gpu_hr": 3.44, "regions": {
+            "H100-SXM": {"instance": "gpu_8x_h100_sxm5", "gpus_per_instance": 8, "price_per_gpu_hr": 2.49, "regions": {
                 "us-west-1": 2.49, "us-south-1": 2.49, "us-east-1": 2.49,
                 "europe-central-1": 2.79
             }},
@@ -391,6 +395,9 @@ CLOUD_PRICING = {
             "H100-PCIe": {"instance": "h100-pcie-80gb", "gpus_per_instance": 1, "price_per_gpu_hr": 2.06, "regions": {
                 "LAS1": 2.06, "ORD1": 2.06
             }},
+            "MI325X": {"instance": "mi325x-256gb", "gpus_per_instance": 1, "price_per_gpu_hr": 3.20, "regions": {
+                "LAS1": 3.20, "ORD1": 3.20
+            }},
             "A100-80GB": {"instance": "a100-sxm-80gb", "gpus_per_instance": 1, "price_per_gpu_hr": 1.28, "regions": {
                 "LAS1": 1.28, "ORD1": 1.28, "LGA1": 1.28
             }},
@@ -422,6 +429,9 @@ CLOUD_PRICING = {
             }},
             "H100-PCIe": {"instance": "h100-pcie", "gpus_per_instance": 1, "price_per_gpu_hr": 1.79, "regions": {
                 "US": 1.79, "EU": 1.99
+            }},
+            "MI325X": {"instance": "mi325x", "gpus_per_instance": 1, "price_per_gpu_hr": 2.99, "regions": {
+                "US": 2.99, "EU": 3.29
             }},
             "MI300X": {"instance": "mi300x", "gpus_per_instance": 1, "price_per_gpu_hr": 2.49, "regions": {
                 "US": 2.49, "EU": 2.69
@@ -528,9 +538,9 @@ CLOUD_PRICING = {
                 "us-ashburn-1": 3.19, "us-phoenix-1": 3.19, "uk-london-1": 3.51,
                 "eu-frankfurt-1": 3.51, "ap-tokyo-1": 3.83
             }},
-            "A100-80GB": {"instance": "BM.GPU.A100-v2.8", "gpus_per_instance": 8, "price_per_gpu_hr": 4.00, "regions": {
-                "us-ashburn-1": 4.00, "us-phoenix-1": 4.00,
-                "uk-london-1": 4.40, "eu-frankfurt-1": 4.40
+            "A100-80GB": {"instance": "BM.GPU.A100-v2.8", "gpus_per_instance": 8, "price_per_gpu_hr": 2.95, "regions": {
+                "us-ashburn-1": 2.95, "us-phoenix-1": 2.95,
+                "uk-london-1": 3.25, "eu-frankfurt-1": 3.25
             }},
             "A10G": {"instance": "VM.GPU.A10.1", "gpus_per_instance": 1, "price_per_gpu_hr": 0.70, "regions": {
                 "us-ashburn-1": 0.70, "us-phoenix-1": 0.70
@@ -793,6 +803,61 @@ HISTORICAL_PRICING = {
         "2025-10": {"avg": 0.90, "min": 0.72, "max": 1.13, "availability": "abundant"},
         "2026-01": {"avg": 0.88, "min": 0.70, "max": 1.10, "availability": "abundant"},
         "2026-02": {"avg": 0.87, "min": 0.69, "max": 1.08, "availability": "abundant"}
+    },
+    "GB200": {
+        "2025-06": {"avg": 28.00, "min": 26.50, "max": 30.00, "availability": "scarce"},
+        "2025-07": {"avg": 27.50, "min": 26.00, "max": 29.50, "availability": "scarce"},
+        "2025-08": {"avg": 27.20, "min": 25.80, "max": 29.00, "availability": "scarce"},
+        "2025-09": {"avg": 27.00, "min": 25.50, "max": 28.80, "availability": "scarce"},
+        "2025-10": {"avg": 27.10, "min": 25.60, "max": 29.00, "availability": "scarce"},
+        "2025-11": {"avg": 27.00, "min": 25.40, "max": 28.80, "availability": "scarce"},
+        "2025-12": {"avg": 27.05, "min": 25.50, "max": 28.90, "availability": "scarce"},
+        "2026-01": {"avg": 27.04, "min": 25.40, "max": 28.80, "availability": "scarce"},
+        "2026-02": {"avg": 26.90, "min": 25.20, "max": 28.60, "availability": "scarce"}
+    },
+    "H100-PCIe": {
+        "2023-06": {"avg": 3.20, "min": 2.90, "max": 3.60, "availability": "scarce"},
+        "2023-09": {"avg": 3.10, "min": 2.80, "max": 3.50, "availability": "limited"},
+        "2023-12": {"avg": 3.00, "min": 2.70, "max": 3.40, "availability": "limited"},
+        "2024-03": {"avg": 2.90, "min": 2.60, "max": 3.30, "availability": "available"},
+        "2024-06": {"avg": 2.80, "min": 2.50, "max": 3.20, "availability": "available"},
+        "2024-09": {"avg": 2.70, "min": 2.40, "max": 3.10, "availability": "available"},
+        "2024-12": {"avg": 2.60, "min": 2.30, "max": 3.00, "availability": "available"},
+        "2025-03": {"avg": 2.40, "min": 2.10, "max": 2.80, "availability": "available"},
+        "2025-06": {"avg": 2.20, "min": 1.95, "max": 2.55, "availability": "available"},
+        "2025-09": {"avg": 2.05, "min": 1.80, "max": 2.40, "availability": "available"},
+        "2025-12": {"avg": 1.95, "min": 1.70, "max": 2.25, "availability": "available"},
+        "2026-02": {"avg": 1.90, "min": 1.65, "max": 2.20, "availability": "available"}
+    },
+    "A10G": {
+        "2023-01": {"avg": 1.20, "min": 1.00, "max": 1.45, "availability": "available"},
+        "2023-06": {"avg": 1.15, "min": 0.95, "max": 1.40, "availability": "available"},
+        "2023-12": {"avg": 1.10, "min": 0.90, "max": 1.35, "availability": "available"},
+        "2024-06": {"avg": 1.00, "min": 0.80, "max": 1.25, "availability": "available"},
+        "2024-12": {"avg": 0.85, "min": 0.65, "max": 1.10, "availability": "abundant"},
+        "2025-06": {"avg": 0.72, "min": 0.55, "max": 0.95, "availability": "abundant"},
+        "2025-12": {"avg": 0.62, "min": 0.45, "max": 0.82, "availability": "abundant"},
+        "2026-02": {"avg": 0.58, "min": 0.39, "max": 0.78, "availability": "abundant"}
+    },
+    "RTX-5090": {
+        "2025-03": {"avg": 0.60, "min": 0.50, "max": 0.75, "availability": "scarce"},
+        "2025-06": {"avg": 0.55, "min": 0.47, "max": 0.68, "availability": "limited"},
+        "2025-09": {"avg": 0.50, "min": 0.44, "max": 0.62, "availability": "limited"},
+        "2025-12": {"avg": 0.48, "min": 0.42, "max": 0.58, "availability": "available"},
+        "2026-02": {"avg": 0.45, "min": 0.40, "max": 0.55, "availability": "available"}
+    },
+    "V100": {
+        "2021-01": {"avg": 3.20, "min": 2.90, "max": 3.60, "availability": "available"},
+        "2021-06": {"avg": 3.40, "min": 3.00, "max": 3.90, "availability": "limited"},
+        "2022-01": {"avg": 3.50, "min": 3.10, "max": 4.00, "availability": "limited"},
+        "2022-06": {"avg": 3.30, "min": 2.90, "max": 3.80, "availability": "available"},
+        "2023-01": {"avg": 3.10, "min": 2.70, "max": 3.60, "availability": "available"},
+        "2023-06": {"avg": 2.90, "min": 2.50, "max": 3.40, "availability": "available"},
+        "2024-01": {"avg": 2.50, "min": 2.10, "max": 3.00, "availability": "abundant"},
+        "2024-06": {"avg": 2.20, "min": 1.80, "max": 2.70, "availability": "abundant"},
+        "2025-01": {"avg": 1.80, "min": 1.40, "max": 2.30, "availability": "abundant"},
+        "2025-06": {"avg": 1.50, "min": 1.10, "max": 2.00, "availability": "abundant"},
+        "2026-02": {"avg": 1.20, "min": 0.85, "max": 1.65, "availability": "abundant"}
     }
 }
 
@@ -1243,6 +1308,13 @@ SPOT_MARKET = {
         "reserved_3yr_low": 0.16, "reserved_3yr_avg": 0.25, "reserved_3yr_high": 0.37,
         "res1_savings_pct": 25, "res3_savings_pct": 45,
         "num_providers": 4, "quarterly_trend": [0.65, 0.55, 0.48, 0.45]
+    },
+    "MI325X": {
+        "on_demand_low": 2.99, "on_demand_avg": 5.80, "on_demand_high": 8.40,
+        "reserved_1yr_low": 2.09, "reserved_1yr_avg": 4.06, "reserved_1yr_high": 5.88,
+        "reserved_3yr_low": 1.50, "reserved_3yr_avg": 2.90, "reserved_3yr_high": 4.20,
+        "res1_savings_pct": 30, "res3_savings_pct": 50,
+        "num_providers": 3, "quarterly_trend": [7.50, 6.80, 6.20, 5.80]
     },
     "L40S": {
         "on_demand_low": 0.47, "on_demand_avg": 1.00, "on_demand_high": 1.86,
@@ -1872,10 +1944,12 @@ SUSTAINABILITY_INDEX = {
 GPU_CARBON_FOOTPRINT = {
     "H100-SXM": {"tdp_watts": 700, "typical_watts": 580, "kwh_per_hour": 0.58, "annual_kwh_full_util": 5081, "carbon_kg_per_year_us_avg": 2032, "carbon_kg_per_year_eu_nordic": 228, "water_liters_per_year_us_avg": 9146, "embodied_carbon_kg": 150},
     "B200": {"tdp_watts": 1000, "typical_watts": 820, "kwh_per_hour": 0.82, "annual_kwh_full_util": 7183, "carbon_kg_per_year_us_avg": 2873, "carbon_kg_per_year_eu_nordic": 323, "water_liters_per_year_us_avg": 12930, "embodied_carbon_kg": 200},
-    "A100-80GB": {"tdp_watts": 300, "typical_watts": 250, "kwh_per_hour": 0.25, "annual_kwh_full_util": 2190, "carbon_kg_per_year_us_avg": 876, "carbon_kg_per_year_eu_nordic": 99, "water_liters_per_year_us_avg": 3942, "embodied_carbon_kg": 100},
+    "A100-80GB": {"tdp_watts": 400, "typical_watts": 330, "kwh_per_hour": 0.33, "annual_kwh_full_util": 2891, "carbon_kg_per_year_us_avg": 1156, "carbon_kg_per_year_eu_nordic": 130, "water_liters_per_year_us_avg": 5204, "embodied_carbon_kg": 100},
     "MI300X": {"tdp_watts": 750, "typical_watts": 620, "kwh_per_hour": 0.62, "annual_kwh_full_util": 5431, "carbon_kg_per_year_us_avg": 2172, "carbon_kg_per_year_eu_nordic": 244, "water_liters_per_year_us_avg": 9776, "embodied_carbon_kg": 160},
     "H200": {"tdp_watts": 700, "typical_watts": 580, "kwh_per_hour": 0.58, "annual_kwh_full_util": 5081, "carbon_kg_per_year_us_avg": 2032, "carbon_kg_per_year_eu_nordic": 228, "water_liters_per_year_us_avg": 9146, "embodied_carbon_kg": 155},
-    "RTX-4090": {"tdp_watts": 450, "typical_watts": 370, "kwh_per_hour": 0.37, "annual_kwh_full_util": 3241, "carbon_kg_per_year_us_avg": 1296, "carbon_kg_per_year_eu_nordic": 146, "water_liters_per_year_us_avg": 5834, "embodied_carbon_kg": 80}
+    "RTX-4090": {"tdp_watts": 450, "typical_watts": 370, "kwh_per_hour": 0.37, "annual_kwh_full_util": 3241, "carbon_kg_per_year_us_avg": 1296, "carbon_kg_per_year_eu_nordic": 146, "water_liters_per_year_us_avg": 5834, "embodied_carbon_kg": 80},
+    "MI325X": {"tdp_watts": 1000, "typical_watts": 830, "kwh_per_hour": 0.83, "annual_kwh_full_util": 7273, "carbon_kg_per_year_us_avg": 2909, "carbon_kg_per_year_eu_nordic": 327, "water_liters_per_year_us_avg": 13091, "embodied_carbon_kg": 175},
+    "GB200": {"tdp_watts": 2700, "typical_watts": 2200, "kwh_per_hour": 2.20, "annual_kwh_full_util": 19272, "carbon_kg_per_year_us_avg": 7709, "carbon_kg_per_year_eu_nordic": 867, "water_liters_per_year_us_avg": 34690, "embodied_carbon_kg": 350}
 }
 
 
@@ -2162,7 +2236,7 @@ MODEL_HARDWARE_FIT = {
             "B200": {"optimal_config": "1x B200", "batch_size": 256, "throughput_tok_s": 480, "cost_per_1m_tokens": 0.062, "vram_headroom_pct": 86, "fit_score": 65, "notes": "Overkill but fast"},
             "A100-80GB": {"optimal_config": "1x A100", "batch_size": 64, "throughput_tok_s": 195, "cost_per_1m_tokens": 0.072, "vram_headroom_pct": 68, "fit_score": 82, "notes": "Sweet spot for 13B inference"},
             "MI300X": {"optimal_config": "1x MI300X", "batch_size": 128, "throughput_tok_s": 270, "cost_per_1m_tokens": 0.065, "vram_headroom_pct": 86, "fit_score": 70, "notes": "Good perf, VRAM headroom for batching"},
-            "RTX-4090": {"optimal_config": "2x RTX-4090", "batch_size": 32, "throughput_tok_s": 95, "cost_per_1m_tokens": 0.058, "vram_headroom_pct": 8, "fit_score": 72, "notes": "Best cost/perf if 2-GPU setup acceptable"}
+            "RTX-4090": {"optimal_config": "2x RTX-4090", "batch_size": 32, "throughput_tok_s": 95, "cost_per_1m_tokens": 0.058, "vram_headroom_pct": 46, "fit_score": 72, "notes": "Best cost/perf if 2-GPU setup acceptable"}
         }
     },
     "70B": {
@@ -2173,18 +2247,29 @@ MODEL_HARDWARE_FIT = {
             "B200": {"optimal_config": "1x B200", "batch_size": 128, "throughput_tok_s": 145, "cost_per_1m_tokens": 0.28, "vram_headroom_pct": 27, "fit_score": 92, "notes": "Single GPU! 192GB VRAM fits 70B"},
             "A100-80GB": {"optimal_config": "2x A100 (NVLink)", "batch_size": 32, "throughput_tok_s": 52, "cost_per_1m_tokens": 0.52, "vram_headroom_pct": 14, "fit_score": 72, "notes": "Viable but slower, tight VRAM"},
             "MI300X": {"optimal_config": "1x MI300X", "batch_size": 64, "throughput_tok_s": 82, "cost_per_1m_tokens": 0.32, "vram_headroom_pct": 27, "fit_score": 88, "notes": "Single GPU fits 70B, best AMD value"},
-            "H200": {"optimal_config": "2x H200", "batch_size": 64, "throughput_tok_s": 110, "cost_per_1m_tokens": 0.42, "vram_headroom_pct": 20, "fit_score": 80, "notes": "NVLink pair, good throughput"}
+            "H200": {"optimal_config": "2x H200", "batch_size": 64, "throughput_tok_s": 110, "cost_per_1m_tokens": 0.42, "vram_headroom_pct": 50, "fit_score": 80, "notes": "NVLink pair, good throughput"}
+        }
+    },
+    "180B": {
+        "models": ["Falcon-180B", "DBRX-132B"],
+        "vram_required_gb": 360,
+        "gpus": {
+            "H100-SXM": {"optimal_config": "8x H100 (DGX)", "batch_size": 32, "throughput_tok_s": 48, "cost_per_1m_tokens": 1.20, "vram_headroom_pct": 44, "fit_score": 75, "notes": "Full DGX node, 640GB provides ample headroom for batching"},
+            "B200": {"optimal_config": "2x B200", "batch_size": 64, "throughput_tok_s": 85, "cost_per_1m_tokens": 0.82, "vram_headroom_pct": 6, "fit_score": 85, "notes": "384GB fits 180B FP16 comfortably"},
+            "MI300X": {"optimal_config": "2x MI300X", "batch_size": 48, "throughput_tok_s": 55, "cost_per_1m_tokens": 0.95, "vram_headroom_pct": 6, "fit_score": 80, "notes": "384GB HBM, good AMD value"},
+            "GB200": {"optimal_config": "1x GB200", "batch_size": 128, "throughput_tok_s": 120, "cost_per_1m_tokens": 0.60, "vram_headroom_pct": 6, "fit_score": 95, "notes": "Single NVL72 node fits 180B with headroom"},
+            "H200": {"optimal_config": "4x H200", "batch_size": 32, "throughput_tok_s": 58, "cost_per_1m_tokens": 1.10, "vram_headroom_pct": 36, "fit_score": 78, "notes": "564GB total, good headroom for batching"}
         }
     },
     "405B": {
-        "models": ["Llama-3.1-405B", "DBRX-132B", "Falcon-180B"],
+        "models": ["Llama-3.1-405B"],
         "vram_required_gb": 810,
         "gpus": {
-            "H100-SXM": {"optimal_config": "8x H100 (DGX)", "batch_size": 16, "throughput_tok_s": 28, "cost_per_1m_tokens": 2.80, "vram_headroom_pct": 0, "fit_score": 70, "notes": "Full DGX node, tight VRAM, needs offloading"},
+            "H100-SXM": {"optimal_config": "16x H100 (2x DGX)", "batch_size": 8, "throughput_tok_s": 28, "cost_per_1m_tokens": 2.80, "vram_headroom_pct": 37, "fit_score": 55, "notes": "Needs 2 DGX nodes (1.28TB), cross-node NVLink"},
             "B200": {"optimal_config": "8x B200 (NVL)", "batch_size": 64, "throughput_tok_s": 65, "cost_per_1m_tokens": 1.85, "vram_headroom_pct": 47, "fit_score": 90, "notes": "1.5TB VRAM, excellent fit for mega-models"},
             "MI300X": {"optimal_config": "8x MI300X", "batch_size": 32, "throughput_tok_s": 35, "cost_per_1m_tokens": 2.20, "vram_headroom_pct": 47, "fit_score": 78, "notes": "1.5TB HBM, competitive AMD option"},
-            "GB200": {"optimal_config": "4x GB200", "batch_size": 128, "throughput_tok_s": 95, "cost_per_1m_tokens": 1.40, "vram_headroom_pct": 60, "fit_score": 95, "notes": "NVL72 rack-scale, best for 400B+ models"},
-            "H200": {"optimal_config": "8x H200", "batch_size": 16, "throughput_tok_s": 32, "cost_per_1m_tokens": 2.50, "vram_headroom_pct": 10, "fit_score": 65, "notes": "Feasible but H100 successor, limited headroom"}
+            "GB200": {"optimal_config": "4x GB200", "batch_size": 128, "throughput_tok_s": 95, "cost_per_1m_tokens": 1.40, "vram_headroom_pct": 47, "fit_score": 95, "notes": "NVL72 rack-scale, best for 400B+ models"},
+            "H200": {"optimal_config": "8x H200", "batch_size": 16, "throughput_tok_s": 32, "cost_per_1m_tokens": 2.50, "vram_headroom_pct": 28, "fit_score": 65, "notes": "1.13TB total, feasible but limited headroom"}
         }
     }
 }
