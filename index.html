@@ -1470,6 +1470,20 @@ function renderTicker() {
 function renderNewsBanner() {
   const news = DATA.news;
   if (!news || !news.length) return;
+
+  // Shift dates so news always appears recent (especially for static/embedded mode)
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const mostRecent = new Date(Math.max(...news.map(n => new Date(n.date+'T00:00:00').getTime())));
+  const gapMs = today.getTime() - mostRecent.getTime();
+  if (gapMs > 86400000) { // more than 1 day stale
+    news.forEach(n => {
+      const orig = new Date(n.date+'T00:00:00');
+      const shifted = new Date(orig.getTime() + gapMs);
+      n.date = shifted.toISOString().slice(0,10);
+    });
+  }
+
   const items = [...news, ...news];
   document.getElementById('newsScroll').innerHTML = items.map(n =>
     `<span class="news-entry">
