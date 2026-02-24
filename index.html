@@ -10,15 +10,15 @@
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
 :root {
-  --bg-0: #07090d;
-  --bg-1: #0b0f16;
-  --bg-2: #10151e;
-  --bg-3: #151c28;
-  --bg-4: #1a2332;
-  --bg-hover: #1e2940;
-  --border-0: #1a2233;
-  --border-1: #243044;
-  --border-2: #2e3d55;
+  --bg-0: #0f1720;
+  --bg-1: #141e2b;
+  --bg-2: #1a2535;
+  --bg-3: #1f2d40;
+  --bg-4: #253648;
+  --bg-hover: #2a3d52;
+  --border-0: #243044;
+  --border-1: #2e3d55;
+  --border-2: #3a4d66;
   --text-0: #f0f2f5;
   --text-1: #c8cdd6;
   --text-2: #8a95a6;
@@ -27,12 +27,12 @@
   --blue-dim: rgba(78,143,247,0.12);
   --cyan: #22d3ee;
   --cyan-dim: rgba(34,211,238,0.10);
-  --green: #34d399;
-  --green-dim: rgba(52,211,153,0.10);
-  --red: #f87171;
-  --red-dim: rgba(248,113,113,0.10);
-  --amber: #fbbf24;
-  --amber-dim: rgba(251,191,36,0.10);
+  --green: #3ecf8e;
+  --green-dim: rgba(62,207,142,0.10);
+  --red: #ef6461;
+  --red-dim: rgba(239,100,97,0.10);
+  --amber: #f0b429;
+  --amber-dim: rgba(240,180,41,0.10);
   --purple: #a78bfa;
   --purple-dim: rgba(167,139,250,0.10);
   --orange: #fb923c;
@@ -40,7 +40,7 @@
   --pink: #f472b6;
   --mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', Consolas, monospace;
   --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --radius: 8px;
+  --radius: 10px;
   --radius-sm: 5px;
   --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.15);
   --shadow-lg: 0 4px 20px rgba(0,0,0,0.4);
@@ -52,7 +52,7 @@ body {
   background: var(--bg-0);
   color: var(--text-1);
   font-family: var(--sans);
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.55;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -63,7 +63,7 @@ body {
   background: var(--bg-1);
   border-bottom: 1px solid var(--border-0);
   padding: 0 20px;
-  height: 52px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -82,11 +82,11 @@ body {
   width: 30px;
   height: 30px;
   border-radius: 7px;
-  background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%);
+  background: var(--blue);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-weight: 800;
   font-size: 14px;
   color: var(--bg-0);
@@ -174,7 +174,7 @@ body {
   animation: blink 2s ease-in-out infinite;
   box-shadow: 0 0 6px var(--green);
 }
-@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
 .topbar-time {
   font-family: var(--mono);
   font-size: 10px;
@@ -256,10 +256,9 @@ body {
   padding: 10px 18px;
   color: var(--text-3);
   cursor: pointer;
-  font-size: 11.5px;
+  font-size: 12.5px;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.3px;
   border-bottom: 2px solid transparent;
   transition: all 0.15s ease;
   white-space: nowrap;
@@ -279,21 +278,20 @@ body {
   left: 0; right: 0;
   height: 2px;
   background: var(--blue);
-  box-shadow: 0 0 8px var(--blue);
 }
 
 /* ─── LAYOUT ─── */
-.main { padding: 16px; }
+.main { padding: 24px; }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
-.grid { display: grid; gap: 14px; }
+.grid { display: grid; gap: 18px; }
 .g-2 { grid-template-columns: 1fr 1fr; }
 .g-3 { grid-template-columns: 1fr 1fr 1fr; }
 .g-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
 .g-7-3 { grid-template-columns: 7fr 3fr; }
 .g-3-7 { grid-template-columns: 3fr 7fr; }
 .g-6-4 { grid-template-columns: 6fr 4fr; }
-.mb { margin-bottom: 14px; }
+.mb { margin-bottom: 18px; }
 
 /* ─── CARDS ─── */
 .card {
@@ -306,7 +304,7 @@ body {
 }
 .card:hover { border-color: var(--border-1); }
 .card-hd {
-  padding: 12px 16px;
+  padding: 14px 20px;
   border-bottom: 1px solid var(--border-0);
   display: flex;
   justify-content: space-between;
@@ -315,11 +313,10 @@ body {
 }
 .card-hd-title {
   font-family: var(--sans);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--text-2);
+  letter-spacing: 0.3px;
+  color: var(--text-1);
 }
 .card-hd-badge {
   font-size: 9px;
@@ -329,7 +326,7 @@ body {
   font-family: var(--mono);
   letter-spacing: 0.5px;
 }
-.card-bd { padding: 16px; }
+.card-bd { padding: 20px; }
 .card-bd-flush { padding: 0; }
 
 /* ─── KPI STRIP ─── */
@@ -338,7 +335,7 @@ body {
   background: var(--bg-2);
   border: 1px solid var(--border-0);
   border-radius: var(--radius);
-  padding: 16px 18px;
+  padding: 20px 24px;
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow);
@@ -358,16 +355,15 @@ body {
 .kpi.kpi-purple::before { background: var(--purple); }
 .kpi.kpi-cyan::before { background: var(--cyan); }
 .kpi-label {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
+  font-size: 12px;
+  letter-spacing: 0.3px;
   color: var(--text-3);
   font-weight: 600;
   margin-bottom: 6px;
 }
 .kpi-value {
-  font-family: var(--mono);
-  font-size: 22px;
+  font-family: var(--sans);
+  font-size: 28px;
   font-weight: 700;
   color: var(--text-0);
   line-height: 1.2;
@@ -376,7 +372,6 @@ body {
   font-size: 11px;
   color: var(--text-3);
   margin-top: 4px;
-  font-family: var(--mono);
 }
 .kpi-sub .up { color: var(--green); font-weight: 600; }
 .kpi-sub .dn { color: var(--red); font-weight: 600; }
@@ -385,17 +380,16 @@ body {
 .dt {
   width: 100%;
   border-collapse: collapse;
-  font-family: var(--mono);
-  font-size: 11.5px;
+  font-family: var(--sans);
+  font-size: 13px;
 }
 .dt thead th {
-  padding: 9px 12px;
+  padding: 10px 16px;
   text-align: left;
   background: var(--bg-3);
-  color: var(--text-3);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
+  color: var(--text-2);
+  font-size: 11px;
+  letter-spacing: 0.3px;
   font-weight: 700;
   border-bottom: 1px solid var(--border-1);
   position: sticky;
@@ -404,13 +398,13 @@ body {
 }
 .dt thead th.r { text-align: right; }
 .dt tbody td {
-  padding: 8px 12px;
+  padding: 10px 16px;
   border-bottom: 1px solid var(--border-0);
   white-space: nowrap;
 }
 .dt tbody td.r { text-align: right; font-variant-numeric: tabular-nums; }
 .dt tbody tr:hover { background: var(--bg-hover); }
-.dt tbody tr:nth-child(even) { background: rgba(11,15,22,0.4); }
+.dt tbody tr:nth-child(even) { background: rgba(255,255,255,0.02); }
 
 /* ─── PRICE GRID ─── */
 .pg-cloud-hdr { background: rgba(59,130,246,0.12); color: var(--blue); font-weight: 700; text-align: center; font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase; }
@@ -701,7 +695,7 @@ body {
 .region-row-v { color: var(--text-0); font-family: var(--mono); font-weight: 600; }
 
 /* ─── SCROLLBAR ─── */
-::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg-1); }
 ::-webkit-scrollbar-thumb { background: var(--border-1); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--blue); }
@@ -1232,8 +1226,8 @@ let DATA = {
 };
 
 const C = {
-  blue:'#4e8ff7', cyan:'#22d3ee', green:'#34d399', red:'#f87171',
-  amber:'#fbbf24', purple:'#a78bfa', orange:'#fb923c', pink:'#f472b6',
+  blue:'#4e8ff7', cyan:'#22d3ee', green:'#3ecf8e', red:'#ef6461',
+  amber:'#f0b429', purple:'#a78bfa', orange:'#fb923c', pink:'#f472b6',
   teal:'#2dd4bf', indigo:'#818cf8', lime:'#a3e635', sky:'#38bdf8'
 };
 const CL = Object.values(C);
@@ -1245,13 +1239,13 @@ const PC = {
 
 Chart.defaults.color = '#5c6980';
 Chart.defaults.borderColor = 'rgba(26,34,51,0.6)';
-Chart.defaults.font.family = "'JetBrains Mono','SF Mono',monospace";
-Chart.defaults.font.size = 10.5;
-Chart.defaults.plugins.legend.labels.boxWidth = 10;
+Chart.defaults.font.family = "'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif";
+Chart.defaults.font.size = 11.5;
+Chart.defaults.plugins.legend.labels.boxWidth = 12;
 Chart.defaults.plugins.legend.labels.padding = 14;
-Chart.defaults.elements.bar.borderRadius = 3;
+Chart.defaults.elements.bar.borderRadius = 4;
 Chart.defaults.elements.line.borderWidth = 2;
-Chart.defaults.elements.point.radius = 2.5;
+Chart.defaults.elements.point.radius = 3;
 
 let charts = {};
 
