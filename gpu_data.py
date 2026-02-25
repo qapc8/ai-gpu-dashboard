@@ -296,7 +296,8 @@ CLOUD_PRICING = {
             }}
         },
         "reserved_1yr_discount": 0.40,
-        "reserved_3yr_discount": 0.60
+        "reserved_3yr_discount": 0.60,
+        "spot_discount": 0.65
     },
     "GCP": {
         "provider_name": "Google Cloud Platform",
@@ -331,7 +332,8 @@ CLOUD_PRICING = {
             }}
         },
         "reserved_1yr_discount": 0.37,
-        "reserved_3yr_discount": 0.55
+        "reserved_3yr_discount": 0.55,
+        "spot_discount": 0.60
     },
     "Azure": {
         "provider_name": "Microsoft Azure",
@@ -377,7 +379,8 @@ CLOUD_PRICING = {
             }}
         },
         "reserved_1yr_discount": 0.36,
-        "reserved_3yr_discount": 0.56
+        "reserved_3yr_discount": 0.56,
+        "spot_discount": 0.60
     },
     "Lambda": {
         "provider_name": "Lambda Labs",
@@ -407,7 +410,8 @@ CLOUD_PRICING = {
             }}
         },
         "reserved_1yr_discount": 0.20,
-        "reserved_3yr_discount": 0.35
+        "reserved_3yr_discount": 0.35,
+        "spot_discount": 0.50
     },
     "CoreWeave": {
         "provider_name": "CoreWeave",
@@ -445,7 +449,8 @@ CLOUD_PRICING = {
             }}
         },
         "reserved_1yr_discount": 0.25,
-        "reserved_3yr_discount": 0.45
+        "reserved_3yr_discount": 0.45,
+        "spot_discount": 0.55
     },
     "RunPod": {
         "provider_name": "RunPod",
@@ -489,7 +494,8 @@ CLOUD_PRICING = {
             }}
         },
         "reserved_1yr_discount": 0.15,
-        "reserved_3yr_discount": 0.30
+        "reserved_3yr_discount": 0.30,
+        "spot_discount": 0.40
     },
     "Vast.ai": {
         "provider_name": "Vast.ai",
@@ -533,7 +539,8 @@ CLOUD_PRICING = {
             }}
         },
         "reserved_1yr_discount": 0.0,
-        "reserved_3yr_discount": 0.0
+        "reserved_3yr_discount": 0.0,
+        "spot_discount": 0.0
     },
     "FluidStack": {
         "provider_name": "FluidStack",
@@ -562,7 +569,8 @@ CLOUD_PRICING = {
             }}
         },
         "reserved_1yr_discount": 0.20,
-        "reserved_3yr_discount": 0.35
+        "reserved_3yr_discount": 0.35,
+        "spot_discount": 0.45
     },
     "Oracle": {
         "provider_name": "Oracle Cloud (OCI)",
@@ -593,7 +601,8 @@ CLOUD_PRICING = {
             }}
         },
         "reserved_1yr_discount": 0.30,
-        "reserved_3yr_discount": 0.50
+        "reserved_3yr_discount": 0.50,
+        "spot_discount": 0.55
     },
     "Together": {
         "provider_name": "Together AI",
@@ -610,7 +619,8 @@ CLOUD_PRICING = {
             }}
         },
         "reserved_1yr_discount": 0.25,
-        "reserved_3yr_discount": 0.40
+        "reserved_3yr_discount": 0.40,
+        "spot_discount": 0.35
     }
 }
 
@@ -1482,63 +1492,99 @@ SPOT_MARKET = {
         "reserved_1yr_low": 2.60, "reserved_1yr_avg": 5.92, "reserved_1yr_high": 12.95,
         "reserved_3yr_low": 1.91, "reserved_3yr_avg": 4.23, "reserved_3yr_high": 8.33,
         "res1_savings_pct": 30, "res3_savings_pct": 50,
-        "num_providers": 10, "quarterly_trend": [10.50, 9.80, 8.90, 8.45]
+        "num_providers": 10, "quarterly_trend": [10.50, 9.80, 8.90, 8.45],
+        "bid": 7.90, "ask": 8.95, "last_trade": 8.45, "spread_pct": 12.4,
+        "24h_low": 7.80, "24h_high": 9.10,
+        "24h_volume_gpu_hrs": 3200, "available_gpus": 480, "volatility_30d": 18.5,
+        "hourly_prices_24h": [8.20,8.25,8.15,8.10,8.05,7.95,7.90,7.85,7.90,8.00,8.10,8.20,8.30,8.40,8.50,8.55,8.60,8.55,8.50,8.45,8.40,8.35,8.40,8.45]
     },
     "B200": {
         "on_demand_low": 2.67, "on_demand_avg": 6.50, "on_demand_high": 14.24,
         "reserved_1yr_low": 2.00, "reserved_1yr_avg": 4.55, "reserved_1yr_high": 9.97,
         "reserved_3yr_low": 1.47, "reserved_3yr_avg": 3.25, "reserved_3yr_high": 6.41,
         "res1_savings_pct": 30, "res3_savings_pct": 50,
-        "num_providers": 6, "quarterly_trend": [12.80, 11.50, 10.20, 8.50]
+        "num_providers": 6, "quarterly_trend": [12.80, 11.50, 10.20, 8.50],
+        "bid": 6.10, "ask": 6.90, "last_trade": 6.50, "spread_pct": 12.3,
+        "24h_low": 5.95, "24h_high": 7.05,
+        "24h_volume_gpu_hrs": 8400, "available_gpus": 1250, "volatility_30d": 14.2,
+        "hourly_prices_24h": [6.30,6.35,6.25,6.20,6.15,6.10,6.05,6.00,6.10,6.20,6.30,6.40,6.45,6.50,6.55,6.60,6.65,6.60,6.55,6.50,6.45,6.40,6.45,6.50]
     },
     "H200": {
         "on_demand_low": 1.97, "on_demand_avg": 5.30, "on_demand_high": 10.85,
         "reserved_1yr_low": 1.48, "reserved_1yr_avg": 3.71, "reserved_1yr_high": 7.60,
         "reserved_3yr_low": 1.08, "reserved_3yr_avg": 2.65, "reserved_3yr_high": 4.88,
         "res1_savings_pct": 30, "res3_savings_pct": 50,
-        "num_providers": 8, "quarterly_trend": [9.80, 8.60, 7.90, 7.60]
+        "num_providers": 8, "quarterly_trend": [9.80, 8.60, 7.90, 7.60],
+        "bid": 4.95, "ask": 5.65, "last_trade": 5.30, "spread_pct": 13.2,
+        "24h_low": 4.85, "24h_high": 5.70,
+        "24h_volume_gpu_hrs": 12800, "available_gpus": 2100, "volatility_30d": 11.8,
+        "hourly_prices_24h": [5.10,5.15,5.05,5.00,4.95,4.90,4.85,4.90,4.95,5.05,5.15,5.20,5.25,5.30,5.35,5.40,5.45,5.40,5.35,5.30,5.25,5.20,5.25,5.30]
     },
     "H100-SXM": {
         "on_demand_low": 1.70, "on_demand_avg": 5.80, "on_demand_high": 12.75,
         "reserved_1yr_low": 1.28, "reserved_1yr_avg": 4.06, "reserved_1yr_high": 8.93,
         "reserved_3yr_low": 0.94, "reserved_3yr_avg": 2.90, "reserved_3yr_high": 5.74,
         "res1_savings_pct": 30, "res3_savings_pct": 50,
-        "num_providers": 10, "quarterly_trend": [8.20, 7.10, 6.40, 5.80]
+        "num_providers": 10, "quarterly_trend": [8.20, 7.10, 6.40, 5.80],
+        "bid": 5.45, "ask": 6.15, "last_trade": 5.80, "spread_pct": 12.1,
+        "24h_low": 5.35, "24h_high": 6.25,
+        "24h_volume_gpu_hrs": 42500, "available_gpus": 8500, "volatility_30d": 8.4,
+        "hourly_prices_24h": [5.65,5.70,5.60,5.55,5.50,5.45,5.40,5.35,5.40,5.50,5.60,5.70,5.75,5.80,5.85,5.90,5.95,5.90,5.85,5.80,5.75,5.70,5.75,5.80]
     },
     "A100-80GB": {
         "on_demand_low": 0.85, "on_demand_avg": 2.60, "on_demand_high": 5.63,
         "reserved_1yr_low": 0.64, "reserved_1yr_avg": 1.82, "reserved_1yr_high": 3.94,
         "reserved_3yr_low": 0.47, "reserved_3yr_avg": 1.30, "reserved_3yr_high": 2.53,
         "res1_savings_pct": 30, "res3_savings_pct": 50,
-        "num_providers": 9, "quarterly_trend": [3.40, 3.10, 2.80, 2.60]
+        "num_providers": 9, "quarterly_trend": [3.40, 3.10, 2.80, 2.60],
+        "bid": 2.45, "ask": 2.75, "last_trade": 2.60, "spread_pct": 11.5,
+        "24h_low": 2.40, "24h_high": 2.85,
+        "24h_volume_gpu_hrs": 38200, "available_gpus": 12000, "volatility_30d": 6.2,
+        "hourly_prices_24h": [2.52,2.55,2.50,2.48,2.45,2.43,2.40,2.42,2.45,2.50,2.55,2.58,2.60,2.62,2.65,2.68,2.70,2.68,2.65,2.62,2.58,2.55,2.58,2.60]
     },
     "MI300X": {
         "on_demand_low": 1.50, "on_demand_avg": 3.10, "on_demand_high": 6.00,
         "reserved_1yr_low": 1.13, "reserved_1yr_avg": 2.17, "reserved_1yr_high": 4.20,
         "reserved_3yr_low": 0.83, "reserved_3yr_avg": 1.55, "reserved_3yr_high": 2.70,
         "res1_savings_pct": 30, "res3_savings_pct": 50,
-        "num_providers": 5, "quarterly_trend": [4.20, 3.80, 3.40, 3.10]
+        "num_providers": 5, "quarterly_trend": [4.20, 3.80, 3.40, 3.10],
+        "bid": 2.90, "ask": 3.30, "last_trade": 3.10, "spread_pct": 12.9,
+        "24h_low": 2.85, "24h_high": 3.40,
+        "24h_volume_gpu_hrs": 9600, "available_gpus": 3200, "volatility_30d": 10.5,
+        "hourly_prices_24h": [3.00,3.02,2.98,2.95,2.92,2.90,2.88,2.85,2.90,2.95,3.00,3.05,3.08,3.10,3.12,3.15,3.18,3.15,3.12,3.10,3.08,3.05,3.08,3.10]
     },
     "RTX-4090": {
         "on_demand_low": 0.29, "on_demand_avg": 0.45, "on_demand_high": 0.74,
         "reserved_1yr_low": 0.22, "reserved_1yr_avg": 0.34, "reserved_1yr_high": 0.56,
         "reserved_3yr_low": 0.16, "reserved_3yr_avg": 0.25, "reserved_3yr_high": 0.37,
         "res1_savings_pct": 25, "res3_savings_pct": 45,
-        "num_providers": 4, "quarterly_trend": [0.65, 0.55, 0.48, 0.45]
+        "num_providers": 4, "quarterly_trend": [0.65, 0.55, 0.48, 0.45],
+        "bid": 0.42, "ask": 0.48, "last_trade": 0.45, "spread_pct": 13.3,
+        "24h_low": 0.40, "24h_high": 0.50,
+        "24h_volume_gpu_hrs": 15800, "available_gpus": 5400, "volatility_30d": 7.8,
+        "hourly_prices_24h": [0.43,0.44,0.42,0.41,0.40,0.40,0.39,0.40,0.41,0.42,0.44,0.45,0.46,0.47,0.48,0.48,0.47,0.46,0.45,0.44,0.43,0.44,0.45,0.45]
     },
     "MI325X": {
         "on_demand_low": 2.99, "on_demand_avg": 5.80, "on_demand_high": 8.40,
         "reserved_1yr_low": 2.09, "reserved_1yr_avg": 4.06, "reserved_1yr_high": 5.88,
         "reserved_3yr_low": 1.50, "reserved_3yr_avg": 2.90, "reserved_3yr_high": 4.20,
         "res1_savings_pct": 30, "res3_savings_pct": 50,
-        "num_providers": 3, "quarterly_trend": [7.50, 6.80, 6.20, 5.80]
+        "num_providers": 3, "quarterly_trend": [7.50, 6.80, 6.20, 5.80],
+        "bid": 5.50, "ask": 6.10, "last_trade": 5.80, "spread_pct": 10.3,
+        "24h_low": 5.40, "24h_high": 6.20,
+        "24h_volume_gpu_hrs": 4200, "available_gpus": 900, "volatility_30d": 12.8,
+        "hourly_prices_24h": [5.60,5.65,5.55,5.50,5.45,5.40,5.35,5.40,5.45,5.55,5.60,5.65,5.70,5.75,5.80,5.85,5.90,5.85,5.80,5.75,5.70,5.65,5.70,5.80]
     },
     "L40S": {
         "on_demand_low": 0.47, "on_demand_avg": 1.00, "on_demand_high": 1.86,
         "reserved_1yr_low": 0.35, "reserved_1yr_avg": 0.70, "reserved_1yr_high": 1.30,
         "reserved_3yr_low": 0.26, "reserved_3yr_avg": 0.50, "reserved_3yr_high": 0.84,
         "res1_savings_pct": 30, "res3_savings_pct": 50,
-        "num_providers": 6, "quarterly_trend": [1.45, 1.30, 1.18, 1.10]
+        "num_providers": 6, "quarterly_trend": [1.45, 1.30, 1.18, 1.10],
+        "bid": 0.95, "ask": 1.05, "last_trade": 1.00, "spread_pct": 10.0,
+        "24h_low": 0.92, "24h_high": 1.08,
+        "24h_volume_gpu_hrs": 18500, "available_gpus": 6800, "volatility_30d": 5.4,
+        "hourly_prices_24h": [0.96,0.97,0.95,0.94,0.93,0.92,0.92,0.93,0.94,0.96,0.98,0.99,1.00,1.01,1.02,1.03,1.04,1.03,1.02,1.01,1.00,0.98,0.99,1.00]
     }
 }
 

@@ -1347,8 +1347,8 @@ function renderOverview() {
   const totalAvail = spot ? Object.values(spot).reduce((s,g) => s + (g.available_gpus||0), 0) : 0;
   const mktSize = mi.gpu_market_size_bn?.['2025'] || '--';
   const capex26 = mi.ai_capex_bn?.['2026_est'] || '--';
-  const leadKeys = Object.keys(mi.h100_lead_time_weeks||{}).sort();
-  const lead = mi.h100_lead_time_weeks?.[leadKeys[leadKeys.length-1]] || '--';
+  const leadKeys = Object.keys(mi.flagship_lead_time_weeks||{}).sort();
+  const lead = mi.flagship_lead_time_weeks?.[leadKeys[leadKeys.length-1]] || '--';
   const bestVal = m.reduce((a,b) => a.flops_per_dollar > b.flops_per_dollar ? a : b);
   const nProv = new Set(m.map(r => r.cheapest_provider)).size;
 
@@ -1446,8 +1446,8 @@ function renderOverviewShipmentsChart() {
 }
 
 function renderOverviewLeadChart() {
-  const mi = DATA.indicators; if(!mi.h100_lead_time_weeks) return;
-  const lt = mi.h100_lead_time_weeks, lbl = Object.keys(lt).sort();
+  const mi = DATA.indicators; if(!mi.flagship_lead_time_weeks) return;
+  const lt = mi.flagship_lead_time_weeks, lbl = Object.keys(lt).sort();
   if(charts.ovLead) charts.ovLead.destroy();
   charts.ovLead = new Chart(document.getElementById('chartOverviewLead'),{
     type:'line',
@@ -1530,8 +1530,8 @@ function renderTrendsTab() {
       options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
     });
   }
-  if(mi.h100_lead_time_weeks){
-    const lt=mi.h100_lead_time_weeks, lbl=Object.keys(lt).sort();
+  if(mi.flagship_lead_time_weeks){
+    const lt=mi.flagship_lead_time_weeks, lbl=Object.keys(lt).sort();
     if(charts.lt) charts.lt.destroy();
     charts.lt = new Chart(document.getElementById('chartLeadTime'),{type:'line',
       data:{labels:lbl,datasets:[{label:'Lead Time (wk)',data:lbl.map(l=>lt[l]),borderColor:C.red,backgroundColor:C.red+'18',fill:true,tension:0.35,pointRadius:3}]},
@@ -1717,9 +1717,9 @@ function renderRegionalPricingTable(reg, regions) {
 }
 
 function renderRegionAdoptionChart(reg, regions) {
-  const ap=new Set(); regions.forEach(r=>{const at=reg[r].adoption_trend_monthly;if(at)Object.keys(at).forEach(p=>ap.add(p));});
+  const ap=new Set(); regions.forEach(r=>{const at=reg[r].adoption_trend_quarterly;if(at)Object.keys(at).forEach(p=>ap.add(p));});
   const periods=[...ap].sort();
-  const ds=regions.map((r,i)=>({label:r,data:periods.map(p=>reg[r].adoption_trend_monthly?.[p]||null),borderColor:CL[i],backgroundColor:CL[i]+'12',tension:0.35,pointRadius:1.5,borderWidth:2,fill:true,spanGaps:true}));
+  const ds=regions.map((r,i)=>({label:r,data:periods.map(p=>reg[r].adoption_trend_quarterly?.[p]||null),borderColor:CL[i],backgroundColor:CL[i]+'12',tension:0.35,pointRadius:1.5,borderWidth:2,fill:true,spanGaps:true}));
   if(charts.ra) charts.ra.destroy();
   charts.ra = new Chart(document.getElementById('chartRegionAdoption'),{type:'line',data:{labels:periods,datasets:ds},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{stacked:true,title:{display:true,text:'Share %'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
@@ -1891,10 +1891,12 @@ function renderInferenceTab(filterCat) {
   models.forEach(m=>{if(inf[m].providers)Object.keys(inf[m].providers).forEach(p=>provSet.add(p));});
   const providers=[...provSet].sort();
 
+  // Helper: extract numeric price from provider entry (can be number or {input,output} object)
+  const provPrice=p=>typeof p==='number'?p:(p&&typeof p==='object'?(p.input||0):0);
   // Collect all provider prices for stats
   const allPrices=[]; const selfHostedPrices=[];
   models.forEach(m=>{
-    if(inf[m].providers) Object.values(inf[m].providers).forEach(p=>{if(p>0)allPrices.push(p);});
+    if(inf[m].providers) Object.values(inf[m].providers).forEach(p=>{const v=provPrice(p);if(v>0)allPrices.push(v);});
     if(inf[m].gpus) Object.values(inf[m].gpus).forEach(g=>{if(g.cost_per_1m_tokens>0)selfHostedPrices.push(g.cost_per_1m_tokens);});
   });
   const cheapestProv=allPrices.length?Math.min(...allPrices):0;
@@ -1903,7 +1905,7 @@ function renderInferenceTab(filterCat) {
 
   // Find #1 ranked model price for reference
   const topModel=allModels.find(m=>inf[m].rank===1)||allModels[0];
-  const topPrice=inf[topModel]?.providers?Math.min(...Object.values(inf[topModel].providers).filter(v=>v>0)):0;
+  const topPrice=inf[topModel]?.providers?Math.min(...Object.values(inf[topModel].providers).map(provPrice).filter(v=>v>0)):0;
 
   document.getElementById('inferenceStats').innerHTML=`
     <div class="kpi kpi-green"><div class="kpi-label">Cheapest Provider</div><div class="kpi-value">$${cheapestProv.toFixed(3)}</div><div class="kpi-sub">Per M tokens (API)</div></div>
@@ -1924,7 +1926,7 @@ function renderInferenceTab(filterCat) {
   sorted.forEach(m=>{
     const d=inf[m];
     const provPrices=d.providers||{};
-    const provVals=Object.values(provPrices).filter(v=>v>0);
+    const provVals=Object.values(provPrices).map(provPrice).filter(v=>v>0);
     const bestProv=provVals.length?Math.min(...provVals):null;
     const gpuVals=d.gpus?Object.values(d.gpus).map(g=>g.cost_per_1m_tokens).filter(v=>v>0):[];
     const bestGpu=gpuVals.length?Math.min(...gpuVals):null;
@@ -1934,7 +1936,7 @@ function renderInferenceTab(filterCat) {
     h+=`<td class="r" style="font-family:var(--mono);font-size:11px;">${d.params_b}B</td>`;
     h+=`<td><span style="background:${cc}20;color:${cc};padding:1px 6px;border-radius:3px;font-size:10px;font-weight:600;">${d.category}</span></td>`;
     providers.forEach(p=>{
-      const price=provPrices[p];
+      const price=provPrice(provPrices[p]);
       if(price!=null && price>0){
         const isBest=price===bestProv;
         h+=`<td class="r" style="font-family:var(--mono);font-size:11px;${isBest?'color:var(--green);font-weight:700;':''}">$${price<1?price.toFixed(3):price.toFixed(2)}</td>`;
@@ -1956,7 +1958,7 @@ function renderInferenceTab(filterCat) {
   charts.ic=new Chart(document.getElementById('chartInferenceCost'),{type:'bar',
     data:{labels:chartModels,datasets:topProviders.map((p,i)=>({
       label:p,
-      data:chartModels.map(m=>inf[m].providers?.[p]||null),
+      data:chartModels.map(m=>provPrice(inf[m].providers?.[p])||null),
       backgroundColor:CL[i%CL.length]+'70',borderColor:CL[i%CL.length],borderWidth:1
     }))},
     options:{responsive:true,maintainAspectRatio:false,
@@ -1966,7 +1968,7 @@ function renderInferenceTab(filterCat) {
 
   // Chart 2: Self-hosted GPU cost vs Provider API for 70B-class models
   const compModels=sorted.filter(m=>{const p=inf[m].params_b;return inf[m].type==='LLM'&&p>=7&&Object.keys(inf[m].providers||{}).length>=3;}).slice(0,8);
-  const bestProvPrices=compModels.map(m=>{const v=Object.values(inf[m].providers||{}).filter(x=>x>0);return v.length?Math.min(...v):null;});
+  const bestProvPrices=compModels.map(m=>{const v=Object.values(inf[m].providers||{}).map(provPrice).filter(x=>x>0);return v.length?Math.min(...v):null;});
   const bestGpuPrices=compModels.map(m=>{const v=inf[m].gpus?Object.values(inf[m].gpus).map(g=>g.cost_per_1m_tokens).filter(x=>x>0):[];return v.length?Math.min(...v):null;});
   if(charts.avs) charts.avs.destroy();
   charts.avs=new Chart(document.getElementById('chartApiVsSelfHosted'),{type:'bar',
@@ -1980,8 +1982,8 @@ function renderInferenceTab(filterCat) {
   });
 
   // Chart 3: Cost frontier scatter — model size vs best $/M tokens
-  const scatterData=allModels.filter(m=>inf[m].providers&&Object.values(inf[m].providers).some(v=>v>0)).map(m=>{
-    const best=Math.min(...Object.values(inf[m].providers).filter(v=>v>0));
+  const scatterData=allModels.filter(m=>inf[m].providers&&Object.values(inf[m].providers).map(provPrice).some(v=>v>0)).map(m=>{
+    const best=Math.min(...Object.values(inf[m].providers).map(provPrice).filter(v=>v>0));
     return {x:inf[m].params_b,y:best,label:m};
   });
   if(charts.it) charts.it.destroy();
