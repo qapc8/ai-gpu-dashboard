@@ -1282,14 +1282,18 @@ function renderTicker() {
 
   const h100 = spot?.['H100-SXM'];
   const b200 = spot?.['B200'];
+  const b300 = spot?.['B300'];
   const h100Price = h100 ? '$'+h100.last_trade.toFixed(2) : '--';
   const b200Price = b200 ? '$'+b200.last_trade.toFixed(2) : '--';
+  const b300Price = b300 ? '$'+b300.last_trade.toFixed(2) : '--';
   const h100Chg = h100?.hourly_prices_24h?.length > 1 ? ((h100.hourly_prices_24h.at(-1) - h100.hourly_prices_24h[0]) / h100.hourly_prices_24h[0] * 100).toFixed(1) : 0;
   const b200Chg = b200?.hourly_prices_24h?.length > 1 ? ((b200.hourly_prices_24h.at(-1) - b200.hourly_prices_24h[0]) / b200.hourly_prices_24h[0] * 100).toFixed(1) : 0;
+  const b300Chg = b300?.hourly_prices_24h?.length > 1 ? ((b300.hourly_prices_24h.at(-1) - b300.hourly_prices_24h[0]) / b300.hourly_prices_24h[0] * 100).toFixed(1) : 0;
 
   tb.innerHTML =
     mkTick('NVDA', '$'+mi.nvidia_stock.current, mi.nvidia_stock.ytd_change) +
     mkTick('AMD', '$'+mi.amd_stock.current, mi.amd_stock.ytd_change) +
+    mkTick('B300', b300Price, parseFloat(b300Chg)) +
     mkTick('H100', h100Price, parseFloat(h100Chg)) +
     mkTick('B200', b200Price, parseFloat(b200Chg));
 }
@@ -1338,7 +1342,7 @@ function renderOverview() {
   if (!m || !m.length) return;
 
   // KPI calculations
-  const h100s = spot?.['H100-SXM'], b200s = spot?.['B200'], h200s = spot?.['H200'];
+  const h100s = spot?.['H100-SXM'], b200s = spot?.['B200'], b300s = spot?.['B300'], h200s = spot?.['H200'];
   const totalVol = spot ? Object.values(spot).reduce((s,g) => s + (g['24h_volume_gpu_hrs']||0), 0) : 0;
   const totalAvail = spot ? Object.values(spot).reduce((s,g) => s + (g.available_gpus||0), 0) : 0;
   const mktSize = mi.gpu_market_size_bn?.['2025'] || '--';
@@ -1369,7 +1373,7 @@ function renderOverview() {
 function renderOverviewSpotTable() {
   const spot = DATA.spot;
   if (!spot || !Object.keys(spot).length) return;
-  const gpus = ['H100-SXM','B200','H200','A100-80GB','MI300X','RTX-4090'];
+  const gpus = ['B300','B200','H200','H100-SXM','A100-80GB','MI300X','RTX-4090'];
   let h = '<thead><tr><th>GPU</th><th class="r">Bid</th><th class="r">Ask</th><th class="r">Last</th><th class="r">Spread</th><th class="r">24h Low</th><th class="r">24h High</th><th class="r">24h Vol</th><th class="r">Avail</th><th>24h Trend</th></tr></thead><tbody>';
   gpus.forEach(g => {
     const s = spot[g]; if (!s) return;
@@ -1393,13 +1397,13 @@ function renderOverviewSpotTable() {
 
 function renderOverviewTrendChart() {
   const hist = DATA.historical;
-  const gpus = ['H100-SXM','B200','H200','A100-80GB','MI300X','RTX-4090'];
+  const gpus = ['B300','B200','H200','H100-SXM','A100-80GB','MI300X','RTX-4090'];
   const ap = new Set();
   gpus.forEach(g => { if(hist[g]) Object.keys(hist[g]).forEach(p => ap.add(p)); });
   const periods = [...ap].sort().slice(-12);
   const ds = gpus.map((g,i) => ({
     label:g, data:periods.map(p => hist[g]?.[p]?.avg||null),
-    borderColor:CL[i], backgroundColor:CL[i]+'18', tension:0.35,
+    borderColor:CL[i%CL.length], backgroundColor:CL[i%CL.length]+'18', tension:0.35,
     pointRadius:2, borderWidth:2, fill:false, spanGaps:true,
   }));
   if(charts.ot) charts.ot.destroy();
@@ -1568,7 +1572,7 @@ function updateTrendChart() {
 function renderAvailabilityChart() {
   const hist=DATA.historical;
   const am={'scarce':1,'limited':2,'moderate':3,'good':4,'abundant':5};
-  const gpus=['H100-SXM','H200','A100-80GB','MI300X','RTX-4090'];
+  const gpus=['B300','H100-SXM','H200','A100-80GB','MI300X','RTX-4090'];
   const ap=new Set(); gpus.forEach(g=>{if(hist[g])Object.keys(hist[g]).forEach(p=>ap.add(p));});
   const periods=[...ap].sort().slice(-8);
   const ds=gpus.map((g,i)=>({label:g,data:periods.map(p=>hist[g]?.[p]?am[hist[g][p].availability]||0:null),borderColor:CL[i],tension:0.35,pointRadius:3,borderWidth:2,spanGaps:true}));
