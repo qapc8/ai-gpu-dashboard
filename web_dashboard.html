@@ -811,7 +811,7 @@ body {
     <div class="card-hd">
       <span class="card-hd-title">Top 20 Models — $/M Tokens by Provider</span>
       <div style="display:flex;gap:8px;align-items:center;">
-        <select id="inferCatFilter" style="background:var(--bg2);color:var(--fg);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:11px;font-family:var(--mono);">
+        <select id="inferCatFilter" style="background:var(--bg-2);color:var(--text-0);border:1px solid var(--border-0);border-radius:4px;padding:2px 8px;font-size:11px;font-family:var(--mono);">
           <option value="all">All Categories</option>
           <option value="Small">Small (&lt;10B)</option>
           <option value="Medium">Medium (10-30B)</option>
@@ -864,7 +864,7 @@ body {
   </div>
   <div class="card">
     <div class="card-hd"><span class="card-hd-title">Key Assumptions</span></div>
-    <div class="card-bd" id="tcoAssumptions" style="font-size:.85rem;line-height:1.6;color:var(--c-sub);"></div>
+    <div class="card-bd" id="tcoAssumptions" style="font-size:.85rem;line-height:1.6;color:var(--text-2);"></div>
   </div>
 </div>
 
@@ -1915,7 +1915,7 @@ function renderInferenceTab(filterCat) {
 
   // Build table: Model | Params | Cat | Provider1 | Provider2 | ... | Best Provider | Best Self-Hosted
   const catColors={Small:'#22c55e',Medium:'#3b82f6',Large:'#a855f7',Frontier:'#f59e0b'};
-  let h='<thead><tr><th style="position:sticky;left:0;background:var(--card);z-index:2;width:30px;">#</th><th style="background:var(--card);">Model</th><th class="r">Params</th><th>Cat</th>';
+  let h='<thead><tr><th style="position:sticky;left:0;background:var(--bg-2);z-index:2;width:30px;">#</th><th style="background:var(--bg-2);">Model</th><th class="r">Params</th><th>Cat</th>';
   providers.forEach(p=>{h+=`<th class="r" style="font-size:10px;white-space:nowrap;">${p}</th>`;});
   h+='<th class="r" style="background:rgba(34,197,94,0.08);">Best API</th><th class="r" style="background:rgba(56,189,248,0.08);">Best GPU</th>';
   h+='</tr></thead><tbody>';
@@ -1931,7 +1931,7 @@ function renderInferenceTab(filterCat) {
     const gpuVals=d.gpus?Object.values(d.gpus).map(g=>g.cost_per_1m_tokens).filter(v=>v>0):[];
     const bestGpu=gpuVals.length?Math.min(...gpuVals):null;
     const cc=catColors[d.category]||'#666';
-    h+=`<tr><td style="position:sticky;left:0;background:var(--card);z-index:1;font-family:var(--mono);font-size:11px;color:var(--fg2);text-align:center;">${d.rank||''}</td>`;
+    h+=`<tr><td style="position:sticky;left:0;background:var(--bg-2);z-index:1;font-family:var(--mono);font-size:11px;color:var(--text-2);text-align:center;">${d.rank||''}</td>`;
     h+=`<td class="gpu-name" style="white-space:nowrap;">${m}</td>`;
     h+=`<td class="r" style="font-family:var(--mono);font-size:11px;">${d.params_b}B</td>`;
     h+=`<td><span style="background:${cc}20;color:${cc};padding:1px 6px;border-radius:3px;font-size:10px;font-weight:600;">${d.category}</span></td>`;

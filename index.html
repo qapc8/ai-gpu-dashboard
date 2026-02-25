@@ -847,7 +847,7 @@ body {
     <div class="card-hd">
       <span class="card-hd-title">Top 20 Models by Usage — Inference Pricing</span>
       <div style="display:flex;gap:8px;align-items:center;">
-        <select id="inferCatFilter" style="background:var(--bg2);color:var(--fg);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:11px;font-family:var(--mono);">
+        <select id="inferCatFilter" style="background:var(--bg-2);color:var(--text-0);border:1px solid var(--border-0);border-radius:4px;padding:2px 8px;font-size:11px;font-family:var(--mono);">
           <option value="all">All Categories</option>
           <option value="Small">Small (&lt;10B)</option>
           <option value="Medium">Medium (10-30B)</option>
@@ -894,7 +894,7 @@ body {
   </div>
   <div class="card">
     <div class="card-hd"><span class="card-hd-title">Key Assumptions</span></div>
-    <div class="card-bd" id="tcoAssumptions" style="font-size:.85rem;line-height:1.6;color:var(--c-sub);"></div>
+    <div class="card-bd" id="tcoAssumptions" style="font-size:.85rem;line-height:1.6;color:var(--text-2);"></div>
   </div>
 </div>
 
@@ -2198,16 +2198,16 @@ function renderInferenceTab(filterCat) {
     const barW=maxTokens>0?Math.round(tok7d/maxTokens*100):0;
 
     h+=`<tr>`;
-    h+=`<td style="font-family:var(--mono);font-size:11px;color:var(--fg2);text-align:center;">${d.rank||''}</td>`;
+    h+=`<td style="font-family:var(--mono);font-size:11px;color:var(--text-2);text-align:center;">${d.rank||''}</td>`;
     h+=`<td class="gpu-name" style="white-space:nowrap;">${m}</td>`;
     h+=`<td class="r" style="font-family:var(--mono);font-size:11px;">${d.params_b}B</td>`;
     h+=`<td class="r" style="font-family:var(--mono);font-size:11px;">${d.context_k?d.context_k+'K':'—'}</td>`;
-    h+=`<td style="text-align:center;">${d.open_source?'<span style="color:var(--green);font-weight:700;">✓</span>':'<span style="color:var(--fg2);">✗</span>'}</td>`;
+    h+=`<td style="text-align:center;">${d.open_source?'<span style="color:var(--green);font-weight:700;">✓</span>':'<span style="color:var(--text-2);">✗</span>'}</td>`;
     h+=`<td class="r" style="background:rgba(34,197,94,0.05);font-family:var(--mono);font-size:11px;font-weight:700;color:var(--green);">${fmtPrice(ip)}</td>`;
     h+=`<td class="r" style="background:rgba(251,146,60,0.05);font-family:var(--mono);font-size:11px;color:var(--orange);">${fmtPrice(op)}</td>`;
     h+=`<td style="font-size:10px;white-space:nowrap;">${prov}</td>`;
     const tokLabel=tok7d>=1000?(tok7d/1000).toFixed(1)+'T':tok7d>=1?tok7d.toFixed(0)+'B':tok7d.toFixed(1)+'B';
-    h+=`<td style="font-family:var(--mono);font-size:11px;"><div style="display:flex;align-items:center;gap:6px;"><span style="min-width:36px;">${tokLabel}</span><div style="flex:1;height:10px;background:var(--bg2);border-radius:3px;overflow:hidden;"><div style="width:${barW}%;height:100%;background:${cc};border-radius:3px;"></div></div></div></td>`;
+    h+=`<td style="font-family:var(--mono);font-size:11px;"><div style="display:flex;align-items:center;gap:6px;"><span style="min-width:36px;">${tokLabel}</span><div style="flex:1;height:10px;background:var(--bg-2);border-radius:3px;overflow:hidden;"><div style="width:${barW}%;height:100%;background:${cc};border-radius:3px;"></div></div></div></td>`;
     h+=`</tr>`;
   });
   h+='</tbody>';
