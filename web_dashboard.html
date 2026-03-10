@@ -3,47 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GPU Intel Pro — Market Terminal</title>
+<title>HyperFusion — GPU Market Intelligence</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
 :root {
-  --bg-0: #0f1720;
-  --bg-1: #141e2b;
-  --bg-2: #1a2535;
-  --bg-3: #1f2d40;
-  --bg-4: #253648;
-  --bg-hover: #2a3d52;
-  --border-0: #243044;
-  --border-1: #2e3d55;
-  --border-2: #3a4d66;
-  --text-0: #f0f2f5;
-  --text-1: #c8cdd6;
-  --text-2: #8a95a6;
-  --text-3: #5c6980;
+  --bg-0: #0a0e27;
+  --bg-1: #0e1333;
+  --bg-2: #131940;
+  --bg-3: #181f4d;
+  --bg-4: #1e265a;
+  --bg-hover: #252d68;
+  --border-0: rgba(255,255,255,0.08);
+  --border-1: rgba(255,255,255,0.12);
+  --border-2: rgba(255,255,255,0.20);
+  --text-0: #ffffff;
+  --text-1: rgba(255,255,255,0.9);
+  --text-2: rgba(255,255,255,0.55);
+  --text-3: rgba(255,255,255,0.35);
   --blue: #4e8ff7;
   --blue-dim: rgba(78,143,247,0.12);
-  --cyan: #22d3ee;
-  --cyan-dim: rgba(34,211,238,0.10);
+  --cyan: #00F7FF;
+  --cyan-dim: rgba(0,247,255,0.10);
   --green: #3ecf8e;
   --green-dim: rgba(62,207,142,0.10);
   --red: #ef6461;
   --red-dim: rgba(239,100,97,0.10);
   --amber: #f0b429;
   --amber-dim: rgba(240,180,41,0.10);
-  --purple: #a78bfa;
-  --purple-dim: rgba(167,139,250,0.10);
+  --purple: #F726FF;
+  --purple-dim: rgba(247,38,255,0.12);
   --orange: #fb923c;
   --orange-dim: rgba(251,146,60,0.10);
-  --pink: #f472b6;
+  --pink: #F726FF;
   --mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', Consolas, monospace;
   --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --radius: 10px;
   --radius-sm: 5px;
-  --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.15);
-  --shadow-lg: 0 4px 20px rgba(0,0,0,0.4);
+  --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 4px 12px rgba(0,0,0,0.2);
+  --shadow-lg: 0 4px 20px rgba(0,0,0,0.5);
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -61,9 +64,9 @@ body {
 /* ─── TOPBAR ─── */
 .topbar {
   background: var(--bg-1);
-  border-bottom: 1px solid var(--border-0);
+  border-bottom: 1px solid var(--border-1);
   padding: 0 14px;
-  height: 36px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -82,14 +85,14 @@ body {
   width: 24px;
   height: 24px;
   border-radius: 5px;
-  background: var(--blue);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--sans);
-  font-weight: 800;
-  font-size: 11px;
-  color: var(--bg-0);
+}
+.topbar-logo img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 .topbar-name {
   display: flex;
@@ -98,10 +101,10 @@ body {
 }
 .topbar-title {
   font-family: var(--sans);
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-0);
-  letter-spacing: -0.2px;
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--cyan);
+  letter-spacing: 1.5px;
   white-space: nowrap;
 }
 .topbar-subtitle {
@@ -195,11 +198,11 @@ body {
   font-family: var(--sans);
   position: relative;
 }
-.nav-item:hover { color: var(--text-1); background: rgba(78,143,247,0.04); }
+.nav-item:hover { color: var(--text-1); background: rgba(0,247,255,0.04); }
 .nav-item.active {
-  color: var(--text-0);
-  border-bottom-color: var(--blue);
-  background: rgba(78,143,247,0.06);
+  color: var(--cyan);
+  border-bottom-color: var(--cyan);
+  background: rgba(0,247,255,0.06);
 }
 .nav-item.active::after {
   content: '';
@@ -207,7 +210,7 @@ body {
   bottom: -1px;
   left: 0; right: 0;
   height: 2px;
-  background: var(--blue);
+  background: var(--cyan);
 }
 
 /* ─── LAYOUT ─── */
@@ -408,11 +411,12 @@ body {
 }
 .btn:hover { background: var(--bg-4); border-color: var(--border-2); color: var(--text-0); }
 .btn-primary {
-  background: var(--blue);
-  border-color: var(--blue);
-  color: white;
+  background: var(--cyan);
+  border-color: var(--cyan);
+  color: var(--bg-0);
+  font-weight: 700;
 }
-.btn-primary:hover { background: #3a7be0; }
+.btn-primary:hover { background: #00dce6; }
 .btn-accent {
   background: var(--orange);
   border-color: var(--orange);
@@ -664,10 +668,10 @@ body {
 <!-- ═══ TOPBAR ═══ -->
 <div class="topbar">
   <div class="topbar-brand">
-    <div class="topbar-logo">G</div>
+    <div class="topbar-logo"><img src="favicon.png" alt="HyperFusion"></div>
     <div class="topbar-name">
-      <span class="topbar-title">GPU Intel Pro</span>
-      <span class="topbar-subtitle">Market Terminal</span>
+      <span class="topbar-title">HYPERFUSION</span>
+      <span class="topbar-subtitle">GPU Market Intelligence</span>
     </div>
   </div>
   <div class="topbar-indicators" id="tickerBar"></div>
