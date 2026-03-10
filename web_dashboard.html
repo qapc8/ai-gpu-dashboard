@@ -2639,30 +2639,91 @@ function initChat() {
 
 function buildChatContext() {
   const parts = [];
-  if(DATA) {
-    const specs = DATA.specs || {};
-    const gpuList = Object.entries(specs).map(([id, s]) =>
-      `${s.name}: ${s.fp16_tflops} TFLOPS, ${s.vram_gb}GB ${s.memory_type}, $${s.msrp_usd} MSRP`
+  if(!DATA) return '';
+
+  // GPU Specs
+  const specs = DATA.specs || {};
+  parts.push('GPU SPECIFICATIONS:\n' + Object.entries(specs).map(([id, s]) =>
+    `${s.name}: ${s.fp16_tflops} FP16 TFLOPS, ${s.vram_gb}GB ${s.memory_type}, TDP ${s.tdp_watts}W, ${s.interconnect||'N/A'} interconnect, MSRP $${s.msrp_usd}`
+  ).join('\n'));
+
+  // Provider Pricing (detailed)
+  const providers = DATA.providers || {};
+  parts.push('PROVIDER PRICING:\n' + Object.entries(providers).map(([pid, p]) => {
+    const gpus = Object.entries(p.gpus || {}).map(([gid, g]) =>
+      `  ${gid}: $${g.price_per_gpu_hr}/hr (${g.instance_type||'N/A'})`
     ).join('\n');
-    parts.push('Available GPUs:\n' + gpuList);
+    return `${pid} (regions: ${(p.regions||[]).join(', ')}):\n${gpus}`;
+  }).join('\n'));
 
-    const fc = DATA.forecasts || {};
-    const fcSummary = Object.entries(fc).map(([id, f]) => {
+  // Spot & Reserved Pricing
+  const spot = DATA.spot || {};
+  if(Object.keys(spot).length) {
+    parts.push('SPOT & RESERVED PRICING:\n' + Object.entries(spot).map(([id, s]) =>
+      `${id}: On-demand $${s.on_demand_low}-$${s.on_demand_high}/hr (avg $${s.on_demand_avg}), 1yr reserved $${s.reserved_1yr_avg}/hr (${s.res1_savings_pct}% savings), 3yr reserved $${s.reserved_3yr_avg}/hr (${s.res3_savings_pct}% savings)`
+    ).join('\n'));
+  }
+
+  // Historical Pricing (last 3 months per GPU)
+  const hist = DATA.historical || {};
+  if(Object.keys(hist).length) {
+    parts.push('RECENT PRICE HISTORY (last 3 months):\n' + Object.entries(hist).map(([id, months]) => {
+      const entries = Object.entries(months).slice(-3);
+      const trend = entries.map(([m, d]) => `${m}: $${d.avg}/hr (${d.availability})`).join(', ');
+      return `${id}: ${trend}`;
+    }).join('\n'));
+  }
+
+  // Price Forecasts
+  const fc = DATA.forecasts || {};
+  if(Object.keys(fc).length) {
+    parts.push('PRICE FORECASTS:\n' + Object.entries(fc).map(([id, f]) => {
       const cur = f.current_avg;
+      const m3 = f.forecast_3mo?.mid || cur;
       const m12 = f.forecast_12mo?.mid || cur;
-      const chg = ((m12 - cur) / cur * 100).toFixed(1);
-      return `${id}: $${cur}/hr now, $${m12}/hr in 12mo (${chg}%), regime=${f.regime||'?'}`;
-    }).join('\n');
-    parts.push('\nPrice Forecasts:\n' + fcSummary);
+      const chg3 = ((m3 - cur) / cur * 100).toFixed(1);
+      const chg12 = ((m12 - cur) / cur * 100).toFixed(1);
+      return `${id}: $${cur}/hr now → $${m3}/hr in 3mo (${chg3}%) → $${m12}/hr in 12mo (${chg12}%), regime: ${f.regime||'unknown'}`;
+    }).join('\n'));
+  }
 
-    const providers = DATA.providers || {};
-    const provSummary = Object.entries(providers).map(([pid, p]) => {
-      const gpuPrices = Object.entries(p.gpus || {}).map(([gid, g]) =>
-        `${gid}: $${g.price_per_gpu_hr}/hr`
-      ).join(', ');
-      return `${pid}: ${gpuPrices}`;
-    }).join('\n');
-    parts.push('\nProvider Pricing:\n' + provSummary);
+  // Workload Recommendations
+  const wl = DATA.workloads || DATA.workload_recs || {};
+  if(Object.keys(wl).length) {
+    parts.push('WORKLOAD RECOMMENDATIONS:\n' + Object.entries(wl).map(([name, w]) =>
+      `${name}: Recommended GPUs: ${(w.recommended||[]).join(', ')}, min ${w.min_gpus} GPUs, budget $${w.budget_monthly_low?.toLocaleString()}-$${w.budget_monthly_high?.toLocaleString()}/mo, best value: ${w.best_value||'N/A'}`
+    ).join('\n'));
+  }
+
+  // Model-Hardware Fit
+  const mf = DATA.modelfit || {};
+  if(Object.keys(mf).length) {
+    parts.push('MODEL-HARDWARE FIT:\n' + Object.entries(mf).map(([size, m]) => {
+      const gpuFits = Object.entries(m.gpus || {}).map(([gid, g]) =>
+        `${gid}: ${g.optimal_config}, ${g.throughput_tok_s} tok/s, $${g.cost_per_1m_tokens}/1M tokens (score: ${g.fit_score}/100)`
+      ).join('; ');
+      return `${size}B params (${(m.models||[]).join(', ')}, needs ${m.vram_required_gb}GB VRAM): ${gpuFits}`;
+    }).join('\n'));
+  }
+
+  // Regional Data
+  const reg = DATA.regional || {};
+  if(Object.keys(reg).length) {
+    parts.push('REGIONAL PRICING:\n' + Object.entries(reg).map(([region, r]) =>
+      `${region}: ${r.market_share_pct}% market share, +${r.avg_price_premium_pct}% price premium, energy $${r.energy_cost_kwh}/kWh, top providers: ${(r.top_providers||[]).join(', ')}`
+    ).join('\n'));
+  }
+
+  // Market Indicators
+  const mi = DATA.indicators || {};
+  if(Object.keys(mi).length) {
+    const ind = [];
+    if(mi.nvidia_stock) ind.push(`NVDA: $${mi.nvidia_stock}`);
+    if(mi.amd_stock) ind.push(`AMD: $${mi.amd_stock}`);
+    if(mi.gpu_market_size_bn) ind.push(`GPU market: $${mi.gpu_market_size_bn}B`);
+    if(mi.avg_utilization_pct) ind.push(`Avg utilization: ${mi.avg_utilization_pct}%`);
+    if(mi.supply_demand_ratio) ind.push(`Supply/demand ratio: ${mi.supply_demand_ratio}`);
+    if(ind.length) parts.push('MARKET INDICATORS:\n' + ind.join('\n'));
   }
   return parts.join('\n\n');
 }
