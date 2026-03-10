@@ -151,19 +151,6 @@ GPU_SPECS = {
         "msrp_usd": 10000,
         "tier": "high"
     },
-    "A10G": {
-        "name": "NVIDIA A10G 24GB",
-        "vendor": "NVIDIA",
-        "vram_gb": 24,
-        "arch": "Ampere",
-        "fp16_tflops": 70,
-        "fp32_tflops": 35,
-        "tdp_watts": 300,
-        "interconnect": "PCIe 4.0",
-        "release_year": 2021,
-        "msrp_usd": 3500,
-        "tier": "mid"
-    },
     "RTX-4090": {
         "name": "NVIDIA RTX 4090 24GB",
         "vendor": "NVIDIA",
@@ -176,20 +163,6 @@ GPU_SPECS = {
         "release_year": 2022,
         "msrp_usd": 1599,
         "tier": "consumer"
-    },
-    # --- NVIDIA Legacy ---
-    "V100": {
-        "name": "NVIDIA V100 16GB",
-        "vendor": "NVIDIA",
-        "vram_gb": 16,
-        "arch": "Volta",
-        "fp16_tflops": 125,
-        "fp32_tflops": 15.7,
-        "tdp_watts": 300,
-        "interconnect": "NVLink 2.0",
-        "release_year": 2017,
-        "msrp_usd": 8000,
-        "tier": "legacy"
     },
     # --- AMD CDNA ---
     "MI300X": {
@@ -288,11 +261,6 @@ CLOUD_PRICING = {
             "L40S": {"instance": "g6e.xlarge", "gpus_per_instance": 1, "price_per_gpu_hr": 1.86, "regions": {
                 "us-east-1": 1.86, "us-east-2": 1.86, "us-west-2": 1.86,
                 "eu-west-1": 2.05, "eu-central-1": 2.12
-            }},
-            "A10G": {"instance": "g5.xlarge", "gpus_per_instance": 1, "price_per_gpu_hr": 1.006, "regions": {
-                "us-east-1": 1.006, "us-east-2": 1.006, "us-west-2": 1.006,
-                "eu-west-1": 1.11, "eu-central-1": 1.15,
-                "ap-northeast-1": 1.22, "ap-southeast-1": 1.18
             }}
         },
         "reserved_1yr_discount": 0.40,
@@ -325,10 +293,6 @@ CLOUD_PRICING = {
                 "us-central1": 3.67, "us-east4": 3.67, "us-west1": 3.67,
                 "europe-west4": 4.04, "europe-west1": 4.00,
                 "asia-east1": 4.22, "asia-northeast1": 4.29
-            }},
-            "V100": {"instance": "n1-standard-8+V100", "gpus_per_instance": 1, "price_per_gpu_hr": 2.97, "regions": {
-                "us-central1": 2.97, "us-east4": 2.97, "us-west1": 2.97,
-                "europe-west4": 3.27
             }}
         },
         "reserved_1yr_discount": 0.37,
@@ -368,14 +332,6 @@ CLOUD_PRICING = {
                 "eastus": 4.10, "eastus2": 4.10, "westus2": 4.10,
                 "westeurope": 4.51, "northeurope": 4.46,
                 "japaneast": 4.92, "southeastasia": 4.78
-            }},
-            "A10G": {"instance": "NV36ads_A10_v5", "gpus_per_instance": 1, "price_per_gpu_hr": 0.91, "regions": {
-                "eastus": 0.91, "eastus2": 0.91, "westus2": 0.91,
-                "westeurope": 1.00, "northeurope": 0.99
-            }},
-            "V100": {"instance": "NC6s_v3", "gpus_per_instance": 1, "price_per_gpu_hr": 3.06, "regions": {
-                "eastus": 3.06, "eastus2": 3.06, "westus2": 3.06,
-                "westeurope": 3.37, "northeurope": 3.33
             }}
         },
         "reserved_1yr_discount": 0.36,
@@ -404,9 +360,6 @@ CLOUD_PRICING = {
             }},
             "A100-40GB": {"instance": "gpu_8x_a100", "gpus_per_instance": 8, "price_per_gpu_hr": 1.10, "regions": {
                 "us-west-1": 1.10, "us-south-1": 1.10
-            }},
-            "A10G": {"instance": "gpu_1x_a10", "gpus_per_instance": 1, "price_per_gpu_hr": 0.60, "regions": {
-                "us-west-1": 0.60, "us-south-1": 0.60
             }}
         },
         "reserved_1yr_discount": 0.20,
@@ -488,9 +441,6 @@ CLOUD_PRICING = {
             }},
             "RTX-4090": {"instance": "rtx4090", "gpus_per_instance": 1, "price_per_gpu_hr": 0.34, "regions": {
                 "US": 0.34, "EU": 0.39
-            }},
-            "A10G": {"instance": "a10g", "gpus_per_instance": 1, "price_per_gpu_hr": 0.39, "regions": {
-                "US": 0.39
             }}
         },
         "reserved_1yr_discount": 0.15,
@@ -595,9 +545,6 @@ CLOUD_PRICING = {
             "A100-80GB": {"instance": "BM.GPU.A100-v2.8", "gpus_per_instance": 8, "price_per_gpu_hr": 2.95, "regions": {
                 "us-ashburn-1": 2.95, "us-phoenix-1": 2.95,
                 "uk-london-1": 3.25, "eu-frankfurt-1": 3.25
-            }},
-            "A10G": {"instance": "VM.GPU.A10.1", "gpus_per_instance": 1, "price_per_gpu_hr": 0.70, "regions": {
-                "us-ashburn-1": 0.70, "us-phoenix-1": 0.70
             }}
         },
         "reserved_1yr_discount": 0.30,
@@ -895,35 +842,12 @@ HISTORICAL_PRICING = {
         "2025-12": {"avg": 1.95, "min": 1.70, "max": 2.25, "availability": "available"},
         "2026-02": {"avg": 1.90, "min": 1.65, "max": 2.20, "availability": "available"}
     },
-    "A10G": {
-        "2023-01": {"avg": 1.20, "min": 1.00, "max": 1.45, "availability": "available"},
-        "2023-06": {"avg": 1.15, "min": 0.95, "max": 1.40, "availability": "available"},
-        "2023-12": {"avg": 1.10, "min": 0.90, "max": 1.35, "availability": "available"},
-        "2024-06": {"avg": 1.00, "min": 0.80, "max": 1.25, "availability": "available"},
-        "2024-12": {"avg": 0.85, "min": 0.65, "max": 1.10, "availability": "abundant"},
-        "2025-06": {"avg": 0.72, "min": 0.55, "max": 0.95, "availability": "abundant"},
-        "2025-12": {"avg": 0.62, "min": 0.45, "max": 0.82, "availability": "abundant"},
-        "2026-02": {"avg": 0.58, "min": 0.39, "max": 0.78, "availability": "abundant"}
-    },
     "RTX-5090": {
         "2025-03": {"avg": 0.60, "min": 0.50, "max": 0.75, "availability": "scarce"},
         "2025-06": {"avg": 0.55, "min": 0.47, "max": 0.68, "availability": "limited"},
         "2025-09": {"avg": 0.50, "min": 0.44, "max": 0.62, "availability": "limited"},
         "2025-12": {"avg": 0.48, "min": 0.42, "max": 0.58, "availability": "available"},
         "2026-02": {"avg": 0.45, "min": 0.40, "max": 0.55, "availability": "available"}
-    },
-    "V100": {
-        "2021-01": {"avg": 3.20, "min": 2.90, "max": 3.60, "availability": "available"},
-        "2021-06": {"avg": 3.40, "min": 3.00, "max": 3.90, "availability": "limited"},
-        "2022-01": {"avg": 3.50, "min": 3.10, "max": 4.00, "availability": "limited"},
-        "2022-06": {"avg": 3.30, "min": 2.90, "max": 3.80, "availability": "available"},
-        "2023-01": {"avg": 3.10, "min": 2.70, "max": 3.60, "availability": "available"},
-        "2023-06": {"avg": 2.90, "min": 2.50, "max": 3.40, "availability": "available"},
-        "2024-01": {"avg": 2.50, "min": 2.10, "max": 3.00, "availability": "abundant"},
-        "2024-06": {"avg": 2.20, "min": 1.80, "max": 2.70, "availability": "abundant"},
-        "2025-01": {"avg": 1.80, "min": 1.40, "max": 2.30, "availability": "abundant"},
-        "2025-06": {"avg": 1.50, "min": 1.10, "max": 2.00, "availability": "abundant"},
-        "2026-02": {"avg": 1.20, "min": 0.85, "max": 1.65, "availability": "abundant"}
     }
 }
 
@@ -1123,11 +1047,11 @@ WORKLOAD_RECOMMENDATIONS = {
         "best_value": "Vast.ai MI300X"
     },
     "LLM Inference": {
-        "recommended": ["A10G", "L40S"],
+        "recommended": ["L40S"],
         "min_gpus": 1,
         "budget_monthly_low": 300,
         "budget_monthly_high": 5000,
-        "best_value": "GCP A10G"
+        "best_value": "GCP L40S"
     },
     "Image/Video Generation": {
         "recommended": ["RTX-4090", "L40S", "A100-40GB", "MI250X"],
@@ -1137,7 +1061,7 @@ WORKLOAD_RECOMMENDATIONS = {
         "best_value": "Vast.ai RTX 4090"
     },
     "Research / Experimentation": {
-        "recommended": ["A10G", "RTX-4090", "MI210"],
+        "recommended": ["RTX-4090", "MI210"],
         "min_gpus": 1,
         "budget_monthly_low": 50,
         "budget_monthly_high": 1000,

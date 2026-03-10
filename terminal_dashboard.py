@@ -397,7 +397,7 @@ def render_cost_calculator() -> Panel:
     scenarios = [
         ("Train 7B LLM (1 week, 8xH100)", 8, 2.23, 168),
         ("Fine-tune 70B (3 days, 4xA100-80)", 4, 1.10, 72),
-        ("Inference server (1xA10G, 30d)", 1, 1.006, 730),
+        ("Inference server (1xL40S, 30d)", 1, 0.87, 730),
         ("Batch processing (8xA100, spot, 48h)", 8, 0.70 * 0.35, 48),
         ("Dev/test (1xRTX-4090, 8hr/day, 22d)", 1, 0.22, 176),
     ]
