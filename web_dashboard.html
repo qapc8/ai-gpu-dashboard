@@ -2706,6 +2706,28 @@ function buildChatContext() {
     }).join('\n'));
   }
 
+  // Inference Benchmarks (AI models, sizes, GPU requirements, API pricing)
+  const inf = DATA.inference || {};
+  if(Object.keys(inf).length) {
+    parts.push('AI MODEL INFERENCE DATA:\n' + Object.entries(inf).map(([name, m]) => {
+      let line = `${name}: ${m.params_b}B params, ${m.type}, category=${m.category}, rank=#${m.rank}, context=${m.context_k}K tokens, open_source=${m.open_source}`;
+      if(m.tokens_7d) line += `, weekly_usage=${m.tokens_7d}B tokens`;
+      const gpuInfo = Object.entries(m.gpus || {});
+      if(gpuInfo.length) {
+        line += ', GPU benchmarks: ' + gpuInfo.map(([gid, g]) =>
+          `${gid} (${g.tokens_per_sec} tok/s, $${g.cost_per_1m_tokens}/1M tokens, needs ${g.vram_gb}GB VRAM)`
+        ).join(', ');
+      }
+      const provInfo = Object.entries(m.providers || {});
+      if(provInfo.length) {
+        line += ', API pricing: ' + provInfo.map(([p, pr]) =>
+          `${p} ($${pr.input}/1M in, $${pr.output}/1M out)`
+        ).join(', ');
+      }
+      return line;
+    }).join('\n'));
+  }
+
   // Regional Data
   const reg = DATA.regional || {};
   if(Object.keys(reg).length) {
