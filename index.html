@@ -1138,9 +1138,7 @@ loadExternalData();
       <button class="chat-send" id="chatSendBtn" onclick="sendChat()">SEND</button>
     </div>
     <div class="chat-api-bar">
-      <span>API Key:</span>
-      <input type="password" class="chat-api-input" id="chatApiKey" placeholder="sk-..." oninput="saveChatApiKey()">
-      <span class="chat-api-status" id="chatApiStatus" style="color:var(--text-3);">Not set</span>
+      <span class="chat-api-status" id="chatApiStatus" style="color:var(--green);">AI Chat Ready</span>
     </div>
   </div>
 
@@ -2814,32 +2812,14 @@ document.addEventListener('click', function(e) {
 // AI CHAT SYSTEM
 // ════════════════════════════════════════════════════════════════
 
-const CHAT_API_URL = 'https://api.hyperfusion.io/v1/chat/completions';
-const CHAT_MODEL = 'qwen/qwen3-32b';
+const CHAT_PROXY_URL = '/api/chat';
 let chatHistory = [];
 
 function initChat() {
-  const saved = localStorage.getItem('hf_chat_api_key');
-  const keyEl = document.getElementById('chatApiKey');
   const statusEl = document.getElementById('chatApiStatus');
-  if(saved && keyEl) {
-    keyEl.value = saved;
-    statusEl.textContent = 'Connected';
+  if(statusEl) {
+    statusEl.textContent = 'AI Chat Ready';
     statusEl.style.color = 'var(--green)';
-  }
-}
-
-function saveChatApiKey() {
-  const key = document.getElementById('chatApiKey').value.trim();
-  const statusEl = document.getElementById('chatApiStatus');
-  if(key) {
-    localStorage.setItem('hf_chat_api_key', key);
-    statusEl.textContent = 'Connected';
-    statusEl.style.color = 'var(--green)';
-  } else {
-    localStorage.removeItem('hf_chat_api_key');
-    statusEl.textContent = 'Not set';
-    statusEl.style.color = 'var(--text-3)';
   }
 }
 
@@ -2918,12 +2898,6 @@ async function sendChat() {
   const msg = input.value.trim();
   if(!msg) return;
 
-  const apiKey = localStorage.getItem('hf_chat_api_key');
-  if(!apiKey) {
-    appendChatMsg('ai', '<p style="color:var(--amber);">Please enter your HyperFusion API key in the field below to enable chat.</p>');
-    return;
-  }
-
   // Show user message
   appendChatMsg('user', `<p>${msg.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</p>`);
   input.value = '';
@@ -2950,17 +2924,14 @@ ${buildChatContext()}`;
   showTyping();
 
   try {
-    const resp = await fetch(CHAT_API_URL, {
+    const resp = await fetch(CHAT_PROXY_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model: CHAT_MODEL,
         messages: messages,
         max_tokens: 1024,
-        temperature: 0.7,
       })
     });
 

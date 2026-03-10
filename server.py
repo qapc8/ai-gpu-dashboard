@@ -11,6 +11,8 @@ import threading
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 from datetime import datetime
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
 
 sys.path.insert(0, os.path.dirname(__file__))
 
@@ -27,9 +29,87 @@ from gpu_data import (
 from config import WEB_PORT
 
 
+def _load_env():
+    """Load variables from .env file if present."""
+    env_path = os.path.join(os.path.dirname(__file__), ".env")
+    if os.path.isfile(env_path):
+        with open(env_path) as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    key, _, value = line.partition("=")
+                    os.environ.setdefault(key.strip(), value.strip())
+
+_load_env()
+
+CHAT_API_URL = os.environ.get("CHAT_API_URL", "https://api.hyperfusion.io/v1/chat/completions")
+CHAT_API_KEY = os.environ.get("CHAT_API_KEY", "")
+CHAT_MODEL = os.environ.get("CHAT_MODEL", "qwen/qwen3-32b")
+
+
 class DashboardHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=os.path.dirname(__file__), **kwargs)
+
+    def do_OPTIONS(self):
+        self.send_response(204)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.end_headers()
+
+    def do_POST(self):
+        parsed = urlparse(self.path)
+        if parsed.path == "/api/chat":
+            self.handle_chat_proxy()
+        else:
+            self.send_error(404, "Not Found")
+
+    def handle_chat_proxy(self):
+        if not CHAT_API_KEY:
+            self.send_json({"error": "Chat API key not configured on server."}, status=503)
+            return
+
+        try:
+            content_length = int(self.headers.get("Content-Length", 0))
+            body = self.rfile.read(content_length)
+            payload = json.loads(body)
+        except (json.JSONDecodeError, ValueError):
+            self.send_json({"error": "Invalid request body."}, status=400)
+            return
+
+        # Only allow messages through — strip any attempt to override model/key
+        messages = payload.get("messages", [])
+        if not messages:
+            self.send_json({"error": "No messages provided."}, status=400)
+            return
+
+        proxy_payload = json.dumps({
+            "model": CHAT_MODEL,
+            "messages": messages,
+            "max_tokens": min(payload.get("max_tokens", 1024), 2048),
+            "temperature": 0.7,
+        }).encode("utf-8")
+
+        req = Request(
+            CHAT_API_URL,
+            data=proxy_payload,
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {CHAT_API_KEY}",
+            },
+            method="POST",
+        )
+
+        try:
+            with urlopen(req, timeout=60) as resp:
+                resp_data = json.loads(resp.read().decode("utf-8"))
+            self.send_json(resp_data)
+        except HTTPError as e:
+            err_body = e.read().decode("utf-8", errors="replace")[:200]
+            self.send_json({"error": f"Upstream API error ({e.code}): {err_body}"}, status=e.code)
+        except (URLError, TimeoutError) as e:
+            self.send_json({"error": f"Connection to AI service failed: {str(e)}"}, status=502)
 
     def do_GET(self):
         parsed = urlparse(self.path)
@@ -108,9 +188,9 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         else:
             super().do_GET()
 
-    def send_json(self, data):
+    def send_json(self, data, status=200):
         content = json.dumps(data, default=str).encode("utf-8")
-        self.send_response(200)
+        self.send_response(status)
         self.send_header("Content-Type", "application/json")
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Content-Length", len(content))
