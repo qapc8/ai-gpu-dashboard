@@ -139,20 +139,47 @@ body {
 .indicator-change { font-weight: 600; font-size: 9.5px; padding: 1px 4px; border-radius: 3px; line-height: 1; }
 .indicator-change.up { color: var(--green); background: rgba(34,197,94,0.12); }
 .indicator-change.down { color: var(--red); background: rgba(239,68,68,0.12); }
-.news-headline {
-  flex: 1;
-  min-width: 0;
+.news-banner {
+  width: 100%;
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--border-0);
+  overflow: hidden;
+  position: relative;
+  height: 28px;
+  display: flex;
+  align-items: center;
+}
+.news-banner-label {
+  position: absolute; left: 0; top: 0; bottom: 0; z-index: 2;
+  display: flex; align-items: center; padding: 0 12px;
+  background: var(--bg-1);
+  font-family: var(--mono); font-size: 9px; font-weight: 700;
+  color: var(--cyan); letter-spacing: 1px; text-transform: uppercase;
+  border-right: 1px solid var(--border-0);
+}
+.news-track {
+  display: flex;
+  animation: newsTicker linear infinite;
+  white-space: nowrap;
+  padding-left: 80px;
+}
+.news-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 28px;
   font-family: var(--sans);
   font-size: 11px;
   color: var(--text-2);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0 14px;
-  transition: opacity 0.4s ease;
+  flex-shrink: 0;
 }
-.news-headline .nh-src { color: var(--cyan); font-weight: 600; font-family: var(--mono); font-size: 10px; }
-@media (max-width: 900px) { .news-headline { display: none; } }
+.news-item .nh-src { color: var(--cyan); font-weight: 600; font-family: var(--mono); font-size: 10px; }
+.news-item .nh-dot { color: var(--border-2); }
+@keyframes newsTicker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
 .topbar-meta {
   display: flex;
   align-items: center;
@@ -675,11 +702,14 @@ body {
     </div>
   </div>
   <div class="topbar-indicators" id="tickerBar"></div>
-  <div class="news-headline" id="newsHeadline"></div>
   <div class="topbar-meta">
     <div class="live-dot"></div>
     <div class="topbar-time" id="headerTime"></div>
   </div>
+</div>
+<div class="news-banner">
+  <div class="news-banner-label">NEWS</div>
+  <div class="news-track" id="newsTrack"></div>
 </div>
 
 <!-- ═══ NAV ═══ -->
@@ -1441,20 +1471,12 @@ function renderNewsHeadline() {
     });
   }
 
-  const el = document.getElementById('newsHeadline');
-  let idx = 0;
-  const show = () => {
-    const n = news[idx % news.length];
-    el.style.opacity = '0';
-    setTimeout(() => {
-      el.innerHTML = `▸ <span class="nh-src">${n.source}:</span> ${n.headline}`;
-      el.style.opacity = '1';
-    }, 400);
-    idx++;
-  };
-  show();
-  if (window._newsInterval) clearInterval(window._newsInterval);
-  window._newsInterval = setInterval(show, 6000);
+  const track = document.getElementById('newsTrack');
+  const items = news.map(n =>
+    `<span class="news-item"><span class="nh-dot">▸</span> <span class="nh-src">${n.source}</span> ${n.headline}</span>`
+  ).join('');
+  track.innerHTML = items + items;
+  track.style.animationDuration = (news.length * 3) + 's';
 }
 
 // ════════════════════════════════════════════════════════════════
