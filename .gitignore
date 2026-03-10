@@ -6,3 +6,5 @@ embedded_data.json
 *.log
 .DS_Store
 .env
+.vercel
+node_modules
