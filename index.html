@@ -341,17 +341,48 @@ body {
   line-height: 1.15;
   font-family: var(--sans);
 }
+.carousel-prices-dual {
+  display: flex;
+  gap: 0;
+  align-items: stretch;
+  margin-top: 4px;
+}
+.carousel-price-block {
+  flex: 1;
+  min-width: 0;
+}
+.carousel-price-type {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-3);
+  margin-bottom: 2px;
+  font-family: var(--sans);
+}
+.carousel-price-divider {
+  width: 1px;
+  background: var(--border-0);
+  margin: 0 14px;
+  align-self: stretch;
+}
 .carousel-price {
-  font-size: 32px;
+  font-size: 26px;
   font-weight: 800;
   color: var(--cyan);
   font-family: var(--mono);
   line-height: 1.2;
 }
 .carousel-price-sub {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 400;
   color: var(--text-3);
+}
+.carousel-provider-name {
+  font-size: 11px;
+  color: var(--text-2);
+  font-family: var(--sans);
+  margin-top: 1px;
 }
 .carousel-provider {
   font-size: 12px;
@@ -1680,13 +1711,14 @@ function renderOverviewTrendChart() {
     }
     return {
       label:g, data:pctData,
-      borderColor:CL[i%CL.length], backgroundColor:CL[i%CL.length]+'18', tension:0.35,
-      pointRadius:2, borderWidth:2, fill:false, spanGaps:true,
+      backgroundColor:CL[i%CL.length]+'CC',
+      borderColor:CL[i%CL.length],
+      borderWidth:1, borderRadius:3,
     };
   });
   if(charts.ot) charts.ot.destroy();
   charts.ot = new Chart(document.getElementById('chartOverviewTrends'),{
-    type:'line', data:{labels:pctLabels, datasets:ds},
+    type:'bar', data:{labels:pctLabels, datasets:ds},
     options:{responsive:true, maintainAspectRatio:false,
       plugins:{legend:{position:'top'},
         tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+(ctx.parsed.y>0?'+':'')+ctx.parsed.y+'%'}}},
@@ -1716,6 +1748,20 @@ function renderGpuCarousel() {
   const track = document.getElementById('carouselTrack');
   const dots = document.getElementById('carouselDots');
 
+  // Helper: find best price per GPU for cloud vs marketplace
+  const pd = DATA.providers||{};
+  const bestByType = (gpuId, type) => {
+    let best = null;
+    for(const [prov, p] of Object.entries(pd)) {
+      if((p.type||'cloud') !== type) continue;
+      const g = p.gpus?.[gpuId];
+      if(g && g.price_per_gpu_hr && (!best || g.price_per_gpu_hr < best.price)) {
+        best = { price: g.price_per_gpu_hr, provider: p.provider_name || prov };
+      }
+    }
+    return best;
+  };
+
   track.innerHTML = top5.map((gpu, i) => {
     const s = spot[gpu.gpu_id]||{};
     const spec = specs[gpu.gpu_id]||{};
@@ -1726,16 +1772,30 @@ function renderGpuCarousel() {
     const cur = periods.length>=1 ? h[periods[periods.length-1]]?.avg : gpu.avg_price;
     const pctChg = prev ? ((cur-prev)/prev*100).toFixed(1) : null;
     const pctCls = pctChg && pctChg < 0 ? 'up' : 'dn';
-    const res1Sav = s.res1_savings_pct || '--';
     const regime = f.regime || 'stable';
     const regimeLabel = {declining:'Prices Falling',stable:'Prices Stable',recovering:'Prices Rising',volatile:'Volatile'}[regime]||regime;
+
+    const cloudBest = bestByType(gpu.gpu_id, 'cloud');
+    const mktBest = bestByType(gpu.gpu_id, 'marketplace');
 
     return `<div class="carousel-slide">
       <div class="carousel-slide-left">
         <div class="carousel-rank">#${i+1} Best Value GPU</div>
         <div class="carousel-gpu-name">${gpu.name}</div>
-        <div class="carousel-price">$${gpu.cheapest_price.toFixed(2)}<span class="carousel-price-sub">/hr</span></div>
-        <div class="carousel-provider">on <b>${gpu.cheapest_provider}</b> · avg $${gpu.avg_price.toFixed(2)}/hr across ${gpu.num_providers} providers</div>
+        <div class="carousel-prices-dual">
+          <div class="carousel-price-block">
+            <div class="carousel-price-type">Cloud</div>
+            <div class="carousel-price">${cloudBest ? '$'+cloudBest.price.toFixed(2) : '--'}<span class="carousel-price-sub">/hr</span></div>
+            <div class="carousel-provider-name">${cloudBest ? cloudBest.provider : 'N/A'}</div>
+          </div>
+          <div class="carousel-price-divider"></div>
+          <div class="carousel-price-block">
+            <div class="carousel-price-type">Marketplace</div>
+            <div class="carousel-price">${mktBest ? '$'+mktBest.price.toFixed(2) : '--'}<span class="carousel-price-sub">/hr</span></div>
+            <div class="carousel-provider-name">${mktBest ? mktBest.provider : 'N/A'}</div>
+          </div>
+        </div>
+        <div class="carousel-provider" style="margin-top:6px;">avg $${gpu.avg_price.toFixed(2)}/hr across ${gpu.num_providers} providers</div>
       </div>
       <div class="carousel-slide-right">
         <div class="carousel-stat">
@@ -1751,12 +1811,12 @@ function renderGpuCarousel() {
           <div class="carousel-stat-value">${pctChg ? `<span class="${pctCls}">${pctChg>0?'+':''}${pctChg}%</span>` : '--'}</div>
         </div>
         <div class="carousel-stat">
-          <div class="carousel-stat-label">1yr Reserved</div>
-          <div class="carousel-stat-value">${s.reserved_1yr_avg ? '$'+s.reserved_1yr_avg.toFixed(2) : '--'}<span style="font-size:11px;color:var(--green);"> ${res1Sav!='--'?'-'+res1Sav+'%':''}</span></div>
+          <div class="carousel-stat-label">Forecast</div>
+          <div class="carousel-stat-value" style="font-size:13px;">${regimeLabel}</div>
         </div>
         <div class="carousel-stat" style="grid-column:span 2;">
-          <div class="carousel-stat-label">Forecast Regime</div>
-          <div class="carousel-stat-value" style="font-size:14px;">${regimeLabel} · FP16: ${spec.fp16_tflops||'--'} TFLOPS · ${spec.memory_type||''}</div>
+          <div class="carousel-stat-label">Specs</div>
+          <div class="carousel-stat-value" style="font-size:14px;">FP16: ${spec.fp16_tflops||'--'} TFLOPS · ${spec.memory_type||''}</div>
         </div>
       </div>
     </div>`;
