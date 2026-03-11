@@ -10,7 +10,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
 :root {
@@ -2304,103 +2303,169 @@ function updateTrendChart() {
   });
 }
 
-function _buildDecayData() {
-  const hist=DATA.historical, gpus=Object.keys(hist);
-  const out=[];
-  gpus.forEach((g,i)=>{
-    const periods=Object.keys(hist[g]).sort();
-    if(periods.length<4) return;
+function _decayDataCache(){
+  if(_decayDataCache._c) return _decayDataCache._c;
+  const hist=DATA.historical||{}, gpus=Object.keys(hist), out=[];
+  for(let i=0;i<gpus.length;i++){
+    const g=gpus[i], periods=Object.keys(hist[g]).sort();
+    if(periods.length<4) continue;
     const base=hist[g][periods[0]].avg;
-    if(!base) return;
-    const pts=periods.map((p,j)=>({x:j,y:+((hist[g][p].avg/base)*100).toFixed(1),price:hist[g][p].avg,min:hist[g][p].min,max:hist[g][p].max,label:p}));
-    const finalPct=pts[pts.length-1].y;
-    const totalDecay=+(100-finalPct).toFixed(1);
-    const monthlyRate=+(totalDecay/pts.length).toFixed(2);
+    if(!base||base<=0) continue;
+    const pts=[], linX=[], linY=[];
+    for(let j=0;j<periods.length;j++){
+      const p=periods[j], entry=hist[g][p];
+      const pct=Math.round((entry.avg/base)*1000)/10;
+      pts.push({x:j,y:pct,price:entry.avg,label:p});
+      linX.push(j); linY.push(pct);
+    }
     // Linear regression
-    const n=pts.length, sx=pts.reduce((s,p)=>s+p.x,0), sy=pts.reduce((s,p)=>s+p.y,0);
-    const sxy=pts.reduce((s,p)=>s+p.x*p.y,0), sxx=pts.reduce((s,p)=>s+p.x*p.x,0);
-    const slope=(n*sxy-sx*sy)/(n*sxx-sx*sx), intercept=(sy-slope*sx)/n;
-    const linPts=pts.map(p=>({x:p.x,y:+(slope*p.x+intercept).toFixed(1)}));
-    // Residual analysis: is decay accelerating or decelerating?
-    const residuals=pts.map((p,j)=>p.y-linPts[j].y);
+    const n=pts.length;
+    let sx=0,sy=0,sxy=0,sxx=0;
+    for(let j=0;j<n;j++){sx+=linX[j];sy+=linY[j];sxy+=linX[j]*linY[j];sxx+=linX[j]*linX[j];}
+    const denom=n*sxx-sx*sx;
+    const slope=denom?((n*sxy-sx*sy)/denom):0;
+    const intercept=(sy-slope*sx)/n;
+    const trendPts=pts.map(p=>({x:p.x,y:Math.round((slope*p.x+intercept)*10)/10}));
+    // Pattern: compare first-half vs second-half residuals
     const halfN=Math.floor(n/2);
-    const avgResFirst=residuals.slice(0,halfN).reduce((s,v)=>s+v,0)/halfN;
-    const avgResSecond=residuals.slice(halfN).reduce((s,v)=>s+v,0)/(n-halfN);
+    let resFirst=0,resSecond=0;
+    for(let j=0;j<n;j++){
+      const r=pts[j].y-trendPts[j].y;
+      if(j<halfN) resFirst+=r; else resSecond+=r;
+    }
+    resFirst/=halfN; resSecond/=(n-halfN);
     let shape='linear';
-    if(avgResFirst>1.5 && avgResSecond<-1.5) shape='accelerating';
-    else if(avgResFirst<-1.5 && avgResSecond>1.5) shape='decelerating';
-    out.push({gpu:g,pts,linPts,finalPct,totalDecay,monthlyRate,shape,slope,idx:i,months:n});
-  });
-  return out.sort((a,b)=>a.finalPct-b.finalPct);
+    if(resFirst>1.5&&resSecond<-1.5) shape='accelerating';
+    else if(resFirst<-1.5&&resSecond>1.5) shape='decelerating';
+    const finalPct=pts[n-1].y;
+    const totalDecay=Math.round((100-finalPct)*10)/10;
+    const monthlyRate=Math.round((totalDecay/n)*100)/100;
+    out.push({gpu:g,pts:pts,trendPts:trendPts,finalPct:finalPct,totalDecay:totalDecay,monthlyRate:monthlyRate,shape:shape,colorIdx:i,months:n});
+  }
+  out.sort(function(a,b){return a.finalPct-b.finalPct;});
+  _decayDataCache._c=out;
+  return out;
 }
 
-function renderDecayChart() {
-  const allData=_buildDecayData();
-  if(!allData.length) return;
-  const picker=document.getElementById('decayGpuPicker');
+function renderDecayChart(){
+  try{
+  var allData=_decayDataCache();
+  if(!allData||!allData.length) return;
+  var picker=document.getElementById('decayGpuPicker');
+  if(!picker) return;
+  var statsEl=document.getElementById('decayStats');
+  var canvasEl=document.getElementById('chartDecay');
+  if(!canvasEl) return;
 
-  // Build chips on first render
-  if(!picker.children.length) {
-    allData.forEach((d,i)=>{
-      const chip=document.createElement('span');
+  // Build chips once
+  if(picker.children.length===0){
+    for(var i=0;i<allData.length;i++){
+      var d=allData[i];
+      var chip=document.createElement('span');
       chip.className='decay-chip'+(i<3?' active':'');
-      chip.dataset.gpu=d.gpu;
-      chip.style.setProperty('--chip-color',CL[d.idx%CL.length]);
+      chip.setAttribute('data-gpu',d.gpu);
+      chip.setAttribute('data-ci',String(d.colorIdx));
       chip.textContent=d.gpu;
-      chip.onclick=()=>{chip.classList.toggle('active');renderDecayChart();};
+      chip.addEventListener('click',function(){this.classList.toggle('active');renderDecayChart();});
       picker.appendChild(chip);
+    }
+  }
+
+  // Selected GPUs
+  var chips=picker.querySelectorAll('.decay-chip.active');
+  var selected=[];
+  for(var j=0;j<chips.length;j++) selected.push(chips[j].getAttribute('data-gpu'));
+  var chosen=[];
+  for(var k=0;k<allData.length;k++){
+    if(selected.indexOf(allData[k].gpu)!==-1) chosen.push(allData[k]);
+  }
+
+  // Style chips
+  var allChips=picker.querySelectorAll('.decay-chip');
+  for(var m=0;m<allChips.length;m++){
+    var ac=allChips[m], ci=parseInt(ac.getAttribute('data-ci'))||0;
+    var col=CL[ci%CL.length];
+    if(ac.classList.contains('active')){
+      ac.style.background=col+'22';ac.style.borderColor=col;ac.style.color=col;
+    }else{
+      ac.style.background='';ac.style.borderColor='';ac.style.color='';
+    }
+  }
+
+  if(!chosen.length){
+    if(statsEl) statsEl.innerHTML='<div style="padding:10px;color:var(--text-3);font-size:12px;">Select at least one GPU above</div>';
+    if(charts.dc){charts.dc.destroy();charts.dc=null;}
+    return;
+  }
+
+  // Build datasets
+  var datasets=[];
+  for(var ci2=0;ci2<chosen.length;ci2++){
+    var dd=chosen[ci2];
+    var cc=CL[dd.colorIdx%CL.length];
+    datasets.push({
+      label:dd.gpu,
+      data:dd.pts.map(function(p){return{x:p.x,y:p.y};}),
+      borderColor:cc,
+      backgroundColor:cc+'15',
+      fill:true,
+      pointRadius:chosen.length>4?1.5:3,
+      pointHoverRadius:6,
+      borderWidth:chosen.length>4?1.5:2.5,
+      tension:0.3,
+      pointBackgroundColor:cc
+    });
+    datasets.push({
+      label:dd.gpu+' trend',
+      data:dd.trendPts.map(function(p){return{x:p.x,y:p.y};}),
+      borderColor:cc+'55',
+      borderWidth:1.5,
+      borderDash:[5,3],
+      fill:false,
+      pointRadius:0,
+      tension:0
     });
   }
 
-  // Get selected GPUs
-  const selected=[...picker.querySelectorAll('.decay-chip.active')].map(c=>c.dataset.gpu);
-  const chosen=allData.filter(d=>selected.includes(d.gpu));
-  if(!chosen.length){document.getElementById('decayStats').innerHTML='<div style="padding:10px;color:var(--text-3);font-size:12px;">Select at least one GPU above</div>';if(charts.dc)charts.dc.destroy();return;}
-
-  // Update chip colors
-  picker.querySelectorAll('.decay-chip').forEach(c=>{
-    const d=allData.find(x=>x.gpu===c.dataset.gpu);
-    if(d && c.classList.contains('active')){
-      const col=CL[d.idx%CL.length];
-      c.style.background=col+'22';c.style.borderColor=col;c.style.color=col;
-    } else {
-      c.style.background='';c.style.borderColor='';c.style.color='';
-    }
+  // 100% baseline as a dataset (no annotation plugin needed)
+  var maxMonth=0;
+  for(var q=0;q<chosen.length;q++){
+    var last=chosen[q].pts[chosen[q].pts.length-1].x;
+    if(last>maxMonth) maxMonth=last;
+  }
+  datasets.push({
+    label:'Launch Price (100%)',
+    data:[{x:0,y:100},{x:maxMonth,y:100}],
+    borderColor:'rgba(255,255,255,0.2)',
+    borderWidth:1,
+    borderDash:[4,4],
+    fill:false,
+    pointRadius:0,
+    tension:0
   });
 
-  // Build datasets: each GPU gets a line + its linear trend (dashed)
-  const datasets=[];
-  chosen.forEach(d=>{
-    const c=CL[d.idx%CL.length];
-    datasets.push({label:d.gpu,data:d.pts,borderColor:c,backgroundColor:c+'12',fill:true,
-      pointRadius:chosen.length>3?1.5:3,pointHoverRadius:6,borderWidth:chosen.length>3?2:2.5,tension:0.3,pointBackgroundColor:c});
-    datasets.push({label:d.gpu+' trend',data:d.linPts,borderColor:c+'60',borderWidth:1.5,borderDash:[5,3],
-      fill:false,pointRadius:0,tension:0});
-  });
-
-  if(charts.dc) charts.dc.destroy();
-  charts.dc = new Chart(document.getElementById('chartDecay'),{type:'line',
-    data:{datasets},
+  if(charts.dc){charts.dc.destroy();charts.dc=null;}
+  charts.dc=new Chart(canvasEl,{type:'line',
+    data:{datasets:datasets},
     options:{responsive:true,maintainAspectRatio:false,
       interaction:{mode:'nearest',intersect:false},
       plugins:{
         legend:{display:true,position:'top',labels:{boxWidth:10,font:{size:10},
-          filter:item=>!item.text.includes(' trend'),usePointStyle:true,pointStyle:'circle'}},
+          filter:function(item){return item.text.indexOf(' trend')===-1;},usePointStyle:true,pointStyle:'circle'}},
         tooltip:{
-          filter:item=>!item.dataset.label.includes(' trend'),
+          filter:function(item){return item.dataset.label.indexOf(' trend')===-1 && item.dataset.label!=='Launch Price (100%)';},
           callbacks:{
-            title:items=>'Month '+items[0].parsed.x,
-            label:item=>{
-              const d=allData.find(x=>x.gpu===item.dataset.label);
-              const pt=d?d.pts[item.dataIndex]:null;
-              return pt?`${d.gpu}: ${pt.y}% ($${pt.price}/hr)`:`${item.dataset.label}: ${item.parsed.y}%`;
+            title:function(items){return 'Month '+items[0].parsed.x;},
+            label:function(item){
+              var gpuName=item.dataset.label;
+              for(var z=0;z<allData.length;z++){
+                if(allData[z].gpu===gpuName){
+                  var pt=allData[z].pts[item.dataIndex];
+                  if(pt) return gpuName+': '+pt.y+'% ($'+pt.price.toFixed(2)+'/hr)';
+                }
+              }
+              return gpuName+': '+item.parsed.y+'%';
             }
-          }
-        },
-        annotation:{
-          annotations:{
-            baseline:{type:'line',yMin:100,yMax:100,borderColor:'rgba(255,255,255,0.18)',borderWidth:1,borderDash:[4,4],
-              label:{display:true,content:'Launch Price (100%)',position:'start',color:'rgba(255,255,255,0.3)',font:{size:8}}}
           }
         }
       },
@@ -2412,19 +2477,24 @@ function renderDecayChart() {
     }
   });
 
-  // Stats table for selected GPUs
-  const rows=chosen.map(d=>{
-    const shapeClass=d.shape==='accelerating'?'accel':d.shape==='decelerating'?'decel':'linear';
-    const c=CL[d.idx%CL.length];
-    return `<div class="decay-stats" style="margin-bottom:4px;">
-      <div class="decay-stat" style="min-width:100px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${c};margin-right:5px;"></span><b style="font-size:12px;">${d.gpu}</b></div>
-      <div class="decay-stat">Decay<b>−${d.totalDecay}%</b></div>
-      <div class="decay-stat">Rate<b>−${d.monthlyRate}%/mo</b></div>
-      <div class="decay-stat">${d.months}mo</div>
-      <div class="decay-stat"><span class="decay-tag ${shapeClass}">${d.shape.toUpperCase()}</span></div>
-    </div>`;
-  }).join('');
-  document.getElementById('decayStats').innerHTML=rows;
+  // Stats table
+  if(statsEl){
+    var rows='';
+    for(var s=0;s<chosen.length;s++){
+      var sd=chosen[s];
+      var sc=sd.shape==='accelerating'?'accel':(sd.shape==='decelerating'?'decel':'linear');
+      var scc=CL[sd.colorIdx%CL.length];
+      rows+='<div class="decay-stats" style="margin-bottom:4px;">'
+        +'<div class="decay-stat" style="min-width:100px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+scc+';margin-right:5px;"></span><b style="font-size:12px;">'+sd.gpu+'</b></div>'
+        +'<div class="decay-stat">Decay<b>\u2212'+sd.totalDecay+'%</b></div>'
+        +'<div class="decay-stat">Rate<b>\u2212'+sd.monthlyRate+'%/mo</b></div>'
+        +'<div class="decay-stat">'+sd.months+'mo</div>'
+        +'<div class="decay-stat"><span class="decay-tag '+sc+'">'+sd.shape.toUpperCase()+'</span></div>'
+        +'</div>';
+    }
+    statsEl.innerHTML=rows;
+  }
+  }catch(err){console.error('renderDecayChart error:',err);}
 }
 
 function renderMarketSupplyChart() {
