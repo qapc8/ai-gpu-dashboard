@@ -4961,7 +4961,7 @@
         "avg_price": 4.64,
         "num_providers": 10,
         "price_spread_pct": 622.9,
-        "monthly_change_pct": -1.5,
+        "monthly_change_pct": -1.3,
         "flops_per_dollar": 582.1,
         "vram_per_dollar": 47.1
       },
@@ -5376,7 +5376,7 @@
       "avg_price": 4.64,
       "num_providers": 10,
       "price_spread_pct": 622.9,
-      "monthly_change_pct": -1.5,
+      "monthly_change_pct": -1.3,
       "flops_per_dollar": 582.1,
       "vram_per_dollar": 47.1
     },
