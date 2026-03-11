@@ -2114,7 +2114,7 @@ function renderOverviewTable() {
     if (!prices || prices.length < 2) return '<span class="dim">—</span>';
     const mn = Math.min(...prices), mx = Math.max(...prices), rng = mx - mn || 1;
     const pts = prices.map((p,i) => `${(i/(prices.length-1))*w},${h-((p-mn)/rng)*(h-2)-1}`).join(' ');
-    const clr = prices[prices.length-1] <= prices[0] ? 'var(--green)' : 'var(--red)';
+    const clr = prices[prices.length-1] >= prices[0] ? 'var(--green)' : 'var(--red)';
     return `<svg width="${w}" height="${h}" style="vertical-align:middle;"><polyline points="${pts}" fill="none" stroke="${clr}" stroke-width="1.5"/></svg>`;
   };
 
@@ -2130,7 +2130,7 @@ function renderOverviewTable() {
       `<td class="gpu-name">${r.name}</td>` +
       `<td class="r c-green fw">$${r.cheapest_price.toFixed(2)}</td>` +
       `<td class="r">${r.cheapest_provider}</td>` +
-      `<td class="r"><span class="up">-${savPct}%</span></td>` +
+      `<td class="r"><span class="dn">-${savPct}%</span></td>` +
       `<td class="r c-purple">${r.flops_per_dollar}</td>` +
       `<td class="r c-cyan">${spec.vram_gb||'--'}GB</td>` +
       `<td>${spark(trend)}</td>` +
