@@ -1174,7 +1174,6 @@ loadExternalData();
 
 <!-- ── PRICING ── -->
 <div class="tab-panel" id="tab-pricing">
-  <div class="kpi-strip mb" id="pricingKpis"></div>
   <div class="card mb">
     <div class="card-hd">
       <span class="card-hd-title">GPU Price Grid</span>
@@ -2064,19 +2063,6 @@ function renderPriceMatrix() {
   const spotGpus = Object.keys(spot);
   const spotVals = Object.values(spot);
 
-  // ── KPI strip ──
-  const bestVal = m.reduce((a,b) => a.flops_per_dollar > b.flops_per_dollar ? a : b);
-  let kpiHtml = '';
-  if (spotGpus.length) {
-    const cheapest = spotGpus.reduce((a,b) => spot[a].on_demand_low < spot[b].on_demand_low ? a : b);
-    const avgRes1 = (spotVals.reduce((s,d) => s + (d.res1_savings_pct||0), 0) / spotVals.length).toFixed(0);
-    const avgRes3 = (spotVals.reduce((s,d) => s + (d.res3_savings_pct||0), 0) / spotVals.length).toFixed(0);
-    kpiHtml += `<div class="kpi kpi-cyan"><div class="kpi-label">Cheapest On-Demand</div><div class="kpi-value">${cheapest}</div><div class="kpi-sub">From $${spot[cheapest].on_demand_low.toFixed(2)}/hr</div></div>`;
-    kpiHtml += `<div class="kpi kpi-green"><div class="kpi-label">Avg 1yr Savings</div><div class="kpi-value">${avgRes1}% off</div><div class="kpi-sub">vs on-demand across ${spotGpus.length} GPUs</div></div>`;
-    kpiHtml += `<div class="kpi kpi-amber"><div class="kpi-label">Avg 3yr Savings</div><div class="kpi-value">${avgRes3}% off</div><div class="kpi-sub">Best for sustained workloads</div></div>`;
-  }
-  kpiHtml += `<div class="kpi kpi-purple"><div class="kpi-label">Best TFLOPS/$</div><div class="kpi-value">${bestVal.flops_per_dollar}</div><div class="kpi-sub">${bestVal.name} @ $${bestVal.cheapest_price.toFixed(2)}/hr</div></div>`;
-  document.getElementById('pricingKpis').innerHTML = kpiHtml;
 
   // ── Provider grid table ──
   const cloudProvs = ['AWS','GCP','Azure','Lambda','CoreWeave','Oracle','Together'];
