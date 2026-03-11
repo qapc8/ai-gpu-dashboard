@@ -436,6 +436,58 @@ body {
   border-radius: 4px;
 }
 
+/* ─── AI COMMENTARY ─── */
+.ai-commentary {
+  margin-top: 16px;
+  border-top: 1px solid var(--border-0);
+  padding-top: 14px;
+}
+.ai-commentary-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.ai-commentary-icon {
+  color: var(--cyan);
+  font-size: 14px;
+}
+.ai-commentary-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--cyan);
+  font-family: var(--mono);
+}
+.ai-commentary-body {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-1);
+  font-family: var(--sans);
+}
+.ai-commentary-body p { margin: 0 0 6px; }
+.ai-commentary-body strong { color: var(--text-0); }
+.ai-commentary-loading {
+  color: var(--text-3);
+  font-style: italic;
+  font-size: 12px;
+}
+@keyframes aiDotPulse { 0%,100%{opacity:.3} 50%{opacity:1} }
+.ai-commentary-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  animation: aiDotPulse 1.2s ease-in-out infinite;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+.ai-commentary-error {
+  color: var(--red);
+  font-size: 12px;
+}
+
 /* ─── WORKLOAD MATCHER ─── */
 .wl-grid {
   display: grid;
@@ -1063,7 +1115,18 @@ loadExternalData();
     </div>
     <div class="card">
       <div class="card-hd"><span class="card-hd-title">GPU Price Change — % per Month</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:280px;"><canvas id="chartOverviewTrends"></canvas></div></div>
+      <div class="card-bd">
+        <div class="chart-wrap" style="height:280px;"><canvas id="chartOverviewTrends"></canvas></div>
+        <div class="ai-commentary" id="priceAiCommentary">
+          <div class="ai-commentary-header">
+            <span class="ai-commentary-icon">&#9733;</span>
+            <span class="ai-commentary-label">AI Price Analysis</span>
+          </div>
+          <div class="ai-commentary-body" id="priceAiCommentaryBody">
+            <div class="ai-commentary-loading"><span class="ai-commentary-dot"></span> Analyzing price dynamics...</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1692,6 +1755,7 @@ function renderOverview() {
   renderGpuCarousel();
   renderOverviewTrendChart();
   renderOverviewTable();
+  fetchPriceAiCommentary();
 }
 
 function renderOverviewTrendChart() {
@@ -1729,6 +1793,46 @@ function renderOverviewTrendChart() {
       }
     }
   });
+}
+
+// ── AI PRICE COMMENTARY ──
+let _priceCommentaryCache = null;
+async function fetchPriceAiCommentary() {
+  const el = document.getElementById('priceAiCommentaryBody');
+  if(!el) return;
+  if(_priceCommentaryCache) { el.innerHTML = _priceCommentaryCache; return; }
+
+  // Build concise price data summary for the prompt
+  const hist = DATA.historical||{};
+  const gpus = ['B300','B200','GB200','H200','H100-SXM','A100-80GB','MI300X'];
+  const fc = DATA.forecasts||{};
+  let priceSummary = '';
+  gpus.forEach(g => {
+    const h = hist[g]||{};
+    const periods = Object.keys(h).sort();
+    const recent = periods.slice(-4);
+    const prices = recent.map(p => `${p}: $${h[p]?.avg?.toFixed(2)||'?'}`).join(', ');
+    const regime = fc[g]?.regime || 'unknown';
+    priceSummary += `${g}: ${prices} | forecast: ${regime}\n`;
+  });
+
+  const messages = [
+    { role: 'system', content: `You are HyperFusion AI, a GPU compute market analyst. Write a brief, insightful commentary (150 words max) on GPU price dynamics based on the data below. For each GPU, explain the MoM price trend and the likely reasons (supply/demand, new chip launches, contract shifts, AI training demand, etc). Use bold for GPU names. Be specific with numbers. No greetings or introductions — start directly with the analysis. Format as a short flowing paragraph, not bullet points.` },
+    { role: 'user', content: `Recent monthly average prices and forecast regime:\n${priceSummary}\nAnalyze the price dynamics and reasons for each GPU type.` }
+  ];
+
+  try {
+    const resp = await _chatRequest(messages);
+    if(!resp.ok) throw new Error('API error');
+    const data = await resp.json();
+    const text = data.choices?.[0]?.message?.content || 'No analysis available.';
+    // Simple markdown bold → HTML
+    const html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+    _priceCommentaryCache = html;
+    el.innerHTML = html;
+  } catch(e) {
+    el.innerHTML = '<span class="ai-commentary-error">Unable to load AI analysis.</span>';
+  }
 }
 
 // ── GPU CAROUSEL ──
