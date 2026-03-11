@@ -2650,6 +2650,15 @@ function updateGlobalStatus() {
 
 const _cp = '/api/chat';
 function _esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+let _aiCfg = null;
+async function _loadAiConfig() {
+  if (_aiCfg) return _aiCfg;
+  try {
+    const r = await fetch('./ai_config.json');
+    if (r.ok) { _aiCfg = await r.json(); return _aiCfg; }
+  } catch(e) {}
+  return null;
+}
 let chatHistory = [];
 
 function initChat() {
@@ -2813,9 +2822,21 @@ function askSuggestion(el) {
 }
 
 async function _chatRequest(messages) {
-  return fetch(_cp, {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({messages, max_tokens:1024})
+  try {
+    const r = await fetch(_cp, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({messages, max_tokens:1024})
+    });
+    if(r.ok || (r.status >= 400 && r.status < 500 && r.status !== 404 && r.status !== 405)) return r;
+  } catch(e) {}
+  const cfg = await _loadAiConfig();
+  if(!cfg || !cfg.key || !cfg.url) {
+    return new Response(JSON.stringify({error:'AI service not configured.'}), {status:503, headers:{'Content-Type':'application/json'}});
+  }
+  return fetch(cfg.url, {
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+cfg.key},
+    body: JSON.stringify({model:cfg.model||'qwen/qwen3-32b', messages, max_tokens:1024, temperature:0.7})
   });
 }
 
