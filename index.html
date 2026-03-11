@@ -681,6 +681,11 @@ body {
 .decay-tag.accel { background:rgba(255,61,87,0.15); color:var(--red); }
 .decay-tag.decel { background:rgba(0,247,255,0.12); color:var(--cyan); }
 .decay-tag.linear { background:rgba(255,255,255,0.08); color:var(--text-2); }
+.decay-picker { display:flex; flex-wrap:wrap; gap:5px; }
+.decay-chip { padding:4px 10px; border-radius:4px; font-family:var(--mono); font-size:10px; font-weight:600;
+  cursor:pointer; border:1px solid var(--border-1); color:var(--text-2); background:var(--bg-2); transition:all 0.15s; user-select:none; }
+.decay-chip:hover { border-color:var(--text-2); }
+.decay-chip.active { color:#fff; border-color:currentColor; }
 .ctrl-input {
   padding: 6px 10px;
   background: var(--bg-3);
@@ -1232,21 +1237,14 @@ loadExternalData();
     </div>
     <div class="card-bd"><div class="chart-wrap" style="height:360px;"><canvas id="chartTrends"></canvas></div></div>
   </div>
-  <div class="grid g-2 mb">
-    <div class="card">
-      <div class="card-hd">
-        <span class="card-hd-title">Price Decay Since Launch</span>
-        <select class="ctrl-select" id="decayGpuSelect" onchange="renderDecayChart()" style="font-size:10px;min-width:130px;"></select>
-      </div>
-      <div class="card-bd">
-        <div class="chart-wrap" style="height:220px;"><canvas id="chartDecay"></canvas></div>
-        <div id="decayStats" style="padding:8px 16px 12px;"></div>
-        <div style="padding:0 16px 14px;"><canvas id="chartDecayRank" height="60"></canvas></div>
-      </div>
+  <div class="card mb">
+    <div class="card-hd" style="flex-wrap:wrap;gap:8px;">
+      <span class="card-hd-title">Price Decay Since Launch</span>
+      <div id="decayGpuPicker" class="decay-picker"></div>
     </div>
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">12-Month Price Targets</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartForecast"></canvas></div></div>
+    <div class="card-bd">
+      <div class="chart-wrap" style="height:340px;"><canvas id="chartDecay"></canvas></div>
+      <div id="decayStats" style="padding:8px 16px 12px;"></div>
     </div>
   </div>
   <div class="grid g-2 mb">
@@ -2223,7 +2221,6 @@ function renderTrendsTab() {
 
   updateTrendChart();
   renderDecayChart();
-  renderForecastBarsChart();
   renderMarketSupplyChart();
   renderMoatRadar();
 }
@@ -2340,51 +2337,69 @@ function _buildDecayData() {
 function renderDecayChart() {
   const allData=_buildDecayData();
   if(!allData.length) return;
-  const sel=document.getElementById('decayGpuSelect');
-  // Populate dropdown on first render
-  if(!sel.options.length) {
-    allData.forEach(d=>{
-      const o=document.createElement('option'); o.value=d.gpu;
-      o.textContent=`${d.gpu} (−${d.totalDecay}%)`; sel.appendChild(o);
+  const picker=document.getElementById('decayGpuPicker');
+
+  // Build chips on first render
+  if(!picker.children.length) {
+    allData.forEach((d,i)=>{
+      const chip=document.createElement('span');
+      chip.className='decay-chip'+(i<3?' active':'');
+      chip.dataset.gpu=d.gpu;
+      chip.style.setProperty('--chip-color',CL[d.idx%CL.length]);
+      chip.textContent=d.gpu;
+      chip.onclick=()=>{chip.classList.toggle('active');renderDecayChart();};
+      picker.appendChild(chip);
     });
   }
-  const gpu=sel.value||allData[0].gpu;
-  const d=allData.find(x=>x.gpu===gpu)||allData[0];
 
-  // Min/max band
-  const minBand=d.pts.map(p=>({x:p.x,y:+((p.min/d.pts[0].price)*100).toFixed(1)}));
-  const maxBand=d.pts.map(p=>({x:p.x,y:+((p.max/d.pts[0].price)*100).toFixed(1)}));
+  // Get selected GPUs
+  const selected=[...picker.querySelectorAll('.decay-chip.active')].map(c=>c.dataset.gpu);
+  const chosen=allData.filter(d=>selected.includes(d.gpu));
+  if(!chosen.length){document.getElementById('decayStats').innerHTML='<div style="padding:10px;color:var(--text-3);font-size:12px;">Select at least one GPU above</div>';if(charts.dc)charts.dc.destroy();return;}
 
-  const datasets=[
-    {label:'Max',data:maxBand,borderColor:'transparent',backgroundColor:'rgba(0,247,255,0.06)',fill:'+1',pointRadius:0,borderWidth:0},
-    {label:'Min',data:minBand,borderColor:'transparent',backgroundColor:'transparent',fill:false,pointRadius:0,borderWidth:0},
-    {label:'Actual Price',data:d.pts,borderColor:'#00F7FF',backgroundColor:'rgba(0,247,255,0.1)',fill:false,
-      pointRadius:3,pointHoverRadius:6,borderWidth:2.5,tension:0.3,pointBackgroundColor:'#00F7FF'},
-    {label:'Linear Trend',data:d.linPts,borderColor:'rgba(255,255,255,0.35)',borderWidth:1.5,borderDash:[6,4],
-      fill:false,pointRadius:0,tension:0}
-  ];
+  // Update chip colors
+  picker.querySelectorAll('.decay-chip').forEach(c=>{
+    const d=allData.find(x=>x.gpu===c.dataset.gpu);
+    if(d && c.classList.contains('active')){
+      const col=CL[d.idx%CL.length];
+      c.style.background=col+'22';c.style.borderColor=col;c.style.color=col;
+    } else {
+      c.style.background='';c.style.borderColor='';c.style.color='';
+    }
+  });
+
+  // Build datasets: each GPU gets a line + its linear trend (dashed)
+  const datasets=[];
+  chosen.forEach(d=>{
+    const c=CL[d.idx%CL.length];
+    datasets.push({label:d.gpu,data:d.pts,borderColor:c,backgroundColor:c+'12',fill:true,
+      pointRadius:chosen.length>3?1.5:3,pointHoverRadius:6,borderWidth:chosen.length>3?2:2.5,tension:0.3,pointBackgroundColor:c});
+    datasets.push({label:d.gpu+' trend',data:d.linPts,borderColor:c+'60',borderWidth:1.5,borderDash:[5,3],
+      fill:false,pointRadius:0,tension:0});
+  });
 
   if(charts.dc) charts.dc.destroy();
   charts.dc = new Chart(document.getElementById('chartDecay'),{type:'line',
     data:{datasets},
     options:{responsive:true,maintainAspectRatio:false,
-      interaction:{mode:'index',intersect:false},
+      interaction:{mode:'nearest',intersect:false},
       plugins:{
-        legend:{display:false},
+        legend:{display:true,position:'top',labels:{boxWidth:10,font:{size:10},
+          filter:item=>!item.text.includes(' trend'),usePointStyle:true,pointStyle:'circle'}},
         tooltip:{
-          filter:item=>item.datasetIndex>=2,
+          filter:item=>!item.dataset.label.includes(' trend'),
           callbacks:{
-            title:items=>{const p=d.pts[items[0].dataIndex]; return p?p.label:'';},
+            title:items=>'Month '+items[0].parsed.x,
             label:item=>{
-              if(item.datasetIndex===2){const p=d.pts[item.dataIndex]; return `$${p.price}/hr (${p.y}% of launch)`;}
-              if(item.datasetIndex===3) return `Linear trend: ${item.parsed.y}%`;
-              return '';
+              const d=allData.find(x=>x.gpu===item.dataset.label);
+              const pt=d?d.pts[item.dataIndex]:null;
+              return pt?`${d.gpu}: ${pt.y}% ($${pt.price}/hr)`:`${item.dataset.label}: ${item.parsed.y}%`;
             }
           }
         },
         annotation:{
           annotations:{
-            baseline:{type:'line',yMin:100,yMax:100,borderColor:'rgba(255,255,255,0.15)',borderWidth:1,borderDash:[4,4],
+            baseline:{type:'line',yMin:100,yMax:100,borderColor:'rgba(255,255,255,0.18)',borderWidth:1,borderDash:[4,4],
               label:{display:true,content:'Launch Price (100%)',position:'start',color:'rgba(255,255,255,0.3)',font:{size:8}}}
           }
         }
@@ -2397,53 +2412,19 @@ function renderDecayChart() {
     }
   });
 
-  // Stats below chart
-  const shapeClass=d.shape==='accelerating'?'accel':d.shape==='decelerating'?'decel':'linear';
-  const shapeDesc=d.shape==='accelerating'?'Prices dropping faster over time':(d.shape==='decelerating'?'Price drops are slowing down':'Steady, predictable depreciation');
-  document.getElementById('decayStats').innerHTML=`
-    <div class="decay-stats">
-      <div class="decay-stat">Total Decay<b>−${d.totalDecay}%</b></div>
-      <div class="decay-stat">Avg Monthly<b>−${d.monthlyRate}%/mo</b></div>
-      <div class="decay-stat">Over<b>${d.months} months</b></div>
-      <div class="decay-stat">Pattern<b><span class="decay-tag ${shapeClass}">${d.shape.toUpperCase()}</span></b>
-        <span style="display:block;font-size:9px;color:var(--text-3);margin-top:2px;">${shapeDesc}</span></div>
+  // Stats table for selected GPUs
+  const rows=chosen.map(d=>{
+    const shapeClass=d.shape==='accelerating'?'accel':d.shape==='decelerating'?'decel':'linear';
+    const c=CL[d.idx%CL.length];
+    return `<div class="decay-stats" style="margin-bottom:4px;">
+      <div class="decay-stat" style="min-width:100px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${c};margin-right:5px;"></span><b style="font-size:12px;">${d.gpu}</b></div>
+      <div class="decay-stat">Decay<b>−${d.totalDecay}%</b></div>
+      <div class="decay-stat">Rate<b>−${d.monthlyRate}%/mo</b></div>
+      <div class="decay-stat">${d.months}mo</div>
+      <div class="decay-stat"><span class="decay-tag ${shapeClass}">${d.shape.toUpperCase()}</span></div>
     </div>`;
-
-  // Ranking bar chart
-  if(charts.dcRank) charts.dcRank.destroy();
-  const ranked=allData.map(r=>({gpu:r.gpu,decay:r.totalDecay,active:r.gpu===gpu}));
-  charts.dcRank = new Chart(document.getElementById('chartDecayRank'),{type:'bar',
-    data:{labels:ranked.map(r=>r.gpu),datasets:[{
-      data:ranked.map(r=>r.decay),
-      backgroundColor:ranked.map(r=>r.active?'#00F7FF':'rgba(255,255,255,0.12)'),
-      borderRadius:2,barPercentage:0.7
-    }]},
-    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
-      plugins:{legend:{display:false},
-        tooltip:{callbacks:{label:item=>`−${item.parsed.x}% from launch`}}},
-      scales:{x:{display:false},y:{grid:{display:false},ticks:{font:{size:9,family:'JetBrains Mono'},color:ranked.map(r=>r.active?'#00F7FF':'rgba(255,255,255,0.4)')}}},
-      onClick:(e,els)=>{
-        if(els.length){sel.value=ranked[els[0].index].gpu;renderDecayChart();}
-      }
-    }
-  });
-}
-
-function renderForecastBarsChart() {
-  const fc=DATA.forecasts; if(!fc||!Object.keys(fc).length) return;
-  const gpuIds=Object.keys(fc);
-  if(charts.pfc) charts.pfc.destroy();
-  charts.pfc=new Chart(document.getElementById('chartForecast'),{type:'bar',
-    data:{labels:gpuIds,datasets:[
-      {label:'Current',data:gpuIds.map(g=>fc[g].current_avg),backgroundColor:C.blue+'70',borderColor:C.blue,borderWidth:1},
-      {label:'3mo',data:gpuIds.map(g=>fc[g].forecast_3mo.mid),backgroundColor:C.cyan+'70',borderColor:C.cyan,borderWidth:1},
-      {label:'6mo',data:gpuIds.map(g=>fc[g].forecast_6mo.mid),backgroundColor:C.amber+'70',borderColor:C.amber,borderWidth:1},
-      {label:'12mo',data:gpuIds.map(g=>fc[g].forecast_12mo.mid),backgroundColor:C.green+'70',borderColor:C.green,borderWidth:1},
-      {label:'Floor',data:gpuIds.map(g=>fc[g].price_floor),type:'line',borderColor:C.red,borderDash:[5,5],pointRadius:4,borderWidth:2,fill:false},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:8,font:{size:9}}}},
-      scales:{y:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false},ticks:{font:{size:9}}}}}
-  });
+  }).join('');
+  document.getElementById('decayStats').innerHTML=rows;
 }
 
 function renderMarketSupplyChart() {
