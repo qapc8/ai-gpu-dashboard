@@ -689,6 +689,10 @@ body {
 .tco-range::-webkit-slider-thumb { -webkit-appearance:none; width:16px; height:16px; border-radius:50%; background:var(--cyan); border:2px solid var(--bg-2); cursor:pointer; }
 .tco-range::-moz-range-thumb { width:16px; height:16px; border-radius:50%; background:var(--cyan); border:2px solid var(--bg-2); cursor:pointer; }
 .tco-slider-range { display:flex; justify-content:space-between; font-size:9px; color:var(--text-3); font-family:var(--mono); }
+.tco-preset-btn { padding:5px 12px; font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:0.3px;
+  background:rgba(0,247,255,0.08); border:1px solid var(--cyan); color:var(--cyan); border-radius:4px; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+.tco-preset-btn:hover { background:rgba(0,247,255,0.18); }
+.tco-preset-btn.active { background:var(--cyan); color:var(--bg-0); }
 
 .decay-picker { display:flex; flex-wrap:wrap; gap:5px; }
 .decay-chip { padding:4px 10px; border-radius:4px; font-family:var(--mono); font-size:10px; font-weight:600;
@@ -1357,7 +1361,13 @@ loadExternalData();
 <div class="tab-panel" id="tab-tco">
   <!-- Scenario Builder -->
   <div class="card mb">
-    <div class="card-hd"><span class="card-hd-title">Scenario Builder</span><span class="dim" style="font-size:10px;font-family:var(--mono);">Adjust parameters — all charts update live</span></div>
+    <div class="card-hd">
+      <span class="card-hd-title">Scenario Builder</span>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span class="dim" style="font-size:10px;font-family:var(--mono);">Adjust parameters — all charts update live</span>
+        <button class="tco-preset-btn" onclick="tcoApplyPreset('industry')">Industry Average</button>
+      </div>
+    </div>
     <div class="card-bd">
       <div class="tco-sliders">
         <div class="tco-slider-group">
@@ -3158,6 +3168,23 @@ function _computeTcoRows(params){
       }
     };
   }).sort(function(a,b){return a.selfTotal-b.selfTotal;});
+}
+
+function tcoApplyPreset(name){
+  // Industry averages: Uptime Institute 2024 Global Data Center Survey + EIA industrial rates
+  var presets={
+    industry:{elec:0.08, pue:1.58, util:65, life:4}  // PUE 1.58 global avg, 65% avg GPU util, $0.08 US industrial
+  };
+  var p=presets[name]; if(!p) return;
+  var ids={elec:'tcoElecSlider',pue:'tcoPueSlider',util:'tcoUtilSlider',life:'tcoLifeSlider'};
+  for(var k in ids){
+    var slider=document.getElementById(ids[k]);
+    if(slider) slider.value=p[k];
+  }
+  // Flash the button
+  var btn=document.querySelector('.tco-preset-btn');
+  if(btn){btn.classList.add('active');setTimeout(function(){btn.classList.remove('active');},600);}
+  tcoSliderChanged();
 }
 
 function tcoSliderChanged(){
