@@ -359,7 +359,7 @@
       },
       "reserved_1yr_discount": 0.4,
       "reserved_3yr_discount": 0.6,
-      "spot_discount": 0.65
+      "spot_discount": 0.4
     },
     "GCP": {
       "provider_name": "Google Cloud Platform",
@@ -455,7 +455,7 @@
       },
       "reserved_1yr_discount": 0.37,
       "reserved_3yr_discount": 0.55,
-      "spot_discount": 0.6
+      "spot_discount": 0.45
     },
     "Azure": {
       "provider_name": "Microsoft Azure",
@@ -567,7 +567,7 @@
       },
       "reserved_1yr_discount": 0.36,
       "reserved_3yr_discount": 0.56,
-      "spot_discount": 0.6
+      "spot_discount": 0.4
     },
     "Lambda": {
       "provider_name": "Lambda Labs",
@@ -645,7 +645,7 @@
       },
       "reserved_1yr_discount": 0.2,
       "reserved_3yr_discount": 0.35,
-      "spot_discount": 0.5
+      "spot_discount": 0.0
     },
     "CoreWeave": {
       "provider_name": "CoreWeave",
@@ -2661,8 +2661,8 @@
       "current": 182.65,
       "1m_change": 4.2,
       "3m_change": 12.8,
-      "ytd_change": 8.5,
-      "52w_high": 153.13,
+      "ytd_change": -8.5,
+      "52w_high": 182.65,
       "52w_low": 75.61,
       "ytd_pct": -3.28
     },
@@ -2671,8 +2671,8 @@
       "current": 202.68,
       "1m_change": -2.1,
       "3m_change": 5.3,
-      "ytd_change": 3.8,
-      "52w_high": 164.46,
+      "ytd_change": -3.8,
+      "52w_high": 202.68,
       "52w_low": 100.55,
       "ytd_pct": -9.3
     },
@@ -2687,8 +2687,8 @@
       "2023": 55,
       "2024": 95,
       "2025_est": 150,
-      "2026_est": 650,
-      "2027_est": 850
+      "2026_est": 300,
+      "2027_est": 420
     },
     "data_center_gpu_shipments_k": {
       "2023-Q1": 480,
@@ -3153,6 +3153,11 @@
     },
     "LLM Inference": {
       "recommended": [
+        "H100-SXM",
+        "H200",
+        "A100-80GB",
+        "B200",
+        "MI300X",
         "L40S"
       ],
       "min_gpus": 1,
@@ -3165,7 +3170,7 @@
         "RTX-4090",
         "L40S",
         "A100-40GB",
-        "MI250X"
+        "H100-SXM"
       ],
       "min_gpus": 1,
       "budget_monthly_low": 200,
@@ -3200,7 +3205,7 @@
         "colo_rack_hr": 0.15,
         "ops_staff_hr": 0.1
       },
-      "perf_fp16_tflops": 1979,
+      "perf_fp16_tflops": 989.5,
       "vram_gb": 80
     },
     "B300": {
@@ -3219,8 +3224,9 @@
         "colo_rack_hr": 0.22,
         "ops_staff_hr": 0.14
       },
-      "perf_fp16_tflops": 3000,
-      "vram_gb": 256
+      "perf_fp16_tflops": 2500,
+      "vram_gb": 288,
+      "name": "NVIDIA B300 288GB"
     },
     "B200": {
       "gpu_price_usd": 40000,
@@ -3257,7 +3263,7 @@
         "colo_rack_hr": 0.16,
         "ops_staff_hr": 0.1
       },
-      "perf_fp16_tflops": 1979,
+      "perf_fp16_tflops": 989.5,
       "vram_gb": 141
     },
     "GB200": {
@@ -3314,7 +3320,7 @@
         "colo_rack_hr": 0.14,
         "ops_staff_hr": 0.1
       },
-      "perf_fp16_tflops": 1307,
+      "perf_fp16_tflops": 1307.4,
       "vram_gb": 192
     },
     "MI325X": {
@@ -3352,7 +3358,7 @@
         "colo_rack_hr": 0.06,
         "ops_staff_hr": 0.04
       },
-      "perf_fp16_tflops": 330,
+      "perf_fp16_tflops": 165.2,
       "vram_gb": 24
     },
     "L40S": {
@@ -3371,7 +3377,7 @@
         "colo_rack_hr": 0.08,
         "ops_staff_hr": 0.05
       },
-      "perf_fp16_tflops": 362,
+      "perf_fp16_tflops": 181,
       "vram_gb": 48
     }
   },
@@ -3476,11 +3482,11 @@
       "providers": {
         "DeepSeek API": {
           "input": 0.26,
-          "output": 0.38
+          "output": 1.1
         },
         "OpenRouter": {
           "input": 0.26,
-          "output": 0.38
+          "output": 1.1
         }
       }
     },
@@ -3534,7 +3540,8 @@
           "input": 5.0,
           "output": 25.0
         }
-      }
+      },
+      "params_note": "estimated (Anthropic does not disclose parameter counts)"
     },
     "Claude-Sonnet-4.5": {
       "params_b": 175,
@@ -3566,7 +3573,8 @@
           "input": 3.0,
           "output": 15.0
         }
-      }
+      },
+      "params_note": "estimated (Anthropic does not disclose parameter counts)"
     },
     "Gemini-2.5-Flash": {
       "params_b": 65,
@@ -3670,7 +3678,8 @@
           "input": 3.0,
           "output": 15.0
         }
-      }
+      },
+      "params_note": "estimated (Anthropic does not disclose parameter counts)"
     },
     "GPT-OSS-120B": {
       "params_b": 120,
@@ -3766,7 +3775,8 @@
           "input": 5.0,
           "output": 25.0
         }
-      }
+      },
+      "params_note": "estimated (Anthropic does not disclose parameter counts)"
     },
     "Gemini-3-Pro": {
       "params_b": 300,
@@ -3818,7 +3828,8 @@
           "input": 1.0,
           "output": 5.0
         }
-      }
+      },
+      "params_note": "estimated (Anthropic does not disclose parameter counts)"
     },
     "GLM-4.7": {
       "params_b": 230,
@@ -3837,7 +3848,7 @@
       }
     },
     "GPT-4o-Mini": {
-      "params_b": 70,
+      "params_b": 8,
       "type": "LLM",
       "category": "Large",
       "rank": 20,
@@ -3872,8 +3883,8 @@
       "reserved_3yr_low": 1.91,
       "reserved_3yr_avg": 4.23,
       "reserved_3yr_high": 8.33,
-      "res1_savings_pct": 30,
-      "res3_savings_pct": 50,
+      "res1_savings_pct": 25,
+      "res3_savings_pct": 55,
       "num_providers": 10,
       "quarterly_trend": [
         10.5,
@@ -3927,7 +3938,7 @@
       "reserved_3yr_low": 1.47,
       "reserved_3yr_avg": 3.25,
       "reserved_3yr_high": 6.41,
-      "res1_savings_pct": 30,
+      "res1_savings_pct": 25,
       "res3_savings_pct": 50,
       "num_providers": 6,
       "quarterly_trend": [
@@ -3982,8 +3993,8 @@
       "reserved_3yr_low": 1.08,
       "reserved_3yr_avg": 2.65,
       "reserved_3yr_high": 4.88,
-      "res1_savings_pct": 30,
-      "res3_savings_pct": 50,
+      "res1_savings_pct": 28,
+      "res3_savings_pct": 48,
       "num_providers": 8,
       "quarterly_trend": [
         9.8,
@@ -4028,7 +4039,7 @@
       ]
     },
     "H100-SXM": {
-      "on_demand_low": 1.25,
+      "on_demand_low": 1.6,
       "on_demand_avg": 2.5,
       "on_demand_high": 5.8,
       "reserved_1yr_low": 0.94,
@@ -4037,8 +4048,8 @@
       "reserved_3yr_low": 0.69,
       "reserved_3yr_avg": 1.25,
       "reserved_3yr_high": 2.9,
-      "res1_savings_pct": 30,
-      "res3_savings_pct": 50,
+      "res1_savings_pct": 35,
+      "res3_savings_pct": 55,
       "num_providers": 10,
       "quarterly_trend": [
         5.8,
@@ -4092,8 +4103,8 @@
       "reserved_3yr_low": 0.36,
       "reserved_3yr_avg": 0.75,
       "reserved_3yr_high": 1.44,
-      "res1_savings_pct": 30,
-      "res3_savings_pct": 50,
+      "res1_savings_pct": 38,
+      "res3_savings_pct": 58,
       "num_providers": 9,
       "quarterly_trend": [
         2.6,
@@ -4147,8 +4158,8 @@
       "reserved_3yr_low": 0.83,
       "reserved_3yr_avg": 1.55,
       "reserved_3yr_high": 2.7,
-      "res1_savings_pct": 30,
-      "res3_savings_pct": 50,
+      "res1_savings_pct": 25,
+      "res3_savings_pct": 45,
       "num_providers": 5,
       "quarterly_trend": [
         4.2,
@@ -4257,8 +4268,8 @@
       "reserved_3yr_low": 1.5,
       "reserved_3yr_avg": 2.9,
       "reserved_3yr_high": 4.2,
-      "res1_savings_pct": 30,
-      "res3_savings_pct": 50,
+      "res1_savings_pct": 22,
+      "res3_savings_pct": 42,
       "num_providers": 3,
       "quarterly_trend": [
         7.5,
@@ -4312,8 +4323,8 @@
       "reserved_3yr_low": 0.26,
       "reserved_3yr_avg": 0.5,
       "reserved_3yr_high": 0.84,
-      "res1_savings_pct": 30,
-      "res3_savings_pct": 50,
+      "res1_savings_pct": 32,
+      "res3_savings_pct": 52,
       "num_providers": 6,
       "quarterly_trend": [
         1.45,
@@ -8512,13 +8523,13 @@
       "software_compatibility": 99,
       "price_performance_ratio": 72,
       "moat_strength_score": 92,
-      "market_share_pct": 92,
+      "market_share_pct": 93,
       "market_share_trend": [
-        88,
+        85,
         86,
-        84,
-        81,
-        92
+        87,
+        88,
+        88
       ],
       "key_products": [
         "B300",
@@ -8546,13 +8557,13 @@
       "software_compatibility": 58,
       "price_performance_ratio": 88,
       "moat_strength_score": 48,
-      "market_share_pct": 8,
+      "market_share_pct": 6,
       "market_share_trend": [
-        12,
-        14,
-        16,
-        19,
-        8
+        5,
+        5,
+        6,
+        6,
+        6
       ],
       "key_products": [
         "MI300X",
@@ -8641,13 +8652,13 @@
       "software_compatibility": 40,
       "price_performance_ratio": 65,
       "moat_strength_score": 22,
-      "market_share_pct": 2,
+      "market_share_pct": 1,
       "market_share_trend": [
         4,
-        4,
         3,
-        3,
-        2
+        2,
+        1,
+        1
       ],
       "key_products": [
         "Gaudi 3",
@@ -9599,7 +9610,7 @@
           "cost_per_1m_tokens": 0.038,
           "vram_headroom_pct": 95,
           "fit_score": 50,
-          "notes": "Extreme overkill \u2014 256GB for 14GB model"
+          "notes": "Extreme overkill \u2014 288GB for 14GB model"
         },
         "B200": {
           "optimal_config": "1x B200",
@@ -9641,9 +9652,9 @@
     },
     "13B": {
       "models": [
-        "Llama-3.1-13B",
+        "Qwen2.5-14B",
         "CodeLlama-13B",
-        "Qwen2.5-14B"
+        "Mistral-7B-v0.3"
       ],
       "vram_required_gb": 26,
       "gpus": {
@@ -9661,9 +9672,9 @@
           "batch_size": 256,
           "throughput_tok_s": 640,
           "cost_per_1m_tokens": 0.055,
-          "vram_headroom_pct": 90,
+          "vram_headroom_pct": 91,
           "fit_score": 60,
-          "notes": "Overkill \u2014 256GB VRAM far exceeds 26GB need"
+          "notes": "Overkill \u2014 288GB VRAM far exceeds 26GB need"
         },
         "B200": {
           "optimal_config": "1x B200",
@@ -9725,9 +9736,9 @@
           "batch_size": 256,
           "throughput_tok_s": 195,
           "cost_per_1m_tokens": 0.22,
-          "vram_headroom_pct": 45,
+          "vram_headroom_pct": 51,
           "fit_score": 95,
-          "notes": "256GB VRAM fits 70B with massive headroom for batching"
+          "notes": "288GB VRAM fits 70B with massive headroom for batching"
         },
         "B200": {
           "optimal_config": "1x B200",
@@ -9757,13 +9768,13 @@
           "notes": "Single GPU fits 70B, best AMD value"
         },
         "H200": {
-          "optimal_config": "2x H200",
-          "batch_size": 64,
+          "optimal_config": "1x H200",
+          "batch_size": 16,
           "throughput_tok_s": 110,
           "cost_per_1m_tokens": 0.42,
-          "vram_headroom_pct": 50,
-          "fit_score": 80,
-          "notes": "NVLink pair, good throughput"
+          "vram_headroom_pct": 1,
+          "fit_score": 70,
+          "notes": "Tight fit at FP16 (141GB for 140GB); use INT8/FP8 quantization for headroom"
         }
       }
     },
@@ -9788,7 +9799,7 @@
           "batch_size": 128,
           "throughput_tok_s": 115,
           "cost_per_1m_tokens": 0.68,
-          "vram_headroom_pct": 30,
+          "vram_headroom_pct": 38,
           "fit_score": 90,
           "notes": "512GB VRAM, excellent fit with batching headroom"
         },
@@ -9850,7 +9861,7 @@
           "batch_size": 128,
           "throughput_tok_s": 88,
           "cost_per_1m_tokens": 1.5,
-          "vram_headroom_pct": 21,
+          "vram_headroom_pct": 30,
           "fit_score": 92,
           "notes": "1TB VRAM, single-rack solution for 405B"
         },
