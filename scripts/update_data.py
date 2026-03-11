@@ -425,6 +425,169 @@ def merge_live_pricing_into_data(data, vastai_prices, runpod_prices):
 
 
 # ===================================================================
+# 1b. RECALCULATE MATRIX, HISTORICAL, SPOT from provider prices
+# ===================================================================
+
+def recalculate_matrix(data):
+    """Rebuild the matrix array from current providers + specs data."""
+    providers = data.get("providers", {})
+    specs = data.get("specs", {})
+    now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    # Collect all prices per GPU across providers
+    gpu_prices = {}  # gpu_id -> [{price, provider, type}]
+    for prov_key, prov in providers.items():
+        prov_type = prov.get("type", "cloud")
+        prov_name = prov.get("provider_name", prov_key)
+        for gpu_id, gpu_info in (prov.get("gpus") or {}).items():
+            price = gpu_info.get("price_per_gpu_hr")
+            if price is not None and price > 0:
+                gpu_prices.setdefault(gpu_id, []).append({
+                    "price": price, "provider": prov_name, "type": prov_type
+                })
+
+    matrix = []
+    for gpu_id, price_list in gpu_prices.items():
+        spec = specs.get(gpu_id, {})
+        prices_sorted = sorted(price_list, key=lambda x: x["price"])
+        cheapest = prices_sorted[0]
+        most_expensive = prices_sorted[-1]
+        avg_price = round(sum(p["price"] for p in prices_sorted) / len(prices_sorted), 2)
+        spread = round((most_expensive["price"] - cheapest["price"]) / cheapest["price"] * 100, 1) if cheapest["price"] > 0 else 0
+
+        # Compute FLOPS/$ using FP16 TFLOPS
+        fp16 = spec.get("fp16_tflops", 0)
+        flops_per_dollar = round(fp16 / cheapest["price"], 1) if cheapest["price"] > 0 and fp16 else 0
+
+        # MoM change from historical
+        hist = data.get("historical", {}).get(gpu_id, {})
+        periods = sorted(hist.keys())
+        monthly_change = 0
+        if len(periods) >= 2:
+            prev_avg = hist[periods[-2]].get("avg")
+            cur_avg = hist[periods[-1]].get("avg")
+            if prev_avg and cur_avg:
+                monthly_change = round((cur_avg - prev_avg) / prev_avg * 100, 1)
+
+        matrix.append({
+            "gpu_id": gpu_id,
+            "name": spec.get("name", gpu_id),
+            "vendor": spec.get("vendor", "Unknown"),
+            "vram_gb": spec.get("vram_gb"),
+            "arch": spec.get("arch", ""),
+            "tier": spec.get("tier", ""),
+            "cheapest_price": cheapest["price"],
+            "cheapest_provider": cheapest["provider"],
+            "cheapest_provider_type": cheapest["type"],
+            "most_expensive": most_expensive["price"],
+            "avg_price": avg_price,
+            "num_providers": len(prices_sorted),
+            "price_spread_pct": spread,
+            "monthly_change_pct": monthly_change,
+            "flops_per_dollar": flops_per_dollar,
+            "vram_per_dollar": round(spec.get("vram_gb", 0) / cheapest["price"], 1) if cheapest["price"] > 0 and spec.get("vram_gb") else 0,
+        })
+
+    # Sort by flops_per_dollar descending
+    matrix.sort(key=lambda x: x["flops_per_dollar"], reverse=True)
+    data["matrix"] = matrix
+    log_ok("Matrix", f"{len(matrix)} GPUs recalculated from {len(providers)} providers")
+    return data
+
+
+def update_historical(data):
+    """Append a new monthly data point from current provider prices."""
+    providers = data.get("providers", {})
+    historical = data.get("historical", {})
+    current_month = datetime.now(timezone.utc).strftime("%Y-%m")
+
+    # Collect per-GPU prices from providers
+    gpu_prices = {}
+    for prov_key, prov in providers.items():
+        for gpu_id, gpu_info in (prov.get("gpus") or {}).items():
+            price = gpu_info.get("price_per_gpu_hr")
+            if price is not None and price > 0:
+                gpu_prices.setdefault(gpu_id, []).append(price)
+
+    updated_count = 0
+    for gpu_id, prices in gpu_prices.items():
+        if gpu_id not in historical:
+            historical[gpu_id] = {}
+        # Only update if we have data and don't already have this month with live source
+        entry = historical[gpu_id].get(current_month, {})
+        avg_price = round(sum(prices) / len(prices), 2)
+        min_price = round(min(prices), 2)
+        max_price = round(max(prices), 2)
+
+        historical[gpu_id][current_month] = {
+            "avg": avg_price,
+            "min": min_price,
+            "max": max_price,
+            "availability": entry.get("availability", "available"),
+        }
+        updated_count += 1
+
+    data["historical"] = historical
+    log_ok("Historical", f"{updated_count} GPUs updated for {current_month}")
+    return data
+
+
+def update_spot(data):
+    """Refresh spot data from current provider prices and discounts."""
+    providers = data.get("providers", {})
+    spot = data.get("spot", {})
+
+    # Collect per-GPU on-demand prices and compute spot/reserved estimates
+    gpu_prices = {}
+    for prov_key, prov in providers.items():
+        spot_disc = prov.get("spot_discount", 0)
+        res1_disc = prov.get("reserved_1yr_discount", 0)
+        res3_disc = prov.get("reserved_3yr_discount", 0)
+        for gpu_id, gpu_info in (prov.get("gpus") or {}).items():
+            price = gpu_info.get("price_per_gpu_hr")
+            if price is not None and price > 0:
+                gpu_prices.setdefault(gpu_id, []).append({
+                    "price": price,
+                    "spot_disc": spot_disc,
+                    "res1_disc": res1_disc,
+                    "res3_disc": res3_disc,
+                })
+
+    for gpu_id, entries in gpu_prices.items():
+        on_demand = [e["price"] for e in entries]
+        reserved_1yr = [e["price"] * (1 - e["res1_disc"]) for e in entries if e["res1_disc"] > 0]
+        reserved_3yr = [e["price"] * (1 - e["res3_disc"]) for e in entries if e["res3_disc"] > 0]
+
+        existing = spot.get(gpu_id, {})
+        # Preserve quarterly_trend, just append/shift
+        trend = existing.get("quarterly_trend", [])
+        avg_od = round(sum(on_demand) / len(on_demand), 2)
+
+        spot[gpu_id] = {
+            "on_demand_low": round(min(on_demand), 2),
+            "on_demand_avg": avg_od,
+            "on_demand_high": round(max(on_demand), 2),
+            "reserved_1yr_low": round(min(reserved_1yr), 2) if reserved_1yr else existing.get("reserved_1yr_low"),
+            "reserved_1yr_avg": round(sum(reserved_1yr) / len(reserved_1yr), 2) if reserved_1yr else existing.get("reserved_1yr_avg"),
+            "reserved_1yr_high": round(max(reserved_1yr), 2) if reserved_1yr else existing.get("reserved_1yr_high"),
+            "reserved_3yr_low": round(min(reserved_3yr), 2) if reserved_3yr else existing.get("reserved_3yr_low"),
+            "reserved_3yr_avg": round(sum(reserved_3yr) / len(reserved_3yr), 2) if reserved_3yr else existing.get("reserved_3yr_avg"),
+            "reserved_3yr_high": round(max(reserved_3yr), 2) if reserved_3yr else existing.get("reserved_3yr_high"),
+            "res1_savings_pct": existing.get("res1_savings_pct", 30),
+            "res3_savings_pct": existing.get("res3_savings_pct", 50),
+            "num_providers": len(entries),
+            "quarterly_trend": (trend + [avg_od])[-4:],  # Keep last 4 quarters
+            "bid": existing.get("bid", avg_od),
+            "ask": existing.get("ask", avg_od),
+            "last_trade": avg_od,
+        }
+
+    data["spot"] = spot
+    log_ok("Spot", f"{len(gpu_prices)} GPUs refreshed")
+    return data
+
+
+# ===================================================================
 # 2. STOCK PRICE FETCHERS
 # ===================================================================
 
@@ -769,8 +932,33 @@ def main():
     data = merge_live_pricing_into_data(data, vastai_prices, runpod_prices)
     print()
 
-    # ---- 2. Stock Prices ----
-    print("[2/5] Stock Prices")
+    # ---- 2. Recalculate derived data (matrix, historical, spot) ----
+    print("[2/8] Recalculate Historical")
+    print("-" * 40)
+    try:
+        data = update_historical(data)
+    except Exception as exc:
+        log_fail("Historical", str(exc))
+    print()
+
+    print("[3/8] Recalculate Spot")
+    print("-" * 40)
+    try:
+        data = update_spot(data)
+    except Exception as exc:
+        log_fail("Spot", str(exc))
+    print()
+
+    print("[4/8] Recalculate Matrix")
+    print("-" * 40)
+    try:
+        data = recalculate_matrix(data)
+    except Exception as exc:
+        log_fail("Matrix", str(exc))
+    print()
+
+    # ---- 5. Stock Prices ----
+    print("[5/8] Stock Prices")
     print("-" * 40)
 
     stocks = []
@@ -784,8 +972,8 @@ def main():
     data = merge_stocks_into_data(data, stocks)
     print()
 
-    # ---- 3. News ----
-    print("[3/5] News Headlines")
+    # ---- 6. News ----
+    print("[6/8] News Headlines")
     print("-" * 40)
 
     try:
@@ -795,8 +983,8 @@ def main():
         log_fail("Google News RSS", str(exc))
     print()
 
-    # ---- 4. Price Forecasts ----
-    print("[4/5] Price Forecasts")
+    # ---- 7. Price Forecasts ----
+    print("[7/8] Price Forecasts")
     print("-" * 40)
 
     try:
@@ -810,8 +998,8 @@ def main():
         log_fail("Forecasts", str(exc))
     print()
 
-    # ---- 5. AI Analysis ----
-    print("[5/5] AI Analysis")
+    # ---- 8. AI Analysis ----
+    print("[8/8] AI Analysis")
     print("-" * 40)
 
     existing_ai = update_ai_analysis(data, existing_ai)
