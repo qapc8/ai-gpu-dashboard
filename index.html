@@ -1242,7 +1242,7 @@ loadExternalData();
       <div id="decayGpuPicker" class="decay-picker"></div>
     </div>
     <div class="card-bd">
-      <div class="chart-wrap" style="height:340px;"><canvas id="chartDecay"></canvas></div>
+      <div class="chart-wrap" style="height:340px;" id="decayChartWrap"><canvas></canvas></div>
       <div id="decayStats" style="padding:8px 16px 12px;"></div>
     </div>
   </div>
@@ -2354,20 +2354,22 @@ function renderDecayChart(){
   var picker=document.getElementById('decayGpuPicker');
   if(!picker) return;
   var statsEl=document.getElementById('decayStats');
-  var canvasEl=document.getElementById('chartDecay');
-  if(!canvasEl) return;
+  var wrap=document.getElementById('decayChartWrap');
+  if(!wrap) return;
 
   // Build chips once
   if(picker.children.length===0){
     for(var i=0;i<allData.length;i++){
-      var d=allData[i];
-      var chip=document.createElement('span');
-      chip.className='decay-chip'+(i<3?' active':'');
-      chip.setAttribute('data-gpu',d.gpu);
-      chip.setAttribute('data-ci',String(d.colorIdx));
-      chip.textContent=d.gpu;
-      chip.addEventListener('click',function(){this.classList.toggle('active');renderDecayChart();});
-      picker.appendChild(chip);
+      (function(idx){
+        var d=allData[idx];
+        var chip=document.createElement('span');
+        chip.className='decay-chip'+(idx<3?' active':'');
+        chip.setAttribute('data-gpu',d.gpu);
+        chip.setAttribute('data-ci',String(d.colorIdx));
+        chip.textContent=d.gpu;
+        chip.addEventListener('click',function(){this.classList.toggle('active');renderDecayChart();});
+        picker.appendChild(chip);
+      })(i);
     }
   }
 
@@ -2398,14 +2400,24 @@ function renderDecayChart(){
     return;
   }
 
+  // Always replace the canvas to avoid Chart.js reuse bugs
+  if(charts.dc){charts.dc.destroy();charts.dc=null;}
+  wrap.innerHTML='<canvas></canvas>';
+  var canvasEl=wrap.querySelector('canvas');
+
   // Build datasets
   var datasets=[];
   for(var ci2=0;ci2<chosen.length;ci2++){
     var dd=chosen[ci2];
     var cc=CL[dd.colorIdx%CL.length];
-    datasets.push({
+    // Store gpu name + price data directly on the dataset for tooltip access
+    var ptsData=[];
+    for(var pi=0;pi<dd.pts.length;pi++){
+      ptsData.push({x:dd.pts[pi].x, y:dd.pts[pi].y});
+    }
+    var ds={
       label:dd.gpu,
-      data:dd.pts.map(function(p){return{x:p.x,y:p.y};}),
+      data:ptsData,
       borderColor:cc,
       backgroundColor:cc+'15',
       fill:true,
@@ -2413,11 +2425,18 @@ function renderDecayChart(){
       pointHoverRadius:6,
       borderWidth:chosen.length>4?1.5:2.5,
       tension:0.3,
-      pointBackgroundColor:cc
-    });
+      pointBackgroundColor:cc,
+      _prices:dd.pts.map(function(p){return p.price;})
+    };
+    datasets.push(ds);
+    // Trend line
+    var tData=[];
+    for(var ti=0;ti<dd.trendPts.length;ti++){
+      tData.push({x:dd.trendPts[ti].x, y:dd.trendPts[ti].y});
+    }
     datasets.push({
       label:dd.gpu+' trend',
-      data:dd.trendPts.map(function(p){return{x:p.x,y:p.y};}),
+      data:tData,
       borderColor:cc+'55',
       borderWidth:1.5,
       borderDash:[5,3],
@@ -2427,7 +2446,7 @@ function renderDecayChart(){
     });
   }
 
-  // 100% baseline as a dataset (no annotation plugin needed)
+  // 100% baseline
   var maxMonth=0;
   for(var q=0;q<chosen.length;q++){
     var last=chosen[q].pts[chosen[q].pts.length-1].x;
@@ -2444,7 +2463,6 @@ function renderDecayChart(){
     tension:0
   });
 
-  if(charts.dc){charts.dc.destroy();charts.dc=null;}
   charts.dc=new Chart(canvasEl,{type:'line',
     data:{datasets:datasets},
     options:{responsive:true,maintainAspectRatio:false,
@@ -2457,14 +2475,12 @@ function renderDecayChart(){
           callbacks:{
             title:function(items){return 'Month '+items[0].parsed.x;},
             label:function(item){
-              var gpuName=item.dataset.label;
-              for(var z=0;z<allData.length;z++){
-                if(allData[z].gpu===gpuName){
-                  var pt=allData[z].pts[item.dataIndex];
-                  if(pt) return gpuName+': '+pt.y+'% ($'+pt.price.toFixed(2)+'/hr)';
-                }
+              var prices=item.dataset._prices;
+              var idx=item.dataIndex;
+              if(prices && idx<prices.length){
+                return item.dataset.label+': '+item.parsed.y+'% ($'+prices[idx].toFixed(2)+'/hr)';
               }
-              return gpuName+': '+item.parsed.y+'%';
+              return item.dataset.label+': '+item.parsed.y+'%';
             }
           }
         }
