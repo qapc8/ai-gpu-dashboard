@@ -291,6 +291,163 @@ body {
 .card-bd-flush { padding: 0; }
 
 /* ─── KPI STRIP ─── */
+/* ─── GPU CAROUSEL ─── */
+.gpu-carousel {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--bg-2);
+  border: 1px solid var(--border-0);
+  box-shadow: var(--shadow);
+}
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.carousel-slide {
+  min-width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  padding: 24px 28px;
+}
+.carousel-slide-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding-right: 28px;
+  border-right: 1px solid var(--border-0);
+}
+.carousel-slide-right {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  padding-left: 28px;
+}
+.carousel-rank {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--cyan);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.carousel-gpu-name {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-0);
+  line-height: 1.15;
+  font-family: var(--sans);
+}
+.carousel-price {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--cyan);
+  font-family: var(--mono);
+  line-height: 1.2;
+}
+.carousel-price-sub {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-3);
+}
+.carousel-provider {
+  font-size: 12px;
+  color: var(--text-2);
+  font-family: var(--sans);
+}
+.carousel-provider b { color: var(--text-0); font-weight: 600; }
+.carousel-stat {
+  background: var(--bg-3);
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.carousel-stat-label {
+  font-size: 10px;
+  color: var(--text-3);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: var(--mono);
+}
+.carousel-stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-0);
+  font-family: var(--mono);
+}
+.carousel-stat-value .up { color: var(--green); }
+.carousel-stat-value .dn { color: var(--red); }
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 0 16px;
+}
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border-1);
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+.carousel-dot.active {
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  width: 24px;
+  border-radius: 4px;
+}
+
+/* ─── WORKLOAD MATCHER ─── */
+.wl-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.wl-card {
+  background: var(--bg-3);
+  border: 1px solid var(--border-0);
+  border-radius: 8px;
+  padding: 14px;
+  transition: border-color 0.15s;
+  cursor: default;
+}
+.wl-card:hover { border-color: var(--border-2); }
+.wl-card-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-0);
+  margin-bottom: 8px;
+  font-family: var(--sans);
+}
+.wl-card-gpu {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cyan);
+  margin-bottom: 4px;
+}
+.wl-card-detail {
+  font-size: 10px;
+  color: var(--text-3);
+  line-height: 1.6;
+}
+.wl-card-detail b { color: var(--text-1); font-weight: 600; }
+.wl-card-price {
+  margin-top: 6px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+}
+
 .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
 .kpi {
   background: var(--bg-2);
@@ -770,6 +927,10 @@ body {
 @media (max-width: 1200px) {
   .g-2, .g-3, .g-4, .g-7-3, .g-3-7, .g-6-4, .g-5-5 { grid-template-columns: 1fr; }
   .topbar-indicators { display: none; }
+  .carousel-slide { grid-template-columns: 1fr; }
+  .carousel-slide-left { border-right: none; border-bottom: 1px solid var(--border-0); padding: 0 0 16px; margin-bottom: 16px; }
+  .carousel-slide-right { padding-left: 0; }
+  .wl-grid { grid-template-columns: 1fr; }
 }
 </style>
 <script>
@@ -856,41 +1017,41 @@ loadExternalData();
 
 <!-- ── OVERVIEW ── -->
 <div class="tab-panel active" id="tab-overview">
-  <div class="kpi-strip mb" id="overviewKpis"></div>
+
+  <!-- Top 5 GPU Carousel -->
+  <div class="gpu-carousel mb" id="gpuCarousel">
+    <div class="carousel-track" id="carouselTrack"></div>
+    <div class="carousel-dots" id="carouselDots"></div>
+  </div>
+
+  <!-- Best Deals Table + Price Trends -->
   <div class="grid g-6-4 mb">
     <div class="card">
-      <div class="card-hd"><span class="card-hd-title">GPU Pricing Overview</span><span class="dim" style="font-size:10px;font-family:var(--mono);">On-demand &amp; reserved across all providers</span></div>
+      <div class="card-hd"><span class="card-hd-title">Best GPU Deals Right Now</span><span class="dim" style="font-size:10px;font-family:var(--mono);">Sorted by lowest price across all providers</span></div>
       <div class="card-bd-flush"><table class="dt" id="overviewTopTable"></table></div>
     </div>
     <div class="card">
-      <div class="card-hd"><span class="card-hd-title">GPU Price Trends — 12mo ($/hr avg)</span></div>
+      <div class="card-hd"><span class="card-hd-title">GPU Price Trends — 12mo</span></div>
       <div class="card-bd"><div class="chart-wrap" style="height:280px;"><canvas id="chartOverviewTrends"></canvas></div></div>
     </div>
   </div>
-  <div class="grid g-3 mb">
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Market Size & AI CapEx ($B)</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:250px;"><canvas id="chartMarketSize"></canvas></div></div>
-    </div>
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">GPU Shipments (K units/qtr)</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:250px;"><canvas id="chartOverviewShipments"></canvas></div></div>
-    </div>
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">GPU Lead Times by Model (weeks)</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:250px;"><canvas id="chartOverviewLead"></canvas></div></div>
-    </div>
-  </div>
+
+  <!-- Workload Matcher + Spot Savings -->
   <div class="grid g-6-4 mb">
-    <div class="ai-panel">
+    <div class="card">
       <div class="card-hd">
-        <span class="card-hd-title">Market Intelligence Brief</span>
-        <span class="card-hd-badge" style="background:var(--cyan-dim);color:var(--cyan);">ANALYST</span>
-        <button class="btn" onclick="loadAI('summary')">Refresh</button>
+        <span class="card-hd-title">Match Your Workload</span>
+        <span class="card-hd-badge" style="background:var(--cyan-dim);color:var(--cyan);">QUICK PICK</span>
       </div>
-      <div class="ai-body" id="aiSummaryContent"><div class="ai-loading">Generating analysis</div></div>
+      <div class="card-bd" id="workloadMatcher"></div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">Spot vs Reserved Savings</span></div>
+      <div class="card-bd"><div class="chart-wrap" style="height:250px;"><canvas id="chartSpotSavings"></canvas></div></div>
     </div>
   </div>
+
+  <!-- Sentiment -->
   <div class="card mb">
     <div class="card-hd">
       <div style="display:flex;align-items:center;gap:10px;">
@@ -1309,8 +1470,8 @@ let DATA = {
 };
 
 const C = {
-  blue:'#4e8ff7', cyan:'#22d3ee', green:'#3ecf8e', red:'#ef6461',
-  amber:'#f0b429', purple:'#a78bfa', orange:'#fb923c', pink:'#f472b6',
+  blue:'#4e8ff7', cyan:'#00F7FF', green:'#3ecf8e', red:'#ef6461',
+  amber:'#f0b429', purple:'#F726FF', orange:'#fb923c', pink:'#F726FF',
   teal:'#2dd4bf', indigo:'#818cf8', lime:'#a3e635', sky:'#38bdf8'
 };
 const CL = Object.values(C);
@@ -1510,45 +1671,14 @@ function renderNewsHeadline() {
 // OVERVIEW
 // ════════════════════════════════════════════════════════════════
 function renderOverview() {
-  const m = DATA.matrix, mi = DATA.indicators, spot = DATA.spot;
+  const m = DATA.matrix, spot = DATA.spot;
   if (!m || !m.length) return;
 
-  // KPI calculations
-  const nGpusTiered = spot ? Object.keys(spot).length : 0;
-  const mktSize = mi.gpu_market_size_bn?.['2025'] || '--';
-  const capex26 = mi.ai_capex_bn?.['2026_est'] || '--';
-  const leadKeys = Object.keys(mi.flagship_lead_time_weeks||{}).sort();
-  const lead = mi.flagship_lead_time_weeks?.[leadKeys[leadKeys.length-1]] ?? '--';
-  const bestVal = m.reduce((a,b) => a.flops_per_dollar > b.flops_per_dollar ? a : b);
-  const nProv = new Set(m.map(r => r.cheapest_provider)).size;
-
-  const kpi = (cls, label, val, sub) => `<div class="kpi kpi-${cls}"><div class="kpi-label">${label}</div><div class="kpi-value">${val}</div><div class="kpi-sub">${sub}</div></div>`;
-
-  // Best prices from matrix
-  const b200row = m.find(r=>r.gpu_id==='B200'), h100row = m.find(r=>r.gpu_id==='H100-SXM');
-  // Lead time summary from per-GPU data
-  const glt = mi.gpu_lead_times||{};
-  const constrained = Object.entries(glt).filter(([,v])=>v.status==='constrained').map(([k])=>k);
-  const leadSub = constrained.length ? `<span class="dn">${constrained.join(', ')}: ${glt[constrained[0]]?.weeks}+ wk</span>` : '<span class="up">All available</span>';
-
-  document.getElementById('overviewKpis').innerHTML =
-    kpi('purple', 'B200 Best Price', '$'+(b200row?.cheapest_price?.toFixed(2)||'--')+'/hr', `${b200row?.cheapest_provider||'--'} &middot; avg $${b200row?.avg_price?.toFixed(2)||'--'}`) +
-    kpi('blue', 'H100 Best Price', '$'+(h100row?.cheapest_price?.toFixed(2)||'--')+'/hr', `${h100row?.cheapest_provider||'--'} &middot; avg $${h100row?.avg_price?.toFixed(2)||'--'}`) +
-    kpi('cyan', 'Providers Tracked', nProv+' providers', `${nGpusTiered} GPUs with pricing tiers`) +
-    kpi('green', 'GPU Market 2025', '$'+mktSize+'B', `AI CapEx \'26E: <span class="up">$${capex26}B</span> (+34% YoY)`) +
-    kpi('amber', 'GPU Lead Times', constrained.length?constrained[0]+': '+glt[constrained[0]].weeks+'wk':'<2 wk', leadSub + ' &middot; Most GPUs: <span class="up">&lt;2 wk</span>') +
-    kpi('red', 'Best Value GPU', bestVal.flops_per_dollar+' TFLOPS/$', `${bestVal.name} @ $${bestVal.cheapest_price.toFixed(2)}/hr`);
-
-  renderOverviewSpotTable();
+  renderGpuCarousel();
   renderOverviewTrendChart();
-  renderMarketSizeChart();
-  renderOverviewShipmentsChart();
-  renderOverviewLeadChart();
   renderOverviewTable();
-}
-
-function renderOverviewSpotTable() {
-  // Merged into renderOverviewTable — no-op
+  renderWorkloadMatcher();
+  renderSpotSavingsChart();
 }
 
 function renderOverviewTrendChart() {
@@ -1572,60 +1702,131 @@ function renderOverviewTrendChart() {
   });
 }
 
-function renderMarketSizeChart() {
-  const mi=DATA.indicators; if(!mi.gpu_market_size_bn) return;
-  const mkt=mi.gpu_market_size_bn, capex=mi.ai_capex_bn;
-  const yrs=['2023','2024','2025','2026','2027'];
-  const yrLabels = yrs.map(y => (mkt[y+'_est']||capex[y+'_est']) ? y+'E' : y);
-  if(charts.ms) charts.ms.destroy();
-  charts.ms = new Chart(document.getElementById('chartMarketSize'),{
-    type:'bar',
-    data:{labels:yrLabels, datasets:[
-      {label:'GPU Market ($B)',data:yrs.map(y=>mkt[y]||mkt[y+'_est']||null),backgroundColor:C.cyan+'70',borderColor:C.cyan,borderWidth:1},
-      {label:'AI CapEx ($B)',data:yrs.map(y=>capex[y]||capex[y+'_est']||null),backgroundColor:C.purple+'70',borderColor:C.purple,borderWidth:1}
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},
-      scales:{y:{title:{display:true,text:'$B'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
-  });
+// ── GPU CAROUSEL ──
+let _carouselIdx = 0, _carouselTimer = null;
+function renderGpuCarousel() {
+  const m = DATA.matrix, spot = DATA.spot||{}, hist = DATA.historical||{}, fc = DATA.forecasts||{}, specs = DATA.specs||{};
+  // Top 5 by best value (cheapest price, weighted by TFLOPS/$)
+  const top5 = [...m].sort((a,b) => b.flops_per_dollar - a.flops_per_dollar).slice(0, 5);
+
+  const track = document.getElementById('carouselTrack');
+  const dots = document.getElementById('carouselDots');
+
+  track.innerHTML = top5.map((gpu, i) => {
+    const s = spot[gpu.gpu_id]||{};
+    const spec = specs[gpu.gpu_id]||{};
+    const f = fc[gpu.gpu_id]||{};
+    const h = hist[gpu.gpu_id]||{};
+    const periods = Object.keys(h).sort();
+    const prev = periods.length>=2 ? h[periods[periods.length-2]]?.avg : null;
+    const cur = periods.length>=1 ? h[periods[periods.length-1]]?.avg : gpu.avg_price;
+    const pctChg = prev ? ((cur-prev)/prev*100).toFixed(1) : null;
+    const pctCls = pctChg && pctChg < 0 ? 'up' : 'dn';
+    const res1Sav = s.res1_savings_pct || '--';
+    const regime = f.regime || 'stable';
+    const regimeLabel = {declining:'Prices Falling',stable:'Prices Stable',recovering:'Prices Rising',volatile:'Volatile'}[regime]||regime;
+
+    return `<div class="carousel-slide">
+      <div class="carousel-slide-left">
+        <div class="carousel-rank">#${i+1} Best Value GPU</div>
+        <div class="carousel-gpu-name">${gpu.name}</div>
+        <div class="carousel-price">$${gpu.cheapest_price.toFixed(2)}<span class="carousel-price-sub">/hr</span></div>
+        <div class="carousel-provider">on <b>${gpu.cheapest_provider}</b> · avg $${gpu.avg_price.toFixed(2)}/hr across ${gpu.num_providers} providers</div>
+      </div>
+      <div class="carousel-slide-right">
+        <div class="carousel-stat">
+          <div class="carousel-stat-label">TFLOPS/$</div>
+          <div class="carousel-stat-value">${gpu.flops_per_dollar}</div>
+        </div>
+        <div class="carousel-stat">
+          <div class="carousel-stat-label">VRAM</div>
+          <div class="carousel-stat-value">${spec.vram_gb||'--'}GB</div>
+        </div>
+        <div class="carousel-stat">
+          <div class="carousel-stat-label">30d Trend</div>
+          <div class="carousel-stat-value">${pctChg ? `<span class="${pctCls}">${pctChg>0?'+':''}${pctChg}%</span>` : '--'}</div>
+        </div>
+        <div class="carousel-stat">
+          <div class="carousel-stat-label">1yr Reserved</div>
+          <div class="carousel-stat-value">${s.reserved_1yr_avg ? '$'+s.reserved_1yr_avg.toFixed(2) : '--'}<span style="font-size:11px;color:var(--green);"> ${res1Sav!='--'?'-'+res1Sav+'%':''}</span></div>
+        </div>
+        <div class="carousel-stat" style="grid-column:span 2;">
+          <div class="carousel-stat-label">Forecast Regime</div>
+          <div class="carousel-stat-value" style="font-size:14px;">${regimeLabel} · FP16: ${spec.fp16_tflops||'--'} TFLOPS · ${spec.memory_type||''}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  dots.innerHTML = top5.map((_, i) =>
+    `<button class="carousel-dot${i===0?' active':''}" onclick="goCarousel(${i})"></button>`
+  ).join('');
+
+  _carouselIdx = 0;
+  if(_carouselTimer) clearInterval(_carouselTimer);
+  _carouselTimer = setInterval(() => goCarousel((_carouselIdx+1) % top5.length), 6000);
 }
 
-function renderOverviewShipmentsChart() {
-  const mi = DATA.indicators; if(!mi.data_center_gpu_shipments_k) return;
-  const s = mi.data_center_gpu_shipments_k, lbl = Object.keys(s).sort();
-  if(charts.ovShip) charts.ovShip.destroy();
-  charts.ovShip = new Chart(document.getElementById('chartOverviewShipments'),{
-    type:'bar',
-    data:{labels:lbl, datasets:[{label:'DC GPU Shipments (K)',data:lbl.map(l=>s[l]),backgroundColor:C.cyan+'50',borderColor:C.cyan,borderWidth:1,borderRadius:3}]},
-    options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
-      scales:{y:{grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false},ticks:{maxRotation:45}}}}
-  });
+function goCarousel(idx) {
+  _carouselIdx = idx;
+  document.getElementById('carouselTrack').style.transform = `translateX(-${idx*100}%)`;
+  document.querySelectorAll('.carousel-dot').forEach((d,i) => d.classList.toggle('active', i===idx));
 }
 
-function renderOverviewLeadChart() {
-  const mi = DATA.indicators;
-  const glt = mi.gpu_lead_times;
-  if(!glt || !Object.keys(glt).length) return;
-  const gpus = Object.keys(glt).sort((a,b)=>glt[b].weeks-glt[a].weeks);
-  const colors = gpus.map(g=>{
-    const s=glt[g].status;
-    return s==='constrained'?C.red:s==='limited'?C.amber:C.green;
-  });
-  if(charts.ovLead) charts.ovLead.destroy();
-  charts.ovLead = new Chart(document.getElementById('chartOverviewLead'),{
-    type:'bar',
-    data:{labels:gpus, datasets:[{label:'Lead Time (wks)',data:gpus.map(g=>glt[g].weeks),
-      backgroundColor:colors.map(c=>c+'70'),borderColor:colors,borderWidth:1}]},
-    options:{indexAxis:'y',responsive:true, maintainAspectRatio:false,
-      plugins:{legend:{display:false},
-        tooltip:{callbacks:{afterBody:(ctx)=>{const g=gpus[ctx[0].dataIndex];return glt[g].note||'';}}}},
-      scales:{x:{title:{display:true,text:'weeks'},grid:{color:'rgba(26,34,51,0.4)'}},y:{grid:{display:false}}}}
+// ── WORKLOAD MATCHER ──
+function renderWorkloadMatcher() {
+  const wl = DATA.workloads || {};
+  const el = document.getElementById('workloadMatcher');
+  if(!el || !Object.keys(wl).length) return;
+
+  const workloads = Object.entries(wl).slice(0, 4);
+  el.innerHTML = '<div class="wl-grid">' + workloads.map(([name, w]) => {
+    const topGpu = (w.recommended||[])[0] || '--';
+    const cp = w.current_prices?.[topGpu] || {};
+    const price = cp.cheapest ? '$'+cp.cheapest.toFixed(2)+'/hr' : '--';
+    const provider = cp.provider || '--';
+    const minGpus = w.min_gpus || 1;
+    const budgetLow = w.budget_monthly_low ? '$'+Math.round(w.budget_monthly_low).toLocaleString() : '--';
+    const budgetHigh = w.budget_monthly_high ? '$'+Math.round(w.budget_monthly_high).toLocaleString() : '--';
+
+    return `<div class="wl-card">
+      <div class="wl-card-title">${name}</div>
+      <div class="wl-card-gpu">${topGpu}</div>
+      <div class="wl-card-detail">
+        Min <b>${minGpus} GPU${minGpus>1?'s':''}</b> · Best on <b>${provider}</b><br>
+        Budget: <b>${budgetLow} – ${budgetHigh}</b>/mo
+      </div>
+      <div class="wl-card-price">${price}</div>
+    </div>`;
+  }).join('') + '</div>';
+}
+
+// ── SPOT VS RESERVED SAVINGS ──
+function renderSpotSavingsChart() {
+  const spot = DATA.spot||{};
+  const gpus = Object.keys(spot).sort((a,b) => (spot[b].res1_savings_pct||0) - (spot[a].res1_savings_pct||0)).slice(0, 8);
+  if(!gpus.length) return;
+  if(charts.spotSav) charts.spotSav.destroy();
+  charts.spotSav = new Chart(document.getElementById('chartSpotSavings'), {
+    type: 'bar',
+    data: {
+      labels: gpus,
+      datasets: [
+        {label:'1yr Reserved Savings', data:gpus.map(g=>spot[g].res1_savings_pct||0), backgroundColor:C.cyan+'70', borderColor:C.cyan, borderWidth:1, borderRadius:3},
+        {label:'3yr Reserved Savings', data:gpus.map(g=>spot[g].res3_savings_pct||0), backgroundColor:C.purple+'70', borderColor:C.purple, borderWidth:1, borderRadius:3}
+      ]
+    },
+    options:{responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{position:'top'}},
+      scales:{y:{title:{display:true,text:'% Savings'},grid:{color:'rgba(255,255,255,0.04)'}},x:{grid:{display:false},ticks:{maxRotation:45}}}
+    }
   });
 }
 
 function renderOverviewTable() {
-  const m = DATA.matrix, spot = DATA.spot, hist = DATA.historical;
+  const m = DATA.matrix, spot = DATA.spot||{}, hist = DATA.historical||{};
+  const sorted = [...m].sort((a,b) => a.cheapest_price - b.cheapest_price);
 
-  // SVG sparkline helper
   const spark = (prices, w=52, h=16) => {
     if (!prices || prices.length < 2) return '<span class="dim">—</span>';
     const mn = Math.min(...prices), mx = Math.max(...prices), rng = mx - mn || 1;
@@ -1634,11 +1835,10 @@ function renderOverviewTable() {
     return `<svg width="${w}" height="${h}" style="vertical-align:middle;"><polyline points="${pts}" fill="none" stroke="${clr}" stroke-width="1.5"/></svg>`;
   };
 
-  let h = '<thead><tr><th>GPU</th><th class="r">Best</th><th class="r">Avg</th><th class="r">High</th><th class="r">1yr Res.</th><th class="r">3yr Res.</th><th class="r">Provs</th><th class="r">TFLOPS/$</th><th>6mo</th></tr></thead><tbody>';
-  m.forEach(r => {
-    const s = spot?.[r.gpu_id];
-    const res1 = s ? '$'+s.reserved_1yr_avg.toFixed(2) : '<span class="dim">—</span>';
-    const res3 = s ? '$'+s.reserved_3yr_avg.toFixed(2) : '<span class="dim">—</span>';
+  let h = '<thead><tr><th>GPU</th><th class="r">Best $/hr</th><th class="r">Provider</th><th class="r">vs Avg</th><th class="r">TFLOPS/$</th><th class="r">VRAM</th><th>6mo</th></tr></thead><tbody>';
+  sorted.forEach(r => {
+    const savPct = ((1 - r.cheapest_price / r.avg_price) * 100).toFixed(0);
+    const spec = DATA.specs?.[r.gpu_id]||{};
     const hd = hist[r.gpu_id] || {};
     const periods = Object.keys(hd).sort().slice(-6);
     const trend = periods.map(p => hd[p]?.avg).filter(v => v != null);
@@ -1646,12 +1846,10 @@ function renderOverviewTable() {
     h += `<tr>` +
       `<td class="gpu-name">${r.name}</td>` +
       `<td class="r c-green fw">$${r.cheapest_price.toFixed(2)}</td>` +
-      `<td class="r fw">$${r.avg_price.toFixed(2)}</td>` +
-      `<td class="r dim">$${r.most_expensive.toFixed(2)}</td>` +
-      `<td class="r">${res1}</td>` +
-      `<td class="r c-green">${res3}</td>` +
-      `<td class="r c-cyan">${r.num_providers}</td>` +
+      `<td class="r">${r.cheapest_provider}</td>` +
+      `<td class="r"><span class="up">-${savPct}%</span></td>` +
       `<td class="r c-purple">${r.flops_per_dollar}</td>` +
+      `<td class="r c-cyan">${spec.vram_gb||'--'}GB</td>` +
       `<td>${spark(trend)}</td>` +
       `</tr>`;
   });
