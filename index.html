@@ -680,6 +680,16 @@ body {
 .decay-tag.accel { background:rgba(255,61,87,0.15); color:var(--red); }
 .decay-tag.decel { background:rgba(0,247,255,0.12); color:var(--cyan); }
 .decay-tag.linear { background:rgba(255,255,255,0.08); color:var(--text-2); }
+/* TCO Sliders */
+.tco-sliders { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; }
+.tco-slider-group { display:flex; flex-direction:column; gap:4px; }
+.tco-slider-label { font-family:var(--mono); font-size:11px; color:var(--text-2); }
+.tco-slider-val { color:var(--cyan); font-weight:700; }
+.tco-range { -webkit-appearance:none; appearance:none; width:100%; height:4px; border-radius:2px; background:var(--bg-0); outline:none; cursor:pointer; }
+.tco-range::-webkit-slider-thumb { -webkit-appearance:none; width:16px; height:16px; border-radius:50%; background:var(--cyan); border:2px solid var(--bg-2); cursor:pointer; }
+.tco-range::-moz-range-thumb { width:16px; height:16px; border-radius:50%; background:var(--cyan); border:2px solid var(--bg-2); cursor:pointer; }
+.tco-slider-range { display:flex; justify-content:space-between; font-size:9px; color:var(--text-3); font-family:var(--mono); }
+
 .decay-picker { display:flex; flex-wrap:wrap; gap:5px; }
 .decay-chip { padding:4px 10px; border-radius:4px; font-family:var(--mono); font-size:10px; font-weight:600;
   cursor:pointer; border:1px solid var(--border-1); color:var(--text-2); background:var(--bg-2); transition:all 0.15s; user-select:none; }
@@ -1345,6 +1355,34 @@ loadExternalData();
 
 <!-- ── TCO ── -->
 <div class="tab-panel" id="tab-tco">
+  <!-- Scenario Builder -->
+  <div class="card mb">
+    <div class="card-hd"><span class="card-hd-title">Scenario Builder</span><span class="dim" style="font-size:10px;font-family:var(--mono);">Adjust parameters — all charts update live</span></div>
+    <div class="card-bd">
+      <div class="tco-sliders">
+        <div class="tco-slider-group">
+          <label class="tco-slider-label">Electricity <span id="tcoElecVal" class="tco-slider-val">$0.08</span>/kWh</label>
+          <input type="range" id="tcoElecSlider" class="tco-range" min="0.03" max="0.25" step="0.01" value="0.08" oninput="tcoSliderChanged()">
+          <div class="tco-slider-range"><span>$0.03</span><span>$0.25</span></div>
+        </div>
+        <div class="tco-slider-group">
+          <label class="tco-slider-label">PUE <span id="tcoPueVal" class="tco-slider-val">1.3</span></label>
+          <input type="range" id="tcoPueSlider" class="tco-range" min="1.05" max="2.0" step="0.05" value="1.3" oninput="tcoSliderChanged()">
+          <div class="tco-slider-range"><span>1.05</span><span>2.0</span></div>
+        </div>
+        <div class="tco-slider-group">
+          <label class="tco-slider-label">Utilization <span id="tcoUtilVal" class="tco-slider-val">100%</span></label>
+          <input type="range" id="tcoUtilSlider" class="tco-range" min="10" max="100" step="5" value="100" oninput="tcoSliderChanged()">
+          <div class="tco-slider-range"><span>10%</span><span>100%</span></div>
+        </div>
+        <div class="tco-slider-group">
+          <label class="tco-slider-label">GPU Lifespan <span id="tcoLifeVal" class="tco-slider-val">4 yr</span></label>
+          <input type="range" id="tcoLifeSlider" class="tco-range" min="1" max="7" step="1" value="4" oninput="tcoSliderChanged()">
+          <div class="tco-slider-range"><span>1 yr</span><span>7 yr</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="kpi-strip mb" id="tcoStats"></div>
   <div class="grid g-2 mb">
     <div class="card">
@@ -1352,17 +1390,30 @@ loadExternalData();
       <div class="card-bd"><div class="chart-wrap" style="height:380px;"><canvas id="chartTcoStack"></canvas></div></div>
     </div>
     <div class="card">
-      <div class="card-hd"><span class="card-hd-title" id="tcoPieTitle">Break-Even Timeline — Self-Hosted vs Cloud</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:380px;"><canvas id="chartTcoPie"></canvas></div></div>
+      <div class="card-hd">
+        <span class="card-hd-title">Break-Even Timeline</span>
+      </div>
+      <div class="card-bd">
+        <div id="tcoBeGpuPicker" class="decay-picker" style="padding:10px 16px 4px;"></div>
+        <div class="chart-wrap" style="height:340px;"><canvas id="chartTcoPie"></canvas></div>
+      </div>
+    </div>
+  </div>
+  <div class="grid g-2 mb">
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">Cost Breakdown Waterfall — $/hr</span>
+        <select class="ctrl-select" id="tcoWaterfallGpu" onchange="renderTcoWaterfall()" style="font-size:10px;min-width:120px;"></select>
+      </div>
+      <div class="card-bd"><div class="chart-wrap" style="height:320px;" id="tcoWaterfallWrap"><canvas></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">Perf/$ Efficiency — FP16 TFLOPS vs Cost</span></div>
+      <div class="card-bd"><div class="chart-wrap" style="height:320px;"><canvas id="chartTcoScatter"></canvas></div></div>
     </div>
   </div>
   <div class="card mb">
     <div class="card-hd"><span class="card-hd-title">TCO Comparison by GPU</span></div>
     <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="tcoTable"></table></div>
-  </div>
-  <div class="card">
-    <div class="card-hd"><span class="card-hd-title">Key Assumptions</span></div>
-    <div class="card-bd" id="tcoAssumptions" style="font-size:.85rem;line-height:1.6;color:var(--text-2);"></div>
   </div>
 </div>
 
@@ -3057,107 +3108,303 @@ document.getElementById('inferCatFilter')?.addEventListener('change',function(){
 // ════════════════════════════════════════════════════════════════
 // TCO
 // ════════════════════════════════════════════════════════════════
-function renderTcoTab() {
-  const tco=DATA.tco; if(!tco||!Object.keys(tco).length) return;
-  // New TCO_PROFILES format: keyed by GPU name
-  const gpus=Object.keys(tco).filter(k=>tco[k].gpu_price_usd!==undefined);
-  if(!gpus.length) return;
+// TCO state: cached rows for re-rendering sub-charts
+var _tcoRows=null;
 
-  // ── Compute derived values per GPU ──
-  const rows=gpus.map(g=>{
-    const p=tco[g], sh=p.self_hosted;
-    const powerCost=sh.power_kwh*sh.power_cost_kwh*sh.pue;
-    const depreciation=p.gpu_price_usd/(p.useful_life_years*8760);
-    const opex=powerCost+sh.networking_hr+sh.storage_hr+sh.colo_rack_hr+sh.ops_staff_hr;
-    const selfTotal=opex+depreciation;
-    const beMonths=p.cloud_on_demand_hr>opex?p.gpu_price_usd/((p.cloud_on_demand_hr-opex)*730):Infinity;
-    const perfDollar=selfTotal>0?p.perf_fp16_tflops/selfTotal:0;
-    return {gpu:g,price:p.gpu_price_usd,life:p.useful_life_years,
-      cloudOD:p.cloud_on_demand_hr,cloud1yr:p.cloud_reserved_1yr_hr,
-      cloud3yr:p.cloud_reserved_3yr_hr,cloudSpot:p.cloud_spot_hr,
-      selfTotal,opex,depreciation,powerCost,
-      beMonths,perfDollar,
+function _getTcoParams(){
+  return {
+    elec: parseFloat((document.getElementById('tcoElecSlider')||{}).value)||0.08,
+    pue: parseFloat((document.getElementById('tcoPueSlider')||{}).value)||1.3,
+    util: (parseFloat((document.getElementById('tcoUtilSlider')||{}).value)||100)/100,
+    life: parseInt((document.getElementById('tcoLifeSlider')||{}).value)||4
+  };
+}
+
+function _computeTcoRows(params){
+  var tco=DATA.tco; if(!tco) return [];
+  var gpus=Object.keys(tco).filter(function(k){return tco[k].gpu_price_usd!==undefined;});
+  return gpus.map(function(g){
+    var p=tco[g], sh=p.self_hosted;
+    var powerCost=sh.power_kwh*params.elec*params.pue;
+    var depreciation=p.gpu_price_usd/(params.life*8760);
+    var opex=powerCost+sh.networking_hr+sh.storage_hr+sh.colo_rack_hr+sh.ops_staff_hr;
+    // Scale cloud cost by utilization (you pay for idle cloud time), self-hosted fixed costs remain
+    var effectiveCloudOD=p.cloud_on_demand_hr; // cloud cost stays same per used hour
+    var effectiveCloud1yr=p.cloud_reserved_1yr_hr;
+    var effectiveCloud3yr=p.cloud_reserved_3yr_hr;
+    // Self-hosted: fixed costs (depreciation, colo, ops, network, storage) spread over utilized hours
+    var fixedPerHr=(depreciation+sh.colo_rack_hr+sh.ops_staff_hr+sh.networking_hr+sh.storage_hr)/params.util;
+    var variablePerHr=powerCost; // power only consumed when running
+    var selfTotal=fixedPerHr+variablePerHr;
+    var monthlyHrs=730*params.util;
+    var beMonths=effectiveCloudOD>(variablePerHr+sh.networking_hr+sh.storage_hr+sh.colo_rack_hr+sh.ops_staff_hr)?
+      p.gpu_price_usd/((effectiveCloudOD-(variablePerHr+sh.networking_hr+sh.storage_hr+sh.colo_rack_hr+sh.ops_staff_hr))*monthlyHrs):Infinity;
+    var perfDollar=selfTotal>0?p.perf_fp16_tflops/selfTotal:0;
+    return {gpu:g,price:p.gpu_price_usd,
+      cloudOD:effectiveCloudOD,cloud1yr:effectiveCloud1yr,cloud3yr:effectiveCloud3yr,
+      selfTotal:selfTotal,opex:opex,depreciation:depreciation,powerCost:powerCost,
+      fixedPerHr:fixedPerHr,variablePerHr:variablePerHr,
+      beMonths:beMonths,perfDollar:perfDollar,
       perf:p.perf_fp16_tflops,vram:p.vram_gb,
-      sh};
-  }).sort((a,b)=>a.selfTotal-b.selfTotal);
+      sh:sh,monthlyHrs:monthlyHrs,
+      // Keep breakdowns for waterfall
+      components:{
+        power:powerCost,
+        depreciation:depreciation/params.util,
+        networking:sh.networking_hr/params.util,
+        storage:sh.storage_hr/params.util,
+        colo:sh.colo_rack_hr/params.util,
+        ops:sh.ops_staff_hr/params.util
+      }
+    };
+  }).sort(function(a,b){return a.selfTotal-b.selfTotal;});
+}
+
+function tcoSliderChanged(){
+  // Update labels
+  var p=_getTcoParams();
+  var el=document.getElementById('tcoElecVal'); if(el) el.textContent='$'+p.elec.toFixed(2);
+  el=document.getElementById('tcoPueVal'); if(el) el.textContent=p.pue.toFixed(2);
+  el=document.getElementById('tcoUtilVal'); if(el) el.textContent=Math.round(p.util*100)+'%';
+  el=document.getElementById('tcoLifeVal'); if(el) el.textContent=p.life+' yr';
+  renderTcoTab();
+}
+
+function renderTcoTab() {
+  var tco=DATA.tco; if(!tco||!Object.keys(tco).length) return;
+  var params=_getTcoParams();
+  var rows=_computeTcoRows(params);
+  _tcoRows=rows;
+  if(!rows.length) return;
 
   // ── KPIs ──
-  const cheapCloud=rows.reduce((a,b)=>a.cloudOD<b.cloudOD?a:b);
-  const cheapSelf=rows[0];
-  const fastBE=rows.filter(r=>isFinite(r.beMonths)).reduce((a,b)=>a.beMonths<b.beMonths?a:b,{beMonths:Infinity});
-  const bestPerf=rows.reduce((a,b)=>a.perfDollar>b.perfDollar?a:b);
-  document.getElementById('tcoStats').innerHTML=`
-    <div class="kpi kpi-cyan"><div class="kpi-label">Cheapest Cloud $/hr</div><div class="kpi-value">$${cheapCloud.cloudOD.toFixed(2)}</div><div class="kpi-sub">${cheapCloud.gpu} on-demand</div></div>
-    <div class="kpi kpi-green"><div class="kpi-label">Cheapest Self-Hosted</div><div class="kpi-value">$${cheapSelf.selfTotal.toFixed(2)}/hr</div><div class="kpi-sub">${cheapSelf.gpu} fully loaded</div></div>
-    <div class="kpi kpi-amber"><div class="kpi-label">Fastest Break-Even</div><div class="kpi-value">${isFinite(fastBE.beMonths)?fastBE.beMonths.toFixed(0)+'mo':'N/A'}</div><div class="kpi-sub">${isFinite(fastBE.beMonths)?fastBE.gpu+' vs cloud OD':'—'}</div></div>
-    <div class="kpi kpi-purple"><div class="kpi-label">Best Perf/$ (TFLOPS/$)</div><div class="kpi-value">${bestPerf.perfDollar.toFixed(0)}</div><div class="kpi-sub">${bestPerf.gpu} FP16</div></div>`;
+  var cheapCloud=rows.reduce(function(a,b){return a.cloudOD<b.cloudOD?a:b;});
+  var cheapSelf=rows[0];
+  var fastBE=rows.filter(function(r){return isFinite(r.beMonths);}).reduce(function(a,b){return a.beMonths<b.beMonths?a:b;},{beMonths:Infinity,gpu:'—'});
+  var bestPerf=rows.reduce(function(a,b){return a.perfDollar>b.perfDollar?a:b;});
+  document.getElementById('tcoStats').innerHTML=
+    '<div class="kpi kpi-cyan"><div class="kpi-label">Cheapest Cloud $/hr</div><div class="kpi-value">$'+cheapCloud.cloudOD.toFixed(2)+'</div><div class="kpi-sub">'+cheapCloud.gpu+' on-demand</div></div>'+
+    '<div class="kpi kpi-green"><div class="kpi-label">Cheapest Self-Hosted</div><div class="kpi-value">$'+cheapSelf.selfTotal.toFixed(2)+'/hr</div><div class="kpi-sub">'+cheapSelf.gpu+' @ '+Math.round(params.util*100)+'% util</div></div>'+
+    '<div class="kpi kpi-amber"><div class="kpi-label">Fastest Break-Even</div><div class="kpi-value">'+(isFinite(fastBE.beMonths)?fastBE.beMonths.toFixed(0)+'mo':'N/A')+'</div><div class="kpi-sub">'+(isFinite(fastBE.beMonths)?fastBE.gpu+' vs cloud OD':'—')+'</div></div>'+
+    '<div class="kpi kpi-purple"><div class="kpi-label">Best Perf/$ (TFLOPS/$)</div><div class="kpi-value">'+bestPerf.perfDollar.toFixed(0)+'</div><div class="kpi-sub">'+bestPerf.gpu+' FP16</div></div>';
 
   // ── Chart 1: Grouped bar — 4 scenarios per GPU ──
   if(charts.ts) charts.ts.destroy();
-  const labels=rows.map(r=>r.gpu);
   charts.ts=new Chart(document.getElementById('chartTcoStack'),{type:'bar',
-    data:{labels,datasets:[
-      {label:'Cloud On-Demand',data:rows.map(r=>r.cloudOD),backgroundColor:C.red+'80',borderColor:C.red,borderWidth:1},
-      {label:'Cloud 1yr Reserved',data:rows.map(r=>r.cloud1yr),backgroundColor:C.orange+'80',borderColor:C.orange,borderWidth:1},
-      {label:'Cloud 3yr Reserved',data:rows.map(r=>r.cloud3yr),backgroundColor:C.amber+'80',borderColor:C.amber,borderWidth:1},
-      {label:'Self-Hosted',data:rows.map(r=>r.selfTotal),backgroundColor:C.green+'80',borderColor:C.green,borderWidth:1},
+    data:{labels:rows.map(function(r){return r.gpu;}),datasets:[
+      {label:'Cloud On-Demand',data:rows.map(function(r){return r.cloudOD;}),backgroundColor:C.red+'80',borderColor:C.red,borderWidth:1},
+      {label:'Cloud 1yr Reserved',data:rows.map(function(r){return r.cloud1yr;}),backgroundColor:C.orange+'80',borderColor:C.orange,borderWidth:1},
+      {label:'Cloud 3yr Reserved',data:rows.map(function(r){return r.cloud3yr;}),backgroundColor:C.amber+'80',borderColor:C.amber,borderWidth:1},
+      {label:'Self-Hosted',data:rows.map(function(r){return r.selfTotal;}),backgroundColor:C.green+'80',borderColor:C.green,borderWidth:1},
     ]},
     options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'top'},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': $'+ctx.parsed.y.toFixed(2)+'/hr';}}}},
-      scales:{x:{grid:{display:false}},y:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}}}}
+      plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10}}},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': $'+ctx.parsed.y.toFixed(2)+'/hr';}}}},
+      scales:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}}}}
   });
 
-  // ── Chart 2: Break-even cumulative cost lines (reference GPU = B200 or first) ──
-  if(charts.tp) charts.tp.destroy();
-  const refRow=rows.find(r=>r.gpu==='B200')||rows[0];
-  document.getElementById('tcoPieTitle').textContent='Break-Even Timeline — '+refRow.gpu+' Self-Hosted vs Cloud';
-  const months=Array.from({length:49},(_,i)=>i);
-  const cumOD=months.map(m=>refRow.cloudOD*730*m);
-  const cum3yr=months.map(m=>refRow.cloud3yr*730*m);
-  const cumSelf=months.map(m=>refRow.price+refRow.opex*730*m);
-  charts.tp=new Chart(document.getElementById('chartTcoPie'),{type:'line',
-    data:{labels:months,datasets:[
-      {label:'Cloud On-Demand',data:cumOD,borderColor:C.red,backgroundColor:C.red+'20',fill:false,tension:0,pointRadius:0,borderWidth:2},
-      {label:'Cloud 3yr Reserved',data:cum3yr,borderColor:C.amber,backgroundColor:C.amber+'20',fill:false,tension:0,pointRadius:0,borderWidth:2},
-      {label:'Self-Hosted',data:cumSelf,borderColor:C.green,backgroundColor:C.green+'20',fill:false,tension:0,pointRadius:0,borderWidth:2},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'top'},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': $'+Math.round(ctx.parsed.y).toLocaleString();}}}},
-      scales:{x:{title:{display:true,text:'Months'},grid:{color:'rgba(26,34,51,0.2)'}},
-              y:{title:{display:true,text:'Cumulative Cost ($)'},grid:{color:'rgba(26,34,51,0.4)'},ticks:{callback:function(v){return '$'+Math.round(v/1000)+'k';}}}}}
-  });
+  // ── Chart 2: Multi-GPU break-even with chip picker ──
+  var bePicker=document.getElementById('tcoBeGpuPicker');
+  if(bePicker && bePicker.children.length===0){
+    rows.forEach(function(r,i){
+      var chip=document.createElement('span');
+      chip.className='decay-chip'+(i<2?' active':'');
+      chip.setAttribute('data-gpu',r.gpu);
+      chip.setAttribute('data-ci',String(i));
+      chip.textContent=r.gpu;
+      chip.addEventListener('click',function(){this.classList.toggle('active');renderTcoBreakEven();});
+      bePicker.appendChild(chip);
+    });
+  }
+  renderTcoBreakEven();
 
-  // ── Table: 9 columns ──
-  let h='<thead><tr><th>GPU</th><th class="r">VRAM</th><th class="r">FP16 TFLOPS</th><th class="r">Cloud OD</th><th class="r">Cloud 1yr</th><th class="r">Cloud 3yr</th><th class="r">Self-Hosted</th><th class="r">Break-Even</th><th class="r">Perf/$</th></tr></thead><tbody>';
-  rows.forEach(r=>{
-    const costs=[r.cloudOD,r.cloud1yr,r.cloud3yr,r.selfTotal];
-    const minCost=Math.min(...costs);
-    const fmt=(v)=>{const s='$'+v.toFixed(2);return v===minCost?`<span class="c-green fw">${s}</span>`:s;};
-    h+=`<tr><td class="gpu-name">${r.gpu}</td>`;
-    h+=`<td class="r">${r.vram} GB</td>`;
-    h+=`<td class="r">${r.perf.toLocaleString()}</td>`;
-    h+=`<td class="r">${fmt(r.cloudOD)}</td>`;
-    h+=`<td class="r">${fmt(r.cloud1yr)}</td>`;
-    h+=`<td class="r">${fmt(r.cloud3yr)}</td>`;
-    h+=`<td class="r">${fmt(r.selfTotal)}</td>`;
-    h+=`<td class="r">${isFinite(r.beMonths)?r.beMonths.toFixed(0)+' mo':'—'}</td>`;
-    h+=`<td class="r c-purple fw">${r.perfDollar.toFixed(0)}</td></tr>`;
+  // ── Waterfall select ──
+  var wfSel=document.getElementById('tcoWaterfallGpu');
+  if(wfSel && wfSel.options.length===0){
+    rows.forEach(function(r){
+      var o=document.createElement('option'); o.value=r.gpu; o.textContent=r.gpu;
+      wfSel.appendChild(o);
+    });
+  }
+  renderTcoWaterfall();
+
+  // ── Scatter chart ──
+  renderTcoScatter();
+
+  // ── Table ──
+  var h='<thead><tr><th>GPU</th><th class="r">VRAM</th><th class="r">FP16</th><th class="r">Cloud OD</th><th class="r">1yr Res</th><th class="r">3yr Res</th><th class="r">Self-Host</th><th class="r">Break-Even</th><th class="r">Perf/$</th><th class="r">3yr Savings</th></tr></thead><tbody>';
+  rows.forEach(function(r){
+    var costs=[r.cloudOD,r.cloud1yr,r.cloud3yr,r.selfTotal];
+    var minCost=Math.min.apply(null,costs);
+    var fmt=function(v){var s='$'+v.toFixed(2);return v===minCost?'<span class="c-green fw">'+s+'</span>':s;};
+    var savings3yr=((r.cloudOD-r.selfTotal)*730*36);
+    h+='<tr><td class="gpu-name">'+r.gpu+'</td>';
+    h+='<td class="r">'+r.vram+' GB</td>';
+    h+='<td class="r">'+r.perf.toLocaleString()+'</td>';
+    h+='<td class="r">'+fmt(r.cloudOD)+'</td>';
+    h+='<td class="r">'+fmt(r.cloud1yr)+'</td>';
+    h+='<td class="r">'+fmt(r.cloud3yr)+'</td>';
+    h+='<td class="r">'+fmt(r.selfTotal)+'</td>';
+    h+='<td class="r">'+(isFinite(r.beMonths)?r.beMonths.toFixed(0)+' mo':'\u2014')+'</td>';
+    h+='<td class="r c-purple fw">'+r.perfDollar.toFixed(0)+'</td>';
+    h+='<td class="r">'+(savings3yr>0?'<span class="c-green fw">$'+Math.round(savings3yr/1000)+'k</span>':'<span class="c-red">\u2212$'+Math.round(Math.abs(savings3yr)/1000)+'k</span>')+'</td></tr>';
   });
   h+='</tbody>';
   document.getElementById('tcoTable').innerHTML=h;
+}
 
-  // ── Assumptions card ──
-  const el=document.getElementById('tcoAssumptions');
-  if(el) el.innerHTML=
-    '<b>Self-hosted assumptions:</b> '+
-    'Power cost $0.08/kWh (US industrial avg) · PUE 1.3 · '+
-    'Useful life '+rows[0].life+' yr straight-line depreciation · '+
-    'Colo/rack, networking, storage, and ops amortised per GPU-hr<br>'+
-    '<b>Cloud pricing:</b> '+
-    'On-demand = typical major-provider list price · '+
-    '1yr reserved ≈ 25-35% discount · 3yr reserved ≈ 45-60% discount · '+
-    'Break-even = months until self-hosted cumulative cost &lt; cloud on-demand<br>'+
-    '<b>Hours/month:</b> 730 (24/7 operation)';
+function renderTcoBreakEven(){
+  var rows=_tcoRows; if(!rows||!rows.length) return;
+  var bePicker=document.getElementById('tcoBeGpuPicker');
+  if(!bePicker) return;
+
+  // Get selected
+  var chips=bePicker.querySelectorAll('.decay-chip.active');
+  var selected=[];
+  for(var j=0;j<chips.length;j++) selected.push(chips[j].getAttribute('data-gpu'));
+
+  // Style chips
+  var allChips=bePicker.querySelectorAll('.decay-chip');
+  for(var m=0;m<allChips.length;m++){
+    var ac=allChips[m], ci=parseInt(ac.getAttribute('data-ci'))||0;
+    var col=CL[ci%CL.length];
+    if(ac.classList.contains('active')){
+      ac.style.background=col+'22';ac.style.borderColor=col;ac.style.color=col;
+    }else{
+      ac.style.background='';ac.style.borderColor='';ac.style.color='';
+    }
+  }
+
+  var chosen=rows.filter(function(r){return selected.indexOf(r.gpu)!==-1;});
+  if(!chosen.length) chosen=[rows[0]];
+
+  var months=[];for(var i=0;i<=48;i++) months.push(i);
+  var datasets=[];
+  chosen.forEach(function(r,idx){
+    var ci2=rows.indexOf(r);
+    var col=CL[ci2%CL.length];
+    // Cloud on-demand cumulative (dashed)
+    datasets.push({
+      label:r.gpu+' Cloud',
+      data:months.map(function(m){return r.cloudOD*r.monthlyHrs*m;}),
+      borderColor:col,borderDash:[6,3],borderWidth:1.5,pointRadius:0,tension:0,fill:false
+    });
+    // Self-hosted cumulative (solid): upfront GPU cost + opex per month
+    var opexHr=r.selfTotal-r.components.depreciation; // remove depreciation since GPU price is upfront
+    datasets.push({
+      label:r.gpu+' Self-Host',
+      data:months.map(function(m){return r.price+opexHr*r.monthlyHrs*m;}),
+      borderColor:col,borderWidth:2.5,pointRadius:0,tension:0,fill:false
+    });
+  });
+
+  if(charts.tp) charts.tp.destroy();
+  charts.tp=new Chart(document.getElementById('chartTcoPie'),{type:'line',
+    data:{labels:months,datasets:datasets},
+    options:{responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{position:'top',labels:{boxWidth:10,font:{size:9},usePointStyle:true,pointStyle:'circle'}},
+        tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': $'+Math.round(ctx.parsed.y).toLocaleString();}}}
+      },
+      scales:{
+        x:{title:{display:true,text:'Months',color:'rgba(255,255,255,0.4)',font:{size:10}},grid:{color:'rgba(26,34,51,0.2)'}},
+        y:{title:{display:true,text:'Cumulative Cost ($)',color:'rgba(255,255,255,0.4)',font:{size:10}},grid:{color:'rgba(26,34,51,0.4)'},
+          ticks:{callback:function(v){return '$'+Math.round(v/1000)+'k';}}}
+      }
+    }
+  });
+}
+
+function renderTcoWaterfall(){
+  var rows=_tcoRows; if(!rows||!rows.length) return;
+  var sel=document.getElementById('tcoWaterfallGpu');
+  var wrap=document.getElementById('tcoWaterfallWrap');
+  if(!sel||!wrap) return;
+  var gpu=sel.value||rows[0].gpu;
+  var r=rows.find(function(x){return x.gpu===gpu;})||rows[0];
+
+  var labels=['Power','Depreciation','Networking','Storage','Colo/Rack','Ops Staff','Total'];
+  var comp=r.components;
+  var vals=[comp.power,comp.depreciation,comp.networking,comp.storage,comp.colo,comp.ops];
+  var total=vals.reduce(function(s,v){return s+v;},0);
+  // Floating bars for waterfall effect
+  var running=0;
+  var barData=[];
+  var bgColors=[];
+  var componentColors=[C.amber,C.blue,C.cyan,C.purple,C.orange,C.pink,C.green];
+  for(var i=0;i<vals.length;i++){
+    barData.push([running,running+vals[i]]);
+    bgColors.push(componentColors[i]+'90');
+    running+=vals[i];
+  }
+  barData.push([0,total]);
+  bgColors.push(C.green+'90');
+
+  if(charts.twf) charts.twf.destroy();
+  wrap.innerHTML='<canvas></canvas>';
+  charts.twf=new Chart(wrap.querySelector('canvas'),{type:'bar',
+    data:{labels:labels,datasets:[{
+      data:barData,
+      backgroundColor:bgColors,
+      borderColor:bgColors.map(function(c){return c.replace('90','');}),
+      borderWidth:1,
+      borderRadius:3
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{
+          label:function(ctx){
+            var v=Array.isArray(ctx.raw)?ctx.raw[1]-ctx.raw[0]:ctx.raw;
+            var pct=Math.round(v/total*100);
+            return '$'+v.toFixed(3)+'/hr ('+pct+'%)';
+          }
+        }}
+      },
+      scales:{
+        x:{title:{display:true,text:'$/hr',color:'rgba(255,255,255,0.4)',font:{size:10}},grid:{color:'rgba(26,34,51,0.3)'}},
+        y:{grid:{display:false},ticks:{font:{size:10}}}
+      }
+    }
+  });
+}
+
+function renderTcoScatter(){
+  var rows=_tcoRows; if(!rows||!rows.length) return;
+  var canvas=document.getElementById('chartTcoScatter');
+  if(!canvas) return;
+
+  var datasets=rows.map(function(r,i){
+    return {
+      label:r.gpu,
+      data:[{x:r.selfTotal,y:r.perf,r:Math.max(r.vram/8,4)}],
+      backgroundColor:CL[i%CL.length]+'80',
+      borderColor:CL[i%CL.length],
+      borderWidth:1.5,
+      pointRadius:Math.max(r.vram/8,4),
+      pointHoverRadius:Math.max(r.vram/8,4)+3
+    };
+  });
+
+  if(charts.tsc) charts.tsc.destroy();
+  charts.tsc=new Chart(canvas,{type:'scatter',
+    data:{datasets:datasets},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:true,position:'top',labels:{boxWidth:8,font:{size:9},usePointStyle:true,pointStyle:'circle'}},
+        tooltip:{callbacks:{
+          label:function(ctx){
+            var r=rows[ctx.datasetIndex];
+            return r.gpu+': '+r.perf+' TFLOPS @ $'+r.selfTotal.toFixed(2)+'/hr ('+r.vram+'GB)';
+          }
+        }}
+      },
+      scales:{
+        x:{title:{display:true,text:'Self-Hosted Cost ($/hr)',color:'rgba(255,255,255,0.4)',font:{size:10}},grid:{color:'rgba(26,34,51,0.3)'}},
+        y:{title:{display:true,text:'FP16 TFLOPS',color:'rgba(255,255,255,0.4)',font:{size:10}},grid:{color:'rgba(26,34,51,0.3)'}}
+      }
+    }
+  });
 }
 
 // ════════════════════════════════════════════════════════════════
