@@ -1391,6 +1391,7 @@ loadExternalData();
           <div class="tco-slider-range"><span>1 yr</span><span>7 yr</span></div>
         </div>
       </div>
+      <div id="tcoPresetSources" style="display:none;margin-top:12px;padding:10px 14px;background:rgba(0,247,255,0.04);border:1px solid rgba(0,247,255,0.12);border-radius:6px;font-family:var(--mono);font-size:10px;line-height:1.7;color:var(--text-2);"></div>
     </div>
   </div>
   <div class="kpi-strip mb" id="tcoStats"></div>
@@ -3170,20 +3171,41 @@ function _computeTcoRows(params){
   }).sort(function(a,b){return a.selfTotal-b.selfTotal;});
 }
 
+var TCO_PRESETS={
+  industry:{
+    elec:0.08,   // EIA 2025 US industrial avg: $0.083/kWh (eia.gov/electricity/monthly)
+    pue:1.58,    // Uptime Institute 2025 Global Survey: 1.58 per-site avg, stagnant since 2020
+    util:50,     // Microsoft Research ICSE 2024: avg ≤50%; Anyscale 2026: <50% under load; McKinsey target 65-75%
+    life:5       // AWS 2025: 5yr for AI GPUs; Google/Microsoft: 6yr servers; economic life 3-4yr for AI accelerators
+  }
+};
+var TCO_PRESET_SOURCES={
+  elec:'US Energy Information Administration (EIA) Electric Power Monthly 2025 — industrial avg $0.083/kWh',
+  pue:'Uptime Institute 15th Annual Global Data Center Survey 2025 — per-site avg 1.58 (n=800+)',
+  util:'Microsoft Research ICSE 2024 (avg \u226450%); Anyscale Jan 2026 (<50% under load); McKinsey target 65-75%',
+  life:'AWS Jan 2025: 5yr for AI servers (reversed from 6yr); Google/MSFT: 6yr accounting; AI GPU economic life: 3-4yr'
+};
+
 function tcoApplyPreset(name){
-  // Industry averages: Uptime Institute 2024 Global Data Center Survey + EIA industrial rates
-  var presets={
-    industry:{elec:0.08, pue:1.58, util:65, life:4}  // PUE 1.58 global avg, 65% avg GPU util, $0.08 US industrial
-  };
-  var p=presets[name]; if(!p) return;
+  var p=TCO_PRESETS[name]; if(!p) return;
   var ids={elec:'tcoElecSlider',pue:'tcoPueSlider',util:'tcoUtilSlider',life:'tcoLifeSlider'};
   for(var k in ids){
     var slider=document.getElementById(ids[k]);
     if(slider) slider.value=p[k];
   }
   // Flash the button
-  var btn=document.querySelector('.tco-preset-btn');
-  if(btn){btn.classList.add('active');setTimeout(function(){btn.classList.remove('active');},600);}
+  var btns=document.querySelectorAll('.tco-preset-btn');
+  for(var i=0;i<btns.length;i++){btns[i].classList.add('active');(function(b){setTimeout(function(){b.classList.remove('active');},600);})(btns[i]);}
+  // Show sources
+  var srcEl=document.getElementById('tcoPresetSources');
+  if(srcEl){
+    srcEl.style.display='block';
+    srcEl.innerHTML='<b>Sources:</b><br>'+
+      '\u2022 Electricity: '+TCO_PRESET_SOURCES.elec+'<br>'+
+      '\u2022 PUE: '+TCO_PRESET_SOURCES.pue+'<br>'+
+      '\u2022 Utilization: '+TCO_PRESET_SOURCES.util+'<br>'+
+      '\u2022 Lifespan: '+TCO_PRESET_SOURCES.life;
+  }
   tcoSliderChanged();
 }
 
