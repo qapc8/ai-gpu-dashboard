@@ -3656,7 +3656,7 @@ async function loadAI(type, bypassCache) {
     const url = bypassCache ? cfg.url + (cfg.url.includes('?') ? '&' : '?') + 'nocache=1' : cfg.url;
     const r = await fetchJSON(url);
     if(r.error) {
-      el.innerHTML = `<div style="color:var(--red);padding:20px;font-size:12px;"><strong>Error:</strong> ${r.error}</div>`;
+      el.innerHTML = '<div style="color:var(--red);padding:20px;font-size:12px;"><strong>Error:</strong> '+_esc(String(r.error))+'</div>';
       setAIStatus(cfg.status, 'idle');
     } else {
       const raw = r.analysis || r.quick_summary || JSON.stringify(r);
@@ -3665,7 +3665,7 @@ async function loadAI(type, bypassCache) {
       aiLoadedSet.add(type);
     }
   } catch(e) {
-    el.innerHTML = `<div style="color:var(--red);padding:20px;font-size:12px;"><strong>Failed:</strong> ${e.message}</div>`;
+    el.innerHTML = '<div style="color:var(--red);padding:20px;font-size:12px;"><strong>Failed:</strong> '+_esc(String(e.message))+'</div>';
     setAIStatus(cfg.status, 'idle');
   }
   aiRunningCount = Math.max(0, aiRunningCount - 1);
@@ -3715,11 +3715,11 @@ async function loadGpuAI() {
 
   try {
     const r = await fetchJSON(`/api/ai/gpu?id=${gpuId}`);
-    if(r.error) el.innerHTML = `<div style="color:var(--red);padding:20px;">Error: ${r.error}</div>`;
+    if(r.error) el.innerHTML = '<div style="color:var(--red);padding:20px;">Error: '+_esc(String(r.error))+'</div>';
     else el.innerHTML = formatAIOutput(r.analysis || '');
     if(statusEl) { statusEl.className='intel-status intel-status-ready'; statusEl.textContent='READY'; }
   } catch(e) {
-    el.innerHTML = `<div style="color:var(--red);padding:20px;">Failed: ${e.message}</div>`;
+    el.innerHTML = '<div style="color:var(--red);padding:20px;">Failed: '+_esc(String(e.message))+'</div>';
     if(statusEl) { statusEl.className='intel-status intel-status-idle'; statusEl.textContent='IDLE'; }
   }
 }
@@ -3741,10 +3741,7 @@ document.addEventListener('click', function(e) {
 // ════════════════════════════════════════════════════════════════
 
 const _cp = '/api/chat';
-const _ca = [115,107,45,77,103,55,75,82,110,70,53,104,51,51,88,121,82,77,65,55,70,118,101,82,103];
-const _cu = [104,116,116,112,115,58,47,47,97,112,105,46,104,121,112,101,114,102,117,115,105,111,110,46,105,111,47,118,49,47,99,104,97,116,47,99,111,109,112,108,101,116,105,111,110,115];
-const _cm = 'qwen/qwen3-32b';
-function _d(a){return a.map(c=>String.fromCharCode(c)).join('');}
+function _esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 let chatHistory = [];
 
 function initChat() {
@@ -3910,20 +3907,9 @@ function askSuggestion(el) {
 }
 
 async function _chatRequest(messages) {
-  // Try server proxy first
-  try {
-    const r = await fetch(_cp, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({messages, max_tokens:1024})
-    });
-    if(r.ok) return r;
-    if(r.status !== 405 && r.status !== 404) return r;
-  } catch(e) {}
-  // Fallback: direct API call
-  return fetch(_d(_cu), {
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+_d(_ca)},
-    body: JSON.stringify({model:_cm, messages, max_tokens:1024, temperature:0.7})
+  return fetch(_cp, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({messages, max_tokens:1024})
   });
 }
 
@@ -3960,14 +3946,14 @@ ${buildChatContext()}`;
 
     if(!resp.ok) {
       const errText = await resp.text();
-      appendChatMsg('ai', `<p style="color:var(--red);">API Error (${resp.status}): ${errText.substring(0, 200)}</p>`);
+      appendChatMsg('ai', '<p style="color:var(--red);">API Error ('+_esc(String(resp.status))+'): '+_esc(errText.substring(0, 200))+'</p>');
       btn.disabled = false;
       return;
     }
 
     const data = await resp.json();
     if(data.error) {
-      appendChatMsg('ai', `<p style="color:var(--red);">${data.error}</p>`);
+      appendChatMsg('ai', '<p style="color:var(--red);">'+_esc(String(data.error))+'</p>');
       btn.disabled = false;
       return;
     }
@@ -3981,7 +3967,7 @@ ${buildChatContext()}`;
 
   } catch(e) {
     removeTyping();
-    appendChatMsg('ai', `<p style="color:var(--red);">Connection failed: ${e.message}</p>`);
+    appendChatMsg('ai', '<p style="color:var(--red);">Connection failed: '+_esc(String(e.message))+'</p>');
   }
 
   btn.disabled = false;

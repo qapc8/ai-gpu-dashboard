@@ -46,14 +46,46 @@ CHAT_API_URL = os.environ.get("CHAT_API_URL", "https://api.hyperfusion.io/v1/cha
 CHAT_API_KEY = os.environ.get("CHAT_API_KEY", "")
 CHAT_MODEL = os.environ.get("CHAT_MODEL", "qwen/qwen3-32b")
 
+# Rate limiter
+_rate_map = {}
+_RATE_LIMIT = 20
+_RATE_WINDOW = 60
+
+def _is_rate_limited(ip):
+    import time
+    now = time.time()
+    entry = _rate_map.get(ip)
+    if not entry or now - entry["start"] > _RATE_WINDOW:
+        _rate_map[ip] = {"start": now, "count": 1}
+        return False
+    entry["count"] += 1
+    return entry["count"] > _RATE_LIMIT
+
+# CORS allowlist
+_ALLOWED_ORIGINS = {"http://localhost:8080", "http://localhost:3000", "http://127.0.0.1:5500"}
+
+def _cors_origin(headers):
+    origin = headers.get("Origin", "")
+    if not origin:
+        return None
+    if origin in _ALLOWED_ORIGINS:
+        return origin
+    return None
+
 
 class DashboardHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=os.path.dirname(__file__), **kwargs)
 
+    def _set_cors(self):
+        origin = _cors_origin(self.headers)
+        if origin:
+            self.send_header("Access-Control-Allow-Origin", origin)
+            self.send_header("Vary", "Origin")
+
     def do_OPTIONS(self):
         self.send_response(204)
-        self.send_header("Access-Control-Allow-Origin", "*")
+        self._set_cors()
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
@@ -66,23 +98,45 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.send_error(404, "Not Found")
 
     def handle_chat_proxy(self):
+        # Rate limiting
+        client_ip = self.headers.get("X-Forwarded-For", self.client_address[0]).split(",")[0].strip()
+        if _is_rate_limited(client_ip):
+            self.send_json({"error": "Too many requests. Please wait a moment."}, status=429)
+            return
+
         if not CHAT_API_KEY:
-            self.send_json({"error": "Chat API key not configured on server."}, status=503)
+            self.send_json({"error": "Chat service unavailable."}, status=503)
             return
 
         try:
             content_length = int(self.headers.get("Content-Length", 0))
+            if content_length > 100_000:
+                self.send_json({"error": "Request too large."}, status=413)
+                return
             body = self.rfile.read(content_length)
             payload = json.loads(body)
         except (json.JSONDecodeError, ValueError):
             self.send_json({"error": "Invalid request body."}, status=400)
             return
 
-        # Only allow messages through — strip any attempt to override model/key
+        # Input validation
         messages = payload.get("messages", [])
-        if not messages:
+        if not messages or not isinstance(messages, list):
             self.send_json({"error": "No messages provided."}, status=400)
             return
+        if len(messages) > 50:
+            self.send_json({"error": "Too many messages."}, status=400)
+            return
+        for msg in messages:
+            if not isinstance(msg, dict) or not isinstance(msg.get("role"), str) or not isinstance(msg.get("content"), str):
+                self.send_json({"error": "Invalid message format."}, status=400)
+                return
+            if msg["role"] not in ("system", "user", "assistant"):
+                self.send_json({"error": "Invalid message role."}, status=400)
+                return
+            if len(msg["content"]) > 10000:
+                self.send_json({"error": "Message too long."}, status=400)
+                return
 
         proxy_payload = json.dumps({
             "model": CHAT_MODEL,
@@ -105,11 +159,10 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             with urlopen(req, timeout=60) as resp:
                 resp_data = json.loads(resp.read().decode("utf-8"))
             self.send_json(resp_data)
-        except HTTPError as e:
-            err_body = e.read().decode("utf-8", errors="replace")[:200]
-            self.send_json({"error": f"Upstream API error ({e.code}): {err_body}"}, status=e.code)
-        except (URLError, TimeoutError) as e:
-            self.send_json({"error": f"Connection to AI service failed: {str(e)}"}, status=502)
+        except HTTPError:
+            self.send_json({"error": "AI service returned an error. Please try again."}, status=502)
+        except (URLError, TimeoutError):
+            self.send_json({"error": "AI service temporarily unavailable."}, status=502)
 
     def do_GET(self):
         parsed = urlparse(self.path)
@@ -192,7 +245,7 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         content = json.dumps(data, default=str).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json")
-        self.send_header("Access-Control-Allow-Origin", "*")
+        self._set_cors()
         self.send_header("Content-Length", len(content))
         self.end_headers()
         self.wfile.write(content)
