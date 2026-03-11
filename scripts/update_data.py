@@ -780,6 +780,260 @@ def merge_news_into_data(data, articles):
 
 
 # ===================================================================
+# 3b. LIVE SENTIMENT — Reddit + HuggingFace
+# ===================================================================
+
+# GPU search terms for Reddit/HF queries
+_GPU_SEARCH_TERMS = {
+    "H100-SXM": ["H100", "H100 SXM"],
+    "B300": ["B300", "Blackwell Ultra"],
+    "B200": ["B200", "Blackwell B200"],
+    "H200": ["H200"],
+    "A100-80GB": ["A100", "A100 80GB"],
+    "MI300X": ["MI300X", "MI300"],
+    "L40S": ["L40S", "L40"],
+    "RTX-4090": ["RTX 4090", "4090"],
+}
+
+_REDDIT_SUBREDDITS = ["MachineLearning", "LocalLLaMA", "deeplearning", "nvidia", "mlops"]
+
+
+def fetch_reddit_sentiment():
+    """Fetch GPU mention counts and sentiment from Reddit public JSON API."""
+    log_info("Fetching Reddit sentiment...")
+    results = {}
+    headers = {"User-Agent": "GPUDashboard/1.0 (market research)"}
+
+    for gpu_id, terms in _GPU_SEARCH_TERMS.items():
+        total_mentions = 0
+        total_score = 0
+        total_upvote_ratio = 0.0
+        post_count = 0
+        hot_topics = []
+
+        for term in terms:
+            for sub in _REDDIT_SUBREDDITS:
+                try:
+                    url = f"https://www.reddit.com/r/{sub}/search.json"
+                    params = {
+                        "q": term,
+                        "restrict_sr": "on",
+                        "sort": "new",
+                        "t": "month",
+                        "limit": "25",
+                    }
+                    status, body = http_get(url, headers=headers, params=params, timeout=15)
+                    if status != 200:
+                        continue
+                    data = json.loads(body)
+                    posts = data.get("data", {}).get("children", [])
+                    for post in posts:
+                        pd = post.get("data", {})
+                        total_mentions += 1
+                        total_score += pd.get("score", 0)
+                        total_upvote_ratio += pd.get("upvote_ratio", 0.5)
+                        post_count += 1
+                        # Capture top posts as hot topics
+                        if pd.get("score", 0) > 10 and len(hot_topics) < 5:
+                            hot_topics.append({
+                                "title": pd.get("title", "")[:100],
+                                "score": pd.get("score", 0),
+                                "subreddit": sub,
+                            })
+                    time.sleep(0.5)  # Rate limit: Reddit allows ~30 req/min unauthenticated
+                except Exception:
+                    continue
+
+        avg_upvote = total_upvote_ratio / post_count if post_count > 0 else 0.5
+        # Sort hot topics by score
+        hot_topics.sort(key=lambda x: x["score"], reverse=True)
+
+        results[gpu_id] = {
+            "mentions_30d": total_mentions,
+            "total_score": total_score,
+            "avg_upvote_ratio": round(avg_upvote, 3),
+            "reddit_sentiment": round(avg_upvote, 2),  # upvote ratio as sentiment proxy
+            "hot_topics": hot_topics[:3],
+        }
+
+    log_ok("Reddit Sentiment", f"{len(results)} GPUs, {sum(r['mentions_30d'] for r in results.values())} total mentions")
+    return results
+
+
+def fetch_huggingface_models():
+    """Fetch model counts per GPU from HuggingFace API."""
+    log_info("Fetching HuggingFace model counts...")
+    results = {}
+    # HF API: search models with GPU keywords in tags/description
+    hf_gpu_tags = {
+        "H100-SXM": "h100",
+        "B300": "b300",
+        "B200": "b200",
+        "H200": "h200",
+        "A100-80GB": "a100",
+        "MI300X": "mi300",
+        "L40S": "l40s",
+        "RTX-4090": "4090",
+    }
+
+    for gpu_id, tag in hf_gpu_tags.items():
+        try:
+            url = "https://huggingface.co/api/models"
+            params = {"search": tag, "limit": "1", "sort": "downloads"}
+            headers = {"User-Agent": "GPUDashboard/1.0"}
+            status, body = http_get(url, headers=headers, params=params, timeout=15)
+            if status != 200:
+                results[gpu_id] = {"model_count": 0}
+                continue
+
+            # The API doesn't return total count directly with search,
+            # so we fetch with a larger limit to estimate
+            params["limit"] = "200"
+            status2, body2 = http_get(url, headers=headers, params=params, timeout=20)
+            if status2 == 200:
+                models = json.loads(body2)
+                count = len(models) if isinstance(models, list) else 0
+                # If we got exactly 200, there are likely more
+                results[gpu_id] = {
+                    "model_count": count,
+                    "estimated": count >= 200,
+                }
+            else:
+                results[gpu_id] = {"model_count": 0}
+            time.sleep(0.3)
+        except Exception:
+            results[gpu_id] = {"model_count": 0}
+
+    log_ok("HuggingFace", f"{len(results)} GPUs queried")
+    return results
+
+
+def fetch_github_compat():
+    """Fetch GitHub repository/issue counts mentioning each GPU."""
+    log_info("Fetching GitHub compatibility scores...")
+    results = {}
+    headers = {
+        "User-Agent": "GPUDashboard/1.0",
+        "Accept": "application/vnd.github.v3+json",
+    }
+
+    for gpu_id, terms in _GPU_SEARCH_TERMS.items():
+        total_repos = 0
+        for term in terms[:1]:  # Use first term only to stay within rate limits
+            try:
+                url = "https://api.github.com/search/repositories"
+                params = {
+                    "q": f"{term} GPU language:python",
+                    "sort": "updated",
+                    "per_page": "1",
+                }
+                status, body = http_get(url, headers=headers, params=params, timeout=15)
+                if status == 200:
+                    data = json.loads(body)
+                    total_repos = data.get("total_count", 0)
+                time.sleep(2)  # GitHub rate limit: 10 req/min unauthenticated
+            except Exception:
+                continue
+
+        # Normalize to a 0-100 score (H100 ~95, newer GPUs lower)
+        # Scale: 1000+ repos = 95+, 100 = ~70, 10 = ~40, 0 = 20
+        if total_repos >= 1000:
+            score = min(98, 85 + int((total_repos - 1000) / 500))
+        elif total_repos >= 100:
+            score = 60 + int((total_repos - 100) / 30)
+        elif total_repos >= 10:
+            score = 30 + int((total_repos - 10) / 3)
+        else:
+            score = max(15, total_repos * 3)
+
+        results[gpu_id] = {
+            "repo_count": total_repos,
+            "github_compat_score": min(score, 99),
+        }
+
+    log_ok("GitHub Compat", f"{len(results)} GPUs scored")
+    return results
+
+
+def merge_sentiment_into_data(data, reddit, hf, github):
+    """Merge live sentiment data into the existing sentiment section."""
+    sentiment = data.get("sentiment", {})
+    now = datetime.now(timezone.utc).isoformat()
+
+    for gpu_id in _GPU_SEARCH_TERMS:
+        if gpu_id not in sentiment:
+            sentiment[gpu_id] = {
+                "score": 50, "ecosystem": "early", "adoption": "stable",
+                "community_pick": False, "pros": [], "cons": [],
+                "top_use_case": "",
+            }
+        s = sentiment[gpu_id]
+
+        # Store previous score for trend tracking
+        prev_score = s.get("score", 50)
+        history = s.get("score_history", [])
+
+        # Reddit data
+        rd = reddit.get(gpu_id, {})
+        if rd.get("mentions_30d", 0) > 0:
+            s["reddit_sentiment"] = rd["reddit_sentiment"]
+            s["mentions_30d"] = rd["mentions_30d"]
+            s["hot_topics"] = rd.get("hot_topics", [])
+
+        # HuggingFace data
+        hfd = hf.get(gpu_id, {})
+        if hfd.get("model_count", 0) > 0:
+            s["hf_models_trained"] = hfd["model_count"]
+            if hfd.get("estimated"):
+                s["hf_models_estimated"] = True
+
+        # GitHub data
+        ghd = github.get(gpu_id, {})
+        if ghd.get("repo_count", 0) > 0:
+            s["github_compat_score"] = ghd["github_compat_score"]
+            s["github_repos"] = ghd["repo_count"]
+
+        # Recalculate composite score:
+        # 35% reddit sentiment + 30% github compat + 20% HF activity + 15% mentions volume
+        reddit_score = s.get("reddit_sentiment", 0.5) * 100
+        github_score = s.get("github_compat_score", 50)
+        mentions = s.get("mentions_30d", 0)
+        mention_score = min(100, mentions / 300 * 100)  # 300+ mentions = 100
+        hf_count = s.get("hf_models_trained", 0)
+        hf_score = min(100, hf_count / 400 * 100)  # 400+ models = 100
+
+        new_score = int(reddit_score * 0.35 + github_score * 0.30 + hf_score * 0.20 + mention_score * 0.15)
+        s["score"] = max(10, min(99, new_score))
+
+        # Update adoption trend based on score change
+        score_delta = s["score"] - prev_score
+        if score_delta > 3:
+            s["adoption"] = "rising"
+        elif score_delta < -3:
+            s["adoption"] = "declining"
+        else:
+            s["adoption"] = "stable"
+
+        # Append to score history (keep last 8 weeks)
+        history.append({"date": now[:10], "score": s["score"]})
+        s["score_history"] = history[-8:]
+
+        s["last_updated"] = now
+
+        # Update community_pick: top 2 scores get the badge
+        sentiment[gpu_id] = s
+
+    # Set community_pick for top 2
+    sorted_gpus = sorted(sentiment.items(), key=lambda x: x[1].get("score", 0), reverse=True)
+    for i, (gid, gs) in enumerate(sorted_gpus):
+        gs["community_pick"] = i < 2
+
+    data["sentiment"] = sentiment
+    log_ok("Sentiment Merge", f"{len(sentiment)} GPUs updated")
+    return data
+
+
+# ===================================================================
 # 4. AI ANALYSIS UPDATER
 # ===================================================================
 
@@ -914,7 +1168,7 @@ def main():
     data["last_updated"] = datetime.now(timezone.utc).isoformat()
 
     # ---- 1. GPU Cloud Pricing ----
-    print("[1/5] GPU Cloud Pricing")
+    print("[1/10] GPU Cloud Pricing")
     print("-" * 40)
 
     vastai_prices = None
@@ -933,7 +1187,7 @@ def main():
     print()
 
     # ---- 2. Recalculate derived data (matrix, historical, spot) ----
-    print("[2/8] Recalculate Historical")
+    print("[2/10] Recalculate Historical")
     print("-" * 40)
     try:
         data = update_historical(data)
@@ -941,7 +1195,7 @@ def main():
         log_fail("Historical", str(exc))
     print()
 
-    print("[3/8] Recalculate Spot")
+    print("[3/10] Recalculate Spot")
     print("-" * 40)
     try:
         data = update_spot(data)
@@ -949,7 +1203,7 @@ def main():
         log_fail("Spot", str(exc))
     print()
 
-    print("[4/8] Recalculate Matrix")
+    print("[4/10] Recalculate Matrix")
     print("-" * 40)
     try:
         data = recalculate_matrix(data)
@@ -958,7 +1212,7 @@ def main():
     print()
 
     # ---- 5. Stock Prices ----
-    print("[5/8] Stock Prices")
+    print("[5/10] Stock Prices")
     print("-" * 40)
 
     stocks = []
@@ -973,7 +1227,7 @@ def main():
     print()
 
     # ---- 6. News ----
-    print("[6/8] News Headlines")
+    print("[6/10] News Headlines")
     print("-" * 40)
 
     try:
@@ -983,8 +1237,38 @@ def main():
         log_fail("Google News RSS", str(exc))
     print()
 
-    # ---- 7. Price Forecasts ----
-    print("[7/8] Price Forecasts")
+    # ---- 7. Community Sentiment (Reddit + HuggingFace + GitHub) ----
+    print("[7/10] Reddit Sentiment")
+    print("-" * 40)
+
+    reddit_data = {}
+    try:
+        reddit_data = fetch_reddit_sentiment()
+    except Exception as exc:
+        log_fail("Reddit Sentiment", str(exc))
+    print()
+
+    print("[8/10] HuggingFace + GitHub")
+    print("-" * 40)
+
+    hf_data = {}
+    github_data = {}
+    try:
+        hf_data = fetch_huggingface_models()
+    except Exception as exc:
+        log_fail("HuggingFace", str(exc))
+
+    try:
+        github_data = fetch_github_compat()
+    except Exception as exc:
+        log_fail("GitHub Compat", str(exc))
+
+    if reddit_data or hf_data or github_data:
+        data = merge_sentiment_into_data(data, reddit_data, hf_data, github_data)
+    print()
+
+    # ---- 9. Price Forecasts ----
+    print("[9/10] Price Forecasts")
     print("-" * 40)
 
     try:
@@ -998,8 +1282,8 @@ def main():
         log_fail("Forecasts", str(exc))
     print()
 
-    # ---- 8. AI Analysis ----
-    print("[8/8] AI Analysis")
+    # ---- 10. AI Analysis ----
+    print("[10/10] AI Analysis")
     print("-" * 40)
 
     existing_ai = update_ai_analysis(data, existing_ai)

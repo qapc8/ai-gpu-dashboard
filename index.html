@@ -724,6 +724,26 @@ body {
 .sent-con { font-size: 9px; padding: 2px 6px; border-radius: 3px; background: var(--red-dim); color: var(--red); font-weight: 600; }
 .sent-pick { background: var(--amber-dim); color: var(--amber); }
 .sent-use { font-size: 10px; color: var(--text-3); margin-top: 6px; font-style: italic; }
+.sent-sparkline {
+  display: inline-flex; align-items: flex-end; gap: 2px; height: 20px; margin-left: 8px; vertical-align: middle;
+}
+.sent-sparkline-bar {
+  width: 4px; border-radius: 1px; background: var(--cyan); opacity: 0.5; transition: opacity 0.2s;
+}
+.sent-sparkline-bar:last-child { opacity: 1; }
+.sent-hot-topics { margin-top: 8px; border-top: 1px solid var(--border-0); padding-top: 6px; }
+.sent-hot-topic {
+  font-size: 10px; color: var(--text-2); line-height: 1.5; display: flex; gap: 6px; align-items: baseline;
+}
+.sent-hot-topic-score {
+  font-family: var(--mono); font-size: 9px; color: var(--cyan); font-weight: 700; min-width: 28px;
+}
+.sent-hot-topic-sub {
+  font-size: 8px; color: var(--text-3); font-family: var(--mono);
+}
+.sent-github-repos {
+  font-size: 9px; color: var(--text-3); font-family: var(--mono); margin-top: 2px;
+}
 
 /* ─── DATA AUDIT ─── */
 .da-section { margin-bottom: 10px; }
@@ -1140,6 +1160,15 @@ loadExternalData();
       <span class="dim" style="font-size:10px;font-family:var(--mono);">Reddit · GitHub · HuggingFace · 30-day signals</span>
     </div>
     <div class="card-bd" id="sentimentPanel"></div>
+    <div class="ai-commentary" id="sentimentAiCommentary" style="padding:0 16px 14px;">
+      <div class="ai-commentary-header">
+        <span class="ai-commentary-icon">&#9733;</span>
+        <span class="ai-commentary-label">AI Sentiment Analysis</span>
+      </div>
+      <div class="ai-commentary-body" id="sentimentAiCommentaryBody">
+        <div class="ai-commentary-loading"><span class="ai-commentary-dot"></span> Analyzing community signals...</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -3501,13 +3530,35 @@ function renderSentimentPanel() {
     return `<span class="tag" style="background:${colors[e]||'var(--text-3)'}20;color:${colors[e]||'var(--text-3)'};font-size:9px;">${e.toUpperCase()}</span>`;
   };
 
+  // Sparkline helper: render mini bar chart from score_history
+  const sparkline = (history) => {
+    if (!history || history.length < 2) return '';
+    const maxScore = Math.max(...history.map(h => h.score));
+    const minScore = Math.min(...history.map(h => h.score));
+    const range = Math.max(maxScore - minScore, 5);
+    return `<span class="sent-sparkline">${history.map(h => {
+      const pct = ((h.score - minScore) / range) * 100;
+      return `<span class="sent-sparkline-bar" style="height:${Math.max(15, pct)}%;"></span>`;
+    }).join('')}</span>`;
+  };
+
   let html = '<div class="sent-grid">';
   entries.forEach(([gpu, s]) => {
     const sc = scoreColor(s.score);
+    const hotTopics = (s.hot_topics || []).slice(0, 2);
+    const hotTopicsHtml = hotTopics.length ? `<div class="sent-hot-topics">
+      ${hotTopics.map(t => `<div class="sent-hot-topic">
+        <span class="sent-hot-topic-score">+${t.score}</span>
+        <span>${t.title}</span>
+        <span class="sent-hot-topic-sub">r/${t.subreddit}</span>
+      </div>`).join('')}
+    </div>` : '';
+
     html += `<div class="sent-card">
       <div class="sent-top">
         <div>
           <span class="sent-gpu">${gpu}</span>
+          ${sparkline(s.score_history)}
           ${s.community_pick ? '<span class="tag sent-pick" style="margin-left:6px;font-size:9px;">COMMUNITY PICK</span>' : ''}
         </div>
         <div class="sent-badges">
@@ -3521,19 +3572,54 @@ function renderSentimentPanel() {
       </div>
       <div class="sent-metrics">
         <span class="sent-metric">Reddit <b>${(s.reddit_sentiment*100).toFixed(0)}%</b> pos</span>
-        <span class="sent-metric">GitHub <b>${s.github_compat_score}/100</b></span>
-        <span class="sent-metric">HF <b>${s.hf_models_trained.toLocaleString()}</b> models</span>
-        <span class="sent-metric">Mentions <b>${(s.mentions_30d/1000).toFixed(1)}K</b>/30d</span>
+        <span class="sent-metric">GitHub <b>${s.github_compat_score}/100</b>${s.github_repos ? ' <span class="sent-github-repos">('+s.github_repos.toLocaleString()+' repos)</span>' : ''}</span>
+        <span class="sent-metric">HF <b>${(s.hf_models_trained||0).toLocaleString()}</b> models</span>
+        <span class="sent-metric">Mentions <b>${((s.mentions_30d||0)/1000).toFixed(1)}K</b>/30d</span>
       </div>
       <div class="sent-tags">
-        ${s.pros.slice(0,2).map(p => `<span class="sent-pro">+ ${p}</span>`).join('')}
-        ${s.cons.slice(0,1).map(c => `<span class="sent-con">- ${c}</span>`).join('')}
+        ${(s.pros||[]).slice(0,2).map(p => `<span class="sent-pro">+ ${p}</span>`).join('')}
+        ${(s.cons||[]).slice(0,1).map(c => `<span class="sent-con">- ${c}</span>`).join('')}
       </div>
-      <div class="sent-use">${s.top_use_case}</div>
+      <div class="sent-use">${s.top_use_case||''}</div>
+      ${hotTopicsHtml}
     </div>`;
   });
   html += '</div>';
   el.innerHTML = html;
+  fetchSentimentAiCommentary();
+}
+
+// ── AI SENTIMENT COMMENTARY ──
+let _sentimentCommentaryCache = null;
+async function fetchSentimentAiCommentary() {
+  const el = document.getElementById('sentimentAiCommentaryBody');
+  if(!el) return;
+  if(_sentimentCommentaryCache) { el.innerHTML = _sentimentCommentaryCache; return; }
+
+  const sent = DATA.sentiment||{};
+  let sentSummary = '';
+  Object.entries(sent).sort((a,b) => b[1].score - a[1].score).forEach(([gpu, s]) => {
+    sentSummary += `${gpu}: score=${s.score}, reddit=${(s.reddit_sentiment*100).toFixed(0)}% positive, github=${s.github_compat_score}/100, HF models=${s.hf_models_trained||0}, mentions=${s.mentions_30d||0}/30d, ecosystem=${s.ecosystem}, adoption=${s.adoption}`;
+    if(s.hot_topics?.length) sentSummary += `, trending: "${s.hot_topics[0].title}"`;
+    sentSummary += '\n';
+  });
+
+  const messages = [
+    { role: 'system', content: `You are HyperFusion AI, analyzing developer and MLOps community sentiment for GPU hardware. Write a brief insightful commentary (120 words max) on community sentiment trends. Compare GPU popularity, highlight which GPUs are gaining or losing developer mindshare and why (new framework support, price changes, new releases, ecosystem maturity). Use bold for GPU names. Start directly with the analysis — no intro. Flowing paragraph style, no bullet points.` },
+    { role: 'user', content: `Current developer & MLOps sentiment data:\n${sentSummary}\nAnalyze the community sentiment dynamics.` }
+  ];
+
+  try {
+    const resp = await _chatRequest(messages);
+    if(!resp.ok) throw new Error('API error');
+    const data = await resp.json();
+    const text = data.choices?.[0]?.message?.content || 'No analysis available.';
+    const html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+    _sentimentCommentaryCache = html;
+    el.innerHTML = html;
+  } catch(e) {
+    el.innerHTML = '<span class="ai-commentary-error">Unable to load AI analysis.</span>';
+  }
 }
 
 // ════════════════════════════════════════════════════════════════
