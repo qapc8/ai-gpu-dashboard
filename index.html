@@ -2515,28 +2515,71 @@ function renderDecayChart(){
 
 function renderMarketSupplyChart() {
   const mi=DATA.indicators;
-  const ship=mi.data_center_gpu_shipments_k, amd=mi.amd_gpu_market_share_pct;
+  const ship=mi.data_center_gpu_shipments_k, amd=mi.amd_gpu_market_share_pct, lt=mi.flagship_lead_time_weeks;
   if(!ship) return;
   const qMap={'Q1':'01','Q2':'04','Q3':'07','Q4':'10'};
   const sLbl=Object.keys(ship).sort();
+  const labels=sLbl.map(q=>q.replace('-',' '));
+  const totalShip=sLbl.map(l=>ship[l]);
+
+  // Interpolate AMD share % to each quarter
   const monthLabels=sLbl.map(q=>{const[y,qn]=q.split('-');return y+'-'+qMap[qn];});
-  const amdVals=monthLabels.map(m=>{
-    if(!amd) return null;
+  const amdPcts=monthLabels.map(m=>{
+    if(!amd) return 0;
     const keys=Object.keys(amd).sort();
     let best=null,bestDist=Infinity;
     keys.forEach(k=>{const d=Math.abs(new Date(k+'-01')-new Date(m+'-01'));if(d<bestDist){bestDist=d;best=k;}});
-    return best?amd[best]:null;
+    return best?amd[best]:0;
   });
+
+  // Split into NVIDIA vs AMD stacked bars
+  const amdShip=totalShip.map((t,i)=>Math.round(t*amdPcts[i]/100));
+  const nvidiaShip=totalShip.map((t,i)=>t-amdShip[i]);
+
+  // QoQ growth %
+  const qoq=totalShip.map((v,i)=>i===0?null:Math.round((v/totalShip[i-1]-1)*1000)/10);
+
+  // Interpolate lead times to each quarter
+  const ltVals=monthLabels.map(m=>{
+    if(!lt) return null;
+    const keys=Object.keys(lt).sort();
+    let best=null,bestDist=Infinity;
+    keys.forEach(k=>{const d=Math.abs(new Date(k+'-01')-new Date(m+'-01'));if(d<bestDist){bestDist=d;best=k;}});
+    return best?lt[best]:null;
+  });
+
   if(charts.sc) charts.sc.destroy();
   charts.sc = new Chart(document.getElementById('chartMarketSupply'),{type:'bar',
-    data:{labels:monthLabels,datasets:[
-      {label:'GPU Shipments (K)',data:sLbl.map(l=>ship[l]),backgroundColor:C.cyan+'60',borderColor:C.cyan,borderWidth:1,yAxisID:'y',order:2},
-      {label:'AMD Share %',data:amdVals,type:'line',borderColor:C.red,backgroundColor:C.red+'18',fill:false,tension:0.35,borderWidth:2,pointRadius:3,yAxisID:'y1',order:1}
+    data:{labels:labels,datasets:[
+      {label:'NVIDIA',data:nvidiaShip,backgroundColor:C.green+'70',borderColor:C.green,borderWidth:1,yAxisID:'y',order:3,stack:'ship'},
+      {label:'AMD',data:amdShip,backgroundColor:C.red+'70',borderColor:C.red,borderWidth:1,yAxisID:'y',order:3,stack:'ship'},
+      {label:'Lead Time (wks)',data:ltVals,type:'line',borderColor:C.amber,backgroundColor:C.amber+'15',fill:true,tension:0.35,borderWidth:2,pointRadius:3,pointBackgroundColor:C.amber,yAxisID:'y1',order:1}
     ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10}}}},
-      scales:{y:{beginAtZero:true,title:{display:true,text:'Shipments (K)'},grid:{color:'rgba(26,34,51,0.4)'}},
-        y1:{position:'right',max:Math.max(15,Math.ceil((Math.max(...amdVals.filter(v=>v!=null))||10)*1.5)),title:{display:true,text:'AMD Share %'},grid:{display:false}},
-        x:{grid:{display:false}}}}
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'top',labels:{boxWidth:10,font:{size:10}}},
+        tooltip:{
+          callbacks:{
+            afterBody:function(items){
+              var idx=items[0].dataIndex;
+              var pct=amdPcts[idx];
+              var growth=qoq[idx];
+              var lines=[];
+              lines.push('Total: '+totalShip[idx]+'K units');
+              lines.push('AMD share: '+pct+'%');
+              if(growth!==null) lines.push('QoQ growth: '+(growth>0?'+':'')+growth+'%');
+              return lines;
+            }
+          }
+        }
+      },
+      scales:{
+        y:{stacked:true,beginAtZero:true,title:{display:true,text:'Shipments (K units)',color:'rgba(255,255,255,0.4)',font:{size:10}},grid:{color:'rgba(26,34,51,0.4)'}},
+        y1:{position:'right',title:{display:true,text:'Lead Time (weeks)',color:C.amber,font:{size:10}},grid:{display:false},
+          ticks:{color:C.amber+'99'}},
+        x:{stacked:true,grid:{display:false},ticks:{font:{size:9}}}
+      }
+    }
   });
 }
 
