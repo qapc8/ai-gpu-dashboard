@@ -1024,9 +1024,6 @@ loadExternalData();
     <div class="carousel-dots" id="carouselDots"></div>
   </div>
 
-  <!-- KPI Strip -->
-  <div class="kpi-strip mb" id="overviewKpis"></div>
-
   <!-- Best Deals Table + Price Trends -->
   <div class="grid g-6-4 mb">
     <div class="card">
@@ -1034,23 +1031,8 @@ loadExternalData();
       <div class="card-bd-flush"><table class="dt" id="overviewTopTable"></table></div>
     </div>
     <div class="card">
-      <div class="card-hd"><span class="card-hd-title">GPU Price Trends — 12mo</span></div>
+      <div class="card-hd"><span class="card-hd-title">GPU Price Change — % per Month</span></div>
       <div class="card-bd"><div class="chart-wrap" style="height:280px;"><canvas id="chartOverviewTrends"></canvas></div></div>
-    </div>
-  </div>
-
-  <!-- Workload Matcher + Spot Savings -->
-  <div class="grid g-6-4 mb">
-    <div class="card">
-      <div class="card-hd">
-        <span class="card-hd-title">Match Your Workload</span>
-        <span class="card-hd-badge" style="background:var(--cyan-dim);color:var(--cyan);">QUICK PICK</span>
-      </div>
-      <div class="card-bd" id="workloadMatcher"></div>
-    </div>
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Spot vs Reserved Savings</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:250px;"><canvas id="chartSpotSavings"></canvas></div></div>
     </div>
   </div>
 
@@ -1674,45 +1656,11 @@ function renderNewsHeadline() {
 // OVERVIEW
 // ════════════════════════════════════════════════════════════════
 function renderOverview() {
-  const m = DATA.matrix, spot = DATA.spot||{}, hist = DATA.historical||{};
+  const m = DATA.matrix;
   if (!m || !m.length) return;
-
-  // KPI Strip
-  const kpi = (cls, label, val, sub) => `<div class="kpi kpi-${cls}"><div class="kpi-label">${label}</div><div class="kpi-value">${val}</div><div class="kpi-sub">${sub}</div></div>`;
-
-  const h100 = m.find(r=>r.gpu_id==='H100-SXM');
-  const bestVal = m.reduce((a,b) => a.flops_per_dollar > b.flops_per_dollar ? a : b);
-
-  // Biggest price drop (30d) — compare last 2 months
-  let bigDrop = {name:'--', pct:0};
-  m.forEach(r => {
-    const h = hist[r.gpu_id]||{};
-    const periods = Object.keys(h).sort();
-    if(periods.length >= 2) {
-      const prev = h[periods[periods.length-2]]?.avg;
-      const cur = h[periods[periods.length-1]]?.avg;
-      if(prev && cur) {
-        const pct = ((cur-prev)/prev*100);
-        if(pct < bigDrop.pct) bigDrop = {name:r.name, pct};
-      }
-    }
-  });
-
-  // Average spot savings
-  const spotVals = Object.values(spot);
-  const avgSav = spotVals.length ? (spotVals.reduce((s,v)=>s+(v.res1_savings_pct||0),0)/spotVals.length).toFixed(0) : '--';
-
-  document.getElementById('overviewKpis').innerHTML =
-    kpi('cyan', 'Cheapest H100', '$'+(h100?.cheapest_price?.toFixed(2)||'--')+'/hr', `${h100?.cheapest_provider||'--'} · avg $${h100?.avg_price?.toFixed(2)||'--'}`) +
-    kpi('purple', 'Best Value GPU', bestVal.flops_per_dollar+' TFLOPS/$', `${bestVal.name} @ $${bestVal.cheapest_price.toFixed(2)}/hr`) +
-    kpi('green', 'Biggest Price Drop', bigDrop.pct!==0 ? bigDrop.pct.toFixed(1)+'%' : '--', bigDrop.name + ' · 30-day change') +
-    kpi('amber', 'Avg Reserved Savings', avgSav+'%', '1yr reserved vs on-demand across all GPUs');
-
   renderGpuCarousel();
   renderOverviewTrendChart();
   renderOverviewTable();
-  renderWorkloadMatcher();
-  renderSpotSavingsChart();
 }
 
 function renderOverviewTrendChart() {
@@ -1720,18 +1668,33 @@ function renderOverviewTrendChart() {
   const gpus = ['B300','B200','GB200','H200','H100-SXM','A100-80GB','MI300X'];
   const ap = new Set();
   gpus.forEach(g => { if(hist[g]) Object.keys(hist[g]).forEach(p => ap.add(p)); });
-  const periods = [...ap].sort().slice(-12);
-  const ds = gpus.map((g,i) => ({
-    label:g, data:periods.map(p => hist[g]?.[p]?.avg||null),
-    borderColor:CL[i%CL.length], backgroundColor:CL[i%CL.length]+'18', tension:0.35,
-    pointRadius:2, borderWidth:2, fill:false, spanGaps:true,
-  }));
+  const periods = [...ap].sort().slice(-13); // 13 to get 12 month-over-month changes
+  const pctLabels = periods.slice(1); // labels for the MoM changes
+
+  const ds = gpus.map((g,i) => {
+    const pctData = [];
+    for(let j=1; j<periods.length; j++) {
+      const prev = hist[g]?.[periods[j-1]]?.avg;
+      const cur = hist[g]?.[periods[j]]?.avg;
+      pctData.push(prev && cur ? +((cur-prev)/prev*100).toFixed(2) : null);
+    }
+    return {
+      label:g, data:pctData,
+      borderColor:CL[i%CL.length], backgroundColor:CL[i%CL.length]+'18', tension:0.35,
+      pointRadius:2, borderWidth:2, fill:false, spanGaps:true,
+    };
+  });
   if(charts.ot) charts.ot.destroy();
   charts.ot = new Chart(document.getElementById('chartOverviewTrends'),{
-    type:'line', data:{labels:periods, datasets:ds},
+    type:'line', data:{labels:pctLabels, datasets:ds},
     options:{responsive:true, maintainAspectRatio:false,
-      plugins:{legend:{position:'top'}},
-      scales:{y:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}
+      plugins:{legend:{position:'top'},
+        tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+(ctx.parsed.y>0?'+':'')+ctx.parsed.y+'%'}}},
+      scales:{
+        y:{title:{display:true,text:'% Change MoM'},grid:{color:'rgba(255,255,255,0.04)'},
+          ticks:{callback:v=>(v>0?'+':'')+v+'%'}},
+        x:{grid:{display:false}}
+      }
     }
   });
 }
