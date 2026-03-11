@@ -1024,6 +1024,9 @@ loadExternalData();
     <div class="carousel-dots" id="carouselDots"></div>
   </div>
 
+  <!-- KPI Strip -->
+  <div class="kpi-strip mb" id="overviewKpis"></div>
+
   <!-- Best Deals Table + Price Trends -->
   <div class="grid g-6-4 mb">
     <div class="card">
@@ -1671,8 +1674,39 @@ function renderNewsHeadline() {
 // OVERVIEW
 // ════════════════════════════════════════════════════════════════
 function renderOverview() {
-  const m = DATA.matrix, spot = DATA.spot;
+  const m = DATA.matrix, spot = DATA.spot||{}, hist = DATA.historical||{};
   if (!m || !m.length) return;
+
+  // KPI Strip
+  const kpi = (cls, label, val, sub) => `<div class="kpi kpi-${cls}"><div class="kpi-label">${label}</div><div class="kpi-value">${val}</div><div class="kpi-sub">${sub}</div></div>`;
+
+  const h100 = m.find(r=>r.gpu_id==='H100-SXM');
+  const bestVal = m.reduce((a,b) => a.flops_per_dollar > b.flops_per_dollar ? a : b);
+
+  // Biggest price drop (30d) — compare last 2 months
+  let bigDrop = {name:'--', pct:0};
+  m.forEach(r => {
+    const h = hist[r.gpu_id]||{};
+    const periods = Object.keys(h).sort();
+    if(periods.length >= 2) {
+      const prev = h[periods[periods.length-2]]?.avg;
+      const cur = h[periods[periods.length-1]]?.avg;
+      if(prev && cur) {
+        const pct = ((cur-prev)/prev*100);
+        if(pct < bigDrop.pct) bigDrop = {name:r.name, pct};
+      }
+    }
+  });
+
+  // Average spot savings
+  const spotVals = Object.values(spot);
+  const avgSav = spotVals.length ? (spotVals.reduce((s,v)=>s+(v.res1_savings_pct||0),0)/spotVals.length).toFixed(0) : '--';
+
+  document.getElementById('overviewKpis').innerHTML =
+    kpi('cyan', 'Cheapest H100', '$'+(h100?.cheapest_price?.toFixed(2)||'--')+'/hr', `${h100?.cheapest_provider||'--'} · avg $${h100?.avg_price?.toFixed(2)||'--'}`) +
+    kpi('purple', 'Best Value GPU', bestVal.flops_per_dollar+' TFLOPS/$', `${bestVal.name} @ $${bestVal.cheapest_price.toFixed(2)}/hr`) +
+    kpi('green', 'Biggest Price Drop', bigDrop.pct!==0 ? bigDrop.pct.toFixed(1)+'%' : '--', bigDrop.name + ' · 30-day change') +
+    kpi('amber', 'Avg Reserved Savings', avgSav+'%', '1yr reserved vs on-demand across all GPUs');
 
   renderGpuCarousel();
   renderOverviewTrendChart();
@@ -1683,7 +1717,7 @@ function renderOverview() {
 
 function renderOverviewTrendChart() {
   const hist = DATA.historical;
-  const gpus = ['B300','B200','H200','H100-SXM','A100-80GB','MI300X','RTX-4090'];
+  const gpus = ['B300','B200','GB200','H200','H100-SXM','A100-80GB','MI300X'];
   const ap = new Set();
   gpus.forEach(g => { if(hist[g]) Object.keys(hist[g]).forEach(p => ap.add(p)); });
   const periods = [...ap].sort().slice(-12);
@@ -1706,8 +1740,15 @@ function renderOverviewTrendChart() {
 let _carouselIdx = 0, _carouselTimer = null;
 function renderGpuCarousel() {
   const m = DATA.matrix, spot = DATA.spot||{}, hist = DATA.historical||{}, fc = DATA.forecasts||{}, specs = DATA.specs||{};
-  // Top 5 by best value (cheapest price, weighted by TFLOPS/$)
-  const top5 = [...m].sort((a,b) => b.flops_per_dollar - a.flops_per_dollar).slice(0, 5);
+  // Top 5 by TFLOPS/$, excluding RTX consumer GPUs, ensuring B200 is included
+  const excluded = new Set(['RTX-4090','RTX-4080','RTX-3090','RTX-5090']);
+  const filtered = m.filter(r => !excluded.has(r.gpu_id));
+  let top5 = [...filtered].sort((a,b) => b.flops_per_dollar - a.flops_per_dollar).slice(0, 5);
+  // Ensure B200 is in the list
+  if(!top5.find(r=>r.gpu_id==='B200')) {
+    const b200 = filtered.find(r=>r.gpu_id==='B200');
+    if(b200) { top5.pop(); top5.push(b200); }
+  }
 
   const track = document.getElementById('carouselTrack');
   const dots = document.getElementById('carouselDots');
