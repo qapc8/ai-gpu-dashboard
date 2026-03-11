@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
 :root {
@@ -662,6 +663,17 @@ body {
   transition: border-color 0.15s;
 }
 .ctrl-select:focus { border-color: var(--blue); }
+.trend-gpu-sel {
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1.5px solid var(--cyan);
+  color: var(--cyan);
+  background: rgba(0,247,255,0.06);
+  min-width: 180px;
+  letter-spacing: 0.3px;
+}
+.trend-gpu-sel:focus { border-color: var(--magenta); box-shadow: 0 0 8px rgba(247,38,255,0.25); }
 .ctrl-input {
   padding: 6px 10px;
   background: var(--bg-3);
@@ -1207,15 +1219,22 @@ loadExternalData();
 <!-- ── TRENDS ── -->
 <div class="tab-panel" id="tab-trends">
   <div class="card mb">
-    <div class="card-hd">
-      <span class="card-hd-title">Historical Prices + Forecast</span>
-      <select class="ctrl-select" id="trendGpuSelect" onchange="updateTrendChart()"></select>
+    <div class="card-hd" style="flex-direction:row;gap:14px;justify-content:flex-start;">
+      <select class="ctrl-select trend-gpu-sel" id="trendGpuSelect" onchange="updateTrendChart()"></select>
+      <span class="card-hd-title" style="opacity:0.6;font-size:11px;">Historical Prices + Forecast</span>
     </div>
     <div class="card-bd"><div class="chart-wrap" style="height:360px;"><canvas id="chartTrends"></canvas></div></div>
   </div>
   <div class="grid g-2 mb">
     <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Price Decay Since Launch</span></div>
+      <div class="card-hd">
+        <span class="card-hd-title">Price Decay Since Launch</span>
+        <select class="ctrl-select" id="decayFilterSelect" onchange="renderDecayChart()" style="font-size:10px;">
+          <option value="all">All GPUs</option>
+          <option value="top3">Top 3 Decayed</option>
+          <option value="bottom3">Most Stable</option>
+        </select>
+      </div>
       <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartDecay"></canvas></div></div>
     </div>
     <div class="card">
@@ -2283,21 +2302,51 @@ function updateTrendChart() {
 
 function renderDecayChart() {
   const hist=DATA.historical, gpus=Object.keys(hist);
-  const ds=[];
+  const filter=(document.getElementById('decayFilterSelect')||{}).value||'all';
+  // Build all series with final decay value
+  let all=[];
   gpus.forEach((g,i)=>{
     const periods=Object.keys(hist[g]).sort();
     if(periods.length<6) return;
     const base=hist[g][periods[0]].avg;
     if(!base) return;
-    const pts=periods.map((p,j)=>({x:j,y:(hist[g][p].avg/base)*100}));
-    ds.push({label:g,data:pts,borderColor:CL[i%CL.length],tension:0.35,pointRadius:1.5,borderWidth:2,fill:false});
+    const pts=periods.map((p,j)=>({x:j,y:+((hist[g][p].avg/base)*100).toFixed(1)}));
+    const finalPct=pts[pts.length-1].y;
+    all.push({gpu:g,pts,finalPct,idx:i});
+  });
+  // Apply filter
+  if(filter==='top3') { all.sort((a,b)=>a.finalPct-b.finalPct); all=all.slice(0,3); }
+  else if(filter==='bottom3') { all.sort((a,b)=>b.finalPct-a.finalPct); all=all.slice(0,3); }
+  const ds=all.map(s=>{
+    const c=CL[s.idx%CL.length];
+    return {label:`${s.gpu} (${s.finalPct}%)`,data:s.pts,borderColor:c,backgroundColor:c+'18',tension:0.35,pointRadius:2,borderWidth:2.5,fill:true,pointHoverRadius:5};
   });
   if(charts.dc) charts.dc.destroy();
   charts.dc = new Chart(document.getElementById('chartDecay'),{type:'line',
     data:{datasets:ds},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10}}}},
-      scales:{x:{type:'linear',title:{display:true,text:'Months Since Launch'},ticks:{stepSize:6},grid:{display:false}},
-        y:{title:{display:true,text:'% of Launch Price'},grid:{color:'rgba(26,34,51,0.4)'}}}}
+    options:{responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{position:'top',labels:{boxWidth:12,font:{size:10},usePointStyle:true,pointStyle:'circle'}},
+        tooltip:{
+          callbacks:{
+            title:items=>`Month ${items[0].parsed.x}`,
+            label:item=>`${item.dataset.label.split(' (')[0]}: ${item.parsed.y}% of launch price`
+          }
+        },
+        annotation:{
+          annotations:{
+            baseline:{type:'line',yMin:100,yMax:100,borderColor:'rgba(255,255,255,0.25)',borderWidth:1.5,borderDash:[6,4],
+              label:{display:true,content:'Launch Price',position:'start',color:'rgba(255,255,255,0.4)',font:{size:9}}}
+          }
+        }
+      },
+      scales:{
+        x:{type:'linear',title:{display:true,text:'Months Since Launch',color:'rgba(255,255,255,0.5)'},ticks:{stepSize:6},grid:{display:false}},
+        y:{title:{display:true,text:'% of Launch Price',color:'rgba(255,255,255,0.5)'},grid:{color:'rgba(26,34,51,0.4)'},
+          suggestedMin:0,suggestedMax:110}
+      }
+    }
   });
 }
 
