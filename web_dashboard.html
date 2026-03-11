@@ -1608,7 +1608,7 @@ function renderOverviewTable() {
   let h = '<thead><tr><th>GPU</th><th>Vendor</th><th class="r">VRAM</th><th class="r">Best $/hr</th><th>Provider</th><th>Type</th><th class="r">Spot</th><th class="r">Spread</th><th class="r">MoM</th><th class="r">TFLOPS/$</th><th class="r">VRAM/$</th></tr></thead><tbody>';
   m.forEach(r => {
     const vc = r.vendor==='AMD' ? 'tag-vendor-amd' : 'tag-vendor-nvidia';
-    const mc = r.monthly_change_pct<0 ? 'c-green' : 'c-red';
+    const mc = r.monthly_change_pct>=0 ? 'c-green' : 'c-red';
     const sp = spot?.[r.gpu_id];
     const spotPrice = sp ? '$'+sp.last_trade.toFixed(2) : '—';
     const spread = sp ? sp.spread_pct+'%' : '—';
@@ -1631,7 +1631,7 @@ function renderPriceMatrix() {
   let h = `<thead><tr><th>GPU</th><th>Vendor</th><th>Arch</th><th class="r">VRAM</th><th>Tier</th><th class="r">Best $/hr</th><th>Provider</th><th>Type</th><th class="r">Avg</th><th class="r">Max</th><th class="r">#Prov</th><th class="r">Spread</th><th class="r">MoM</th><th class="r">TFLOPS/$</th><th class="r">VRAM/$</th></tr></thead><tbody>`;
   m.forEach(r => {
     const vc = r.vendor==='AMD'?'tag-vendor-amd':'tag-vendor-nvidia';
-    const mc = r.monthly_change_pct<0?'c-green':'c-red';
+    const mc = r.monthly_change_pct>=0?'c-green':'c-red';
     const isMkt = r.cheapest_provider_type === 'marketplace';
     const typeBadge = isMkt
       ? '<span class="tag" style="background:var(--amber-dim);color:var(--amber);font-size:9px;">MKT</span>'

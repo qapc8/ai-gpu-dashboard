@@ -1990,7 +1990,7 @@ function renderGpuCarousel() {
     const prev = periods.length>=2 ? h[periods[periods.length-2]]?.avg : null;
     const cur = periods.length>=1 ? h[periods[periods.length-1]]?.avg : gpu.avg_price;
     const pctChg = prev ? ((cur-prev)/prev*100).toFixed(1) : null;
-    const pctCls = pctChg && pctChg < 0 ? 'up' : 'dn';
+    const pctCls = pctChg && pctChg >= 0 ? 'up' : 'dn';
     const regime = f.regime || 'stable';
     const regimeLabel = {declining:'Prices Falling',stable:'Prices Stable',recovering:'Prices Rising',volatile:'Volatile'}[regime]||regime;
 
@@ -2205,7 +2205,7 @@ function renderPriceMatrix() {
         h += '<td class="pg-cell-na">—</td>';
       }
     });
-    const mc = r.monthly_change_pct < 0 ? 'c-green' : 'c-red';
+    const mc = r.monthly_change_pct >= 0 ? 'c-green' : 'c-red';
     const momStr = `${r.monthly_change_pct > 0 ? '+' : ''}${r.monthly_change_pct}%`;
     h += `<td class="r pg-best c-green fw">$${r.cheapest_price.toFixed(2)} <span class="${mc}" style="font-size:10px;font-weight:400;">${momStr}</span></td>`;
     // Reserved columns
@@ -2779,7 +2779,7 @@ function renderRegionalTab() {
         <span style="font-size:10px;font-weight:700;color:${CL[i]};">${d.market_share_pct}%</span>
       </div>
       <div style="height:4px;background:var(--bg-3);border-radius:2px;margin-bottom:8px;"><div style="height:100%;width:${demandPct}%;background:${CL[i]};border-radius:2px;"></div></div>
-      <div class="region-row"><span class="region-row-k">Growth</span><span class="region-row-v" style="color:var(--green)">+${d.yoy_growth_pct}%</span></div>
+      <div class="region-row"><span class="region-row-k">Growth</span><span class="region-row-v" style="color:var(${d.yoy_growth_pct>=0?'--green':'--red'})">${d.yoy_growth_pct>0?'+':''}${d.yoy_growth_pct}%</span></div>
       <div class="region-row"><span class="region-row-k">Demand</span><span class="region-row-v">${d.gpu_demand_index}<span class="dim">/100</span></span></div>
       <div class="region-row"><span class="region-row-k">Premium</span><span class="region-row-v" style="color:${premColor}">${d.avg_price_premium_pct===0?'Baseline':'+'+d.avg_price_premium_pct+'%'}</span></div>
       <div class="region-row"><span class="region-row-k">Energy</span><span class="region-row-v">$${d.energy_cost_kwh}<span class="dim">/kWh</span></span></div>
