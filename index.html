@@ -1206,7 +1206,6 @@ loadExternalData();
 
 <!-- ── TRENDS ── -->
 <div class="tab-panel" id="tab-trends">
-  <div class="kpi-strip mb" id="trendForecastStats"></div>
   <div class="card mb">
     <div class="card-hd">
       <span class="card-hd-title">Historical Prices + Forecast</span>
@@ -2195,23 +2194,6 @@ function renderTrendsTab() {
   const fc=DATA.forecasts||{};
   const gpuIds=Object.keys(fc);
 
-  // KPIs
-  if(gpuIds.length) {
-    const avgPrice=gpuIds.reduce((s,g)=>s+fc[g].current_avg,0)/gpuIds.length;
-    const avgDrop=gpuIds.reduce((s,g)=>s+((fc[g].current_avg-fc[g].forecast_12mo.mid)/fc[g].current_avg)*100,0)/gpuIds.length;
-    const bigDrop=gpuIds.reduce((a,b)=>{
-      const da=(fc[a].current_avg-fc[a].forecast_12mo.mid)/fc[a].current_avg;
-      const db=(fc[b].current_avg-fc[b].forecast_12mo.mid)/fc[b].current_avg;
-      return da>db?a:b;
-    });
-    const bigPct=((fc[bigDrop].current_avg-fc[bigDrop].forecast_12mo.mid)/fc[bigDrop].current_avg*100).toFixed(0);
-    const mostEl=gpuIds.reduce((a,b)=>fc[a].elasticity_coefficient<fc[b].elasticity_coefficient?a:b);
-    document.getElementById('trendForecastStats').innerHTML=`
-      <div class="kpi kpi-cyan"><div class="kpi-label">Avg GPU Price</div><div class="kpi-value">$${avgPrice.toFixed(2)}/hr</div><div class="kpi-sub">Across ${gpuIds.length} tracked GPUs</div></div>
-      <div class="kpi kpi-amber"><div class="kpi-label">12mo Outlook</div><div class="kpi-value">${avgDrop>0?'-':''}${Math.abs(avgDrop).toFixed(0)}%</div><div class="kpi-sub">Avg projected ${avgDrop>0?'decline':'increase'}</div></div>
-      <div class="kpi kpi-red"><div class="kpi-label">Biggest 12mo Drop</div><div class="kpi-value">${bigDrop}</div><div class="kpi-sub">-${bigPct}% projected</div></div>
-      <div class="kpi kpi-green"><div class="kpi-label">Most Elastic</div><div class="kpi-value">${mostEl}</div><div class="kpi-sub">Coeff: ${fc[mostEl].elasticity_coefficient}</div></div>`;
-  }
 
   updateTrendChart();
   renderDecayChart();
