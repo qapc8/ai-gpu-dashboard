@@ -183,6 +183,10 @@ def fetch_runpod_pricing():
                 memoryInGb
                 secureCloud
                 communityCloud
+                securePrice
+                communityPrice
+                secureSpotPrice
+                communitySpotPrice
                 lowestPrice {
                     minimumBidPrice
                     uninterruptablePrice
@@ -205,8 +209,13 @@ def fetch_runpod_pricing():
     for gpu in gpu_types:
         name = gpu.get("displayName", gpu.get("id", "unknown"))
         lowest = gpu.get("lowestPrice", {}) or {}
-        on_demand = lowest.get("uninterruptablePrice")
-        spot = lowest.get("minimumBidPrice")
+        # Prefer securePrice/communityPrice (published rates) over lowestPrice (live availability)
+        secure = gpu.get("securePrice")
+        community = gpu.get("communityPrice")
+        on_demand = lowest.get("uninterruptablePrice") or secure or community
+        secure_spot = gpu.get("secureSpotPrice")
+        community_spot = gpu.get("communitySpotPrice")
+        spot = lowest.get("minimumBidPrice") or secure_spot or community_spot
         result[name] = {
             "on_demand_price": on_demand,
             "spot_price": spot,
@@ -241,6 +250,8 @@ _GPU_NAME_MAP = {
     "H100 NVL": "H100-SXM",
     "H200": "H200",
     "H200 SXM": "H200",
+    "NVIDIA H200 NVL": "H200",
+    "H200 NVL": "H200",
     "B200": "B200",
     "L40S": "L40S",
     "L40": "L40S",
@@ -291,60 +302,111 @@ def get_hardcoded_fallback_prices():
     now = datetime.now(timezone.utc).isoformat()
     return {
         "GCP": {
-            "last_verified": "2026-02-23T00:00:00+00:00",
+            "last_verified": "2026-03-20T00:00:00+00:00",
             "source": "hardcoded_fallback",
             "gpus": {
+                "B300": {"price_per_gpu_hr": 14.10},
+                "B200": {"price_per_gpu_hr": 5.12},
+                "H200": {"price_per_gpu_hr": 4.50},
                 "H100-SXM": {"price_per_gpu_hr": 3.40},
                 "H100-PCIe": {"price_per_gpu_hr": 2.85},
                 "A100-80GB": {"price_per_gpu_hr": 2.21},
                 "A100-40GB": {"price_per_gpu_hr": 1.38},
+                "L40S": {"price_per_gpu_hr": 1.10},
                 "L4": {"price_per_gpu_hr": 0.70},
                 "T4": {"price_per_gpu_hr": 0.35},
             },
         },
         "Azure": {
-            "last_verified": "2026-02-23T00:00:00+00:00",
+            "last_verified": "2026-03-20T00:00:00+00:00",
             "source": "hardcoded_fallback",
             "gpus": {
+                "B300": {"price_per_gpu_hr": 16.00},
+                "B200": {"price_per_gpu_hr": 5.53},
+                "GB200": {"price_per_gpu_hr": 27.04},
+                "H200": {"price_per_gpu_hr": 4.80},
                 "H100-SXM": {"price_per_gpu_hr": 3.67},
+                "MI300X": {"price_per_gpu_hr": 6.00},
                 "A100-80GB": {"price_per_gpu_hr": 2.52},
                 "A100-40GB": {"price_per_gpu_hr": 1.97},
+                "L40S": {"price_per_gpu_hr": 1.24},
                 "T4": {"price_per_gpu_hr": 0.53},
             },
         },
         "Lambda": {
-            "last_verified": "2026-02-23T00:00:00+00:00",
+            "last_verified": "2026-03-20T00:00:00+00:00",
             "source": "hardcoded_fallback",
             "gpus": {
+                "B300": {"price_per_gpu_hr": 7.46},
+                "B200": {"price_per_gpu_hr": 4.25},
                 "H200": {"price_per_gpu_hr": 3.29},
                 "H100-SXM": {"price_per_gpu_hr": 2.49},
+                "MI300X": {"price_per_gpu_hr": 3.99},
                 "A100-80GB": {"price_per_gpu_hr": 1.29},
                 "A100-40GB": {"price_per_gpu_hr": 1.10},
             },
         },
         "CoreWeave": {
-            "last_verified": "2026-02-23T00:00:00+00:00",
+            "last_verified": "2026-03-20T00:00:00+00:00",
             "source": "hardcoded_fallback",
             "gpus": {
+                "B300": {"price_per_gpu_hr": 4.88},
                 "B200": {"price_per_gpu_hr": 3.75},
                 "H200": {"price_per_gpu_hr": 3.49},
                 "H100-SXM": {"price_per_gpu_hr": 2.23},
                 "H100-PCIe": {"price_per_gpu_hr": 2.06},
+                "MI300X": {"price_per_gpu_hr": 2.85},
                 "A100-80GB": {"price_per_gpu_hr": 2.06},
                 "A100-40GB": {"price_per_gpu_hr": 1.62},
                 "L40S": {"price_per_gpu_hr": 1.14},
+                "RTX-4090": {"price_per_gpu_hr": 0.74},
             },
         },
         "AWS": {
-            "last_verified": "2026-02-23T00:00:00+00:00",
+            "last_verified": "2026-03-20T00:00:00+00:00",
             "source": "hardcoded_fallback",
             "gpus": {
+                "B300": {"price_per_gpu_hr": 18.50},
                 "B200": {"price_per_gpu_hr": 5.35},
+                "H200": {"price_per_gpu_hr": 4.56},
                 "H100-SXM": {"price_per_gpu_hr": 4.28},
                 "A100-80GB": {"price_per_gpu_hr": 2.21},
                 "A100-40GB": {"price_per_gpu_hr": 1.38},
                 "L4": {"price_per_gpu_hr": 0.80},
                 "T4": {"price_per_gpu_hr": 0.53},
+            },
+        },
+        "FluidStack": {
+            "last_verified": "2026-03-20T00:00:00+00:00",
+            "source": "hardcoded_fallback",
+            "gpus": {
+                "B300": {"price_per_gpu_hr": 3.00},
+                "B200": {"price_per_gpu_hr": 2.50},
+                "H200": {"price_per_gpu_hr": 2.30},
+                "H100-SXM": {"price_per_gpu_hr": 1.80},
+                "A100-80GB": {"price_per_gpu_hr": 1.20},
+                "A100-40GB": {"price_per_gpu_hr": 0.80},
+                "L40S": {"price_per_gpu_hr": 0.65},
+            },
+        },
+        "Oracle": {
+            "last_verified": "2026-03-20T00:00:00+00:00",
+            "source": "hardcoded_fallback",
+            "gpus": {
+                "B300": {"price_per_gpu_hr": 5.53},
+                "B200": {"price_per_gpu_hr": 3.40},
+                "H100-SXM": {"price_per_gpu_hr": 3.19},
+                "A100-80GB": {"price_per_gpu_hr": 2.18},
+                "A100-40GB": {"price_per_gpu_hr": 1.28},
+            },
+        },
+        "Together": {
+            "last_verified": "2026-03-20T00:00:00+00:00",
+            "source": "hardcoded_fallback",
+            "gpus": {
+                "B300": {"price_per_gpu_hr": 5.50},
+                "H100-SXM": {"price_per_gpu_hr": 2.50},
+                "A100-80GB": {"price_per_gpu_hr": 1.50},
             },
         },
     }
@@ -365,16 +427,18 @@ def merge_live_pricing_into_data(data, vastai_prices, runpod_prices):
         if vast_prov is None:
             providers["Vast.ai"] = {"provider_name": "Vast.ai", "type": "marketplace", "gpus": {}}
             vast_prov = providers["Vast.ai"]
-        vast_gpus = vast_prov.get("gpus", {})
+        vast_gpus = vast_prov.setdefault("gpus", {})
+        tracked = set(data.get("specs", {}).keys())
         for ext_name, info in vastai_prices.items():
             internal = normalize_gpu_name(ext_name)
-            if not internal or internal not in vast_gpus:
+            if not internal or internal not in tracked:
                 continue
+            if internal not in vast_gpus:
+                vast_gpus[internal] = {}
             gpu_entry = vast_gpus[internal]
-            if isinstance(gpu_entry, dict):
-                gpu_entry["price_per_gpu_hr"] = info["min_price"]
-                gpu_entry["source"] = "vastai_api"
-                gpu_entry["last_updated"] = now
+            gpu_entry["price_per_gpu_hr"] = info["min_price"]
+            gpu_entry["source"] = "vastai_api"
+            gpu_entry["last_updated"] = now
         vast_prov["last_updated"] = now
 
     # -- RunPod --
@@ -387,16 +451,24 @@ def merge_live_pricing_into_data(data, vastai_prices, runpod_prices):
         if rp_prov is None:
             providers["RunPod"] = {"provider_name": "RunPod", "type": "marketplace", "gpus": {}}
             rp_prov = providers["RunPod"]
-        rp_gpus = rp_prov.get("gpus", {})
+        rp_gpus = rp_prov.setdefault("gpus", {})
+        tracked = set(data.get("specs", {}).keys())
         for ext_name, info in runpod_prices.items():
             internal = normalize_gpu_name(ext_name)
-            if not internal or internal not in rp_gpus:
+            if not internal or internal not in tracked:
                 continue
+            if info.get("on_demand_price") is None:
+                continue
+            if internal not in rp_gpus:
+                rp_gpus[internal] = {}
             gpu_entry = rp_gpus[internal]
-            if isinstance(gpu_entry, dict) and info.get("on_demand_price") is not None:
-                gpu_entry["price_per_gpu_hr"] = info["on_demand_price"]
-                gpu_entry["source"] = "runpod_api"
-                gpu_entry["last_updated"] = now
+            gpu_entry["price_per_gpu_hr"] = info["on_demand_price"]
+            gpu_entry["source"] = "runpod_api"
+            gpu_entry["last_updated"] = now
+            if info.get("spot_price") is not None:
+                gpu_entry["spot_price"] = info["spot_price"]
+            if info.get("memory_gb"):
+                gpu_entry["memory_gb"] = info["memory_gb"]
         rp_prov["last_updated"] = now
 
     # -- Hardcoded fallbacks for providers without free APIs --
