@@ -1744,6 +1744,8 @@ document.querySelectorAll('.nav-item').forEach(tab => {
     document.querySelectorAll('.tab-panel').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    // Resize all Chart.js charts so hidden-tab charts render at correct dimensions
+    setTimeout(() => { Object.values(charts).forEach(c => { try { c.resize(); } catch(e) {} }); }, 50);
   });
 });
 
@@ -1954,9 +1956,10 @@ async function fetchPriceAiCommentary() {
 let _carouselIdx = 0, _carouselTimer = null;
 function renderGpuCarousel() {
   const m = DATA.matrix, spot = DATA.spot||{}, hist = DATA.historical||{}, fc = DATA.forecasts||{}, specs = DATA.specs||{};
-  // Top 5 by TFLOPS/$, excluding RTX consumer GPUs, ensuring B200 is included
+  // Top 5 by TFLOPS/$, excluding RTX consumer GPUs and GPUs with no cloud provider
   const excluded = new Set(['RTX-4090','RTX-4080','RTX-3090','RTX-5090']);
-  const filtered = m.filter(r => !excluded.has(r.gpu_id));
+  const hasCloud = (gpuId) => Object.values(DATA.providers||{}).some(p => (p.type||'cloud')==='cloud' && p.gpus?.[gpuId]);
+  const filtered = m.filter(r => !excluded.has(r.gpu_id) && hasCloud(r.gpu_id));
   let top5 = [...filtered].sort((a,b) => b.flops_per_dollar - a.flops_per_dollar).slice(0, 5);
   // Ensure B200 is in the list
   if(!top5.find(r=>r.gpu_id==='B200')) {
@@ -2114,7 +2117,7 @@ function renderOverviewTable() {
     if (!prices || prices.length < 2) return '<span class="dim">—</span>';
     const mn = Math.min(...prices), mx = Math.max(...prices), rng = mx - mn || 1;
     const pts = prices.map((p,i) => `${(i/(prices.length-1))*w},${h-((p-mn)/rng)*(h-2)-1}`).join(' ');
-    const clr = prices[prices.length-1] >= prices[0] ? 'var(--green)' : 'var(--red)';
+    const clr = prices[prices.length-1] >= prices[0] ? '#3ecf8e' : '#ef6461';
     return `<svg width="${w}" height="${h}" style="vertical-align:middle;"><polyline points="${pts}" fill="none" stroke="${clr}" stroke-width="1.5"/></svg>`;
   };
 

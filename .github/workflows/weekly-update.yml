@@ -1,16 +1,26 @@
-name: Weekly Data Update
+name: Data Update (Daily + Weekly)
 
 on:
   schedule:
-    - cron: "0 6 * * 1"
+    # Daily at 06:00 UTC — lightweight news + stock update
+    - cron: "0 6 * * *"
+    # Weekly on Monday at 07:00 UTC — full data refresh
+    - cron: "0 7 * * 1"
   workflow_dispatch:
+    inputs:
+      full_update:
+        description: "Run full weekly update (true/false)"
+        required: false
+        default: "false"
 
 permissions:
   contents: write
 
 jobs:
-  update-data:
+  # ── Daily: news + stock prices only ──────────────────────────
+  daily-update:
     runs-on: ubuntu-latest
+    if: github.event.schedule == '0 6 * * *' || (github.event_name == 'workflow_dispatch' && github.event.inputs.full_update != 'true')
 
     steps:
       - name: Checkout repository
@@ -26,14 +36,58 @@ jobs:
       - name: Install dependencies
         run: pip install requests feedparser
 
-      - name: Run data update script
-        run: python scripts/update_data.py
+      - name: Run daily news + stocks update
+        run: python scripts/update_daily.py
+
+      - name: Copy to embedded files
+        run: |
+          cp data.json embedded_data.json
+          cp ai_analysis.json embedded_ai.json
 
       - name: Commit and push if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data.json ai_analysis.json
+          git add data.json ai_analysis.json embedded_data.json embedded_ai.json
+          if ! git diff --quiet --cached; then
+            git commit -m "chore: daily news + stock refresh [automated]"
+            git push
+          else
+            echo "No changes to commit."
+          fi
+
+  # ── Weekly: full data refresh (all providers, sentiment, forecasts, AI analysis) ──
+  weekly-update:
+    runs-on: ubuntu-latest
+    if: github.event.schedule == '0 7 * * 1' || (github.event_name == 'workflow_dispatch' && github.event.inputs.full_update == 'true')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests feedparser
+
+      - name: Run full data update script
+        run: python scripts/update_data.py
+
+      - name: Copy to embedded files
+        run: |
+          cp data.json embedded_data.json
+          cp ai_analysis.json embedded_ai.json
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data.json ai_analysis.json embedded_data.json embedded_ai.json
           if ! git diff --quiet --cached; then
             git commit -m "chore: weekly data refresh [automated]"
             git push

@@ -1129,16 +1129,8 @@ def load_config():
     return None
 
 
-def regenerate_ai_analysis(data, config):
-    """Call the LLM API to regenerate the summary analysis."""
-    log_info("Regenerating AI analysis via LLM API...")
-    url = f"{config['base']}/chat/completions"
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {config['key']}",
-    }
-
-    # Build a compact market snapshot for the LLM
+def _build_market_snapshot(data):
+    """Build a compact market snapshot dict for LLM prompts."""
     providers = data.get("providers", {})
     price_summary = {}
     for prov_name, prov in providers.items():
@@ -1150,67 +1142,194 @@ def regenerate_ai_analysis(data, config):
                     price_summary[gpu_id] = []
                 price_summary[gpu_id].append({"provider": prov_name, "price": price})
 
-    # Sort by cheapest
     for gpu_id in price_summary:
         price_summary[gpu_id].sort(key=lambda x: x["price"])
 
-    stocks = data.get("stocks", {})
-    news_headlines = [a.get("headline", "") for a in data.get("news", [])[:10]]
-
-    snapshot = json.dumps({
+    return {
         "gpu_pricing": {k: v[:5] for k, v in price_summary.items()},
-        "stocks": stocks,
-        "recent_headlines": news_headlines,
+        "stocks": data.get("stocks", {}),
+        "recent_headlines": [a.get("headline", "") for a in data.get("news", [])[:10]],
+        "historical": {k: dict(list(v.items())[-6:]) for k, v in data.get("historical", {}).items()},
+        "sentiment": {k: {"score": v.get("score"), "adoption": v.get("adoption"), "mentions_30d": v.get("mentions_30d")} for k, v in data.get("sentiment", {}).items()},
+        "forecasts": {k: {"trend": v.get("trend"), "next_month": v.get("next_month")} for k, v in data.get("forecasts", {}).items()} if data.get("forecasts") else {},
+        "matrix": [{"gpu_id": m["gpu_id"], "cheapest_price": m.get("cheapest_price"), "cheapest_provider": m.get("cheapest_provider"), "monthly_change_pct": m.get("monthly_change_pct"), "flops_per_dollar": m.get("flops_per_dollar")} for m in data.get("matrix", [])[:15]],
+        "spot": {k: {"on_demand_avg": v.get("on_demand_avg"), "quarterly_trend": v.get("quarterly_trend")} for k, v in data.get("spot", {}).items()},
+        "specs": {k: {"vram_gb": v.get("vram_gb"), "fp16_tflops": v.get("fp16_tflops"), "tdp_watts": v.get("tdp_watts")} for k, v in data.get("specs", {}).items()},
         "date": datetime.now().strftime("%Y-%m-%d"),
-    }, indent=2, default=str)
+    }
 
-    system_prompt = (
-        "You are a GPU compute market analyst. Provide a concise market brief "
-        "(300-500 words) covering: current GPU pricing trends, key stock movements, "
-        "notable news, and actionable insights for organizations planning GPU procurement. "
-        "Use markdown formatting. Be specific with numbers and prices."
-    )
 
+def _call_llm(config, system_prompt, user_prompt, max_tokens=3000):
+    """Call the LLM API and return the response content string."""
+    url = f"{config['base']}/chat/completions"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {config['key']}",
+    }
     payload = {
         "model": config["model"],
         "messages": [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": f"Generate a market brief based on this data:\n\n{snapshot}"},
+            {"role": "user", "content": user_prompt},
         ],
-        "max_tokens": 3000,
+        "max_tokens": max_tokens,
         "temperature": 0.3,
     }
-
     status, body = http_post(url, payload, headers=headers, timeout=120)
     if status != 200:
         raise RuntimeError(f"LLM API returned HTTP {status}: {body[:200]}")
-
     resp = json.loads(body)
     content = resp.get("choices", [{}])[0].get("message", {}).get("content", "")
     if not content:
         raise RuntimeError("LLM returned empty content")
-
-    log_ok("AI Analysis (LLM)", f"{len(content)} chars generated")
     return content
 
 
+# Section definitions: key -> (type, system_prompt, user_prompt_template)
+# The user_prompt_template receives the snapshot JSON string as {snapshot}.
+_AI_SECTIONS = {
+    "summary": {
+        "type": "quick_summary",
+        "system": (
+            "You are a GPU compute market analyst. Provide a concise market brief "
+            "(300-500 words) covering: current GPU pricing trends, key stock movements, "
+            "notable news, and actionable insights for organizations planning GPU procurement. "
+            "Use markdown formatting. Be specific with numbers and prices."
+        ),
+        "user": "Generate a market brief based on this data:\n\n{snapshot}",
+    },
+    "trends": {
+        "type": "market_trends",
+        "system": (
+            "You are a GPU compute market analyst specializing in pricing trends. "
+            "Analyze GPU pricing trends using the historical data, monthly changes, and spot market data. "
+            "Include a table of price changes, identify key dynamics (supply loosening, new GPU adoption, "
+            "AMD competition, regional premiums), and list what to watch. Use markdown. Be specific with numbers."
+        ),
+        "user": "Analyze GPU pricing trends from this market data:\n\n{snapshot}",
+    },
+    "regional": {
+        "type": "regional_analysis",
+        "system": (
+            "You are a GPU compute market analyst specializing in regional pricing. "
+            "Provide a regional GPU pricing guide covering price premiums by region, "
+            "fastest growing markets, and regional recommendations for cost-sensitive, "
+            "compliance-required, and global inference workloads. Use markdown tables."
+        ),
+        "user": "Generate a regional pricing analysis from this data:\n\n{snapshot}",
+    },
+    "investment": {
+        "type": "investment_outlook",
+        "system": (
+            "You are a GPU procurement advisor. Provide a GPU procurement guide covering: "
+            "when to commit to reserved instances vs spot/on-demand, best deals right now with "
+            "specific providers and prices, migration timing recommendations (e.g. A100->H100, H100->B200), "
+            "and a provider comparison table. Use markdown. Be specific with prices and provider names."
+        ),
+        "user": "Generate a GPU procurement guide from this data:\n\n{snapshot}",
+    },
+    "notes": {
+        "type": "market_notes",
+        "system": (
+            "You are a GPU market analyst writing a weekly market snapshot. Cover: "
+            "prices moving this week with specific numbers and MoM changes, what changed in the market, "
+            "quick buy/wait/sell recommendations, and 90-day price targets in a table. "
+            "Use markdown. Keep it concise and actionable."
+        ),
+        "user": "Generate a market snapshot from this data:\n\n{snapshot}",
+    },
+    "efficiency": {
+        "type": "efficiency_optimization",
+        "system": (
+            "You are a GPU compute optimization expert. Provide an optimization checklist covering: "
+            "right-sizing guide (common mistakes and workload-to-GPU matching table), "
+            "reducing idle time strategies, provider efficiency comparison, and quick wins "
+            "with specific dollar savings. Use markdown tables. Be specific with prices."
+        ),
+        "user": "Generate GPU efficiency optimization advice from this data:\n\n{snapshot}",
+    },
+    "forecast": {
+        "type": "price_forecasts",
+        "system": (
+            "You are a GPU market forecaster. Provide a price outlook covering: "
+            "90-day forecast table (GPU, current price, target range, change %, confidence), "
+            "12-month outlook table, factors driving prices up and down, "
+            "and when to act (buy now / wait). Use markdown tables. Be specific with numbers."
+        ),
+        "user": "Generate GPU price forecasts from this data:\n\n{snapshot}",
+    },
+    "sustainability": {
+        "type": "sustainability_risk",
+        "system": (
+            "You are a GPU supply chain and sustainability analyst. Cover: "
+            "GPU availability status table (lead times, status, trend), key supply chain risks "
+            "(TSMC, HBM memory, CoWoS packaging), regulatory risks (export controls, EU AI Act), "
+            "geopolitical risks, and green compute provider comparison. Use markdown tables."
+        ),
+        "user": "Generate a supply chain and sustainability analysis from this data:\n\n{snapshot}",
+    },
+}
+
+
+def _get_gpu_section_key(existing_ai):
+    """Find gpu_* section keys in existing AI analysis."""
+    return [k for k in existing_ai if k.startswith("gpu_")]
+
+
+def _build_gpu_section_prompt(gpu_id, snapshot_str):
+    """Build system/user prompts for a per-GPU deep dive."""
+    system = (
+        f"You are a GPU market analyst. Provide a detailed market report for the {gpu_id} GPU. "
+        "Include: specs at a glance table, price trend analysis, best providers table with prices, "
+        "who should use it, and a buy/wait/sell recommendation. Use markdown. Be specific with numbers."
+    )
+    user = f"Generate a detailed market report for {gpu_id} based on this data:\n\n{snapshot_str}"
+    return system, user
+
+
 def update_ai_analysis(data, existing_ai):
-    """Update ai_analysis.json, optionally regenerating via LLM."""
+    """Update ai_analysis.json, regenerating ALL sections via LLM."""
     now = datetime.now(timezone.utc).isoformat()
     config = load_config()
 
-    if config:
+    if not config:
+        log_info("No LLM config found -- keeping existing ai_analysis.json unchanged")
+        return existing_ai
+
+    snapshot = _build_market_snapshot(data)
+    snapshot_str = json.dumps(snapshot, indent=2, default=str)
+
+    # Regenerate each standard section
+    for section_key, section_def in _AI_SECTIONS.items():
         try:
-            new_summary = regenerate_ai_analysis(data, config)
-            existing_ai["summary"] = {
-                "analysis": new_summary,
-                "type": "quick_summary",
+            log_info(f"Regenerating AI section: {section_key}...")
+            user_prompt = section_def["user"].format(snapshot=snapshot_str)
+            content = _call_llm(config, section_def["system"], user_prompt)
+            existing_ai[section_key] = {
+                "analysis": content,
+                "type": section_def["type"],
                 "timestamp": now,
             }
+            log_ok(f"AI/{section_key}", f"{len(content)} chars")
         except Exception as exc:
-            log_fail("AI Analysis (LLM)", str(exc))
-    else:
-        log_info("No LLM config found -- keeping existing ai_analysis.json unchanged")
+            log_fail(f"AI/{section_key}", str(exc))
+
+    # Regenerate per-GPU sections (e.g. gpu_H100-SXM)
+    gpu_keys = _get_gpu_section_key(existing_ai)
+    for gk in gpu_keys:
+        gpu_id = gk.replace("gpu_", "", 1)
+        try:
+            log_info(f"Regenerating AI section: {gk}...")
+            sys_prompt, usr_prompt = _build_gpu_section_prompt(gpu_id, snapshot_str)
+            content = _call_llm(config, sys_prompt, usr_prompt)
+            existing_ai[gk] = {
+                "analysis": content,
+                "gpu_id": gpu_id,
+                "timestamp": now,
+            }
+            log_ok(f"AI/{gk}", f"{len(content)} chars")
+        except Exception as exc:
+            log_fail(f"AI/{gk}", str(exc))
 
     return existing_ai
 

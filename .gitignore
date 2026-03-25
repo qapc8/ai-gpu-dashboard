@@ -2,10 +2,12 @@ config.py
 __pycache__/
 *.pyc
 data/
-embedded_data.json
 *.log
 .DS_Store
 .env
 ai_config.json
 .vercel
 node_modules
+package.json
+package-lock.json
+screenshots/
