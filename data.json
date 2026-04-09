@@ -2961,23 +2961,23 @@
   "indicators": {
     "nvidia_stock": {
       "ticker": "NVDA",
-      "current": 178.1,
+      "current": 182.08,
       "1m_change": 4.2,
       "3m_change": 12.8,
       "ytd_change": -8.5,
       "52w_high": 182.65,
       "52w_low": 75.61,
-      "ytd_pct": -5.69
+      "ytd_pct": -3.58
     },
     "amd_stock": {
       "ticker": "AMD",
-      "current": 221.53,
+      "current": 231.82,
       "1m_change": -2.1,
       "3m_change": 5.3,
       "ytd_change": -3.8,
       "52w_high": 202.68,
       "52w_low": 100.55,
-      "ytd_pct": -0.87
+      "ytd_pct": 3.74
     },
     "gpu_market_size_bn": {
       "2023": 52.4,
@@ -4652,19 +4652,28 @@
   },
   "news": [
     {
-      "headline": "Nvidia-Backed Firmus Hits $5.5B Valuation in AI Datacenter Blitz - The Tech Buzz",
-      "source": "The Tech Buzz",
-      "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxQSWhnTk1TSGtkSGtoTUl4ZUs4WWxYdXZCRVc5T21lMUlNdGV1TDZMUVFpeGF6SUdlS2I5OUgyU3VxVkY2SzlUa1Y2TWxRZHN0dWZsNDRpSUhTYXlkWVRmamRjTHRadGQ1RHJzcGo0a01IYzUyWnA0aDVvSFprRzRYUWNvQWVWSlZlZjdjd0FXLW9DQlFpS2s1b3NrMEc?oc=5",
-      "date": "2026-04-07",
+      "headline": "Nvidia vs. Micron: Which AI Chip Stock Has More Upside Potential? - The Motley Fool",
+      "source": "The Motley Fool",
+      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPRHA2MTFBS0NQMmMxc2NBT0Z2UUdYSTF6X21LV1pkVWlaa3phN09iMTFaMWNaOUtFZHhEcDZNTzVqQ2Jkam5qYWVJcnlMN1VTRFppcTBEWU0zN3B6T0s5UGJXbDZEOEplck5OUFRLNU8xaUVlcDFHbWZIdnZNUGZqdHZrRXhDZlh2RUxDNDhyd3paTkdLZGc?oc=5",
+      "date": "2026-04-09",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "NVIDIA (NVDA) Is Up 5.9% After Doubling Down On Marvell AI Data Center Tie\u2011Up \u2013 Has The Bull Case Changed? - simplywall.st",
-      "source": "simplywall.st",
-      "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxNRk0yWXpfbHVHNjV4UTVManp2REtKZ0l2T3p4amp4S09BSFFVeGwyMGo4ZXF1Uk04SUVmVUtJd0JqMEpWSExTLXdOMldDbW1RT042UWV1QVc0MmJxakl4V25lNDlITGJPaUVydGxXLU9sNnRoc2pEdWZIWEpURUdpTWNTM25saTB6cmRaRHFTUTFBY3pzT1oxaDBnMTUtOWozTHpmUFExYmp5R1E0eldZVEJnYl9LRUlVbVVjN3piMmwyLXRtZ2pqZndB0gHPAUFVX3lxTE0yd3V0aDhnWUQ1emZ6THZMSGtBTHRMcmhuVHQ3RWRNOXphRDBmWXdwdmJMd3hwdURpRXNRT0EtTXBkMm5MeVZ1Xzh4OHBYT3VYODhBc1AtdWQyMks1aW0tQ1AxdXhGTFQtWmNXOEplQWtKTDZkV2RGY0MtQkRZVlpScXZEQ0o3RU93TXkxdTdOLWVxRzNKUFRObW9BOUZ3eV8xNDR1RzJKb1I5ZWZTZ042WkhBRU5oci1uZVcyX1NyWVVWcUpZbmQ5RUNnaFc3OA?oc=5",
-      "date": "2026-04-05",
+      "headline": "Bain Capital's data center unit removes disgraced tenant suspected of smuggling Nvidia GPUs to China \u2014 Megaspeed previously alleged to have spent roughly $2 billion on AI processors for illicit distribution - Tom's Hardware",
+      "source": "Tom's Hardware",
+      "url": "https://news.google.com/rss/articles/CBMihwNBVV95cUxPc3gxcHhIZWlnYnAxNTBsN3dDMDRrUTFZU1hsaHN3Ynp2QWdNOE1Nd3plRTRfQ3NXQ19UWHpzVnlmcHk2czYwR2kwaVhYeE1WTEFkbTFHRXNwdExOYXctZWVwTFp3ZW8xdTZRRDl0YjdpMGEzd1c0MWFiMkhDcnpPcDUxMWdUWFFVXzZ6M1lVRzlCUE1feTVRM0hLN1JPa0JvOURSOHFiTWxzY3Z1eU1zTzJfYWl4M0xmVTlGMG9jSVpGcDBDa3ExejloUHJIRU5NMm50RExrU2NqaXFyRVpQUnhXNm9BSW1SY0JfaUZOSm1SNHdiWkt3bGZuTmU4WFpsaW4wNnV3OXRrdFBQVEluQW5JdWhVWS1ObFF4bjhUdW53WnhGMEtiQVhXQTEzcndHdi1UcU5KVmtiWHJnT0JFN2wxM19fXzNjaEdJclhTYnVqczMwT096eWJ4LWhTanFyWlRyMzB4X1dKbXJyemREX0dQLUVDQkRKZGNIblB0a253bmVCWGVZ?oc=5",
+      "date": "2026-04-08",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Nvidia-Backed Firmus Hits $5.5B Valuation in AI Datacenter Blitz - The Tech Buzz",
+      "source": "The Tech Buzz",
+      "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxQSWhnTk1TSGtkSGtoTUl4ZUs4WWxYdXZCRVc5T21lMUlNdGV1TDZMUVFpeGF6SUdlS2I5OUgyU3VxVkY2SzlUa1Y2TWxRZHN0dWZsNDRpSUhTYXlkWVRmamRjTHRadGQ1RHJzcGo0a01IYzUyWnA0aDVvSFprRzRYUWNvQWVWSlZlZjdjd0FXLW9DQlFpS2s1b3NrMEc?oc=5",
+      "date": "2026-04-07",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4715,37 +4724,46 @@
       "impact": "medium"
     },
     {
-      "headline": "Nscale and Microsoft Announce Collaboration with NVIDIA and Caterpillar to Deliver 1.35GW of NVIDIA Vera Rubin NVL72 GPUs at Flagship AI Factory Campus in West Virginia - Nscale",
-      "source": "Nscale",
-      "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE5oQWRDb2FLMjBscGZQNjJDY2ZuaVJoVEp0N21fQmRRWnU2a0w4dnVyUnhuYlA2M0VLRk4xc0pPZktrOVVDRDFvME1jaXFxclNRVlU0eXl3cDE4WlZpSUVEVEhDR083bDF4eTA1TDItVXpfME15bVdKZg?oc=5",
-      "date": "2026-03-16",
+      "headline": "Coherent (COHR) Is Up 6.1% After Expanded Nvidia Deal And AI Datacenter Optics Breakthrough - What's Changed - simplywall.st",
+      "source": "simplywall.st",
+      "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxPRkoxbFRsN1Q2S1pwYU12SzN2MGItT2xvazNON2I2Y1hNRDk5TFlMYWhFZzVJVXRLNzdLTFRNRmt6U2oycnpFREhrbW9vMzg5aHotVDNWN29BZ1cycUFfcW1VbjlTSm8zZjVZZU9JTDhZbGY2ejZhSk91a1ktRkZ1NVZFRFFSeEd5OTVEc2J3SHIwR2VTX2dDUUZ1U3BZU0ZrSl9WYUYySjhQYV9PbTZFUlhnSVI3UUxjSk95MmJR0gHDAUFVX3lxTE5NSXUtRkpvenNpSjNta3VPN3R3Mlh5UWh5akZHWU9OdXUwVGw3LVJTdTNQQUVXNE9adGJQcm4xVmFQMHV0dkV0b1FTWl9ncEpGdFVtaW9iTVUyb1dGWG9LbmFTckZ4MEhPNkEwWjFyZW15WmhJVHhfXzZOVk9PMGg2eFNPUmdBbG5EaXk1ZkR2LTZUSWN2WUVsSFo3VDc4NUtZblVkMkVnV1lnRXowTjhHWVh4cktzcEhMMUhSZWRqVkN5UQ?oc=5",
+      "date": "2026-04-03",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "Nvidia unveils AI computing module for space-based data centers - SpaceNews",
-      "source": "SpaceNews",
-      "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxPTVhuOHhjUjJCdjF1blhpV1ZidnQ3ZGZEbFZlOXZOQmpHaGZzd3dmQ3RrWWt3Q2NXR0g2b2JlRzh2d0lvNUNLM3BQc0d0ajdPRTEzOERRYjROTGNzRTdId1dFU3c5ZmIwa3ZxWXBSbmMtRHkyam5Sa1BiaVloUHBRWmxDU2tYdmJXR21UYWVObw?oc=5",
-      "date": "2026-03-16",
+      "headline": "Nvidia overhauls the data center for OpenClaw era - Network World",
+      "source": "Network World",
+      "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxQeW5YQmJRNnRVYlNZdEZOeFNBb3QzSGJfYkRCWWRPSml1TjdfTWZpOUluWmJZWXU2UkZDOUw4ZU9leEpWV29IdHNFSTJtbldURllMOGFscXZlNEZuNE5BRFphZGQ3MVkxNWNudXAwbjQyRXRFUi1ocUpESXpwVTMtRGZSenI3QWRwWWhjcXhEeDhad3YyeTl0SFJmNDNxOTRa?oc=5",
+      "date": "2026-03-20",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "Sagtec says new AI hub will handle millions of daily orders and payments - Stock Titan",
-      "source": "Stock Titan",
-      "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxPS2dRbzhYOFpmVXFYQ3BBOGlwdlZFamh2TGRwT05uVHZuTHFiNFpMQmFnWFJlbDYtRjBkbGpCRU4wQm9ZQVkteEY4OWJXOXFHdm5VZ2dtU2E4N00zVXVXSWRvQWhaMzZPS3lyd1NRYXRocThjbm9wbnRUNm5XU1l2d3NVOWZEM0xCSXF5UFBIMTBsYUl3T0xkeUYyVEtpY29lUC1BdzVaMVdFR3pkVXlqVHVNend0T1ZyWHFqbjhiV2M?oc=5",
-      "date": "2026-03-30",
+      "headline": "Alibaba Deploys 10,000 Proprietary AI Chips in New Data Center - The Tech Buzz",
+      "source": "The Tech Buzz",
+      "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxQakUxN3NBb1ZacTBfS1otcWdBckhoY0xtdDR6R3Nzd1N6cWZqRW1PMTg4TGdQTHEyUEVOMXZST3lJR1lyYTVQcWZITE1mQV9nUnJoZWdMUlRDbEw1YUM3cnNEUElUWk5Iekc2WVhHLWY0OFUxUGdHN1JoOFgwTHhRNTVlZFRjMXlERUlaODhfTkEwX1NGVUNjV2NvTQ?oc=5",
+      "date": "2026-04-08",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "Wall Street's Most Consequential Company -- Whose Shares Have Gained 464,000% Since 1999 -- Turns 33 Today - The Motley Fool",
+      "headline": "How Starcloud Is Bringing Data Centers to Outer Space - NVIDIA Blog",
+      "source": "NVIDIA Blog",
+      "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE9tbUdaQ05nd1ZZYWJXeDNLdUhaNkIyclpPdmxMbjJkZVNnNjZqbGpiU255WWNHYUUtYW1qNk1sT3N2Mk5oQUF0STdRYlZhMEVoS2c?oc=5",
+      "date": "2025-10-15",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Nvidia Stock Just Presented Investors With a Once-in-a-Decade Buying Opportunity - The Motley Fool",
       "source": "The Motley Fool",
-      "url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxQaXV1bXVKeldYbE05R2Z2WktvaHFCMFVmSlVkMUJVYzlDOFk2QngzcUhLNXVhTWljTGlkTkdpcE80c3VfSkMwLVJXTE1nU3N3dVdZaWJXUDlqOWlPTEhYUGdZWXUweUJfMm5GU01qMU5sRlNGd1dvS3YzUkhzU2tZa1JzbmlyNVozel9fcEExblZTVVJa?oc=5",
-      "date": "2026-04-05",
+      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxQYWJOOU9jUTRJOTE1Z3F5dFppbTA5X2wyM1JfZ1hOMWxja2RmakNNdEdIVDgzT1E1V0dVcmV6WXhNUWg2ejlYN2tzeU5QWWxFeXI3cmtaWVFrSVpISGpsWVdGaUtiMFp2OVFrTkV2a1lQX0p4ODVFeUxFb2FLWDR3d05yODVPUFVQdmcwcVdManVoX1d3QXc?oc=5",
+      "date": "2026-04-07",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4760,24 +4778,6 @@
       "impact": "medium"
     },
     {
-      "headline": "Coherent (COHR) Is Up 6.1% After Expanded Nvidia Deal And AI Datacenter Optics Breakthrough - What's Changed - simplywall.st",
-      "source": "simplywall.st",
-      "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxPRkoxbFRsN1Q2S1pwYU12SzN2MGItT2xvazNON2I2Y1hNRDk5TFlMYWhFZzVJVXRLNzdLTFRNRmt6U2oycnpFREhrbW9vMzg5aHotVDNWN29BZ1cycUFfcW1VbjlTSm8zZjVZZU9JTDhZbGY2ejZhSk91a1ktRkZ1NVZFRFFSeEd5OTVEc2J3SHIwR2VTX2dDUUZ1U3BZU0ZrSl9WYUYySjhQYV9PbTZFUlhnSVI3UUxjSk95MmJR0gHDAUFVX3lxTE5NSXUtRkpvenNpSjNta3VPN3R3Mlh5UWh5akZHWU9OdXUwVGw3LVJTdTNQQUVXNE9adGJQcm4xVmFQMHV0dkV0b1FTWl9ncEpGdFVtaW9iTVUyb1dGWG9LbmFTckZ4MEhPNkEwWjFyZW15WmhJVHhfXzZOVk9PMGg2eFNPUmdBbG5EaXk1ZkR2LTZUSWN2WUVsSFo3VDc4NUtZblVkMkVnV1lnRXowTjhHWVh4cktzcEhMMUhSZWRqVkN5UQ?oc=5",
-      "date": "2026-04-03",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "NVIDIA Groq 3 LPX: Inference Accelerator for Agentic AI - NVIDIA",
-      "source": "NVIDIA",
-      "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE16ZklPT3k4WU9mQ0JTekJiZXVOUXo4YlpUTGFpdHZsMlNUN1IzbUVJcUJKUDFSTXVWczM0ZlEybjhiQ0JtRnRHa3BKaURBcC1PdXJINjZYZTQ?oc=5",
-      "date": "2026-03-16",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
       "headline": "Scaling Token Factory Revenue and AI Efficiency by Maximizing Performance per Watt - NVIDIA Developer",
       "source": "NVIDIA Developer",
       "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxORDFyZFJrVkoxUVVwd0dBZ09fUTE4LXh0SDJVbURuTHhuSGk2d1c3bHliRzZfclZYQlVua0JFblAzNnJZR2dRYjJvYmwzd04tcElCcFl4N1pHR09PeGN1a2lJT0g4bTNIYUNDaUtsQ1lKOFoyY2g5aWZyOE9zRndzaDlDLW1WNGw5ZWpZUVo1aUlVeGFxcmh5UnhwNm1rcTZ3R3prSHhwUk1yb3g0TWM4SkRVc24xT0Iw?oc=5",
@@ -4787,10 +4787,10 @@
       "impact": "medium"
     },
     {
-      "headline": "How Starcloud Is Bringing Data Centers to Outer Space - NVIDIA Blog",
-      "source": "NVIDIA Blog",
-      "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE9tbUdaQ05nd1ZZYWJXeDNLdUhaNkIyclpPdmxMbjJkZVNnNjZqbGpiU255WWNHYUUtYW1qNk1sT3N2Mk5oQUF0STdRYlZhMEVoS2c?oc=5",
-      "date": "2025-10-15",
+      "headline": "NVIDIA Groq 3 LPX: Inference Accelerator for Agentic AI - NVIDIA",
+      "source": "NVIDIA",
+      "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE16ZklPT3k4WU9mQ0JTekJiZXVOUXo4YlpUTGFpdHZsMlNUN1IzbUVJcUJKUDFSTXVWczM0ZlEybjhiQ0JtRnRHa3BKaURBcC1PdXJINjZYZTQ?oc=5",
+      "date": "2026-03-16",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4814,19 +4814,19 @@
       "impact": "medium"
     },
     {
-      "headline": "Optimize Data Center Efficiency for AI and HPC Workloads with Power Profiles | NVIDIA Technical Blog - NVIDIA Developer",
-      "source": "NVIDIA Developer",
-      "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxNa0Z6TzBZSmFoRlZmbmhzcmh6eFpyVlFTZF9ONXhMYTNUSGVVSGVQS0ljVUd1b2FmYTVUc3dVeC1wV0dONkhfczRidHJWRFhDbW1xMUtSSTdlOWtZNWNadk1TbVBFMVBXeHB2OFpLWnJRYzVqZUs1VFNNZUc5OHM2TXZMalowWVlFeXpjMzd4OC1EeWJHUUoyaHNWYXkwSXlsbzZSWHJoVENQQl9vQVl1Yg?oc=5",
-      "date": "2025-12-04",
+      "headline": "Nscale and Microsoft Announce Collaboration with NVIDIA and Caterpillar to Deliver 1.35GW of NVIDIA Vera Rubin NVL72 GPUs at Flagship AI Factory Campus in West Virginia - Nscale",
+      "source": "Nscale",
+      "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE5oQWRDb2FLMjBscGZQNjJDY2ZuaVJoVEp0N21fQmRRWnU2a0w4dnVyUnhuYlA2M0VLRk4xc0pPZktrOVVDRDFvME1jaXFxclNRVlU0eXl3cDE4WlZpSUVEVEhDR083bDF4eTA1TDItVXpfME15bVdKZg?oc=5",
+      "date": "2026-03-16",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "OpenAI and NVIDIA Announce Strategic Partnership to Deploy 10 Gigawatts of NVIDIA Systems - NVIDIA Newsroom",
-      "source": "NVIDIA Newsroom",
-      "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOQW5qdHA3WGJQOHlUT1pRdVBxOF9rcFI5aExZbllQdk1xQ1RWNGdnUGlyLVYwbG9MNEMzVzM0Tll1Zmk1N19DT2I0dHFJRXl5U2w5bmJHZ0p4T2pKMkdGRHU3LXVYX09ybm45a1RKU3RxcTlNVzRjdGxzVUswNXRpSzI2ZXB0R082Q3E5WWZIbE5Va2QwZ194eTF6WmNHWWxkcGdEWV9SVWE1Y3paSTl0aHFEMkhDQQ?oc=5",
-      "date": "2025-09-22",
+      "headline": "Nvidia unveils AI computing module for space-based data centers - SpaceNews",
+      "source": "SpaceNews",
+      "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxPTVhuOHhjUjJCdjF1blhpV1ZidnQ3ZGZEbFZlOXZOQmpHaGZzd3dmQ3RrWWt3Q2NXR0g2b2JlRzh2d0lvNUNLM3BQc0d0ajdPRTEzOERRYjROTGNzRTdId1dFU3c5ZmIwa3ZxWXBSbmMtRHkyam5Sa1BiaVloUHBRWmxDU2tYdmJXR21UYWVObw?oc=5",
+      "date": "2026-03-16",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -11591,25 +11591,25 @@
       }
     }
   },
-  "last_updated": "2026-04-08T07:15:54.818958+00:00",
+  "last_updated": "2026-04-09T07:19:05.344609+00:00",
   "stocks": {
     "NVDA": {
       "ticker": "NVDA",
-      "current_price": 178.1,
-      "previous_close": 97.64,
+      "current_price": 182.08,
+      "previous_close": 96.3,
       "52_week_high": 212.19,
-      "52_week_low": 94.46,
-      "ytd_change_pct": -5.69,
-      "last_updated": "2026-04-08T07:15:54.901285+00:00"
+      "52_week_low": 95.04,
+      "ytd_change_pct": -3.58,
+      "last_updated": "2026-04-09T07:19:05.470790+00:00"
     },
     "AMD": {
       "ticker": "AMD",
-      "current_price": 221.53,
-      "previous_close": 83.64,
+      "current_price": 231.82,
+      "previous_close": 78.21,
       "52_week_high": 267.08,
-      "52_week_low": 76.48,
-      "ytd_change_pct": -0.87,
-      "last_updated": "2026-04-08T07:15:54.974213+00:00"
+      "52_week_low": 78.87,
+      "ytd_change_pct": 3.74,
+      "last_updated": "2026-04-09T07:19:05.532200+00:00"
     }
   }
 }
