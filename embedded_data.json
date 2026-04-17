@@ -2961,23 +2961,23 @@
   "indicators": {
     "nvidia_stock": {
       "ticker": "NVDA",
-      "current": 198.87,
+      "current": 198.35,
       "1m_change": 4.2,
       "3m_change": 12.8,
       "ytd_change": -8.5,
       "52w_high": 182.65,
       "52w_low": 75.61,
-      "ytd_pct": 5.31
+      "ytd_pct": 5.03
     },
     "amd_stock": {
       "ticker": "AMD",
-      "current": 258.12,
+      "current": 278.26,
       "1m_change": -2.1,
       "3m_change": 5.3,
       "ytd_change": -3.8,
       "52w_high": 202.68,
       "52w_low": 100.55,
-      "ytd_pct": 15.51
+      "ytd_pct": 24.52
     },
     "gpu_market_size_bn": {
       "2023": 52.4,
@@ -4652,15 +4652,6 @@
   },
   "news": [
     {
-      "headline": "Nvidia Extends Rally, Strengthens AI Infrastructure Dominance - Let's Data Science",
-      "source": "Let's Data Science",
-      "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxNN2NBV3pvRTdESV9jeURKOGNULS1GT25MTS10VldsMWh1cWRiME80LUxwZlM0SkRvM2pHOEtoLVJHb09HbEh4Q0ppbHFvMmxqZ1JjcXR0SF9DWkZnSF96VEV4WFJMY1JNYlg0ajF5VGpKMnJzbHMxWVIwdFZQOWdrZzVVcU1zUmlSSHhBaHlRYkFQeWg0bjBZTzl4bE9iS21WcW5tUQ?oc=5",
-      "date": "2026-04-16",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
       "headline": "Microsoft (MSFT) Valuation Check As AI Data Center Expansion And GPU Leasing Reset Market Expectations - simplywall.st",
       "source": "simplywall.st",
       "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxOYmRZcUtaNHF5VUlXeFlwdUFfU3Axd3FVcG5uTXhpRzNDdk0yWU1xdTh5bFphby0yZzZqUGxsbmVwMHYyRHhPTTVxU0RiX25wcmltaUprb3M1TGU0M1JXcmotdVYwbTBqWUdZdTY1NHJKT3B5Rlp5Sm1ZZk1fSGRxTVRXSzZ0ci1ITjRDLW9pbDdhQks5U3oyeXJZYWVUNGFoM2Yzdmh0bGhaUFNyWVI0RXpRR2FoSlJfcVo3blN3T2ZQbHRpRnkw0gHMAUFVX3lxTE5SUDNlRy1wcE1hUmkyc2lhMkRfR05KM1ozYlhQTFEyeEFZUjdjMncwNUp3eXQxVzZQLURoRmhoM3Nfc2R1RmtJUWQ5cFVRTmliME1XMnFCMENTTGFhOHVhTm8zZnZlWTAybUZqVzV5Y2UwLVNhVFdpbnpYU3U4M2xYdTZHQ1plcEc3Q29mOHFHdE9TTnNOR2o2b0ZnNjM2YXlocENaLWlPMWE1UVFTeEZhRkxXc3gyUEVPM3cwemp1VU02RnV3b3FNbGkzbA?oc=5",
@@ -4679,37 +4670,19 @@
       "impact": "medium"
     },
     {
-      "headline": "DLSS Comes To Cthulhu: The Cosmic Abyss, MONGIL: STAR DIVE, PRAGMATA\u2122 & Windrose This Week - NVIDIA",
-      "source": "NVIDIA",
-      "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxPZzhYd1hXWVNLeFY1RzhVcnZCV1QtVGhsLVYxWGZsSWxUbjEwNUhjOTFLTXdlblVYSjA2WTRseGhHTkgzZnhkd1pGdkQySnlJSkJDdlhXdWcxRkVva1dJQUhQWEhiU3BLalFROHktM1hOdlRWbEFKM3FBQjhaYmh3R1JwcGcwT0NmNlBkMHhhcWNnZHNpLU1iZkM2M1VYcEllanBWZ1JQRQ?oc=5",
-      "date": "2026-04-14",
+      "headline": "Meta Builds AI Infrastructure With NVIDIA - NVIDIA Newsroom",
+      "source": "NVIDIA Newsroom",
+      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQa2Jtb2d5VUFBazZ4U1VWS29KbmFHMkdkN1lNXzNXTHR6eUZTUjVUYWw2cndMOVhpYldLbm1Cdm1nWkxyUzFJcUo1OVBXd3lBMnBsYU1nVVNaOF9YR2pRaXNLdHowVllDdU5hNU9kWW5DV3lSWmk4MFYtQUt6ZTA1WQ?oc=5",
+      "date": "2026-02-17",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "AMD Is Where Nvidia was 4 Years Ago \u2014 This Is Where It Begins To Catch Up - 24/7 Wall St.",
-      "source": "24/7 Wall St.",
-      "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPT2ZlRFlDMzlTVHpiRk1RZTZUV3N6XzV2U2hNU2RYNjcxdUpEQzk2dC1VS3VVUF9XWFg1M0QxNWJHUXdJVG5waklZUGJNRmF0MXhQaVhZN2Y3MFdsZ1YtUFhJX0paSlRtNU9YTDNqX0c2NGhULWNyUFAzVWs4bk5TR3U2MDNvY3JpZWJJTG94VUxwbldkM0pIUkp1bDZudzRlWDhmdXdBMHQ3X2RJUDRGRFg2LWdyUQ?oc=5",
-      "date": "2026-04-14",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Mistral AI Raises $830M For Nvidia Data Center With 13,800 GPUs - crn.com",
-      "source": "crn.com",
-      "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOQ2hUbkZzMENYa3lRU0dFQk1jbVJPZjNsdEFtU2JhSmQycHpoLThhT0JndkxoSjhidEVSRTZmU3pSX2VhSVd4Zi1YUUluTkU4UURyLTlYWWVxbnN6Y0l0RnViTjBPUXpHeWQxZFNMUFN0aVlZTXdNbXJpM0lhajNfUGp2MWRvUWVBQjh2ZWxub1l1b0lJczBQRTN5N2xnd1JpN0xDQVFQcw?oc=5",
-      "date": "2026-03-31",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Nvidia Warranty Payouts Are Up 11x Since 2024, But Why? - PCMag Australia",
-      "source": "PCMag Australia",
-      "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxNX0tlUENjdVhoNkVzcEZ0OWZmZWlVcjNodERmTGFWZzdxY3hKV2Izb1VQTjA1RWN1MUtVWU5IMlNEMFZWblhrLW5iaHpzaVJwbWc2TmkyYkpQNlFfLXlTclViLWpyLUhWWUFocXVOTzlkUXVWX0VxYTFOT0U5VHdLYktlSXFJU3czMWlJR0diS1ZLUVNDeTFFRE9fc1Q?oc=5",
-      "date": "2026-04-15",
+      "headline": "Nvidia Extends Rally, Strengthens AI Infrastructure Dominance - Let's Data Science",
+      "source": "Let's Data Science",
+      "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxNN2NBV3pvRTdESV9jeURKOGNULS1GT25MTS10VldsMWh1cWRiME80LUxwZlM0SkRvM2pHOEtoLVJHb09HbEh4Q0ppbHFvMmxqZ1JjcXR0SF9DWkZnSF96VEV4WFJMY1JNYlg0ajF5VGpKMnJzbHMxWVIwdFZQOWdrZzVVcU1zUmlSSHhBaHlRYkFQeWg0bjBZTzl4bE9iS21WcW5tUQ?oc=5",
+      "date": "2026-04-16",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4724,28 +4697,19 @@
       "impact": "medium"
     },
     {
+      "headline": "AMD Is Where Nvidia was 4 Years Ago \u2014 This Is Where It Begins To Catch Up - 24/7 Wall St.",
+      "source": "24/7 Wall St.",
+      "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPT2ZlRFlDMzlTVHpiRk1RZTZUV3N6XzV2U2hNU2RYNjcxdUpEQzk2dC1VS3VVUF9XWFg1M0QxNWJHUXdJVG5waklZUGJNRmF0MXhQaVhZN2Y3MFdsZ1YtUFhJX0paSlRtNU9YTDNqX0c2NGhULWNyUFAzVWs4bk5TR3U2MDNvY3JpZWJJTG94VUxwbldkM0pIUkp1bDZudzRlWDhmdXdBMHQ3X2RJUDRGRFg2LWdyUQ?oc=5",
+      "date": "2026-04-14",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
       "headline": "Sagtec Global (NASDAQ: SAGT) to Launch Sovereign AI Data Center Powered by NVIDIA GPU Architecture; Infrastructure Pivot to Support Millions of Daily F&B Retail Ordering, Retail and Fintech Transactions - Yahoo Finance",
       "source": "Yahoo Finance",
       "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQRlJydFVjNXlqTm0wY0VheVpPUzlhR2NHQWtVTzN6Vk10TVhyOEVxcDRCZ0kzSjZMRHg5Yl9qUGlpcUZ6U0M3bGpyZklhX0pfdFZjempiTVV5RktRRjgwY1BUYlJzX3ZvUU40SUx0V3czWTFKZDdxeFVPaFFTcGhoTm02NjF0OHRFYXpQTDV5SnZUY0dtcHdwa1BxUmc5VXRxaVE0?oc=5",
       "date": "2026-03-30",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Nvidia Just Announced Hardware for AI Data Centers in Space. Here Are the Very Real Implications. - The Motley Fool",
-      "source": "The Motley Fool",
-      "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNQUNiMGd6OF9WcWw4TUhFOVlmZFRfY3pxR2FkMFJtVHBQbGtXTnJHcFhqU0N0MHlCRHYzNTQxZWNIaWxoVGJ0RTM2b2xyd180ZUZ6TENVaU5SajJ3aXJTLXBURlFiaUx6akozNEtYYW1wRFQxc0pjYjVEazF3eXVOa2JwNk5pZ2duRE16UVBlREhhQlVnZjVudQ?oc=5",
-      "date": "2026-03-29",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Bain Capital's data center unit removes disgraced tenant suspected of smuggling Nvidia GPUs to China \u2014 Megaspeed previously alleged to have spent roughly $2 billion on AI processors for illicit distribution - Tom's Hardware",
-      "source": "Tom's Hardware",
-      "url": "https://news.google.com/rss/articles/CBMihwNBVV95cUxPc3gxcHhIZWlnYnAxNTBsN3dDMDRrUTFZU1hsaHN3Ynp2QWdNOE1Nd3plRTRfQ3NXQ19UWHpzVnlmcHk2czYwR2kwaVhYeE1WTEFkbTFHRXNwdExOYXctZWVwTFp3ZW8xdTZRRDl0YjdpMGEzd1c0MWFiMkhDcnpPcDUxMWdUWFFVXzZ6M1lVRzlCUE1feTVRM0hLN1JPa0JvOURSOHFiTWxzY3Z1eU1zTzJfYWl4M0xmVTlGMG9jSVpGcDBDa3ExejloUHJIRU5NMm50RExrU2NqaXFyRVpQUnhXNm9BSW1SY0JfaUZOSm1SNHdiWkt3bGZuTmU4WFpsaW4wNnV3OXRrdFBQVEluQW5JdWhVWS1ObFF4bjhUdW53WnhGMEtiQVhXQTEzcndHdi1UcU5KVmtiWHJnT0JFN2wxM19fXzNjaEdJclhTYnVqczMwT096eWJ4LWhTanFyWlRyMzB4X1dKbXJyemREX0dQLUVDQkRKZGNIblB0a253bmVCWGVZ?oc=5",
-      "date": "2026-04-08",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4760,15 +4724,6 @@
       "impact": "medium"
     },
     {
-      "headline": "Sagtec says new AI hub will handle millions of daily orders and payments - Stock Titan",
-      "source": "Stock Titan",
-      "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxPS2dRbzhYOFpmVXFYQ3BBOGlwdlZFamh2TGRwT05uVHZuTHFiNFpMQmFnWFJlbDYtRjBkbGpCRU4wQm9ZQVkteEY4OWJXOXFHdm5VZ2dtU2E4N00zVXVXSWRvQWhaMzZPS3lyd1NRYXRocThjbm9wbnRUNm5XU1l2d3NVOWZEM0xCSXF5UFBIMTBsYUl3T0xkeUYyVEtpY29lUC1BdzVaMVdFR3pkVXlqVHVNend0T1ZyWHFqbjhiV2M?oc=5",
-      "date": "2026-03-30",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
       "headline": "Nvidia unveils AI computing module for space-based data centers - SpaceNews",
       "source": "SpaceNews",
       "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxPTVhuOHhjUjJCdjF1blhpV1ZidnQ3ZGZEbFZlOXZOQmpHaGZzd3dmQ3RrWWt3Q2NXR0g2b2JlRzh2d0lvNUNLM3BQc0d0ajdPRTEzOERRYjROTGNzRTdId1dFU3c5ZmIwa3ZxWXBSbmMtRHkyam5Sa1BiaVloUHBRWmxDU2tYdmJXR21UYWVObw?oc=5",
@@ -4778,10 +4733,19 @@
       "impact": "medium"
     },
     {
-      "headline": "Meta Builds AI Infrastructure With NVIDIA - NVIDIA Newsroom",
-      "source": "NVIDIA Newsroom",
-      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQa2Jtb2d5VUFBazZ4U1VWS29KbmFHMkdkN1lNXzNXTHR6eUZTUjVUYWw2cndMOVhpYldLbm1Cdm1nWkxyUzFJcUo1OVBXd3lBMnBsYU1nVVNaOF9YR2pRaXNLdHowVllDdU5hNU9kWW5DV3lSWmk4MFYtQUt6ZTA1WQ?oc=5",
-      "date": "2026-02-17",
+      "headline": "Why Nvidia is worth $5 trillion: Inside a $35 billion, 1 gigawatt AI data center. - Business Insider",
+      "source": "Business Insider",
+      "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxQck1Ea1EwaDJCcEdiYmpGdEtFMUFGb2FHcjNGeVFVUFhjdENnQ0pQVHdwbi1UNWpzNEhPRmxSMUFXZ3pXT2hha3JxY1lLTWQxMjVObUE5bnI0VDJJTzhzZFFfcl9Wck5UUkNWZmhIaUhFTXNneDlvVVI2TWgydDk1aW12MVZKMUdhd3V6WHJ4eWVyQi1QZVBuM0VrX1lxdkp2?oc=5",
+      "date": "2025-10-29",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "800 VDC Architecture for AI Data Centers - NVIDIA",
+      "source": "NVIDIA",
+      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxNbjN0NTNGSmlNLVhudEF5SUhfN3AydVJtaHRaejRlMGpGQzhiU3d3NFlNWkEwN0xoeVRNYlNBRjBjQlJ2RGhKLUVyR0ZGVEhIemVjSGFNRTBIR200RENBZVBrbm9MUkVqZWxrUEZ2Y19YZ3pramo5Qm4taFNlVDZuWg?oc=5",
+      "date": "2026-03-16",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4796,9 +4760,9 @@
       "impact": "medium"
     },
     {
-      "headline": "Opt-In NVIDIA Software Enables Data Center Fleet Management - NVIDIA Blog",
-      "source": "NVIDIA Blog",
-      "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxONkZzZVlXZjU4c0V1TEs4Z3dER3FpTVF2U3dOTnNLMlZhdi1WMmNGRHN5c3pmd3NPQmRWVkkyMXN5UDhpQ1VtdXJhQW5xM2p3SllZOEd6a0ZUdnlOcDRJMHdkU1lIcGpXZVY4VGhTdkNUM2QyeVdlRVlaQTJLcC05aC00Zw?oc=5",
+      "headline": "\u2018Greetings, earthlings\u2019: Nvidia-backed Starcloud trains first AI model in space as orbital data center race heats up - CNBC",
+      "source": "CNBC",
+      "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPc0dqMzBsV2hyWE51aTk5bXhaN1RBeldKbDB4R0VWaGFoalJEMUZOekdmQnNoWmRuY0k2c1gza3JPUnpzNS1Hc3VXbnhFaEF0Um51dzFSUC0zTnZVLUZCaVJWQ3F3aERYdUFad3JtRGE1WWdHc0xlWlprLVp3Qk9zeHprZnNiNldHc3lEVlBRR3hUbFNRY1pwcEtoeHpneU15dzd1c1BFZlE2ZFdhcEhBNVh30gG3AUFVX3lxTE9weExybGFickkxYWZlQkM0M1R5cjBWQ05hZWRVM0dRR0pMOF9fLUtBeHEyeEhzalQwWnowS0JqeU9DOHlTeEV2YWNOaEMzSFdHbGZlVHJLY3Z5UmR3TTByTTc1c1hrTi1VNTAxUmJmNzBlQWJJSjNwbDR0WmNkYVNkTjhNdTJERHhMajV2ODBITXN0dXQteHBGTWV0MVhsM3hadjhOLVN5X3h2dnBsVFRuR3FJMnczTQ?oc=5",
       "date": "2025-12-10",
       "category": "news",
       "sentiment": "neutral",
@@ -4814,10 +4778,10 @@
       "impact": "medium"
     },
     {
-      "headline": "Scaling Token Factory Revenue and AI Efficiency by Maximizing Performance per Watt - NVIDIA Developer",
-      "source": "NVIDIA Developer",
-      "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxORDFyZFJrVkoxUVVwd0dBZ09fUTE4LXh0SDJVbURuTHhuSGk2d1c3bHliRzZfclZYQlVua0JFblAzNnJZR2dRYjJvYmwzd04tcElCcFl4N1pHR09PeGN1a2lJT0g4bTNIYUNDaUtsQ1lKOFoyY2g5aWZyOE9zRndzaDlDLW1WNGw5ZWpZUVo1aUlVeGFxcmh5UnhwNm1rcTZ3R3prSHhwUk1yb3g0TWM4SkRVc24xT0Iw?oc=5",
-      "date": "2026-03-25",
+      "headline": "Opt-In NVIDIA Software Enables Data Center Fleet Management - NVIDIA Blog",
+      "source": "NVIDIA Blog",
+      "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxONkZzZVlXZjU4c0V1TEs4Z3dER3FpTVF2U3dOTnNLMlZhdi1WMmNGRHN5c3pmd3NPQmRWVkkyMXN5UDhpQ1VtdXJhQW5xM2p3SllZOEd6a0ZUdnlOcDRJMHdkU1lIcGpXZVY4VGhTdkNUM2QyeVdlRVlaQTJLcC05aC00Zw?oc=5",
+      "date": "2025-12-10",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4827,6 +4791,42 @@
       "source": "NVIDIA Newsroom",
       "url": "https://news.google.com/rss/articles/CBMi5AFBVV95cUxOeDB1aTlUT0xDRjVCQ3lJWHBBaUJjMzZUbzZVa2s2R1RSQ01Gd1ItZGdHdm5xd256M1JocU9RUk91X2xJSUZlNHBnRWhaVm80aUdJbTgwWUtCN1c2YjRGdWl5SVV4eDM1VHFYRS1iN1lvdlI0LUcyX0NvN1Nkc2hFbDRuNzctNXV1cjFlZk83bEswblNabE5RYzA2bnpYR3dTYUdpVk5zU0o0ZVgxNk1xOVpfa2NDZFhzYWlrc1Azc25FRGFINERTeHNMeV9ua3dQSThsc2ZjLXVieG1LMTRzeDlHbTg?oc=5",
       "date": "2025-09-16",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Scaling Token Factory Revenue and AI Efficiency by Maximizing Performance per Watt - NVIDIA Developer",
+      "source": "NVIDIA Developer",
+      "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxORDFyZFJrVkoxUVVwd0dBZ09fUTE4LXh0SDJVbURuTHhuSGk2d1c3bHliRzZfclZYQlVua0JFblAzNnJZR2dRYjJvYmwzd04tcElCcFl4N1pHR09PeGN1a2lJT0g4bTNIYUNDaUtsQ1lKOFoyY2g5aWZyOE9zRndzaDlDLW1WNGw5ZWpZUVo1aUlVeGFxcmh5UnhwNm1rcTZ3R3prSHhwUk1yb3g0TWM4SkRVc24xT0Iw?oc=5",
+      "date": "2026-03-25",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "OpenAI and NVIDIA Announce Strategic Partnership to Deploy 10 Gigawatts of NVIDIA Systems - NVIDIA Newsroom",
+      "source": "NVIDIA Newsroom",
+      "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOQW5qdHA3WGJQOHlUT1pRdVBxOF9rcFI5aExZbllQdk1xQ1RWNGdnUGlyLVYwbG9MNEMzVzM0Tll1Zmk1N19DT2I0dHFJRXl5U2w5bmJHZ0p4T2pKMkdGRHU3LXVYX09ybm45a1RKU3RxcTlNVzRjdGxzVUswNXRpSzI2ZXB0R082Q3E5WWZIbE5Va2QwZ194eTF6WmNHWWxkcGdEWV9SVWE1Y3paSTl0aHFEMkhDQQ?oc=5",
+      "date": "2025-09-22",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Optimize Data Center Efficiency for AI and HPC Workloads with Power Profiles | NVIDIA Technical Blog - NVIDIA Developer",
+      "source": "NVIDIA Developer",
+      "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxNa0Z6TzBZSmFoRlZmbmhzcmh6eFpyVlFTZF9ONXhMYTNUSGVVSGVQS0ljVUd1b2FmYTVUc3dVeC1wV0dONkhfczRidHJWRFhDbW1xMUtSSTdlOWtZNWNadk1TbVBFMVBXeHB2OFpLWnJRYzVqZUs1VFNNZUc5OHM2TXZMalowWVlFeXpjMzd4OC1EeWJHUUoyaHNWYXkwSXlsbzZSWHJoVENQQl9vQVl1Yg?oc=5",
+      "date": "2025-12-04",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "NVIDIA Kicks Off the Next Generation of AI With Rubin \u2014 Six New Chips, One Incredible AI Supercomputer - NVIDIA Newsroom",
+      "source": "NVIDIA Newsroom",
+      "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE1wVTdNYW04bUY5N2s2cWlUR25KZzZ3ZlFxdUZ2MWgwZGFmSUJqNGQxV3E5M0ktZDAzOGFkMGtSaThmSnBrc09jN1ZYakpjWDlabmdJcDYxTjV1LXpmVW16MkJ1NDNFNE9sOUYxVUR0UUtWdzdE?oc=5",
+      "date": "2026-01-05",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -11591,25 +11591,25 @@
       }
     }
   },
-  "last_updated": "2026-04-16T07:43:06.188690+00:00",
+  "last_updated": "2026-04-17T07:43:16.032705+00:00",
   "stocks": {
     "NVDA": {
       "ticker": "NVDA",
-      "current_price": 198.87,
-      "previous_close": 112.2,
+      "current_price": 198.35,
+      "previous_close": 104.49,
       "52_week_high": 212.19,
       "52_week_low": 95.04,
-      "ytd_change_pct": 5.31,
-      "last_updated": "2026-04-16T07:43:06.559818+00:00"
+      "ytd_change_pct": 5.03,
+      "last_updated": "2026-04-17T07:43:16.131921+00:00"
     },
     "AMD": {
       "ticker": "AMD",
-      "current_price": 258.12,
-      "previous_close": 95.29,
-      "52_week_high": 267.08,
+      "current_price": 278.26,
+      "previous_close": 88.29,
+      "52_week_high": 279.34,
       "52_week_low": 83.75,
-      "ytd_change_pct": 15.51,
-      "last_updated": "2026-04-16T07:43:06.678659+00:00"
+      "ytd_change_pct": 24.52,
+      "last_updated": "2026-04-17T07:43:16.200773+00:00"
     }
   }
 }
