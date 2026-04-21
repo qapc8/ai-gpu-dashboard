@@ -228,6 +228,267 @@ def fetch_runpod_pricing():
     return result
 
 
+# ===================================================================
+# 1b. ADDITIONAL LIVE PRICING FETCHERS (Azure API + HTML scrapers)
+# ===================================================================
+
+import re as _re
+
+
+def _extract_prices_from_html(html, patterns):
+    """Apply a list of (gpu_id, regex) pairs to html, return {gpu_id: price_float}.
+
+    Each regex must capture the price as group 1 (dollar amount, float).
+    """
+    found = {}
+    for gpu_id, pattern in patterns:
+        m = _re.search(pattern, html, _re.IGNORECASE | _re.DOTALL)
+        if not m:
+            continue
+        try:
+            price = float(m.group(1))
+            if 0.05 <= price <= 500:  # sanity bounds per GPU-hr
+                found[gpu_id] = price
+        except (ValueError, IndexError):
+            continue
+    return found
+
+
+def fetch_azure_pricing():
+    """Azure Retail Prices API — free, unauthenticated.
+
+    Docs: https://learn.microsoft.com/rest/api/cost-management/retail-prices/azure-retail-prices
+    Returns {gpu_id: per_gpu_hr_price}.
+
+    Each query targets a specific SKU prefix with a known GPU count, avoiding
+    the "single-GPU SKU divided by 8" trap.
+    """
+    log_info("Fetching Azure Retail Prices API...")
+    # (skuName substring, required substring 2 for 8-GPU, internal GPU id, GPUs per VM)
+    # ND96 family = 8 GPU NVLink trainers; NC* = inference (1-4 GPU)
+    sku_queries = [
+        ("ND96", "H100", "H100-SXM", 8),
+        ("ND96", "H200", "H200", 8),
+        ("ND96", "B200", "B200", 8),
+        ("ND", "B300", "B300", 8),
+        ("ND", "GB200", "GB200", 4),
+        ("ND96", "A100", "A100-80GB", 8),
+        ("NC24", "A100", "A100-80GB", 1),  # may overwrite with cheaper per-GPU
+        ("NC6s_v3", None, "V100", 1),
+        ("NV36", "A10", "A10", 1),
+    ]
+    base = "https://prices.azure.com/api/retail/prices"
+    result = {}
+    for prefix, must_contain, gpu_id, gpus_per_vm in sku_queries:
+        filt = (
+            f"serviceName eq 'Virtual Machines' and armRegionName eq 'eastus' "
+            f"and priceType eq 'Consumption' and startswith(skuName, '{prefix}')"
+        )
+        try:
+            status, body = http_get(
+                base, params={"$filter": filt, "currencyCode": "USD"}, timeout=25
+            )
+            if status != 200:
+                continue
+            items = json.loads(body).get("Items", [])
+            prices = []
+            for it in items:
+                sku = it.get("skuName", "")
+                meter = (it.get("meterName") or "").lower()
+                if "spot" in meter or "low priority" in meter:
+                    continue
+                if must_contain and must_contain not in sku:
+                    continue
+                if (it.get("unitOfMeasure") or "").lower() not in ("1 hour", "1hour"):
+                    continue
+                up = it.get("unitPrice") or it.get("retailPrice")
+                if up and up > 0:
+                    prices.append(float(up) / gpus_per_vm)
+            if prices:
+                prices.sort()
+                # Pick the median to avoid promo/reserved outliers
+                median = prices[len(prices) // 2]
+                if gpu_id not in result or median < result[gpu_id]:
+                    result[gpu_id] = median
+        except Exception:
+            continue
+    if not result:
+        raise RuntimeError("Azure API returned no parseable pricing")
+    log_ok("Azure", f"{len(result)} GPU types")
+    return result
+
+
+def fetch_lambda_pricing():
+    """Scrape Lambda Labs on-demand GPU prices from the pricing page."""
+    log_info("Fetching Lambda Labs pricing...")
+    url = "https://lambda.ai/service/gpu-cloud"
+    status, body = http_get(url, headers={"User-Agent": "Mozilla/5.0 (pricing-bot)"}, timeout=20)
+    if status != 200:
+        raise RuntimeError(f"Lambda returned HTTP {status}")
+    # Each entry matches the GPU-name row followed by a "$X.XX / GPU / hour" or "$X.XX" token.
+    # Pattern captures the first dollar price occurring within 400 chars after the GPU name.
+    patterns = [
+        ("B200", r"B200[^$]{0,400}?\$(\d+\.\d{2})"),
+        ("GH200", r"GH200[^$]{0,400}?\$(\d+\.\d{2})"),
+        ("H100-SXM", r"H100\s*SXM[^$]{0,400}?\$(\d+\.\d{2})"),
+        ("H100-PCIe", r"H100\s*PCIe[^$]{0,400}?\$(\d+\.\d{2})"),
+        ("A100-80GB", r"A100\s*(?:SXM\s*)?\(?80\s*GB\)?[^$]{0,400}?\$(\d+\.\d{2})"),
+        ("A100-40GB", r"A100\s*(?:SXM|PCIe)?\s*\(?40\s*GB\)?[^$]{0,400}?\$(\d+\.\d{2})"),
+    ]
+    result = _extract_prices_from_html(body, patterns)
+    if not result:
+        raise RuntimeError("Lambda: no prices parsed from HTML")
+    log_ok("Lambda", f"{len(result)} GPU types")
+    return result
+
+
+def fetch_coreweave_pricing():
+    """Scrape CoreWeave on-demand GPU prices.
+
+    Page shows per-instance totals; we divide by GPU-count.
+    """
+    log_info("Fetching CoreWeave pricing...")
+    url = "https://www.coreweave.com/pricing"
+    status, body = http_get(url, headers={"User-Agent": "Mozilla/5.0 (pricing-bot)"}, timeout=20)
+    if status != 200:
+        raise RuntimeError(f"CoreWeave returned HTTP {status}")
+    # (html_anchor, internal_gpu_id, gpus_per_instance)
+    rows = [
+        ("GB200 NVL72", "GB200", 4),
+        ("HGX B300", "B300", 8),
+        ("HGX B200", "B200", 8),
+        ("HGX H200", "H200", 8),
+        ("HGX H100", "H100-SXM", 8),
+        ("A100", "A100-80GB", 8),
+        ("L40S", "L40S", 8),
+        ("GH200", "GH200", 1),
+    ]
+    result = {}
+    for anchor, gpu_id, gpus in rows:
+        m = _re.search(_re.escape(anchor), body)
+        if not m:
+            continue
+        chunk = body[m.start():m.start() + 2500]
+        price_m = _re.search(r"On-Demand Price:\s*\$(\d+\.\d{2})", chunk)
+        if not price_m:
+            # Fall back to any dollar amount within 500 chars
+            price_m = _re.search(r"\$(\d+\.\d{2})", chunk[:500])
+        if not price_m:
+            continue
+        try:
+            per_gpu = float(price_m.group(1)) / gpus
+            if 0.2 <= per_gpu <= 100:
+                # keep lowest observed
+                if gpu_id not in result or per_gpu < result[gpu_id]:
+                    result[gpu_id] = per_gpu
+        except ValueError:
+            continue
+    if not result:
+        raise RuntimeError("CoreWeave: no prices parsed from HTML")
+    log_ok("CoreWeave", f"{len(result)} GPU types")
+    return result
+
+
+def fetch_together_pricing():
+    """Scrape Together.ai dedicated + cluster on-demand prices."""
+    log_info("Fetching Together.ai pricing...")
+    url = "https://www.together.ai/pricing"
+    status, body = http_get(url, headers={"User-Agent": "Mozilla/5.0 (pricing-bot)"}, timeout=20)
+    if status != 200:
+        raise RuntimeError(f"Together returned HTTP {status}")
+    # Prefer HGX cluster prices (cheaper, closer to list rate)
+    patterns = [
+        ("B200", r"(?:HGX\s*)?B200[^$]{0,400}?\$(\d+\.\d{2})"),
+        ("H200", r"(?:HGX\s*)?H200[^$]{0,400}?\$(\d+\.\d{2})"),
+        ("H100-SXM", r"(?:HGX\s*)?H100[^$]{0,400}?\$(\d+\.\d{2})"),
+    ]
+    result = _extract_prices_from_html(body, patterns)
+    if not result:
+        raise RuntimeError("Together: no prices parsed from HTML")
+    log_ok("Together", f"{len(result)} GPU types")
+    return result
+
+
+def fetch_aws_pricing():
+    """AWS pricing: EC2 on-demand prices via the public pricing JSON endpoint.
+
+    The full offers file is huge, so we use a per-region bulk endpoint for US East.
+    Falls back to hardcoded if the JSON layout changes.
+    """
+    log_info("Fetching AWS pricing (us-east-1 bulk)...")
+    url = (
+        "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/"
+        "current/us-east-1/index.json"
+    )
+    try:
+        status, body = http_get(url, timeout=45)
+    except Exception as exc:
+        raise RuntimeError(f"AWS pricing fetch failed: {exc}")
+    if status != 200:
+        raise RuntimeError(f"AWS returned HTTP {status}")
+
+    try:
+        doc = json.loads(body)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError(f"AWS JSON parse failed: {exc}")
+
+    products = doc.get("products", {})
+    terms = doc.get("terms", {}).get("OnDemand", {})
+
+    # instance_type -> (internal GPU id, GPUs per VM)
+    instance_map = {
+        "p5.48xlarge": ("H100-SXM", 8),
+        "p5e.48xlarge": ("H200", 8),
+        "p5en.48xlarge": ("H200", 8),
+        "p6-b200.48xlarge": ("B200", 8),
+        "p6-b300.48xlarge": ("B300", 8),
+        "p4d.24xlarge": ("A100-40GB", 8),
+        "p4de.24xlarge": ("A100-80GB", 8),
+        "g5.48xlarge": ("A10G", 8),
+        "g6.48xlarge": ("L4", 8),
+        "g6e.48xlarge": ("L40S", 8),
+    }
+
+    # Map sku -> instance_type for products with Linux/Shared tenancy/No pre-install
+    sku_to_instance = {}
+    for sku, p in products.items():
+        attrs = p.get("attributes", {})
+        if (
+            attrs.get("tenancy") == "Shared"
+            and attrs.get("operatingSystem") == "Linux"
+            and attrs.get("preInstalledSw") == "NA"
+            and attrs.get("capacitystatus") == "Used"
+        ):
+            it = attrs.get("instanceType")
+            if it in instance_map:
+                sku_to_instance[sku] = it
+
+    result = {}
+    for sku, inst_type in sku_to_instance.items():
+        offer = terms.get(sku, {})
+        for _oid, odata in offer.items():
+            pds = odata.get("priceDimensions", {})
+            for _pid, pd in pds.items():
+                price = pd.get("pricePerUnit", {}).get("USD")
+                if not price:
+                    continue
+                try:
+                    p = float(price)
+                except ValueError:
+                    continue
+                if p <= 0:
+                    continue
+                gpu_id, gpus = instance_map[inst_type]
+                per_gpu = p / gpus
+                if gpu_id not in result or per_gpu < result[gpu_id]:
+                    result[gpu_id] = per_gpu
+
+    if not result:
+        raise RuntimeError("AWS: no prices parsed from index.json")
+    log_ok("AWS", f"{len(result)} GPU types")
+    return result
+
+
 # GPU name normalization map: maps external names to internal IDs
 _GPU_NAME_MAP = {
     "RTX 4090": "RTX-4090",
@@ -302,7 +563,7 @@ def get_hardcoded_fallback_prices():
     now = datetime.now(timezone.utc).isoformat()
     return {
         "GCP": {
-            "last_verified": "2026-03-20T00:00:00+00:00",
+            "last_verified": now,
             "source": "hardcoded_fallback",
             "gpus": {
                 "B300": {"price_per_gpu_hr": 14.10},
@@ -318,7 +579,7 @@ def get_hardcoded_fallback_prices():
             },
         },
         "Azure": {
-            "last_verified": "2026-03-20T00:00:00+00:00",
+            "last_verified": now,
             "source": "hardcoded_fallback",
             "gpus": {
                 "B300": {"price_per_gpu_hr": 16.00},
@@ -334,7 +595,7 @@ def get_hardcoded_fallback_prices():
             },
         },
         "Lambda": {
-            "last_verified": "2026-03-20T00:00:00+00:00",
+            "last_verified": now,
             "source": "hardcoded_fallback",
             "gpus": {
                 "B300": {"price_per_gpu_hr": 7.46},
@@ -347,7 +608,7 @@ def get_hardcoded_fallback_prices():
             },
         },
         "CoreWeave": {
-            "last_verified": "2026-03-20T00:00:00+00:00",
+            "last_verified": now,
             "source": "hardcoded_fallback",
             "gpus": {
                 "B300": {"price_per_gpu_hr": 4.88},
@@ -363,7 +624,7 @@ def get_hardcoded_fallback_prices():
             },
         },
         "AWS": {
-            "last_verified": "2026-03-20T00:00:00+00:00",
+            "last_verified": now,
             "source": "hardcoded_fallback",
             "gpus": {
                 "B300": {"price_per_gpu_hr": 18.50},
@@ -377,7 +638,7 @@ def get_hardcoded_fallback_prices():
             },
         },
         "FluidStack": {
-            "last_verified": "2026-03-20T00:00:00+00:00",
+            "last_verified": now,
             "source": "hardcoded_fallback",
             "gpus": {
                 "B300": {"price_per_gpu_hr": 3.00},
@@ -390,7 +651,7 @@ def get_hardcoded_fallback_prices():
             },
         },
         "Oracle": {
-            "last_verified": "2026-03-20T00:00:00+00:00",
+            "last_verified": now,
             "source": "hardcoded_fallback",
             "gpus": {
                 "B300": {"price_per_gpu_hr": 5.53},
@@ -401,7 +662,7 @@ def get_hardcoded_fallback_prices():
             },
         },
         "Together": {
-            "last_verified": "2026-03-20T00:00:00+00:00",
+            "last_verified": now,
             "source": "hardcoded_fallback",
             "gpus": {
                 "B300": {"price_per_gpu_hr": 5.50},
@@ -412,7 +673,40 @@ def get_hardcoded_fallback_prices():
     }
 
 
-def merge_live_pricing_into_data(data, vastai_prices, runpod_prices):
+def _apply_scraped_prices(providers, provider_key, prices, source_tag, tracked_specs, now):
+    """Merge a {gpu_id: per_gpu_hr} dict into providers[provider_key].gpus."""
+    if not prices:
+        return
+    if provider_key not in providers:
+        providers[provider_key] = {
+            "provider_name": provider_key,
+            "type": "cloud",
+            "gpus": {},
+        }
+    prov = providers[provider_key]
+    prov_gpus = prov.setdefault("gpus", {})
+    for gpu_id, price in prices.items():
+        if gpu_id not in tracked_specs:
+            continue
+        if gpu_id not in prov_gpus:
+            prov_gpus[gpu_id] = {}
+        entry = prov_gpus[gpu_id]
+        entry["price_per_gpu_hr"] = round(float(price), 3)
+        entry["source"] = source_tag
+        entry["last_updated"] = now
+    prov["last_updated"] = now
+
+
+def merge_live_pricing_into_data(
+    data,
+    vastai_prices,
+    runpod_prices,
+    azure_prices=None,
+    lambda_prices=None,
+    coreweave_prices=None,
+    together_prices=None,
+    aws_prices=None,
+):
     """Merge live pricing data into the providers section of data.json."""
     now = datetime.now(timezone.utc).isoformat()
     providers = data.get("providers", {})
@@ -471,7 +765,20 @@ def merge_live_pricing_into_data(data, vastai_prices, runpod_prices):
                 gpu_entry["memory_gb"] = info["memory_gb"]
         rp_prov["last_updated"] = now
 
+    # -- Scraped/API-fetched providers --
+    tracked = set(data.get("specs", {}).keys())
+    _apply_scraped_prices(providers, "Azure", azure_prices, "azure_retail_api", tracked, now)
+    _apply_scraped_prices(providers, "Lambda", lambda_prices, "lambda_scrape", tracked, now)
+    _apply_scraped_prices(providers, "CoreWeave", coreweave_prices, "coreweave_scrape", tracked, now)
+    _apply_scraped_prices(providers, "Together", together_prices, "together_scrape", tracked, now)
+    _apply_scraped_prices(providers, "AWS", aws_prices, "aws_pricing_api", tracked, now)
+
     # -- Hardcoded fallbacks for providers without free APIs --
+    # Only fill in GPUs that no live source has already populated this run.
+    live_sources = {
+        "vastai_api", "runpod_api", "azure_retail_api", "lambda_scrape",
+        "coreweave_scrape", "together_scrape", "aws_pricing_api",
+    }
     fallbacks = get_hardcoded_fallback_prices()
     for provider_key, fb_data in fallbacks.items():
         if provider_key not in providers:
@@ -486,11 +793,12 @@ def merge_live_pricing_into_data(data, vastai_prices, runpod_prices):
             if gpu_id not in existing_gpus:
                 existing_gpus[gpu_id] = {}
             existing_entry = existing_gpus[gpu_id]
-            # Only overwrite price if there is no live data
-            if "source" not in existing_entry or existing_entry.get("source") == "hardcoded_fallback":
-                existing_entry["price_per_gpu_hr"] = gpu_info["price_per_gpu_hr"]
-                existing_entry["source"] = "hardcoded_fallback"
-                existing_entry["last_verified"] = fb_data["last_verified"]
+            # Don't clobber a live-scraped price from this run
+            if existing_entry.get("source") in live_sources and existing_entry.get("last_updated") == now:
+                continue
+            existing_entry["price_per_gpu_hr"] = gpu_info["price_per_gpu_hr"]
+            existing_entry["source"] = "hardcoded_fallback"
+            existing_entry["last_verified"] = fb_data["last_verified"]
 
     data["providers"] = providers
     return data
@@ -726,25 +1034,44 @@ def fetch_stock_price(ticker):
 
 
 def merge_stocks_into_data(data, stocks):
-    """Merge stock data into the indicators section, matching existing structure."""
+    """Merge stock data into the indicators section, matching existing structure.
+
+    The stock_data dict uses keys '52_week_high', '52_week_low', 'ytd_change_pct';
+    we populate all dashboard-consumed fields (current, ytd_change, ytd_pct, 52w_*).
+    """
     if not stocks:
         return data
     data["stocks"] = {s["ticker"]: s for s in stocks}
     indicators = data.get("indicators", {})
+
+    def _apply(entry, s):
+        if s.get("current_price") is not None:
+            entry["current"] = s["current_price"]
+        if s.get("ytd_change_pct") is not None:
+            entry["ytd_change"] = s["ytd_change_pct"]
+            entry["ytd_pct"] = s["ytd_change_pct"]
+        hi, lo = s.get("52_week_high"), s.get("52_week_low")
+        if hi is not None:
+            entry["52w_high"] = hi
+        if lo is not None:
+            entry["52w_low"] = lo
+        if hi is not None and lo is not None:
+            entry["52w_range"] = f"${lo:.2f}-${hi:.2f}"
+        entry["last_updated"] = s.get("last_updated")
+
     for s in stocks:
         tk = s["ticker"]
-        if tk == "NVDA" and "nvidia_stock" in indicators:
-            indicators["nvidia_stock"]["current"] = s["current_price"]
-            if s.get("ytd_change_pct") is not None:
-                indicators["nvidia_stock"]["ytd_pct"] = s["ytd_change_pct"]
-            if s.get("week52_high") is not None:
-                indicators["nvidia_stock"]["52w_range"] = f"${s['week52_low']:.2f}-${s['week52_high']:.2f}"
-        elif tk == "AMD" and "amd_stock" in indicators:
-            indicators["amd_stock"]["current"] = s["current_price"]
-            if s.get("ytd_change_pct") is not None:
-                indicators["amd_stock"]["ytd_pct"] = s["ytd_change_pct"]
-            if s.get("week52_high") is not None:
-                indicators["amd_stock"]["52w_range"] = f"${s['week52_low']:.2f}-${s['week52_high']:.2f}"
+        if tk == "NVDA":
+            entry = indicators.setdefault("nvidia_stock", {"ticker": "NVDA"})
+            _apply(entry, s)
+            indicators["nvda_price"] = s.get("current_price")
+            indicators["nvda_ytd_change"] = s.get("ytd_change_pct")
+        elif tk == "AMD":
+            entry = indicators.setdefault("amd_stock", {"ticker": "AMD"})
+            _apply(entry, s)
+            indicators["amd_price"] = s.get("current_price")
+            indicators["amd_ytd_change"] = s.get("ytd_change_pct")
+
     data["indicators"] = indicators
     return data
 
@@ -1374,7 +1701,46 @@ def main():
     except Exception as exc:
         log_fail("RunPod", str(exc))
 
-    data = merge_live_pricing_into_data(data, vastai_prices, runpod_prices)
+    azure_prices = None
+    try:
+        azure_prices = fetch_azure_pricing()
+    except Exception as exc:
+        log_fail("Azure", str(exc))
+
+    lambda_prices = None
+    try:
+        lambda_prices = fetch_lambda_pricing()
+    except Exception as exc:
+        log_fail("Lambda", str(exc))
+
+    coreweave_prices = None
+    try:
+        coreweave_prices = fetch_coreweave_pricing()
+    except Exception as exc:
+        log_fail("CoreWeave", str(exc))
+
+    together_prices = None
+    try:
+        together_prices = fetch_together_pricing()
+    except Exception as exc:
+        log_fail("Together", str(exc))
+
+    aws_prices = None
+    try:
+        aws_prices = fetch_aws_pricing()
+    except Exception as exc:
+        log_fail("AWS", str(exc))
+
+    data = merge_live_pricing_into_data(
+        data,
+        vastai_prices,
+        runpod_prices,
+        azure_prices=azure_prices,
+        lambda_prices=lambda_prices,
+        coreweave_prices=coreweave_prices,
+        together_prices=together_prices,
+        aws_prices=aws_prices,
+    )
     print()
 
     # ---- 2. Recalculate derived data (matrix, historical, spot) ----
