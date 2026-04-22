@@ -3002,27 +3002,27 @@
   "indicators": {
     "nvidia_stock": {
       "ticker": "NVDA",
-      "current": 201.27,
+      "current": 199.88,
       "1m_change": 4.2,
       "3m_change": 12.8,
-      "ytd_change": 6.58,
+      "ytd_change": 5.84,
       "52w_high": 212.19,
-      "52w_low": 95.04,
-      "ytd_pct": 6.58,
-      "52w_range": "$95.04-$212.19",
-      "last_updated": "2026-04-21T14:59:18.187669+00:00"
+      "52w_low": 97.28,
+      "ytd_pct": 5.84,
+      "52w_range": "$97.28-$212.19",
+      "last_updated": "2026-04-22T07:43:33.253166+00:00"
     },
     "amd_stock": {
       "ticker": "AMD",
-      "current": 277.87,
+      "current": 284.49,
       "1m_change": -2.1,
       "3m_change": 5.3,
-      "ytd_change": 24.34,
+      "ytd_change": 27.31,
       "52w_high": 287.61,
-      "52w_low": 83.75,
-      "ytd_pct": 24.34,
-      "52w_range": "$83.75-$287.61",
-      "last_updated": "2026-04-21T14:59:18.279355+00:00"
+      "52w_low": 85.17,
+      "ytd_pct": 27.31,
+      "52w_range": "$85.17-$287.61",
+      "last_updated": "2026-04-22T07:43:33.409826+00:00"
     },
     "gpu_market_size_bn": {
       "2023": 52.4,
@@ -3142,10 +3142,10 @@
         "note": "Consumer stock available"
       }
     },
-    "nvda_price": 201.27,
-    "nvda_ytd_change": 6.58,
-    "amd_price": 277.87,
-    "amd_ytd_change": 24.34
+    "nvda_price": 199.88,
+    "nvda_ytd_change": 5.84,
+    "amd_price": 284.49,
+    "amd_ytd_change": 27.31
   },
   "regional": {
     "North America": {
@@ -4697,7 +4697,16 @@
   },
   "news": [
     {
-      "headline": "130,000 NVIDIA Rubin GPUs Are Being Deployed at Nscale For Microsoft, Further Showing Massive Interest In Next-Gen AI Chips - Wccftech",
+      "headline": "Think AMD, Broadcom, or Alphabet Is Nvidia's Biggest Competitor for AI Data Center Space? Think Again... - The Motley Fool",
+      "source": "The Motley Fool",
+      "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxPU2FQSW1QZjRsWnkwalFtaG1ac0M1RW5hWnlfUVVMUWZvWkhfcncwdmVsSFo2TThKR2NZWHdaWFlFMU9jS19FSHJ5UmJYZFlKWVJWeHRlRzFyVDJfdEdjbDZ0cW5wNlI1ZFdoaU5xRGR3Yk04b0ZVNklCV2ttSmFsMTVCbjZ4eExENWlJWFZtQ20zbXpJN3E0?oc=5",
+      "date": "2026-04-17",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "130,000 Rubin GPUs Are Being Deployed at Nscale For Microsoft, Further Showing Massive Interest In NVIDIA\u2019s Next-Gen AI Chips - Wccftech",
       "source": "Wccftech",
       "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxQYnZIdy1kWDVobE84Y3d4ZTFieGdCTjhCWW1NV2JBWm9TSFNvcjBNWVZUaXBCbEFkSE9DUlBXUml3WldsVHotTDRoTE0zWUxpVnFIblJFUnR2a0NWRzhtR1psaWhJa1k3OWVHMDVxU3pEeXprRXJLRXhZaFVpWEZ1NzVTLTJuY1JJLWszaUZyWEJ2Q3RIYWQxbUw1cGY3Mmp6N1JDVWJUcERxczQ5R0dOVjJwUlRYeXcxbGppZzNPd3c0TDDSAcgBQVVfeXFMTUpiNUYzdEJKVjl1VW1sbUxnZzRJdFVlNC00eEJjMW1hVGE4VnVabkZRRUpwMHNwNWxuVFpmWVpBQ2x1S3pRTkk5U21udnlkVEtsekJMQXV3S1R5eGZkZWJpN2tYYTFwX1h4QnpYMmoxTFFvWUVieVlJVFVyWFl4a0NOanMyR0kwRm5UTE9aUTh5TnNfaEY0WXFoSVRFZlZZY3dQLXlHenE3Vms0ZkkzOXpLX2tueWkzbGMwQ3I1V05RMlFOXzlpenQ?oc=5",
       "date": "2026-04-21",
@@ -4706,10 +4715,10 @@
       "impact": "medium"
     },
     {
-      "headline": "Think AMD, Broadcom, or Alphabet Is Nvidia's Biggest Competitor for AI Data Center Space? Think Again... - The Motley Fool",
-      "source": "The Motley Fool",
-      "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxPU2FQSW1QZjRsWnkwalFtaG1ac0M1RW5hWnlfUVVMUWZvWkhfcncwdmVsSFo2TThKR2NZWHdaWFlFMU9jS19FSHJ5UmJYZFlKWVJWeHRlRzFyVDJfdEdjbDZ0cW5wNlI1ZFdoaU5xRGR3Yk04b0ZVNklCV2ttSmFsMTVCbjZ4eExENWlJWFZtQ20zbXpJN3E0?oc=5",
-      "date": "2026-04-17",
+      "headline": "Meta Builds AI Infrastructure With NVIDIA - NVIDIA Newsroom",
+      "source": "NVIDIA Newsroom",
+      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQa2Jtb2d5VUFBazZ4U1VWS29KbmFHMkdkN1lNXzNXTHR6eUZTUjVUYWw2cndMOVhpYldLbm1Cdm1nWkxyUzFJcUo1OVBXd3lBMnBsYU1nVVNaOF9YR2pRaXNLdHowVllDdU5hNU9kWW5DV3lSWmk4MFYtQUt6ZTA1WQ?oc=5",
+      "date": "2026-02-17",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4724,10 +4733,10 @@
       "impact": "medium"
     },
     {
-      "headline": "Meta Builds AI Infrastructure With NVIDIA - NVIDIA Newsroom",
-      "source": "NVIDIA Newsroom",
-      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQa2Jtb2d5VUFBazZ4U1VWS29KbmFHMkdkN1lNXzNXTHR6eUZTUjVUYWw2cndMOVhpYldLbm1Cdm1nWkxyUzFJcUo1OVBXd3lBMnBsYU1nVVNaOF9YR2pRaXNLdHowVllDdU5hNU9kWW5DV3lSWmk4MFYtQUt6ZTA1WQ?oc=5",
-      "date": "2026-02-17",
+      "headline": "SDT Launches Korea\u2019s First Commercial Quantum-AI Hybrid Data Center via NVIDIA NVQLink - Quantum Computing Report",
+      "source": "Quantum Computing Report",
+      "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxQcnFTRXB4WDNXQUh2Vi1DaDREbmgwbkh3dVRnektMeXBoWWJHdnhTVDZqakN5SWNESkkyYkc3NFBTX1p2MFNuaUx6ZF85TVl3TXBRUGZHV1ZVcl9HRmJRWm5vQ3d6VjNHeEpHY29kZW5aUmdEZlpVb2UxdHJscFI4czhuRVpKbm9QVlBKWnVjaVRzLVR2cUtfRGQ2NTI2QXY3S1RDTDBGVW1EN2lWMFZmVEQ2Q1ZNM3lwc2t0STd30gHDAUFVX3lxTE1nVEczd0hkQWZqcGk3UU1YVGpYbVJwd1hhOTFYM291LW9LZDBOVFZwTHZzNXh2bWwydXk3d2pYYXRWMjBDRVVvckh3YWFzeWVJTUExNExHSFFNNlE1VkJpTVB3V2x6VFBoeE5FR3I3SVhRMTFCUHo1N1h1M2dnTVF1bVl1N1FPOG5Qc2s4SE9XSzFXeVBfZTh5Wnhlak1NNHMxQXpsR3NsR2JOdG9YbEJyeTF4WVg5WGppSGc2cVlHaFIzdw?oc=5",
+      "date": "2026-04-18",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4773,15 +4782,6 @@
       "source": "SpaceNews",
       "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxPTVhuOHhjUjJCdjF1blhpV1ZidnQ3ZGZEbFZlOXZOQmpHaGZzd3dmQ3RrWWt3Q2NXR0g2b2JlRzh2d0lvNUNLM3BQc0d0ajdPRTEzOERRYjROTGNzRTdId1dFU3c5ZmIwa3ZxWXBSbmMtRHkyam5Sa1BiaVloUHBRWmxDU2tYdmJXR21UYWVObw?oc=5",
       "date": "2026-03-16",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Mistral AI raises $830m in debt financing for data center in Paris, France - Data Center Dynamics",
-      "source": "Data Center Dynamics",
-      "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxNS2I0Sl94YVFpTk9rV2xYZmp6VjhTdGZaNGxkWlRfZjZFYW5mMklsNklHaVhHUkhVSkZvSUFXVERFWkRNZkRfQTlqUWpzbUpQNmE2QWs4eDdLX0FpZzctT2czQlFHamtKWHZYVjBJZzZzX2VPM2RMY0pmRmhJTDJzQXRYdDYybDJyMjBfSHBjQks4eXFjMFB5azg4a3cwVUlTck16cGE0S3BfLTZPZ3g2bk03djNEdGc?oc=5",
-      "date": "2026-03-30",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4868,10 +4868,10 @@
       "impact": "medium"
     },
     {
-      "headline": "NVIDIA and Partners Build America\u2019s AI Infrastructure and Create Blueprint to Power the Next Industrial Revolution - NVIDIA Newsroom",
-      "source": "NVIDIA Newsroom",
-      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPSkZzU2FLZ3pBZGt4QzBFUmkybVA3RklCUkJPMGdpdlRaQ3RmaUVlNjFBN0NwQTUzbldRZXJLY1IzamYwcFFpa2hqamlmNVJseUhlVExfUG4zazJOSWZFM01mSkN0b0JlclI1VDBDcHVGRnZqblpYaDdwMVYwZ094YkRn?oc=5",
-      "date": "2025-10-28",
+      "headline": "NVIDIA Groq 3 LPX: Inference Accelerator for Agentic AI - NVIDIA",
+      "source": "NVIDIA",
+      "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE16ZklPT3k4WU9mQ0JTekJiZXVOUXo4YlpUTGFpdHZsMlNUN1IzbUVJcUJKUDFSTXVWczM0ZlEybjhiQ0JtRnRHa3BKaURBcC1PdXJINjZYZTQ?oc=5",
+      "date": "2026-03-16",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -11636,25 +11636,25 @@
       }
     }
   },
-  "last_updated": "2026-04-21T14:59:09.037404+00:00",
+  "last_updated": "2026-04-22T07:43:33.036764+00:00",
   "stocks": {
     "NVDA": {
       "ticker": "NVDA",
-      "current_price": 201.27,
+      "current_price": 199.88,
       "previous_close": 96.91,
       "52_week_high": 212.19,
-      "52_week_low": 95.04,
-      "ytd_change_pct": 6.58,
-      "last_updated": "2026-04-21T14:59:18.187669+00:00"
+      "52_week_low": 97.28,
+      "ytd_change_pct": 5.84,
+      "last_updated": "2026-04-22T07:43:33.253166+00:00"
     },
     "AMD": {
       "ticker": "AMD",
-      "current_price": 277.87,
+      "current_price": 284.49,
       "previous_close": 85.56,
       "52_week_high": 287.61,
-      "52_week_low": 83.75,
-      "ytd_change_pct": 24.34,
-      "last_updated": "2026-04-21T14:59:18.279355+00:00"
+      "52_week_low": 85.17,
+      "ytd_change_pct": 27.31,
+      "last_updated": "2026-04-22T07:43:33.409826+00:00"
     }
   }
 }
