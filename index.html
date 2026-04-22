@@ -193,14 +193,20 @@ body {
   animation: blink 2s ease-in-out infinite;
   box-shadow: 0 0 6px var(--green);
 }
+.live-dot.stale { background: var(--amber, #f59e0b); box-shadow: 0 0 6px var(--amber, #f59e0b); }
+.live-dot.very-stale { background: var(--red, #ef4444); box-shadow: 0 0 6px var(--red, #ef4444); animation: none; }
 @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
 .topbar-time {
   font-family: var(--mono);
   font-size: 10px;
   color: var(--text-3);
-  line-height: 1.2;
+  line-height: 1.25;
   text-align: right;
+  cursor: help;
 }
+.topbar-time .tt-label { color: var(--text-2); font-weight: 600; }
+.topbar-time .tt-date  { color: var(--text-1); font-weight: 600; }
+.topbar-time .tt-age   { color: var(--text-3); font-size: 9.5px; }
 
 
 /* ─── NAV ─── */
@@ -1131,8 +1137,8 @@ loadExternalData();
   </div>
   <div class="topbar-indicators" id="tickerBar"></div>
   <div class="topbar-meta">
-    <div class="live-dot"></div>
-    <div class="topbar-time" id="headerTime"></div>
+    <div class="live-dot" id="liveDot"></div>
+    <div class="topbar-time" id="headerTime" title=""></div>
   </div>
 </div>
 <div class="news-banner">
@@ -1768,13 +1774,41 @@ function renderAll() {
   renderSentimentPanel();
   renderDataAudit();
   updateTime();
-  setInterval(updateTime, 1000);
+  setInterval(updateTime, 60000);
 }
 
 function updateTime() {
-  document.getElementById('headerTime').textContent = new Date().toLocaleString('en-US', {
-    year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit'
-  });
+  const el = document.getElementById('headerTime');
+  const dot = document.getElementById('liveDot');
+  if (!el) return;
+  const iso = (typeof DATA !== 'undefined' && DATA && DATA.last_updated) ? DATA.last_updated : null;
+  const dt = iso ? new Date(iso) : null;
+  if (!dt || isNaN(dt.getTime())) {
+    el.innerHTML = '<span class="tt-label">Data</span> <span class="tt-age">no timestamp</span>';
+    if (dot) dot.classList.add('very-stale');
+    return;
+  }
+  const ageMin = Math.max(0, (Date.now() - dt.getTime()) / 60000);
+  let ageStr;
+  if (ageMin < 60) ageStr = Math.round(ageMin) + 'm ago';
+  else if (ageMin < 1440) ageStr = (ageMin / 60).toFixed(1).replace(/\.0$/, '') + 'h ago';
+  else ageStr = Math.round(ageMin / 1440) + 'd ago';
+
+  const dateStr = dt.toLocaleString('en-US', {
+    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
+    timeZone: 'UTC', hour12: false,
+  }) + ' UTC';
+
+  el.innerHTML =
+    '<div><span class="tt-label">Data updated</span> <span class="tt-date">' + dateStr + '</span></div>' +
+    '<div class="tt-age">' + ageStr + '</div>';
+  el.title = 'Last data refresh: ' + dt.toISOString() + '\nBrowser now: ' + new Date().toISOString();
+
+  if (dot) {
+    dot.classList.remove('stale', 'very-stale');
+    if (ageMin > 14 * 1440) dot.classList.add('very-stale');
+    else if (ageMin > 36 * 60) dot.classList.add('stale');
+  }
 }
 
 // ════════════════════════════════════════════════════════════════
