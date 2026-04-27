@@ -243,7 +243,7 @@
             "ap-northeast-1": 22.22
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "B200": {
           "instance": "p6-b200.48xlarge",
@@ -260,7 +260,7 @@
           },
           "source": "aws_pricing_api",
           "last_verified": "2026-03-20T00:00:00+00:00",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "H200": {
           "instance": "p5en.48xlarge",
@@ -276,7 +276,7 @@
           },
           "source": "aws_pricing_api",
           "last_verified": "2026-03-20T00:00:00+00:00",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "H100-SXM": {
           "instance": "p5.48xlarge",
@@ -293,7 +293,7 @@
           },
           "source": "aws_pricing_api",
           "last_verified": "2026-03-20T00:00:00+00:00",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "A100-80GB": {
           "instance": "p4de.24xlarge",
@@ -310,7 +310,7 @@
           },
           "source": "aws_pricing_api",
           "last_verified": "2026-03-20T00:00:00+00:00",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "A100-40GB": {
           "instance": "p4d.24xlarge",
@@ -327,7 +327,7 @@
           },
           "source": "aws_pricing_api",
           "last_verified": "2026-03-20T00:00:00+00:00",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "L40S": {
           "instance": "g6e.xlarge",
@@ -341,24 +341,24 @@
             "eu-central-1": 2.12
           },
           "source": "aws_pricing_api",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "L4": {
           "price_per_gpu_hr": 1.669,
           "source": "aws_pricing_api",
           "last_verified": "2026-03-20T00:00:00+00:00",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "T4": {
           "price_per_gpu_hr": 0.53,
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         }
       },
       "reserved_1yr_discount": 0.4,
       "reserved_3yr_discount": 0.6,
       "spot_discount": 0.4,
-      "last_updated": "2026-04-21T14:59:18.095804+00:00"
+      "last_updated": "2026-04-27T09:12:52.507768+00:00"
     },
     "GCP": {
       "provider_name": "Google Cloud Platform",
@@ -376,7 +376,7 @@
             "europe-west1": 15.36
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "H200": {
           "instance": "a3-ultragpu-8g",
@@ -390,7 +390,7 @@
             "europe-west1": 11.82
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "H100-SXM": {
           "instance": "a3-highgpu-8g",
@@ -406,7 +406,7 @@
             "asia-northeast1": 12.93
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "A100-80GB": {
           "instance": "a2-ultragpu-1g",
@@ -422,7 +422,7 @@
             "asia-northeast1": 5.93
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "A100-40GB": {
           "instance": "a2-highgpu-1g",
@@ -438,32 +438,32 @@
             "asia-northeast1": 4.29
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "H100-PCIe": {
           "price_per_gpu_hr": 2.85,
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "L4": {
           "price_per_gpu_hr": 0.7,
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "T4": {
           "price_per_gpu_hr": 0.35,
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "B200": {
           "price_per_gpu_hr": 5.12,
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "L40S": {
           "price_per_gpu_hr": 1.1,
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         }
       },
       "reserved_1yr_discount": 0.37,
@@ -486,7 +486,7 @@
             "northeurope": 17.41
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "GB200": {
           "instance": "ND128isr_NDR_GB200_v6",
@@ -501,7 +501,7 @@
           },
           "source": "azure_retail_api",
           "last_verified": "2026-03-20T00:00:00+00:00",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "H200": {
           "instance": "ND96isr_H200_v5",
@@ -515,7 +515,7 @@
             "northeurope": 11.53
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "H100-SXM": {
           "instance": "ND96isr_H100_v5",
@@ -533,7 +533,7 @@
           },
           "source": "azure_retail_api",
           "last_verified": "2026-03-20T00:00:00+00:00",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "MI325X": {
           "instance": "ND96isr_MI325X_v5",
@@ -559,7 +559,7 @@
             "southeastasia": 7.0
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "A100-80GB": {
           "instance": "ND96amsr_A100_v4",
@@ -576,33 +576,33 @@
           },
           "source": "azure_retail_api",
           "last_verified": "2026-03-20T00:00:00+00:00",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "A100-40GB": {
           "price_per_gpu_hr": 1.97,
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "T4": {
           "price_per_gpu_hr": 0.53,
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "B200": {
           "price_per_gpu_hr": 5.53,
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "L40S": {
           "price_per_gpu_hr": 1.24,
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         }
       },
       "reserved_1yr_discount": 0.36,
       "reserved_3yr_discount": 0.56,
       "spot_discount": 0.4,
-      "last_updated": "2026-04-21T14:59:18.095804+00:00"
+      "last_updated": "2026-04-27T09:12:52.507768+00:00"
     },
     "Lambda": {
       "provider_name": "Lambda Labs",
@@ -617,7 +617,7 @@
             "us-south-1": 7.46
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "B200": {
           "instance": "gpu_8x_b200",
@@ -629,7 +629,7 @@
           },
           "source": "lambda_scrape",
           "last_verified": "2026-03-20T00:00:00+00:00",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "H100-SXM": {
           "instance": "gpu_8x_h100_sxm5",
@@ -643,7 +643,7 @@
           },
           "source": "lambda_scrape",
           "last_verified": "2026-03-20T00:00:00+00:00",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "H100-PCIe": {
           "instance": "gpu_1x_h100_pcie",
@@ -655,7 +655,7 @@
             "us-east-1": 2.86
           },
           "source": "lambda_scrape",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "A100-80GB": {
           "instance": "gpu_8x_a100_80gb_sxm4",
@@ -667,7 +667,7 @@
             "us-east-1": 1.29
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "A100-40GB": {
           "instance": "gpu_8x_a100",
@@ -678,23 +678,23 @@
             "us-south-1": 1.1
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "H200": {
           "price_per_gpu_hr": 3.29,
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "MI300X": {
           "price_per_gpu_hr": 3.99,
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         }
       },
       "reserved_1yr_discount": 0.2,
       "reserved_3yr_discount": 0.35,
       "spot_discount": 0.0,
-      "last_updated": "2026-04-21T14:59:18.095804+00:00"
+      "last_updated": "2026-04-27T09:12:52.507768+00:00"
     },
     "CoreWeave": {
       "provider_name": "CoreWeave",
@@ -709,7 +709,7 @@
             "ORD1": 4.88
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "B200": {
           "instance": "b200-sxm-192gb",
@@ -721,7 +721,7 @@
           },
           "source": "coreweave_scrape",
           "last_verified": "2026-03-20T00:00:00+00:00",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "H200": {
           "instance": "h200-sxm-141gb",
@@ -733,7 +733,7 @@
           },
           "source": "coreweave_scrape",
           "last_verified": "2026-03-20T00:00:00+00:00",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "H100-SXM": {
           "instance": "h100-sxm-80gb",
@@ -746,7 +746,7 @@
           },
           "source": "coreweave_scrape",
           "last_verified": "2026-03-20T00:00:00+00:00",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "H100-PCIe": {
           "instance": "h100-pcie-80gb",
@@ -757,7 +757,7 @@
             "ORD1": 2.06
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "MI325X": {
           "instance": "mi325x-256gb",
@@ -779,7 +779,7 @@
           },
           "source": "coreweave_scrape",
           "last_verified": "2026-03-20T00:00:00+00:00",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "A100-40GB": {
           "instance": "a100-pcie-40gb",
@@ -790,7 +790,7 @@
             "ORD1": 0.76
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "L40S": {
           "instance": "l40s-48gb",
@@ -802,7 +802,7 @@
           },
           "source": "coreweave_scrape",
           "last_verified": "2026-03-20T00:00:00+00:00",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "RTX-4090": {
           "instance": "rtx-4090-24gb",
@@ -813,23 +813,23 @@
             "ORD1": 0.74
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "MI300X": {
           "price_per_gpu_hr": 2.85,
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "GB200": {
           "price_per_gpu_hr": 10.5,
           "source": "coreweave_scrape",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         }
       },
       "reserved_1yr_discount": 0.25,
       "reserved_3yr_discount": 0.45,
       "spot_discount": 0.55,
-      "last_updated": "2026-04-21T14:59:18.095804+00:00"
+      "last_updated": "2026-04-27T09:12:52.507768+00:00"
     },
     "RunPod": {
       "provider_name": "RunPod",
@@ -843,34 +843,34 @@
             "US": 7.77
           },
           "source": "runpod_api",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00",
+          "last_updated": "2026-04-27T09:12:52.507768+00:00",
           "spot_price": 7.39,
           "memory_gb": 288
         },
         "B200": {
           "source": "runpod_api",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00",
+          "last_updated": "2026-04-27T09:12:52.507768+00:00",
           "memory_gb": 180,
           "price_per_gpu_hr": 5.49,
           "spot_price": 3.59
         },
         "H200": {
           "source": "runpod_api",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00",
+          "last_updated": "2026-04-27T09:12:52.507768+00:00",
           "memory_gb": 143,
           "price_per_gpu_hr": 3.39,
-          "spot_price": 2.29
+          "spot_price": 3.05
         },
         "H100-SXM": {
           "source": "runpod_api",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00",
+          "last_updated": "2026-04-27T09:12:52.507768+00:00",
           "memory_gb": 94,
           "price_per_gpu_hr": 3.07,
-          "spot_price": 1.65
+          "spot_price": 2.61
         },
         "H100-PCIe": {
           "source": "runpod_api",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00",
+          "last_updated": "2026-04-27T09:12:52.507768+00:00",
           "memory_gb": 80,
           "price_per_gpu_hr": 2.39,
           "spot_price": 1.25
@@ -886,10 +886,10 @@
         },
         "MI300X": {
           "source": "runpod_api",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00",
+          "last_updated": "2026-04-27T09:12:52.507768+00:00",
           "memory_gb": 192,
           "price_per_gpu_hr": 1.99,
-          "spot_price": 1.49
+          "spot_price": 1.69
         },
         "A100-80GB": {
           "instance": "a100-80gb",
@@ -900,8 +900,8 @@
             "EU": 1.44
           },
           "source": "runpod_api",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00",
-          "spot_price": 0.95,
+          "last_updated": "2026-04-27T09:12:52.507768+00:00",
+          "spot_price": 1.27,
           "memory_gb": 80
         },
         "A100-40GB": {
@@ -915,37 +915,37 @@
         },
         "L40S": {
           "source": "runpod_api",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00",
+          "last_updated": "2026-04-27T09:12:52.507768+00:00",
           "memory_gb": 48,
           "price_per_gpu_hr": 0.86,
-          "spot_price": 0.26
+          "spot_price": 0.73
         },
         "RTX-4090": {
           "source": "runpod_api",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00",
+          "last_updated": "2026-04-27T09:12:52.507768+00:00",
           "memory_gb": 24,
           "price_per_gpu_hr": 0.69,
-          "spot_price": 0.29
+          "spot_price": 0.5
         },
         "RTX-5090": {
           "source": "runpod_api",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00",
+          "last_updated": "2026-04-27T09:12:52.507768+00:00",
           "memory_gb": 32,
           "price_per_gpu_hr": 0.99,
-          "spot_price": 0.53
+          "spot_price": 0.84
         },
         "L4": {
           "source": "runpod_api",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00",
+          "last_updated": "2026-04-27T09:12:52.507768+00:00",
           "memory_gb": 24,
           "price_per_gpu_hr": 0.39,
-          "spot_price": 0.22
+          "spot_price": 0.33
         }
       },
       "reserved_1yr_discount": 0.15,
       "reserved_3yr_discount": 0.3,
       "spot_discount": 0.4,
-      "last_updated": "2026-04-21T14:59:18.095804+00:00"
+      "last_updated": "2026-04-27T09:12:52.507768+00:00"
     },
     "Vast.ai": {
       "provider_name": "Vast.ai",
@@ -963,37 +963,37 @@
         "B200": {
           "instance": "community",
           "gpus_per_instance": 1,
-          "price_per_gpu_hr": 3.8007,
+          "price_per_gpu_hr": 3.6253,
           "regions": {
             "US": 2.67,
             "EU": 3.1
           },
           "source": "vastai_api",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "H200": {
           "instance": "community",
           "gpus_per_instance": 1,
-          "price_per_gpu_hr": 2.0131,
+          "price_per_gpu_hr": 2.9356,
           "regions": {
             "US": 1.97,
             "EU": 2.2,
             "APAC": 2.4
           },
           "source": "vastai_api",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "H100-SXM": {
           "instance": "community",
           "gpus_per_instance": 1,
-          "price_per_gpu_hr": 1.6022,
+          "price_per_gpu_hr": 1.6148,
           "regions": {
             "US": 1.7,
             "EU": 1.9,
             "APAC": 2.05
           },
           "source": "vastai_api",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "H100-PCIe": {
           "instance": "community",
@@ -1004,7 +1004,7 @@
             "EU": 1.7
           },
           "source": "vastai_api",
-          "last_updated": "2026-04-13T08:57:58.870599+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "MI300X": {
           "instance": "community",
@@ -1025,7 +1025,7 @@
             "APAC": 1.1
           },
           "source": "vastai_api",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "A100-40GB": {
           "instance": "community",
@@ -1049,41 +1049,41 @@
           "price_per_gpu_hr": 0.4539,
           "num_offers": 16,
           "source": "vastai_api",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "L40S": {
           "instance": "community",
           "gpus_per_instance": 1,
-          "price_per_gpu_hr": 0.5778,
+          "price_per_gpu_hr": 0.5756,
           "regions": {
             "US": 0.47,
             "EU": 0.57
           },
           "source": "vastai_api",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "RTX-5090": {
-          "price_per_gpu_hr": 0.2693,
+          "price_per_gpu_hr": 0.2944,
           "num_offers": 4,
           "source": "vastai_api",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "T4": {
-          "price_per_gpu_hr": 0.1477,
+          "price_per_gpu_hr": 0.1487,
           "num_offers": 4,
           "source": "vastai_api",
-          "last_updated": "2026-04-20T09:03:40.438839+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "L4": {
-          "price_per_gpu_hr": 0.3344,
+          "price_per_gpu_hr": 0.2956,
           "source": "vastai_api",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         }
       },
       "reserved_1yr_discount": 0.0,
       "reserved_3yr_discount": 0.0,
       "spot_discount": 0.0,
-      "last_updated": "2026-04-21T14:59:18.095804+00:00"
+      "last_updated": "2026-04-27T09:12:52.507768+00:00"
     },
     "FluidStack": {
       "provider_name": "FluidStack",
@@ -1098,7 +1098,7 @@
             "EU": 3.3
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "H200": {
           "instance": "h200_sxm",
@@ -1109,7 +1109,7 @@
             "EU": 2.53
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "H100-SXM": {
           "instance": "h100_sxm",
@@ -1121,7 +1121,7 @@
             "APAC": 2.45
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "MI300X": {
           "instance": "mi300x",
@@ -1141,7 +1141,7 @@
             "EU": 1.1
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "A100-40GB": {
           "instance": "a100_40gb",
@@ -1151,7 +1151,7 @@
             "US": 0.65
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "L40S": {
           "instance": "l40s",
@@ -1161,12 +1161,12 @@
             "US": 0.69
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "B200": {
           "price_per_gpu_hr": 2.5,
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         }
       },
       "reserved_1yr_discount": 0.2,
@@ -1188,7 +1188,7 @@
             "eu-frankfurt-1": 6.08
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "B200": {
           "instance": "BM.GPU.B200.8",
@@ -1201,7 +1201,7 @@
             "eu-frankfurt-1": 4.68
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "H200": {
           "instance": "BM.GPU.H200.8",
@@ -1226,7 +1226,7 @@
             "ap-tokyo-1": 3.83
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "A100-80GB": {
           "instance": "BM.GPU.A100-v2.8",
@@ -1239,12 +1239,12 @@
             "eu-frankfurt-1": 3.25
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "A100-40GB": {
           "price_per_gpu_hr": 1.28,
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         }
       },
       "reserved_1yr_discount": 0.3,
@@ -1263,7 +1263,7 @@
             "US": 5.5
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "H100-SXM": {
           "instance": "dedicated",
@@ -1274,7 +1274,7 @@
           },
           "source": "together_scrape",
           "last_verified": "2026-03-20T00:00:00+00:00",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "A100-80GB": {
           "instance": "dedicated",
@@ -1284,23 +1284,23 @@
             "US": 1.5
           },
           "source": "hardcoded_fallback",
-          "last_verified": "2026-04-21T14:59:18.096431+00:00"
+          "last_verified": "2026-04-27T09:12:52.508409+00:00"
         },
         "B200": {
           "price_per_gpu_hr": 9.95,
           "source": "together_scrape",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         },
         "H200": {
           "price_per_gpu_hr": 5.49,
           "source": "together_scrape",
-          "last_updated": "2026-04-21T14:59:18.095804+00:00"
+          "last_updated": "2026-04-27T09:12:52.507768+00:00"
         }
       },
       "reserved_1yr_discount": 0.25,
       "reserved_3yr_discount": 0.4,
       "spot_discount": 0.35,
-      "last_updated": "2026-04-21T14:59:18.095804+00:00"
+      "last_updated": "2026-04-27T09:12:52.507768+00:00"
     }
   },
   "historical": {
@@ -1440,7 +1440,7 @@
         "availability": "available"
       },
       "2026-04": {
-        "avg": 6.53,
+        "avg": 6.51,
         "min": 2.5,
         "max": 14.24,
         "availability": "available"
@@ -1683,7 +1683,7 @@
       },
       "2026-04": {
         "avg": 4.57,
-        "min": 1.6,
+        "min": 1.61,
         "max": 11.61,
         "availability": "available"
       }
@@ -1834,8 +1834,8 @@
         "availability": "available"
       },
       "2026-04": {
-        "avg": 4.65,
-        "min": 2.01,
+        "avg": 4.74,
+        "min": 2.3,
         "max": 7.91,
         "availability": "available"
       }
@@ -2964,8 +2964,8 @@
         "availability": "available"
       },
       "2026-04": {
-        "avg": 0.63,
-        "min": 0.27,
+        "avg": 0.64,
+        "min": 0.29,
         "max": 0.99,
         "availability": "available"
       }
@@ -2978,8 +2978,8 @@
         "availability": "available"
       },
       "2026-04": {
-        "avg": 0.77,
-        "min": 0.33,
+        "avg": 0.76,
+        "min": 0.3,
         "max": 1.67,
         "availability": "available"
       }
@@ -3010,7 +3010,7 @@
       "52w_low": 104.08,
       "ytd_pct": 10.28,
       "52w_range": "$104.08-$212.19",
-      "last_updated": "2026-04-27T08:21:05.962379+00:00"
+      "last_updated": "2026-04-27T09:12:52.593467+00:00"
     },
     "amd_stock": {
       "ticker": "AMD",
@@ -3022,7 +3022,7 @@
       "52w_low": 91.87,
       "ytd_pct": 55.64,
       "52w_range": "$91.87-$352.99",
-      "last_updated": "2026-04-27T08:21:06.086840+00:00"
+      "last_updated": "2026-04-27T09:12:52.660151+00:00"
     },
     "gpu_market_size_bn": {
       "2023": 52.4,
@@ -4351,7 +4351,7 @@
     },
     "B200": {
       "on_demand_low": 2.5,
-      "on_demand_avg": 6.53,
+      "on_demand_avg": 6.51,
       "on_demand_high": 14.24,
       "reserved_1yr_low": 2.0,
       "reserved_1yr_avg": 4.85,
@@ -4363,18 +4363,18 @@
       "res3_savings_pct": 50,
       "num_providers": 10,
       "quarterly_trend": [
-        4.22,
         4.28,
         4.28,
-        6.53
+        6.53,
+        6.51
       ],
       "bid": 6.1,
       "ask": 6.9,
-      "last_trade": 6.53
+      "last_trade": 6.51
     },
     "H200": {
-      "on_demand_low": 2.01,
-      "on_demand_avg": 4.65,
+      "on_demand_low": 2.3,
+      "on_demand_avg": 4.74,
       "on_demand_high": 7.91,
       "reserved_1yr_low": 1.84,
       "reserved_1yr_avg": 3.49,
@@ -4386,17 +4386,17 @@
       "res3_savings_pct": 48,
       "num_providers": 10,
       "quarterly_trend": [
-        3.86,
         3.99,
         3.88,
-        4.65
+        4.65,
+        4.74
       ],
       "bid": 4.95,
       "ask": 5.65,
-      "last_trade": 4.65
+      "last_trade": 4.74
     },
     "H100-SXM": {
-      "on_demand_low": 1.6,
+      "on_demand_low": 1.61,
       "on_demand_avg": 4.57,
       "on_demand_high": 11.61,
       "reserved_1yr_low": 1.44,
@@ -4409,9 +4409,9 @@
       "res3_savings_pct": 55,
       "num_providers": 10,
       "quarterly_trend": [
-        2.82,
         2.81,
         2.84,
+        4.57,
         4.57
       ],
       "bid": 2.35,
@@ -4432,9 +4432,9 @@
       "res3_savings_pct": 58,
       "num_providers": 10,
       "quarterly_trend": [
-        1.79,
         1.71,
         1.71,
+        2.04,
         2.04
       ],
       "bid": 1.4,
@@ -4479,7 +4479,7 @@
       "num_providers": 3,
       "quarterly_trend": [
         0.59,
-        0.59,
+        0.63,
         0.63,
         0.63
       ],
@@ -4524,9 +4524,9 @@
       "res3_savings_pct": 52,
       "num_providers": 7,
       "quarterly_trend": [
-        1.05,
         1.06,
         1.06,
+        1.49,
         1.49
       ],
       "bid": 0.95,
@@ -4549,7 +4549,7 @@
       "quarterly_trend": [
         1.21,
         1.21,
-        1.21,
+        1.37,
         1.37
       ],
       "bid": 1.19,
@@ -4557,8 +4557,8 @@
       "last_trade": 1.37
     },
     "L4": {
-      "on_demand_low": 0.33,
-      "on_demand_avg": 0.77,
+      "on_demand_low": 0.3,
+      "on_demand_avg": 0.76,
       "on_demand_high": 1.67,
       "reserved_1yr_low": 0.33,
       "reserved_1yr_avg": 0.59,
@@ -4572,12 +4572,12 @@
       "quarterly_trend": [
         0.56,
         0.56,
-        0.56,
-        0.77
+        0.77,
+        0.76
       ],
       "bid": 0.75,
       "ask": 0.75,
-      "last_trade": 0.77
+      "last_trade": 0.76
     },
     "T4": {
       "on_demand_low": 0.15,
@@ -4618,7 +4618,7 @@
       "quarterly_trend": [
         2.43,
         2.43,
-        2.43,
+        2.52,
         2.52
       ],
       "bid": 2.44,
@@ -4641,7 +4641,7 @@
       "quarterly_trend": [
         27.04,
         27.04,
-        27.04,
+        19.51,
         19.51
       ],
       "bid": 27.04,
@@ -4672,8 +4672,8 @@
       "last_trade": 0.65
     },
     "RTX-5090": {
-      "on_demand_low": 0.27,
-      "on_demand_avg": 0.63,
+      "on_demand_low": 0.29,
+      "on_demand_avg": 0.64,
       "on_demand_high": 0.99,
       "reserved_1yr_low": 0.84,
       "reserved_1yr_avg": 0.84,
@@ -4685,14 +4685,14 @@
       "res3_savings_pct": 50,
       "num_providers": 2,
       "quarterly_trend": [
-        0.58,
         0.65,
         0.63,
-        0.63
+        0.63,
+        0.64
       ],
       "bid": 0.28,
       "ask": 0.28,
-      "last_trade": 0.63
+      "last_trade": 0.64
     }
   },
   "news": [
@@ -4733,10 +4733,10 @@
       "impact": "medium"
     },
     {
-      "headline": "Nvidia Rubin GPUs may be delayed, slowing the next phase of AI infrastructure - Network World",
-      "source": "Network World",
-      "url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxNMERiUkNzYzBwYXhIZkRTX0xnNTRIV25aQnA5ZHNyM3ZIQnNPaXBkUWJQejA1R2xEVktmQ3NDTzlTS1EwaU9Dd3gyZjZfWGxxam9VVlVfVm9OMS1xeXlISU1HU0tQQWZnQlYtZTB6ZWZPMy1GY1MybDBwN01NLWRkdVZnRmQwMXBhcVJPeUd5OTBtNmxvQkY4ZERTUWF4WTlHNFVyTHEwMENVNE1LbndHV0lhUHBSTmdfb2VrblVYUkE2T210?oc=5",
-      "date": "2026-04-09",
+      "headline": "Why Nvidia is worth $5 trillion: Inside a $35 billion, 1 gigawatt AI data center. - Business Insider",
+      "source": "Business Insider",
+      "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxQck1Ea1EwaDJCcEdiYmpGdEtFMUFGb2FHcjNGeVFVUFhjdENnQ0pQVHdwbi1UNWpzNEhPRmxSMUFXZ3pXT2hha3JxY1lLTWQxMjVObUE5bnI0VDJJTzhzZFFfcl9Wck5UUkNWZmhIaUhFTXNneDlvVVI2TWgydDk1aW12MVZKMUdhd3V6WHJ4eWVyQi1QZVBuM0VrX1lxdkp2?oc=5",
+      "date": "2025-10-29",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4760,28 +4760,10 @@
       "impact": "medium"
     },
     {
-      "headline": "Why Nvidia is worth $5 trillion: Inside a $35 billion, 1 gigawatt AI data center. - Business Insider",
-      "source": "Business Insider",
-      "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxQck1Ea1EwaDJCcEdiYmpGdEtFMUFGb2FHcjNGeVFVUFhjdENnQ0pQVHdwbi1UNWpzNEhPRmxSMUFXZ3pXT2hha3JxY1lLTWQxMjVObUE5bnI0VDJJTzhzZFFfcl9Wck5UUkNWZmhIaUhFTXNneDlvVVI2TWgydDk1aW12MVZKMUdhd3V6WHJ4eWVyQi1QZVBuM0VrX1lxdkp2?oc=5",
-      "date": "2025-10-29",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Meta Builds AI Infrastructure With NVIDIA - NVIDIA Newsroom",
+      "headline": "NVIDIA Launches Space Computing, Rocketing AI Into Orbit - NVIDIA Newsroom",
       "source": "NVIDIA Newsroom",
-      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQa2Jtb2d5VUFBazZ4U1VWS29KbmFHMkdkN1lNXzNXTHR6eUZTUjVUYWw2cndMOVhpYldLbm1Cdm1nWkxyUzFJcUo1OVBXd3lBMnBsYU1nVVNaOF9YR2pRaXNLdHowVllDdU5hNU9kWW5DV3lSWmk4MFYtQUt6ZTA1WQ?oc=5",
-      "date": "2026-02-17",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "3 AI Chipmakers With Far More Upside Than AMD - The Motley Fool",
-      "source": "The Motley Fool",
-      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxNZDI0UTBnd29pVHNRa0ppdXd0ZkdQTkdXQzhBMHo4eUs3ZEd4aXNWWmVBcGprWGFyWjF1eWhDLTE5aHVHODdJTlE3V1FweEtfM0NxanR3RFJ6alpvSy1LNDBGV3ZLcWZoZmFQYVFUY1h4U3FhMVFOZXVBUkpmcFdFU0ZQcEdPbU9IQXNsSW5ld1R1Sjg?oc=5",
-      "date": "2026-04-22",
+      "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTFByTFhFdVBzclhIVjNSbWNVX0tSY0FpZWdKenRYLTJNVU53ZW12ZnFBeE5GaldHTERicEIxUDlWQnJhdFFSQnh6NHNVbXMyUlNTS3AwUFZkaWN4dUxmMkE?oc=5",
+      "date": "2026-03-16",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4796,10 +4778,10 @@
       "impact": "medium"
     },
     {
-      "headline": "Nvidia overhauls the data center for OpenClaw era - Network World",
-      "source": "Network World",
-      "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxQeW5YQmJRNnRVYlNZdEZOeFNBb3QzSGJfYkRCWWRPSml1TjdfTWZpOUluWmJZWXU2UkZDOUw4ZU9leEpWV29IdHNFSTJtbldURllMOGFscXZlNEZuNE5BRFphZGQ3MVkxNWNudXAwbjQyRXRFUi1ocUpESXpwVTMtRGZSenI3QWRwWWhjcXhEeDhad3YyeTl0SFJmNDNxOTRa?oc=5",
-      "date": "2026-03-20",
+      "headline": "Meta Builds AI Infrastructure With NVIDIA - NVIDIA Newsroom",
+      "source": "NVIDIA Newsroom",
+      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQa2Jtb2d5VUFBazZ4U1VWS29KbmFHMkdkN1lNXzNXTHR6eUZTUjVUYWw2cndMOVhpYldLbm1Cdm1nWkxyUzFJcUo1OVBXd3lBMnBsYU1nVVNaOF9YR2pRaXNLdHowVllDdU5hNU9kWW5DV3lSWmk4MFYtQUt6ZTA1WQ?oc=5",
+      "date": "2026-02-17",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4832,10 +4814,28 @@
       "impact": "medium"
     },
     {
+      "headline": "Building the 800 VDC Ecosystem for Efficient, Scalable AI Factories | NVIDIA Technical Blog - NVIDIA Developer",
+      "source": "NVIDIA Developer",
+      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQel9fQ2JOT1MzWGQ4S1N4b2ZuOU9QWm5yaDMzcE9DWlBXbk1NWVRZOEZpUFFwNjMxV2lTd2p5RnFubXBpdDRydHRVSU52Nm5icmdKeDlOY2FBdHBvN2ZIVUE5T3gxZ3NlU0JUY0tmMUtacHVBN3pQRE95SUxDQlhJUDM0dllOMlFDWTFnTWR1LTdGeXJDSFFDeUlpanpZUjlHa0FV?oc=5",
+      "date": "2025-10-13",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
       "headline": "OpenAI and NVIDIA Announce Strategic Partnership to Deploy 10 Gigawatts of NVIDIA Systems - NVIDIA Newsroom",
       "source": "NVIDIA Newsroom",
       "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOQW5qdHA3WGJQOHlUT1pRdVBxOF9rcFI5aExZbllQdk1xQ1RWNGdnUGlyLVYwbG9MNEMzVzM0Tll1Zmk1N19DT2I0dHFJRXl5U2w5bmJHZ0p4T2pKMkdGRHU3LXVYX09ybm45a1RKU3RxcTlNVzRjdGxzVUswNXRpSzI2ZXB0R082Q3E5WWZIbE5Va2QwZ194eTF6WmNHWWxkcGdEWV9SVWE1Y3paSTl0aHFEMkhDQQ?oc=5",
       "date": "2025-09-22",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Industry Leaders Transform Enterprise Data Centers for the AI Era With NVIDIA RTX PRO Servers - NVIDIA Newsroom",
+      "source": "NVIDIA Newsroom",
+      "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxNdjBISTgtejlnOXVfWEJoOHVjX2FzUm1nbzljM0hGMFc0dENja1duVTFQcExiMzBkS3JYMkRZWFpvVVBKRERYMks1VjZHQUJPWV9YSVJvZ2gyRlU0YmRxakR1YWNUWTVmY2J4Rkl6SW9sYk9KdGYyX3g3M1ZrMUJnTWF4THlHb1JlalV3eFBoNFRhMkY4QkMwX2RFcE5tYWZlRG9rWTBucmRzd2d1eFFmM1NhSWo0SUVDWlJXejU3TDBUczRLTHZj?oc=5",
+      "date": "2025-08-26",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4850,6 +4850,15 @@
       "impact": "medium"
     },
     {
+      "headline": "NVIDIA and Partners Build America\u2019s AI Infrastructure and Create Blueprint to Power the Next Industrial Revolution - NVIDIA Newsroom",
+      "source": "NVIDIA Newsroom",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPSkZzU2FLZ3pBZGt4QzBFUmkybVA3RklCUkJPMGdpdlRaQ3RmaUVlNjFBN0NwQTUzbldRZXJLY1IzamYwcFFpa2hqamlmNVJseUhlVExfUG4zazJOSWZFM01mSkN0b0JlclI1VDBDcHVGRnZqblpYaDdwMVYwZ094YkRn?oc=5",
+      "date": "2025-10-28",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
       "headline": "NVIDIA Kicks Off the Next Generation of AI With Rubin \u2014 Six New Chips, One Incredible AI Supercomputer - NVIDIA Newsroom",
       "source": "NVIDIA Newsroom",
       "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE1wVTdNYW04bUY5N2s2cWlUR25KZzZ3ZlFxdUZ2MWgwZGFmSUJqNGQxV3E5M0ktZDAzOGFkMGtSaThmSnBrc09jN1ZYakpjWDlabmdJcDYxTjV1LXpmVW16MkJ1NDNFNE9sOUYxVUR0UUtWdzdE?oc=5",
@@ -4859,19 +4868,10 @@
       "impact": "medium"
     },
     {
-      "headline": "NVIDIA Groq 3 LPX: Inference Accelerator for Agentic AI - NVIDIA",
-      "source": "NVIDIA",
-      "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE16ZklPT3k4WU9mQ0JTekJiZXVOUXo4YlpUTGFpdHZsMlNUN1IzbUVJcUJKUDFSTXVWczM0ZlEybjhiQ0JtRnRHa3BKaURBcC1PdXJINjZYZTQ?oc=5",
-      "date": "2026-03-16",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "NVIDIA and Partners Build America\u2019s AI Infrastructure and Create Blueprint to Power the Next Industrial Revolution - NVIDIA Newsroom",
-      "source": "NVIDIA Newsroom",
-      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPSkZzU2FLZ3pBZGt4QzBFUmkybVA3RklCUkJPMGdpdlRaQ3RmaUVlNjFBN0NwQTUzbldRZXJLY1IzamYwcFFpa2hqamlmNVJseUhlVExfUG4zazJOSWZFM01mSkN0b0JlclI1VDBDcHVGRnZqblpYaDdwMVYwZ094YkRn?oc=5",
-      "date": "2025-10-28",
+      "headline": "Gearing Up for the Gigawatt Data Center Age - NVIDIA Blog",
+      "source": "NVIDIA Blog",
+      "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE1UTWJmV2xZRjh0RXBpSEkxMko1cUlkZ0ZISTdwTXhLak1WbXAzQ0R0UmdBT2s3U0UwWTVGSW9tdXhXNTNaZS10VWlRUW9kMGRWLVlJcVFiTnFlTDF3MjQ0clFDV0hPMVFuWUk3VjNIdXpuQQ?oc=5",
+      "date": "2025-08-21",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4881,7 +4881,7 @@
     "H100-SXM": {
       "score": 55,
       "reddit_sentiment": 0.84,
-      "github_compat_score": 48,
+      "github_compat_score": 49,
       "hf_models_trained": 200,
       "mentions_30d": 29,
       "ecosystem": "mature",
@@ -4897,12 +4897,8 @@
       ],
       "top_use_case": "LLM training & serving at scale",
       "hf_models_estimated": true,
-      "github_repos": 65,
+      "github_repos": 67,
       "score_history": [
-        {
-          "date": "2026-03-20",
-          "score": 54
-        },
         {
           "date": "2026-03-25",
           "score": 54
@@ -4930,9 +4926,13 @@
         {
           "date": "2026-04-21",
           "score": 55
+        },
+        {
+          "date": "2026-04-27",
+          "score": 55
         }
       ],
-      "last_updated": "2026-04-21T14:59:45.533713+00:00",
+      "last_updated": "2026-04-27T09:13:19.385053+00:00",
       "hot_topics": [
         {
           "title": "Fine-tuned Qwen3 SLMs (0.6-8B) beat frontier LLMs on narrow tasks",
@@ -4975,10 +4975,6 @@
       "github_repos": 5,
       "score_history": [
         {
-          "date": "2026-03-20",
-          "score": 35
-        },
-        {
           "date": "2026-03-25",
           "score": 34
         },
@@ -5005,9 +5001,13 @@
         {
           "date": "2026-04-21",
           "score": 33
+        },
+        {
+          "date": "2026-04-27",
+          "score": 33
         }
       ],
-      "last_updated": "2026-04-21T14:59:45.533713+00:00",
+      "last_updated": "2026-04-27T09:13:19.385053+00:00",
       "hot_topics": [
         {
           "title": "Genuinely curious what doors the M5 Ultra will open",
@@ -5047,10 +5047,6 @@
       "github_repos": 18,
       "score_history": [
         {
-          "date": "2026-03-20",
-          "score": 39
-        },
-        {
           "date": "2026-03-25",
           "score": 40
         },
@@ -5077,9 +5073,13 @@
         {
           "date": "2026-04-21",
           "score": 41
+        },
+        {
+          "date": "2026-04-27",
+          "score": 41
         }
       ],
-      "last_updated": "2026-04-21T14:59:45.533713+00:00",
+      "last_updated": "2026-04-27T09:13:19.385053+00:00",
       "hot_topics": [
         {
           "title": "55 \u2192 282 tok/s: How I got Qwen3.5-397B running at speed on 4x RTX PRO 6000 Blackwell",
@@ -5120,10 +5120,6 @@
       "github_repos": 17,
       "score_history": [
         {
-          "date": "2026-03-20",
-          "score": 45
-        },
-        {
           "date": "2026-03-25",
           "score": 46
         },
@@ -5150,9 +5146,13 @@
         {
           "date": "2026-04-21",
           "score": 47
+        },
+        {
+          "date": "2026-04-27",
+          "score": 47
         }
       ],
-      "last_updated": "2026-04-21T14:59:45.533713+00:00",
+      "last_updated": "2026-04-27T09:13:19.385053+00:00",
       "hot_topics": [
         {
           "title": "My company just handed me a 2x H200 (282GB VRAM) rig. Help me pick the \"Intelligence\" ceiling.",
@@ -5193,10 +5193,6 @@
       "github_repos": 157,
       "score_history": [
         {
-          "date": "2026-03-20",
-          "score": 53
-        },
-        {
           "date": "2026-03-25",
           "score": 54
         },
@@ -5223,9 +5219,13 @@
         {
           "date": "2026-04-21",
           "score": 54
+        },
+        {
+          "date": "2026-04-27",
+          "score": 54
         }
       ],
-      "last_updated": "2026-04-21T14:59:45.533713+00:00",
+      "last_updated": "2026-04-27T09:13:19.385053+00:00",
       "hot_topics": [
         {
           "title": "FlashAttention-4: 1613 TFLOPs/s, 2.7x faster than Triton, written in Python. What it means for infer",
@@ -5245,10 +5245,10 @@
       ]
     },
     "MI300X": {
-      "score": 27,
+      "score": 28,
       "reddit_sentiment": 0.52,
-      "github_compat_score": 27,
-      "hf_models_trained": 24,
+      "github_compat_score": 30,
+      "hf_models_trained": 25,
       "mentions_30d": 3,
       "ecosystem": "growing",
       "adoption": "stable",
@@ -5263,12 +5263,8 @@
         "Smaller ecosystem"
       ],
       "top_use_case": "Inference workloads & cost-optimized serving",
-      "github_repos": 9,
+      "github_repos": 10,
       "score_history": [
-        {
-          "date": "2026-03-20",
-          "score": 23
-        },
         {
           "date": "2026-03-25",
           "score": 24
@@ -5296,16 +5292,20 @@
         {
           "date": "2026-04-21",
           "score": 27
+        },
+        {
+          "date": "2026-04-27",
+          "score": 28
         }
       ],
-      "last_updated": "2026-04-21T14:59:45.533713+00:00",
+      "last_updated": "2026-04-27T09:13:19.385053+00:00",
       "hot_topics": []
     },
     "L40S": {
-      "score": 40,
+      "score": 42,
       "reddit_sentiment": 0.87,
-      "github_compat_score": 27,
-      "hf_models_trained": 35,
+      "github_compat_score": 30,
+      "hf_models_trained": 47,
       "mentions_30d": 8,
       "ecosystem": "mature",
       "adoption": "stable",
@@ -5320,12 +5320,8 @@
         "48GB VRAM limit"
       ],
       "top_use_case": "Inference serving & fine-tuning small models",
-      "github_repos": 9,
+      "github_repos": 10,
       "score_history": [
-        {
-          "date": "2026-03-20",
-          "score": 39
-        },
         {
           "date": "2026-03-25",
           "score": 33
@@ -5353,9 +5349,13 @@
         {
           "date": "2026-04-21",
           "score": 40
+        },
+        {
+          "date": "2026-04-27",
+          "score": 42
         }
       ],
-      "last_updated": "2026-04-21T14:59:45.533713+00:00",
+      "last_updated": "2026-04-27T09:13:19.385053+00:00",
       "hot_topics": [
         {
           "title": "Genuinely curious what doors the M5 Ultra will open",
@@ -5378,7 +5378,7 @@
       "score": 46,
       "reddit_sentiment": 0.69,
       "github_compat_score": 35,
-      "hf_models_trained": 153,
+      "hf_models_trained": 155,
       "mentions_30d": 87,
       "ecosystem": "mature",
       "adoption": "stable",
@@ -5395,10 +5395,6 @@
       "top_use_case": "Research prototyping & personal inference",
       "github_repos": 26,
       "score_history": [
-        {
-          "date": "2026-03-20",
-          "score": 48
-        },
         {
           "date": "2026-03-25",
           "score": 47
@@ -5426,9 +5422,13 @@
         {
           "date": "2026-04-21",
           "score": 46
+        },
+        {
+          "date": "2026-04-27",
+          "score": 46
         }
       ],
-      "last_updated": "2026-04-21T14:59:45.533713+00:00",
+      "last_updated": "2026-04-27T09:13:19.385053+00:00",
       "hot_topics": [
         {
           "title": "Genuinely curious what doors the M5 Ultra will open",
@@ -6074,10 +6074,10 @@
       "cheapest_provider": "FluidStack",
       "cheapest_provider_type": "marketplace",
       "most_expensive": 14.242,
-      "avg_price": 6.53,
+      "avg_price": 6.51,
       "num_providers": 10,
       "price_spread_pct": 469.7,
-      "monthly_change_pct": 48.4,
+      "monthly_change_pct": 48.0,
       "flops_per_dollar": 900.0,
       "vram_per_dollar": 76.8
     },
@@ -6124,16 +6124,16 @@
       "vram_gb": 32,
       "arch": "Blackwell",
       "tier": "consumer",
-      "cheapest_price": 0.2693,
+      "cheapest_price": 0.2944,
       "cheapest_provider": "Vast.ai",
       "cheapest_provider_type": "marketplace",
       "most_expensive": 0.99,
-      "avg_price": 0.63,
+      "avg_price": 0.64,
       "num_providers": 2,
-      "price_spread_pct": 267.6,
-      "monthly_change_pct": 6.8,
-      "flops_per_dollar": 777.9,
-      "vram_per_dollar": 118.8
+      "price_spread_pct": 236.3,
+      "monthly_change_pct": 8.5,
+      "flops_per_dollar": 711.6,
+      "vram_per_dollar": 108.7
     },
     {
       "gpu_id": "A100-80GB",
@@ -6160,16 +6160,16 @@
       "vram_gb": 80,
       "arch": "Hopper",
       "tier": "flagship",
-      "cheapest_price": 1.6022,
+      "cheapest_price": 1.6148,
       "cheapest_provider": "Vast.ai",
       "cheapest_provider_type": "marketplace",
       "most_expensive": 11.613,
       "avg_price": 4.57,
       "num_providers": 10,
-      "price_spread_pct": 624.8,
+      "price_spread_pct": 619.2,
       "monthly_change_pct": 59.8,
-      "flops_per_dollar": 617.6,
-      "vram_per_dollar": 49.9
+      "flops_per_dollar": 612.8,
+      "vram_per_dollar": 49.5
     },
     {
       "gpu_id": "MI250X",
@@ -6208,42 +6208,6 @@
       "vram_per_dollar": 72.7
     },
     {
-      "gpu_id": "H200",
-      "name": "NVIDIA H200 141GB",
-      "vendor": "NVIDIA",
-      "vram_gb": 141,
-      "arch": "Hopper",
-      "tier": "flagship",
-      "cheapest_price": 2.0131,
-      "cheapest_provider": "Vast.ai",
-      "cheapest_provider_type": "marketplace",
-      "most_expensive": 7.912,
-      "avg_price": 4.65,
-      "num_providers": 10,
-      "price_spread_pct": 293.0,
-      "monthly_change_pct": 19.8,
-      "flops_per_dollar": 491.5,
-      "vram_per_dollar": 70.0
-    },
-    {
-      "gpu_id": "T4",
-      "name": "NVIDIA T4 16GB",
-      "vendor": "NVIDIA",
-      "vram_gb": 16,
-      "arch": "Turing",
-      "tier": "inference",
-      "cheapest_price": 0.1477,
-      "cheapest_provider": "Vast.ai",
-      "cheapest_provider_type": "marketplace",
-      "most_expensive": 0.53,
-      "avg_price": 0.39,
-      "num_providers": 4,
-      "price_spread_pct": 258.8,
-      "monthly_change_pct": 0.0,
-      "flops_per_dollar": 440.1,
-      "vram_per_dollar": 108.3
-    },
-    {
       "gpu_id": "MI325X",
       "name": "AMD MI325X 256GB",
       "vendor": "AMD",
@@ -6262,6 +6226,42 @@
       "vram_per_dollar": 85.6
     },
     {
+      "gpu_id": "T4",
+      "name": "NVIDIA T4 16GB",
+      "vendor": "NVIDIA",
+      "vram_gb": 16,
+      "arch": "Turing",
+      "tier": "inference",
+      "cheapest_price": 0.1487,
+      "cheapest_provider": "Vast.ai",
+      "cheapest_provider_type": "marketplace",
+      "most_expensive": 0.53,
+      "avg_price": 0.39,
+      "num_providers": 4,
+      "price_spread_pct": 256.4,
+      "monthly_change_pct": 0.0,
+      "flops_per_dollar": 437.1,
+      "vram_per_dollar": 107.6
+    },
+    {
+      "gpu_id": "H200",
+      "name": "NVIDIA H200 141GB",
+      "vendor": "NVIDIA",
+      "vram_gb": 141,
+      "arch": "Hopper",
+      "tier": "flagship",
+      "cheapest_price": 2.3,
+      "cheapest_provider": "FluidStack",
+      "cheapest_provider_type": "marketplace",
+      "most_expensive": 7.912,
+      "avg_price": 4.74,
+      "num_providers": 10,
+      "price_spread_pct": 244.0,
+      "monthly_change_pct": 22.2,
+      "flops_per_dollar": 430.2,
+      "vram_per_dollar": 61.3
+    },
+    {
       "gpu_id": "GB200",
       "name": "NVIDIA GB200 NVL72",
       "vendor": "NVIDIA",
@@ -6278,6 +6278,24 @@
       "monthly_change_pct": -27.8,
       "flops_per_dollar": 428.6,
       "vram_per_dollar": 36.6
+    },
+    {
+      "gpu_id": "L4",
+      "name": "NVIDIA L4 24GB",
+      "vendor": "NVIDIA",
+      "vram_gb": 24,
+      "arch": "Ada Lovelace",
+      "tier": "inference",
+      "cheapest_price": 0.2956,
+      "cheapest_provider": "Vast.ai",
+      "cheapest_provider_type": "marketplace",
+      "most_expensive": 1.669,
+      "avg_price": 0.76,
+      "num_providers": 4,
+      "price_spread_pct": 464.6,
+      "monthly_change_pct": 35.7,
+      "flops_per_dollar": 409.3,
+      "vram_per_dollar": 81.2
     },
     {
       "gpu_id": "H100-PCIe",
@@ -6316,40 +6334,22 @@
       "vram_per_dollar": 52.9
     },
     {
-      "gpu_id": "L4",
-      "name": "NVIDIA L4 24GB",
-      "vendor": "NVIDIA",
-      "vram_gb": 24,
-      "arch": "Ada Lovelace",
-      "tier": "inference",
-      "cheapest_price": 0.3344,
-      "cheapest_provider": "Vast.ai",
-      "cheapest_provider_type": "marketplace",
-      "most_expensive": 1.669,
-      "avg_price": 0.77,
-      "num_providers": 4,
-      "price_spread_pct": 399.1,
-      "monthly_change_pct": 37.5,
-      "flops_per_dollar": 361.8,
-      "vram_per_dollar": 71.8
-    },
-    {
       "gpu_id": "L40S",
       "name": "NVIDIA L40S 48GB",
       "vendor": "NVIDIA",
       "vram_gb": 48,
       "arch": "Ada Lovelace",
       "tier": "mid",
-      "cheapest_price": 0.5778,
+      "cheapest_price": 0.5756,
       "cheapest_provider": "Vast.ai",
       "cheapest_provider_type": "marketplace",
       "most_expensive": 3.766,
       "avg_price": 1.49,
       "num_providers": 7,
-      "price_spread_pct": 551.8,
+      "price_spread_pct": 554.3,
       "monthly_change_pct": 41.9,
-      "flops_per_dollar": 313.3,
-      "vram_per_dollar": 83.1
+      "flops_per_dollar": 314.5,
+      "vram_per_dollar": 83.4
     }
   ],
   "regional_summary": {
@@ -8333,102 +8333,102 @@
       "methodology": "Non-linear model with price recovery regime detected from 6-month history (momentum=+5.0%/mo). Factors: -26% supply pressure, -24% demand signal, +16% competitive pressure, -3% regulatory impact. 1 restricting, 0 liberalizing events. Momentum decays toward structural rate over 4-month half-life with seasonal adjustments. Volatility: 7.3%/mo."
     },
     "B200": {
-      "current_avg": 6.53,
+      "current_avg": 6.51,
       "forecast_monthly": [
         {
           "month": "2026-05",
-          "mid": 7.0524,
-          "low": 5.3277,
-          "high": 8.2022
+          "mid": 7.0308,
+          "low": 5.3258,
+          "high": 8.1675
         },
         {
           "month": "2026-06",
-          "mid": 7.6166,
-          "low": 4.9824,
-          "high": 9.3727
+          "mid": 7.5933,
+          "low": 4.9891,
+          "high": 9.3294
         },
         {
           "month": "2026-07",
-          "mid": 8.2259,
-          "low": 4.7417,
-          "high": 10.5488
+          "mid": 8.2007,
+          "low": 4.7561,
+          "high": 10.4972
         },
         {
           "month": "2026-08",
-          "mid": 8.884,
-          "low": 4.5389,
-          "high": 11.7807
+          "mid": 8.8568,
+          "low": 4.5611,
+          "high": 11.7206
         },
         {
           "month": "2026-09",
-          "mid": 9.5947,
-          "low": 4.3481,
-          "high": 13.0925
+          "mid": 9.5653,
+          "low": 4.3783,
+          "high": 13.0233
         },
         {
           "month": "2026-10",
-          "mid": 10.3623,
-          "low": 4.1551,
-          "high": 14.5004
+          "mid": 10.3306,
+          "low": 4.1939,
+          "high": 14.4216
         },
         {
           "month": "2026-11",
-          "mid": 11.1047,
-          "low": 3.9198,
-          "high": 15.8946
+          "mid": 11.061,
+          "low": 3.964,
+          "high": 15.7923
         },
         {
           "month": "2026-12",
-          "mid": 11.7508,
-          "low": 3.6229,
-          "high": 17.1694
+          "mid": 11.6959,
+          "low": 3.6734,
+          "high": 17.0443
         },
         {
           "month": "2027-01",
-          "mid": 12.303,
-          "low": 3.277,
-          "high": 18.3203
+          "mid": 12.2379,
+          "low": 3.3344,
+          "high": 18.1736
         },
         {
           "month": "2027-02",
-          "mid": 12.7665,
-          "low": 2.8938,
-          "high": 19.3484
+          "mid": 12.6924,
+          "low": 2.9588,
+          "high": 19.1815
         },
         {
           "month": "2027-03",
-          "mid": 13.1487,
-          "low": 2.4841,
-          "high": 20.2584
+          "mid": 13.0666,
+          "low": 2.5569,
+          "high": 20.0731
         },
         {
           "month": "2027-04",
-          "mid": 13.4577,
-          "low": 2.0571,
-          "high": 21.058
+          "mid": 13.3688,
+          "low": 2.1379,
+          "high": 20.8561
         }
       ],
       "regime": "recovering",
       "forecast_3mo": {
-        "low": 4.7417,
-        "mid": 8.2259,
-        "high": 10.5488
+        "low": 4.7561,
+        "mid": 8.2007,
+        "high": 10.4972
       },
-      "confidence_3mo": 49.8,
+      "confidence_3mo": 50.1,
       "forecast_6mo": {
-        "low": 4.1551,
-        "mid": 10.3623,
-        "high": 14.5004
+        "low": 4.1939,
+        "mid": 10.3306,
+        "high": 14.4216
       },
-      "confidence_6mo": 34.8,
+      "confidence_6mo": 35.1,
       "forecast_12mo": {
-        "low": 2.0571,
-        "mid": 13.4577,
-        "high": 21.058
+        "low": 2.1379,
+        "mid": 13.3688,
+        "high": 20.8561
       },
       "confidence_12mo": 20,
       "price_floor": 2.2831,
-      "elasticity_coefficient": -0.3717,
+      "elasticity_coefficient": -0.3695,
       "factors": {
         "historical_trend": 0.005,
         "supply_pressure": 0.8925,
@@ -8437,7 +8437,7 @@
         "regulatory_impact": 1.0,
         "generational_displacement": 1.0
       },
-      "methodology": "Non-linear model with price recovery regime detected from 6-month history (momentum=+20.1%/mo). Factors: -11% supply pressure, -24% demand signal, +16% competitive pressure. No recent regulatory events. Momentum decays toward structural rate over 4-month half-life with seasonal adjustments. Volatility: 13.6%/mo."
+      "methodology": "Non-linear model with price recovery regime detected from 6-month history (momentum=+19.9%/mo). Factors: -11% supply pressure, -24% demand signal, +16% competitive pressure. No recent regulatory events. Momentum decays toward structural rate over 4-month half-life with seasonal adjustments. Volatility: 13.5%/mo."
     },
     "H100-SXM": {
       "current_avg": 4.57,
@@ -8547,102 +8547,102 @@
       "methodology": "Non-linear model with price recovery regime detected from 6-month history (momentum=+37.4%/mo). Factors: -11% supply pressure, -24% demand signal, +16% competitive pressure, +20% generational displacement. No recent regulatory events. Momentum decays toward structural rate over 4-month half-life with seasonal adjustments. Volatility: 10.8%/mo."
     },
     "H200": {
-      "current_avg": 4.65,
+      "current_avg": 4.74,
       "forecast_monthly": [
         {
           "month": "2026-05",
-          "mid": 5.022,
-          "low": 4.5681,
-          "high": 5.3246
+          "mid": 5.1192,
+          "low": 4.6186,
+          "high": 5.4529
         },
         {
           "month": "2026-06",
-          "mid": 5.4238,
-          "low": 4.7305,
-          "high": 5.8859
+          "mid": 5.5287,
+          "low": 4.7642,
+          "high": 6.0384
         },
         {
           "month": "2026-07",
-          "mid": 5.8577,
-          "low": 4.9407,
-          "high": 6.469
+          "mid": 5.971,
+          "low": 4.9597,
+          "high": 6.6452
         },
         {
           "month": "2026-08",
-          "mid": 6.2647,
-          "low": 5.1322,
-          "high": 7.0196
+          "mid": 6.4316,
+          "low": 5.1738,
+          "high": 7.2702
         },
         {
           "month": "2026-09",
-          "mid": 6.6292,
-          "low": 5.2894,
-          "high": 7.5224
+          "mid": 6.8477,
+          "low": 5.3504,
+          "high": 7.8459
         },
         {
           "month": "2026-10",
-          "mid": 6.9546,
-          "low": 5.4149,
-          "high": 7.981
+          "mid": 7.222,
+          "low": 5.4921,
+          "high": 8.3752
         },
         {
           "month": "2026-11",
-          "mid": 7.2412,
-          "low": 5.5096,
-          "high": 8.3956
+          "mid": 7.5542,
+          "low": 5.5998,
+          "high": 8.8571
         },
         {
           "month": "2026-12",
-          "mid": 7.4837,
-          "low": 5.5705,
-          "high": 8.7591
+          "mid": 7.8372,
+          "low": 5.6696,
+          "high": 9.2823
         },
         {
           "month": "2027-01",
-          "mid": 7.6861,
-          "low": 5.602,
-          "high": 9.0755
+          "mid": 8.0751,
+          "low": 5.7063,
+          "high": 9.6544
         },
         {
           "month": "2027-02",
-          "mid": 7.8528,
-          "low": 5.6083,
-          "high": 9.3491
+          "mid": 8.2726,
+          "low": 5.7145,
+          "high": 9.9779
         },
         {
           "month": "2027-03",
-          "mid": 7.9881,
-          "low": 5.5935,
-          "high": 9.5845
+          "mid": 8.4342,
+          "low": 5.6988,
+          "high": 10.2577
         },
         {
           "month": "2027-04",
-          "mid": 8.0962,
-          "low": 5.5613,
-          "high": 9.7861
+          "mid": 8.5644,
+          "low": 5.6634,
+          "high": 10.4985
         }
       ],
       "regime": "recovering",
       "forecast_3mo": {
-        "low": 4.9407,
-        "mid": 5.8577,
-        "high": 6.469
+        "low": 4.9597,
+        "mid": 5.971,
+        "high": 6.6452
       },
-      "confidence_3mo": 51.0,
+      "confidence_3mo": 50.1,
       "forecast_6mo": {
-        "low": 5.4149,
-        "mid": 6.9546,
-        "high": 7.981
+        "low": 5.4921,
+        "mid": 7.222,
+        "high": 8.3752
       },
-      "confidence_6mo": 36.0,
+      "confidence_6mo": 35.1,
       "forecast_12mo": {
-        "low": 5.5613,
-        "mid": 8.0962,
-        "high": 9.7861
+        "low": 5.6634,
+        "mid": 8.5644,
+        "high": 10.4985
       },
       "confidence_12mo": 20,
       "price_floor": 1.9977,
-      "elasticity_coefficient": -0.3004,
+      "elasticity_coefficient": -0.3086,
       "factors": {
         "historical_trend": 0.005,
         "supply_pressure": 0.735,
@@ -8651,7 +8651,7 @@
         "regulatory_impact": 0.9409,
         "generational_displacement": 1.2
       },
-      "methodology": "Non-linear model with price recovery regime detected from 6-month history (momentum=+11.5%/mo). Factors: -26% supply pressure, -24% demand signal, +16% competitive pressure, -6% regulatory impact, +20% generational displacement. 2 restricting, 0 liberalizing events. Momentum decays toward structural rate over 4-month half-life with seasonal adjustments. Volatility: 5.0%/mo."
+      "methodology": "Non-linear model with price recovery regime detected from 6-month history (momentum=+12.6%/mo). Factors: -26% supply pressure, -24% demand signal, +16% competitive pressure, -6% regulatory impact, +20% generational displacement. 2 restricting, 0 liberalizing events. Momentum decays toward structural rate over 4-month half-life with seasonal adjustments. Volatility: 5.4%/mo."
     },
     "A100-80GB": {
       "current_avg": 2.04,
@@ -9617,102 +9617,102 @@
       "methodology": "Non-linear model with price recovery regime detected from 6-month history (momentum=+10.7%/mo). Factors: +21% supply pressure, -24% demand signal, +16% competitive pressure, +20% generational displacement. No recent regulatory events. Momentum decays toward structural rate over 4-month half-life with seasonal adjustments. Volatility: 9.3%/mo."
     },
     "RTX-5090": {
-      "current_avg": 0.63,
+      "current_avg": 0.64,
       "forecast_monthly": [
         {
           "month": "2026-05",
-          "mid": 0.6804,
-          "low": 0.4904,
-          "high": 0.8071
+          "mid": 0.6912,
+          "low": 0.4966,
+          "high": 0.8209
         },
         {
           "month": "2026-06",
-          "mid": 0.7348,
-          "low": 0.4446,
-          "high": 0.9283
+          "mid": 0.7465,
+          "low": 0.4493,
+          "high": 0.9446
         },
         {
           "month": "2026-07",
-          "mid": 0.7936,
-          "low": 0.4097,
-          "high": 1.0495
+          "mid": 0.8062,
+          "low": 0.4131,
+          "high": 1.0683
         },
         {
           "month": "2026-08",
-          "mid": 0.8571,
-          "low": 0.3784,
-          "high": 1.1763
+          "mid": 0.8707,
+          "low": 0.3804,
+          "high": 1.1976
         },
         {
           "month": "2026-09",
-          "mid": 0.9235,
-          "low": 0.3468,
-          "high": 1.308
+          "mid": 0.9404,
+          "low": 0.3484,
+          "high": 1.335
         },
         {
           "month": "2026-10",
-          "mid": 0.9815,
-          "low": 0.3101,
-          "high": 1.4292
+          "mid": 1.0032,
+          "low": 0.3114,
+          "high": 1.4645
         },
         {
           "month": "2026-11",
-          "mid": 1.0307,
-          "low": 0.2691,
-          "high": 1.5384
+          "mid": 1.057,
+          "low": 0.2697,
+          "high": 1.5819
         },
         {
           "month": "2026-12",
-          "mid": 1.0698,
-          "low": 0.2248,
-          "high": 1.6332
+          "mid": 1.1002,
+          "low": 0.2241,
+          "high": 1.6843
         },
         {
           "month": "2027-01",
-          "mid": 1.0997,
-          "low": 0.1783,
-          "high": 1.714
+          "mid": 1.1336,
+          "low": 0.1761,
+          "high": 1.772
         },
         {
           "month": "2027-02",
-          "mid": 1.1213,
-          "low": 0.131,
-          "high": 1.7815
+          "mid": 1.1582,
+          "low": 0.127,
+          "high": 1.8456
         },
         {
           "month": "2027-03",
-          "mid": 1.1356,
+          "mid": 1.1748,
           "low": 0.1027,
-          "high": 1.8368
+          "high": 1.9062
         },
         {
           "month": "2027-04",
-          "mid": 1.1435,
+          "mid": 1.1847,
           "low": 0.1027,
-          "high": 1.8811
+          "high": 1.955
         }
       ],
       "regime": "recovering",
       "forecast_3mo": {
-        "low": 0.4097,
-        "mid": 0.7936,
-        "high": 1.0495
+        "low": 0.4131,
+        "mid": 0.8062,
+        "high": 1.0683
       },
-      "confidence_3mo": 46.0,
+      "confidence_3mo": 45.7,
       "forecast_6mo": {
-        "low": 0.3101,
-        "mid": 0.9815,
-        "high": 1.4292
+        "low": 0.3114,
+        "mid": 1.0032,
+        "high": 1.4645
       },
-      "confidence_6mo": 31.0,
+      "confidence_6mo": 30.7,
       "forecast_12mo": {
         "low": 0.1027,
-        "mid": 1.1435,
-        "high": 1.8811
+        "mid": 1.1847,
+        "high": 1.955
       },
       "confidence_12mo": 20,
       "price_floor": 0.1141,
-      "elasticity_coefficient": -0.4103,
+      "elasticity_coefficient": -0.4128,
       "factors": {
         "historical_trend": 0.05268,
         "supply_pressure": 0.8925,
@@ -9721,101 +9721,101 @@
         "regulatory_impact": 1.0,
         "generational_displacement": 1.0
       },
-      "methodology": "Non-linear model with price recovery regime detected from 6-month history (momentum=+12.7%/mo). Factors: -11% supply pressure, -24% demand signal, +10% competitive pressure. No recent regulatory events. Momentum decays toward structural rate over 4-month half-life with seasonal adjustments. Volatility: 15.5%/mo."
+      "methodology": "Non-linear model with price recovery regime detected from 6-month history (momentum=+13.6%/mo). Factors: -11% supply pressure, -24% demand signal, +10% competitive pressure. No recent regulatory events. Momentum decays toward structural rate over 4-month half-life with seasonal adjustments. Volatility: 15.6%/mo."
     },
     "L4": {
-      "current_avg": 0.77,
+      "current_avg": 0.76,
       "forecast_monthly": [
         {
           "month": "2026-05",
-          "mid": 0.77,
-          "low": 0.6545,
-          "high": 0.847
+          "mid": 0.76,
+          "low": 0.646,
+          "high": 0.836
         },
         {
           "month": "2026-06",
-          "mid": 0.77,
-          "low": 0.6545,
-          "high": 0.847
+          "mid": 0.76,
+          "low": 0.646,
+          "high": 0.836
         },
         {
           "month": "2026-07",
-          "mid": 0.77,
-          "low": 0.6545,
-          "high": 0.847
+          "mid": 0.76,
+          "low": 0.646,
+          "high": 0.836
         },
         {
           "month": "2026-08",
-          "mid": 0.77,
-          "low": 0.6545,
-          "high": 0.847
+          "mid": 0.76,
+          "low": 0.646,
+          "high": 0.836
         },
         {
           "month": "2026-09",
-          "mid": 0.77,
-          "low": 0.6545,
-          "high": 0.847
+          "mid": 0.76,
+          "low": 0.646,
+          "high": 0.836
         },
         {
           "month": "2026-10",
-          "mid": 0.77,
-          "low": 0.6545,
-          "high": 0.847
+          "mid": 0.76,
+          "low": 0.646,
+          "high": 0.836
         },
         {
           "month": "2026-11",
-          "mid": 0.77,
-          "low": 0.6545,
-          "high": 0.847
+          "mid": 0.76,
+          "low": 0.646,
+          "high": 0.836
         },
         {
           "month": "2026-12",
-          "mid": 0.77,
-          "low": 0.6545,
-          "high": 0.847
+          "mid": 0.76,
+          "low": 0.646,
+          "high": 0.836
         },
         {
           "month": "2027-01",
-          "mid": 0.77,
-          "low": 0.6545,
-          "high": 0.847
+          "mid": 0.76,
+          "low": 0.646,
+          "high": 0.836
         },
         {
           "month": "2027-02",
-          "mid": 0.77,
-          "low": 0.6545,
-          "high": 0.847
+          "mid": 0.76,
+          "low": 0.646,
+          "high": 0.836
         },
         {
           "month": "2027-03",
-          "mid": 0.77,
-          "low": 0.6545,
-          "high": 0.847
+          "mid": 0.76,
+          "low": 0.646,
+          "high": 0.836
         },
         {
           "month": "2027-04",
-          "mid": 0.77,
-          "low": 0.6545,
-          "high": 0.847
+          "mid": 0.76,
+          "low": 0.646,
+          "high": 0.836
         }
       ],
       "regime": "stable",
       "forecast_3mo": {
-        "low": 0.6545,
-        "mid": 0.77,
-        "high": 0.847
+        "low": 0.646,
+        "mid": 0.76,
+        "high": 0.836
       },
       "confidence_3mo": 31,
       "forecast_6mo": {
-        "low": 0.6545,
-        "mid": 0.77,
-        "high": 0.847
+        "low": 0.646,
+        "mid": 0.76,
+        "high": 0.836
       },
       "confidence_6mo": 22,
       "forecast_12mo": {
-        "low": 0.6545,
-        "mid": 0.77,
-        "high": 0.847
+        "low": 0.646,
+        "mid": 0.76,
+        "high": 0.836
       },
       "confidence_12mo": 20,
       "price_floor": 0.2854,
@@ -11636,7 +11636,7 @@
       }
     }
   },
-  "last_updated": "2026-04-27T08:21:05.743590+00:00",
+  "last_updated": "2026-04-27T09:12:43.033452+00:00",
   "stocks": {
     "NVDA": {
       "ticker": "NVDA",
@@ -11645,7 +11645,7 @@
       "52_week_high": 212.19,
       "52_week_low": 104.08,
       "ytd_change_pct": 10.28,
-      "last_updated": "2026-04-27T08:21:05.962379+00:00"
+      "last_updated": "2026-04-27T09:12:52.593467+00:00"
     },
     "AMD": {
       "ticker": "AMD",
@@ -11654,7 +11654,7 @@
       "52_week_high": 352.99,
       "52_week_low": 91.87,
       "ytd_change_pct": 55.64,
-      "last_updated": "2026-04-27T08:21:06.086840+00:00"
+      "last_updated": "2026-04-27T09:12:52.660151+00:00"
     }
   }
 }
