@@ -390,17 +390,21 @@ def fetch_coreweave_pricing():
 
 
 def fetch_together_pricing():
-    """Scrape Together.ai dedicated + cluster on-demand prices."""
-    log_info("Fetching Together.ai pricing...")
+    """Scrape Together.ai HGX cluster on-demand prices.
+
+    Page has two product lines: "Dedicated Inference" (managed endpoints) and
+    "GPU Clusters - On-Demand" (raw rental). We anchor on `HGX <gpu>` so we
+    pick the cluster rate, which is comparable to other providers' GPU rentals.
+    """
+    log_info("Fetching Together.ai HGX cluster pricing...")
     url = "https://www.together.ai/pricing"
     status, body = http_get(url, headers={"User-Agent": "Mozilla/5.0 (pricing-bot)"}, timeout=20)
     if status != 200:
         raise RuntimeError(f"Together returned HTTP {status}")
-    # Prefer HGX cluster prices (cheaper, closer to list rate)
     patterns = [
-        ("B200", r"(?:HGX\s*)?B200[^$]{0,400}?\$(\d+\.\d{2})"),
-        ("H200", r"(?:HGX\s*)?H200[^$]{0,400}?\$(\d+\.\d{2})"),
-        ("H100-SXM", r"(?:HGX\s*)?H100[^$]{0,400}?\$(\d+\.\d{2})"),
+        ("B200", r"HGX\s*B200[^$]{0,400}?\$(\d+\.\d{2})"),
+        ("H200", r"HGX\s*H200[^$]{0,400}?\$(\d+\.\d{2})"),
+        ("H100-SXM", r"HGX\s*H100[^$]{0,400}?\$(\d+\.\d{2})"),
     ]
     result = _extract_prices_from_html(body, patterns)
     if not result:
@@ -486,6 +490,45 @@ def fetch_aws_pricing():
     if not result:
         raise RuntimeError("AWS: no prices parsed from index.json")
     log_ok("AWS", f"{len(result)} GPU types")
+    return result
+
+
+def fetch_gcp_pricing():
+    """Scrape GCP per-instance hourly prices, divide by GPU count.
+
+    GCP page lists machine types like 'a3-highgpu-8g' followed by an on-demand
+    hourly price. The first dollar amount after each machine type is the rate.
+    """
+    log_info("Fetching GCP accelerator-optimized pricing...")
+    url = "https://cloud.google.com/products/compute/pricing/accelerator-optimized"
+    status, body = http_get(url, headers={"User-Agent": "Mozilla/5.0 (pricing-bot)"}, timeout=30)
+    if status != 200:
+        raise RuntimeError(f"GCP returned HTTP {status}")
+    # (machine_type, gpu_id, gpus_per_vm)
+    rows = [
+        ("a3-highgpu-8g", "H100-SXM", 8),
+        ("a3-ultragpu-8g", "H200", 8),
+        ("a4-highgpu-8g", "B200", 8),
+        ("a2-ultragpu-8g", "A100-80GB", 8),
+        ("a2-highgpu-8g", "A100-40GB", 8),
+        ("g2-standard-96", "L4", 8),
+    ]
+    result = {}
+    for mt, gpu_id, gpus in rows:
+        m = _re.search(_re.escape(mt) + r"[^$]*?\$\s*([\d,]+\.\d+)", body)
+        if not m:
+            continue
+        try:
+            vm_price = float(m.group(1).replace(",", ""))
+            per_gpu = vm_price / gpus
+            if 0.2 <= per_gpu <= 100:
+                if gpu_id not in result or per_gpu < result[gpu_id]:
+                    result[gpu_id] = per_gpu
+        except ValueError:
+            continue
+    if not result:
+        raise RuntimeError("GCP: no prices parsed from HTML")
+    log_ok("GCP", f"{len(result)} GPU types")
     return result
 
 
@@ -706,6 +749,7 @@ def merge_live_pricing_into_data(
     coreweave_prices=None,
     together_prices=None,
     aws_prices=None,
+    gcp_prices=None,
 ):
     """Merge live pricing data into the providers section of data.json."""
     now = datetime.now(timezone.utc).isoformat()
@@ -772,12 +816,13 @@ def merge_live_pricing_into_data(
     _apply_scraped_prices(providers, "CoreWeave", coreweave_prices, "coreweave_scrape", tracked, now)
     _apply_scraped_prices(providers, "Together", together_prices, "together_scrape", tracked, now)
     _apply_scraped_prices(providers, "AWS", aws_prices, "aws_pricing_api", tracked, now)
+    _apply_scraped_prices(providers, "GCP", gcp_prices, "gcp_scrape", tracked, now)
 
     # -- Hardcoded fallbacks for providers without free APIs --
     # Only fill in GPUs that no live source has already populated this run.
     live_sources = {
         "vastai_api", "runpod_api", "azure_retail_api", "lambda_scrape",
-        "coreweave_scrape", "together_scrape", "aws_pricing_api",
+        "coreweave_scrape", "together_scrape", "aws_pricing_api", "gcp_scrape",
     }
     fallbacks = get_hardcoded_fallback_prices()
     for provider_key, fb_data in fallbacks.items():
@@ -1731,6 +1776,12 @@ def main():
     except Exception as exc:
         log_fail("AWS", str(exc))
 
+    gcp_prices = None
+    try:
+        gcp_prices = fetch_gcp_pricing()
+    except Exception as exc:
+        log_fail("GCP", str(exc))
+
     data = merge_live_pricing_into_data(
         data,
         vastai_prices,
@@ -1740,6 +1791,7 @@ def main():
         coreweave_prices=coreweave_prices,
         together_prices=together_prices,
         aws_prices=aws_prices,
+        gcp_prices=gcp_prices,
     )
     print()
 
