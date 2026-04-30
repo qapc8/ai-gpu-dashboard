@@ -1173,24 +1173,18 @@ loadExternalData();
     <div class="carousel-dots" id="carouselDots"></div>
   </div>
 
-  <!-- Best Deals Table + Price Trends -->
-  <div class="grid g-6-4 mb">
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Best GPU Deals Right Now</span><span class="dim" style="font-size:10px;font-family:var(--mono);">Sorted by lowest price across all providers</span></div>
-      <div class="card-bd-flush"><table class="dt" id="overviewTopTable"></table></div>
-    </div>
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">GPU Price Change — % per Month</span></div>
-      <div class="card-bd">
-        <div class="chart-wrap" style="height:280px;"><canvas id="chartOverviewTrends"></canvas></div>
-        <div class="ai-commentary" id="priceAiCommentary">
-          <div class="ai-commentary-header">
-            <span class="ai-commentary-icon">&#9733;</span>
-            <span class="ai-commentary-label">AI Price Analysis</span>
-          </div>
-          <div class="ai-commentary-body" id="priceAiCommentaryBody">
-            <div class="ai-commentary-loading"><span class="ai-commentary-dot"></span> Analyzing price dynamics...</div>
-          </div>
+  <!-- Price Trends -->
+  <div class="card mb">
+    <div class="card-hd"><span class="card-hd-title">GPU Price Change — % per Month</span></div>
+    <div class="card-bd">
+      <div class="chart-wrap" style="height:280px;"><canvas id="chartOverviewTrends"></canvas></div>
+      <div class="ai-commentary" id="priceAiCommentary">
+        <div class="ai-commentary-header">
+          <span class="ai-commentary-icon">&#9733;</span>
+          <span class="ai-commentary-label">AI Price Analysis</span>
+        </div>
+        <div class="ai-commentary-body" id="priceAiCommentaryBody">
+          <div class="ai-commentary-loading"><span class="ai-commentary-dot"></span> Analyzing price dynamics...</div>
         </div>
       </div>
     </div>
@@ -1678,7 +1672,7 @@ const CL = Object.values(C);
 const PC = {
   'AWS':C.orange,'GCP':C.blue,'Azure':C.cyan,'Lambda':C.purple,
   'CoreWeave':C.green,'RunPod':C.pink,'Vast.ai':C.amber,
-  'FluidStack':C.teal,'Oracle':C.red,'Together':C.indigo
+  'FluidStack':C.teal,'Together':C.indigo
 };
 
 Chart.defaults.color = '#5c6980';
@@ -1905,7 +1899,6 @@ function renderOverview() {
   if (!m || !m.length) return;
   renderGpuCarousel();
   renderOverviewTrendChart();
-  renderOverviewTable();
   fetchPriceAiCommentary();
 }
 
@@ -2143,40 +2136,6 @@ function renderSpotSavingsChart() {
   });
 }
 
-function renderOverviewTable() {
-  const m = DATA.matrix, spot = DATA.spot||{}, hist = DATA.historical||{};
-  const sorted = [...m].sort((a,b) => a.cheapest_price - b.cheapest_price);
-
-  const spark = (prices, w=52, h=16) => {
-    if (!prices || prices.length < 2) return '<span class="dim">—</span>';
-    const mn = Math.min(...prices), mx = Math.max(...prices), rng = mx - mn || 1;
-    const pts = prices.map((p,i) => `${(i/(prices.length-1))*w},${h-((p-mn)/rng)*(h-2)-1}`).join(' ');
-    const clr = prices[prices.length-1] >= prices[0] ? '#3ecf8e' : '#ef6461';
-    return `<svg width="${w}" height="${h}" style="vertical-align:middle;"><polyline points="${pts}" fill="none" stroke="${clr}" stroke-width="1.5"/></svg>`;
-  };
-
-  let h = '<thead><tr><th>GPU</th><th class="r">Best $/hr</th><th class="r">Provider</th><th class="r">vs Avg</th><th class="r">TFLOPS/$</th><th class="r">VRAM</th><th>6mo</th></tr></thead><tbody>';
-  sorted.forEach(r => {
-    const savPct = ((1 - r.cheapest_price / r.avg_price) * 100).toFixed(0);
-    const spec = DATA.specs?.[r.gpu_id]||{};
-    const hd = hist[r.gpu_id] || {};
-    const periods = Object.keys(hd).sort().slice(-6);
-    const trend = periods.map(p => hd[p]?.avg).filter(v => v != null);
-
-    h += `<tr>` +
-      `<td class="gpu-name">${r.name}</td>` +
-      `<td class="r c-green fw">$${r.cheapest_price.toFixed(2)}</td>` +
-      `<td class="r">${r.cheapest_provider}</td>` +
-      `<td class="r"><span class="dn">-${savPct}%</span></td>` +
-      `<td class="r c-purple">${r.flops_per_dollar}</td>` +
-      `<td class="r c-cyan">${spec.vram_gb||'--'}GB</td>` +
-      `<td>${spark(trend)}</td>` +
-      `</tr>`;
-  });
-  h += '</tbody>';
-  document.getElementById('overviewTopTable').innerHTML = h;
-}
-
 // ════════════════════════════════════════════════════════════════
 // PRICE MATRIX
 // ════════════════════════════════════════════════════════════════
@@ -2189,9 +2148,9 @@ function renderPriceMatrix() {
 
 
   // ── Provider grid table ──
-  const cloudProvs = ['AWS','GCP','Azure','Lambda','CoreWeave','Oracle','Together'];
+  const cloudProvs = ['AWS','GCP','Azure','Lambda','CoreWeave','Together'];
   const mktProvs = ['RunPod','Vast.ai','FluidStack'];
-  const cloudLabels = ['AWS','GCP','Azure','Lambda','CoreW.','Oracle','Tog.'];
+  const cloudLabels = ['AWS','GCP','Azure','Lambda','CoreW.','Tog.'];
   const mktLabels = ['RunPod','Vast.ai','Fluid.'];
 
   let h = '<thead>';

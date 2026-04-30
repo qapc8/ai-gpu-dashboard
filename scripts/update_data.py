@@ -693,17 +693,6 @@ def get_hardcoded_fallback_prices():
                 "L40S": {"price_per_gpu_hr": 0.65},
             },
         },
-        "Oracle": {
-            "last_verified": now,
-            "source": "hardcoded_fallback",
-            "gpus": {
-                "B300": {"price_per_gpu_hr": 5.53},
-                "B200": {"price_per_gpu_hr": 3.40},
-                "H100-SXM": {"price_per_gpu_hr": 3.19},
-                "A100-80GB": {"price_per_gpu_hr": 2.18},
-                "A100-40GB": {"price_per_gpu_hr": 1.28},
-            },
-        },
         "Together": {
             "last_verified": now,
             "source": "hardcoded_fallback",
@@ -754,6 +743,10 @@ def merge_live_pricing_into_data(
     """Merge live pricing data into the providers section of data.json."""
     now = datetime.now(timezone.utc).isoformat()
     providers = data.get("providers", {})
+
+    # Drop providers we no longer track
+    for retired in ("Oracle",):
+        providers.pop(retired, None)
 
     # -- Vast.ai --
     if vastai_prices:
