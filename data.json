@@ -3030,27 +3030,27 @@
   "indicators": {
     "nvidia_stock": {
       "ticker": "NVDA",
-      "current": 215.33,
+      "current": 214.86,
       "1m_change": 4.2,
       "3m_change": 12.8,
-      "ytd_change": 14.02,
+      "ytd_change": 13.77,
       "52w_high": 236.54,
-      "52w_low": 129.16,
-      "ytd_pct": 14.02,
-      "52w_range": "$129.16-$236.54",
-      "last_updated": "2026-05-26T09:51:55.473967+00:00"
+      "52w_low": 132.92,
+      "ytd_pct": 13.77,
+      "52w_range": "$132.92-$236.54",
+      "last_updated": "2026-05-27T09:40:54.787314+00:00"
     },
     "amd_stock": {
       "ticker": "AMD",
-      "current": 467.51,
+      "current": 503.89,
       "1m_change": -2.1,
       "3m_change": 5.3,
-      "ytd_change": 109.2,
-      "52w_high": 481.41,
-      "52w_low": 107.67,
-      "ytd_pct": 109.2,
-      "52w_range": "$107.67-$481.41",
-      "last_updated": "2026-05-26T09:51:55.617289+00:00"
+      "ytd_change": 125.48,
+      "52w_high": 506.96,
+      "52w_low": 108.62,
+      "ytd_pct": 125.48,
+      "52w_range": "$108.62-$506.96",
+      "last_updated": "2026-05-27T09:40:54.881611+00:00"
     },
     "gpu_market_size_bn": {
       "2023": 52.4,
@@ -3170,10 +3170,10 @@
         "note": "Consumer stock available"
       }
     },
-    "nvda_price": 215.33,
-    "nvda_ytd_change": 14.02,
-    "amd_price": 467.51,
-    "amd_ytd_change": 109.2
+    "nvda_price": 214.86,
+    "nvda_ytd_change": 13.77,
+    "amd_price": 503.89,
+    "amd_ytd_change": 125.48
   },
   "regional": {
     "North America": {
@@ -4725,19 +4725,19 @@
   },
   "news": [
     {
-      "headline": "NHN Cloud sells out GPU resources, unveils AI brand 'FactoryX' - Korea JoongAng Daily",
-      "source": "Korea JoongAng Daily",
-      "url": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxOQ1NVcHJDRllWZWRfR1hrV2padW94YWlZMlYwem5wMTJRZDdpb1lSR01ocGZUMThxSjVCWV9kVGFLSUgwczlFNl9QOUZIYTdEel9oV2NzTGpObzNoUDZock1oRjdnWEhMMER2WXJqWEt1cG5YalpyVzFHcmV4a3hzMXlVRk1aX1VqelhBMkJEZjZPSjRjYmZxZzRNTGhWSnJfSmFPWXNVeVdLak1iWGlDR3F1eko4R1JtR3QyWXRoRGVNSnBkY3dmR0U1aWNZMnpyRVo2cA?oc=5",
-      "date": "2026-05-26",
+      "headline": "SoftBank to launch GPU cloud powered by Infrinia AI Cloud OS - capacityglobal.com",
+      "source": "capacityglobal.com",
+      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxQbWhsSlppWV83NlJxQi1MbktNdV80b21aT0o0aGJ6bWVZSzJ3dHAtd0xuaEMzcWhEcDlsNWJmUWYyTUthQ2xXOWRLUF9aNEIwRm9iSEhJZkZsQUdvUG9FSnJsNThhRGZKOFZnN2d6U2g3aE1YdVZtMFhCOWxvZUNSX3JlT0FKMkdXV0JqZnlPR2NHeWM?oc=5",
+      "date": "2026-05-27",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "Analysis: Nvidia's Vera CPU opens new front in data center chip race - digitimes",
-      "source": "digitimes",
-      "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxNOWxjZVllMzVSQUdYYWRfM2VlREl3SHJ6VXBlV0FlUkNwY3hpTTNCeDRkcjVhUmQ1b1JQdGl0Z0Nva2NTeU9UVWtNU3gtaG0yUk5EN1FZUlZadXJtOGZJMU5nZXltNFA1MkhoT050MFN5Z0hkZVN4eTdkeC01eVNHTGtmeXJOVC1yWUE?oc=5",
-      "date": "2026-05-25",
+      "headline": "SoftBank to launch AI data center GPU cloud in Japan - W.Media",
+      "source": "W.Media",
+      "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE1nRm96cGFFV29SY0hoZ2tydmIyeXJ0bXNEMlFFcXFNa01ja0VFUWpoNVNJbmJCRWoxQnhBcnBBUV9RTkUwVHJkYVE5X3NyRVVQSjMxOW1YNy14UFFWZC1HRFV4UzZLdnlPdW1vQzk2akpoVUJCMjhlQw?oc=5",
+      "date": "2026-05-27",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4761,9 +4761,18 @@
       "impact": "medium"
     },
     {
-      "headline": "SMCI vs. GOOGL: Which Stock is a Safer Bet in the AI Ecosystem? - TradingView",
-      "source": "TradingView",
-      "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxQVEpveVZRcWhFZ2V3M2dXaFIzTTlua3FhUTUzMFROUjgwMVJneDdpeDZ5ZjVNanZwdWJfUlFOREpwalhXd2N0TVJGeXhDTXA5VVF6clN4Qk5UXzhORzVJazF2TU10YjlVYWloQU9qc1kwTV9CcTE0TVBpaXR5TkE2QjZUVWY1T2JHc3hVVWxSa3FVZkNqOVE3M1k0RnRDY3NwZXpLVTN2LV9jaHN4NW56OHRYLTNEUXM?oc=5",
+      "headline": "NVIDIA Corporation | History, GPUs, & Artificial Intelligence - Britannica",
+      "source": "Britannica",
+      "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE1FMGstclM1R3lESkhtUUVPTDBHZktQWWMzcTFXa3VIR2FOcTJLcy1wQnlLMHo5MDRXeS10UTJudHRxNmpFX2hyWUZzX1ZTaVpBTng3VXBGT3ZGa0FrTXhHMg?oc=5",
+      "date": "2026-05-24",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Analysis: Nvidia's Vera CPU opens new front in data center chip race - digitimes",
+      "source": "digitimes",
+      "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxNOWxjZVllMzVSQUdYYWRfM2VlREl3SHJ6VXBlV0FlUkNwY3hpTTNCeDRkcjVhUmQ1b1JQdGl0Z0Nva2NTeU9UVWtNU3gtaG0yUk5EN1FZUlZadXJtOGZJMU5nZXltNFA1MkhoT050MFN5Z0hkZVN4eTdkeC01eVNHTGtmeXJOVC1yWUE?oc=5",
       "date": "2026-05-25",
       "category": "news",
       "sentiment": "neutral",
@@ -4779,10 +4788,19 @@
       "impact": "medium"
     },
     {
-      "headline": "AI datacenter growth likely to power NVIDIA's strong Q1 revenues - MSN",
-      "source": "MSN",
-      "url": "https://news.google.com/rss/articles/CBMi6AJBVV95cUxPX3QxTlFuWEtNdlFRbTJnRWpxV2R6VTZ5XzRsTGxKTUR1bXFnWlhWMW56dVZsODFfNi1zTE1OOE4wWm9DUWUxOUhsRUhkN1ZmQnNQR1VyemxhLW5WRS03LUJmQ2NBcGJYSVpKYmdPQ1N5T2gzOWNsUWU2dGZ1UWc4R3Q1WVB0SnNKanV6RWVUYkZZaWZZakdqU3kyWVJsLTVPelBKUXhtWVdjZDRqb0NDZXFtVzlFaDZELVR0cVY2RXk4RXBmdUFmc3gxbkxzaDFRQmhxZWxySTY2cFlBOEFaSS1iaUpKTTFvcDFabTJ6ME5qcFY5dl8yOW44RkNJWHFnOVFMWk9pMExoWF81N0l1amRJWnJDSi1nRDNaV0E3c0FSYmtTa2x1X014OTlZOXNNdjZxU3htWFo0dVZsQ3F5OGJsT1J2MGtFVW56dllETUw2Mnh3ZXJYWW02N1BQajV4SlRwNE5kdEo?oc=5",
-      "date": "2026-05-20",
+      "headline": "NHN Cloud sells out GPU resources, unveils AI brand 'FactoryX' - Korea JoongAng Daily",
+      "source": "Korea JoongAng Daily",
+      "url": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxOQ1NVcHJDRllWZWRfR1hrV2padW94YWlZMlYwem5wMTJRZDdpb1lSR01ocGZUMThxSjVCWV9kVGFLSUgwczlFNl9QOUZIYTdEel9oV2NzTGpObzNoUDZock1oRjdnWEhMMER2WXJqWEt1cG5YalpyVzFHcmV4a3hzMXlVRk1aX1VqelhBMkJEZjZPSjRjYmZxZzRNTGhWSnJfSmFPWXNVeVdLak1iWGlDR3F1eko4R1JtR3QyWXRoRGVNSnBkY3dmR0U1aWNZMnpyRVo2cA?oc=5",
+      "date": "2026-05-26",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "You can put a data center at your house\u2014but who really pays? - Fast Company",
+      "source": "Fast Company",
+      "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxQdEZjYWI5cm9WeEN5ZUJJUWNwcHhTSE9KWDRvclplWUlDVERQcl9NOG5qYmhDOGpIT29LT2UtaGItS0hVb00yMG43THNyQm9BV0JZTXBDSU1DQ0ZrWGZ1eHJnVkZZZU5kMWU5SXlGT2hCako0WXNZLThFSmQ4NFljeWdpQVozX0FKLUJndWVhaFNqUjg4QlhTTVN1dHdqUQ?oc=5",
+      "date": "2026-05-10",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4806,19 +4824,10 @@
       "impact": "medium"
     },
     {
-      "headline": "Microsoft\u2019s strategic AI datacenter planning enables seamless, large-scale NVIDIA Rubin deployments - Microsoft Azure",
-      "source": "Microsoft Azure",
-      "url": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxQN0JzUW1qSzlXNnBqN284M1BySzh2bkk4REU4OEJoVTFzSmVRUkNNbHpGMEhVaWZrSHN0QXRVSnpXWk5qckxkaXZKaEFIbzlqTndFWGVqSGpvWFlVR28zaU1BUktHOUhRRmhBcnhxWmJkNTIwaFNJcW50T01FODhGNllGQzJjcW1MYmdIa25HQzZwbHF4Tm9aeHhlT21hUUdYUk5NMmlVbHhUZlVaNVRhRXJ0WVJhWXJTR2J1aTNWMUJmU0R4cGRyTk1OZ3Z4WUV4eGE0?oc=5",
-      "date": "2026-01-05",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "NVIDIA Corporation stock (US67066G1040): record AI earnings keep attention high - AD HOC NEWS",
-      "source": "AD HOC NEWS",
-      "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxNSjJqNGRabE1abDAxQ3ltNzlYNmhfWkppaUFLT25yZXVYUUZIaTB6MldMZVB6blBhaGhQLU9OcE0yYm0xVGR1S21oNjJUNENpbm5NelNKckpHSmJGM1NtU3NaM1VYUzVrcVNDMGtxZjFSY2Y3Wjc2ZE9ZZUoxWUxvTm9hV0VyZVE1WDh2MElUYmFTRHZIVE9jdWVsb1dQRnBGZjVPR0RLbjgydElCQ2VacjNDcndVUVpjQm9TNTZZSmVnY2JzVnY4aVFR?oc=5",
-      "date": "2026-05-26",
+      "headline": "SoftBank to Launch \"AI Data Center GPU Cloud\" Powered by \"Infrinia AI Cloud OS\" as Part of its Neocloud Business in October 2026 | About Us | SoftBank - \u30bd\u30d5\u30c8\u30d0\u30f3\u30af",
+      "source": "\u30bd\u30d5\u30c8\u30d0\u30f3\u30af",
+      "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE1zZ1F0MlR4YTA2d0ZvSzYyM0NrN1BqZmR1UkdyVVVJalplQTdSWkY5eFZXM05ta0hBMUtmWUh2Z2JUa1dac0xWbXh4bERkS2ZsRDRES2NlNS1mV0ZKSFNLSFRFYThNSlF4T1EyUXRwWi0zNlE?oc=5",
+      "date": "2026-05-25",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4891,15 +4900,6 @@
       "source": "NVIDIA Developer",
       "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQel9fQ2JOT1MzWGQ4S1N4b2ZuOU9QWm5yaDMzcE9DWlBXbk1NWVRZOEZpUFFwNjMxV2lTd2p5RnFubXBpdDRydHRVSU52Nm5icmdKeDlOY2FBdHBvN2ZIVUE5T3gxZ3NlU0JUY0tmMUtacHVBN3pQRE95SUxDQlhJUDM0dllOMlFDWTFnTWR1LTdGeXJDSFFDeUlpanpZUjlHa0FV?oc=5",
       "date": "2025-10-13",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Industry Leaders Transform Enterprise Data Centers for the AI Era With NVIDIA RTX PRO Servers - NVIDIA Newsroom",
-      "source": "NVIDIA Newsroom",
-      "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxNdjBISTgtejlnOXVfWEJoOHVjX2FzUm1nbzljM0hGMFc0dENja1duVTFQcExiMzBkS3JYMkRZWFpvVVBKRERYMks1VjZHQUJPWV9YSVJvZ2gyRlU0YmRxakR1YWNUWTVmY2J4Rkl6SW9sYk9KdGYyX3g3M1ZrMUJnTWF4THlHb1JlalV3eFBoNFRhMkY4QkMwX2RFcE5tYWZlRG9rWTBucmRzd2d1eFFmM1NhSWo0SUVDWlJXejU3TDBUczRLTHZj?oc=5",
-      "date": "2025-08-26",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -11664,25 +11664,25 @@
       }
     }
   },
-  "last_updated": "2026-05-26T09:51:55.182070+00:00",
+  "last_updated": "2026-05-27T09:40:54.626418+00:00",
   "stocks": {
     "NVDA": {
       "ticker": "NVDA",
-      "current_price": 215.33,
-      "previous_close": 132.83,
+      "current_price": 214.86,
+      "previous_close": 131.29,
       "52_week_high": 236.54,
-      "52_week_low": 129.16,
-      "ytd_change_pct": 14.02,
-      "last_updated": "2026-05-26T09:51:55.473967+00:00"
+      "52_week_low": 132.92,
+      "ytd_change_pct": 13.77,
+      "last_updated": "2026-05-27T09:40:54.787314+00:00"
     },
     "AMD": {
       "ticker": "AMD",
-      "current_price": 467.51,
-      "previous_close": 110.71,
-      "52_week_high": 481.41,
-      "52_week_low": 107.67,
-      "ytd_change_pct": 109.2,
-      "last_updated": "2026-05-26T09:51:55.617289+00:00"
+      "current_price": 503.89,
+      "previous_close": 110.31,
+      "52_week_high": 506.96,
+      "52_week_low": 108.62,
+      "ytd_change_pct": 125.48,
+      "last_updated": "2026-05-27T09:40:54.881611+00:00"
     }
   }
 }
