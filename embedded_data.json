@@ -3030,27 +3030,27 @@
   "indicators": {
     "nvidia_stock": {
       "ticker": "NVDA",
-      "current": 212.6,
+      "current": 214.25,
       "1m_change": 4.2,
       "3m_change": 12.8,
-      "ytd_change": 12.58,
+      "ytd_change": 13.45,
       "52w_high": 236.54,
       "52w_low": 132.92,
-      "ytd_pct": 12.58,
+      "ytd_pct": 13.45,
       "52w_range": "$132.92-$236.54",
-      "last_updated": "2026-05-28T09:57:26.409735+00:00"
+      "last_updated": "2026-05-29T09:50:31.032753+00:00"
     },
     "amd_stock": {
       "ticker": "AMD",
-      "current": 495.54,
+      "current": 518.09,
       "1m_change": -2.1,
       "3m_change": 5.3,
-      "ytd_change": 121.75,
-      "52w_high": 510.21,
+      "ytd_change": 131.84,
+      "52w_high": 527.2,
       "52w_low": 108.62,
-      "ytd_pct": 121.75,
-      "52w_range": "$108.62-$510.21",
-      "last_updated": "2026-05-28T09:57:26.466714+00:00"
+      "ytd_pct": 131.84,
+      "52w_range": "$108.62-$527.20",
+      "last_updated": "2026-05-29T09:50:31.211589+00:00"
     },
     "gpu_market_size_bn": {
       "2023": 52.4,
@@ -3170,10 +3170,10 @@
         "note": "Consumer stock available"
       }
     },
-    "nvda_price": 212.6,
-    "nvda_ytd_change": 12.58,
-    "amd_price": 495.54,
-    "amd_ytd_change": 121.75
+    "nvda_price": 214.25,
+    "nvda_ytd_change": 13.45,
+    "amd_price": 518.09,
+    "amd_ytd_change": 131.84
   },
   "regional": {
     "North America": {
@@ -4725,10 +4725,28 @@
   },
   "news": [
     {
+      "headline": "SoftBank launches sovereign AI GPU cloud - RCR Wireless News",
+      "source": "RCR Wireless News",
+      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE1paDBFZHRjSDJjWlFNbVQ2b0RGR3RJYzg1WGNEREMzX0tzV28ySE94WVhLOW1HR2lXZUZWcHJzcHBZeXA1ZVRsb205bjExT0dYeUFyTFR6U2J4aFRfU0VxaFBVWXF4Tl90aUJRVEJR?oc=5",
+      "date": "2026-05-27",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
       "headline": "AI Data Center Optical Component Shortage: Nvidia's $4B Laser Lockup Pushes Rivals Past 2027 - Tech Times",
       "source": "Tech Times",
       "url": "https://news.google.com/rss/articles/CBMi3AFBVV95cUxOTVE2dFROelRJdnl0WnM2WGV6OEdUT053ZDlfcUgycFFUMTNXR0dwd082ZUowWTNKd3N2ang2RWIxQzNwVFZneElLQUthOW9LR3RRX0UzNEVRVEVEVzQwMU9zaW9DZE5XVzVmV2NDYjhURTV1dUNJaE1lQk9CQU1MOE13aG5jdmstZ010SDVueVlpcWRoTFdtdk1jR1FPN2V0OWxjQ2loeEdnbERrNkNRcTkyUkw4TTRTQTF3b2FZNzJxcWVKc3REX0M4b2t3MGlUUTdEYkVCM09UbnI3?oc=5",
       "date": "2026-05-27",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "NVIDIA and Taiwan: Why the AI Revolution Is Turning the Island into the World\u2019s AI Infrastructure Hub - semivision",
+      "source": "semivision",
+      "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQc0JNOWxad05RUUdDd0NaRU0wUUxLWExHZnhtbWRXS2g4WjBiSWFKcFgxMGg0czEzQ3ZJR2YtYjlvTUNSa2hoMDhGZ21CN1M0TzYyS0xUcTMyS2NocUFvRHJMdjBEa2VGSVk3ZTlTcHI0bERxRlpWd0wtc1A4THpxRUx3ZG9ETmc?oc=5",
+      "date": "2026-05-28",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4743,19 +4761,19 @@
       "impact": "medium"
     },
     {
-      "headline": "SoftBank to launch GPU cloud powered by Infrinia AI Cloud OS - capacityglobal.com",
-      "source": "capacityglobal.com",
-      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxQbWhsSlppWV83NlJxQi1MbktNdV80b21aT0o0aGJ6bWVZSzJ3dHAtd0xuaEMzcWhEcDlsNWJmUWYyTUthQ2xXOWRLUF9aNEIwRm9iSEhJZkZsQUdvUG9FSnJsNThhRGZKOFZnN2d6U2g3aE1YdVZtMFhCOWxvZUNSX3JlT0FKMkdXV0JqZnlPR2NHeWM?oc=5",
+      "headline": "SoftBank Intros AI Data Center GPU Cloud Powered by Infrinia AI Cloud OS for Japan\u2019s Neocloud Market - The Fast Mode",
+      "source": "The Fast Mode",
+      "url": "https://news.google.com/rss/articles/CBMi6wFBVV95cUxPczhBaUJXTWtpOFpQWkhhTm42U1FsNUNTQ0I5cFRkWVpZX0NDWUZkcXZGQ2ljTlhJLXlNZ3g5MHhNYTV1NEZsSzB2SXVfVDV1LVlycEhJMlNFd1NXLWh2bjZqazBGWl9wemFZNTZndkpuLTJ5RzRtZW41Zmhwb2o1b0t4RnZBeUxaT2pJXzUtSmdua3QzTV9qa2J0UVlTZjhXWDlZemkyYndSZXdURTFoVXZzb1BRMVFfRjJ3RTRZOUItYVdZd2FRRDhMNGhfOHdaVFpBT1J6RDFiN1BHOUhjVlNMYzZFbVpERTJr?oc=5",
       "date": "2026-05-27",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "Analysis: Nvidia's Vera CPU opens new front in data center chip race - digitimes",
-      "source": "digitimes",
-      "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxNOWxjZVllMzVSQUdYYWRfM2VlREl3SHJ6VXBlV0FlUkNwY3hpTTNCeDRkcjVhUmQ1b1JQdGl0Z0Nva2NTeU9UVWtNU3gtaG0yUk5EN1FZUlZadXJtOGZJMU5nZXltNFA1MkhoT050MFN5Z0hkZVN4eTdkeC01eVNHTGtmeXJOVC1yWUE?oc=5",
-      "date": "2026-05-25",
+      "headline": "SoftBank to launch GPU cloud powered by Infrinia AI Cloud OS - capacityglobal.com",
+      "source": "capacityglobal.com",
+      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxQbWhsSlppWV83NlJxQi1MbktNdV80b21aT0o0aGJ6bWVZSzJ3dHAtd0xuaEMzcWhEcDlsNWJmUWYyTUthQ2xXOWRLUF9aNEIwRm9iSEhJZkZsQUdvUG9FSnJsNThhRGZKOFZnN2d6U2g3aE1YdVZtMFhCOWxvZUNSX3JlT0FKMkdXV0JqZnlPR2NHeWM?oc=5",
+      "date": "2026-05-27",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4770,19 +4788,19 @@
       "impact": "medium"
     },
     {
-      "headline": "Musk\u2019s xAI builds Colossus fast, ignites AI data center arms race in Korea and US - CHOSUNBIZ - Chosunbiz",
-      "source": "Chosunbiz",
-      "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE13WTJ2cGRyTFhjNjlPQ0l1U0JUWmxhWkV2WmZ2SUhIWG9GdEttakE0cG5QZC1NU0ZjRTVsQl9RVmNvdGRwVWtOcjBlcXhEc01SODUyU3J6TEF4Tkk0N1ppOXNkUUhzSGQzX01FaUFPZU85YVRtSUVUV0tB0gGOAUFVX3lxTE1sempUZVUydVQ2bDd3MFphczFoSTVYTEdhbXZRVmZlWWJJUFg3dVJZR09lbDRXa0EtNmZtekU3Y2hWcTQ0blF4Y0ZiVFZVU1RQZ3A5SmhvSUVjWXB5UFZwVjFuTzlGdXVMY0hQb0Jpd21GSi00emRua0p4blRMTVdvSEJJU1YyMmZWVTVDSEE?oc=5",
-      "date": "2026-05-27",
+      "headline": "Mistral AI Raises $830M For Nvidia Data Center With 13,800 GPUs - crn.com",
+      "source": "crn.com",
+      "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOQ2hUbkZzMENYa3lRU0dFQk1jbVJPZjNsdEFtU2JhSmQycHpoLThhT0JndkxoSjhidEVSRTZmU3pSX2VhSVd4Zi1YUUluTkU4UURyLTlYWWVxbnN6Y0l0RnViTjBPUXpHeWQxZFNMUFN0aVlZTXdNbXJpM0lhajNfUGp2MWRvUWVBQjh2ZWxub1l1b0lJczBQRTN5N2xnd1JpN0xDQVFQcw?oc=5",
+      "date": "2026-03-31",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "Mistral AI Raises $830M For Nvidia Data Center With 13,800 GPUs - crn.com",
-      "source": "crn.com",
-      "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOQ2hUbkZzMENYa3lRU0dFQk1jbVJPZjNsdEFtU2JhSmQycHpoLThhT0JndkxoSjhidEVSRTZmU3pSX2VhSVd4Zi1YUUluTkU4UURyLTlYWWVxbnN6Y0l0RnViTjBPUXpHeWQxZFNMUFN0aVlZTXdNbXJpM0lhajNfUGp2MWRvUWVBQjh2ZWxub1l1b0lJczBQRTN5N2xnd1JpN0xDQVFQcw?oc=5",
-      "date": "2026-03-31",
+      "headline": "Mistral AI explores custom chip designs, announces new data center in France - Crypto Briefing",
+      "source": "Crypto Briefing",
+      "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTFBhdDlaS2tpTE9EUTBjaUEzMjViT1FxUWFlWkpSRUlscXhjMGZrOGhtMHVGUm14RFhFbU4wZTVaVXBZSWRTQ2lPNmQ4a09YdlpCRlRsaWpMYXNnUk4zdmVBVF93NHdoQXJvdnhsX0x3SWNVQjVpX0hFbi1B?oc=5",
+      "date": "2026-05-28",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4801,24 +4819,6 @@
       "source": "Microsoft Azure",
       "url": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxQN0JzUW1qSzlXNnBqN284M1BySzh2bkk4REU4OEJoVTFzSmVRUkNNbHpGMEhVaWZrSHN0QXRVSnpXWk5qckxkaXZKaEFIbzlqTndFWGVqSGpvWFlVR28zaU1BUktHOUhRRmhBcnhxWmJkNTIwaFNJcW50T01FODhGNllGQzJjcW1MYmdIa25HQzZwbHF4Tm9aeHhlT21hUUdYUk5NMmlVbHhUZlVaNVRhRXJ0WVJhWXJTR2J1aTNWMUJmU0R4cGRyTk1OZ3Z4WUV4eGE0?oc=5",
       "date": "2026-01-05",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "SoftBank to Launch \"AI Data Center GPU Cloud\" Powered by \"Infrinia AI Cloud OS\" as Part of its Neocloud Business in October 2026 | About Us | SoftBank - \u30bd\u30d5\u30c8\u30d0\u30f3\u30af",
-      "source": "\u30bd\u30d5\u30c8\u30d0\u30f3\u30af",
-      "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE1zZ1F0MlR4YTA2d0ZvSzYyM0NrN1BqZmR1UkdyVVVJalplQTdSWkY5eFZXM05ta0hBMUtmWUh2Z2JUa1dac0xWbXh4bERkS2ZsRDRES2NlNS1mV0ZKSFNLSFRFYThNSlF4T1EyUXRwWi0zNlE?oc=5",
-      "date": "2026-05-25",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Meta expands Nvidia deal to use millions of AI chips in data center build-out, including standalone CPUs - CNBC",
-      "source": "CNBC",
-      "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTFBiLXZYX1ZjaTRaenZCcmpJT0FZTksxVFpNOWhYOXBHenZDUjlKLXBoTDJuOHluYzRiSWx0YVV6Slljb3NBem9CLVlJUHlTR1FIQk15ODZGRm4yaXduckZ6YW9DNTJoYkZveDFwS3Y1amFOTkRiSi1lNDYxZlQwMFXSAYQBQVVfeXFMTVBJeVBlbFhKZDhpWE56QTZ4VDFJYjlrSk50eFgtQzViYUduMHRZRmJ2amNRdjZDeVFmUnpfNE54LUhqR2ZTSWR0eXBDcE13Q2wxekszejRCTFlKSHRZWDlWZDgzb0pqZjE4QTdrd0FhZDhQSTNHWDZDMlQtNUYya1RTVkJO?oc=5",
-      "date": "2026-02-17",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4860,19 +4860,19 @@
       "impact": "medium"
     },
     {
-      "headline": "Opt-In NVIDIA Software Enables Data Center Fleet Management - NVIDIA Blog",
-      "source": "NVIDIA Blog",
-      "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxONkZzZVlXZjU4c0V1TEs4Z3dER3FpTVF2U3dOTnNLMlZhdi1WMmNGRHN5c3pmd3NPQmRWVkkyMXN5UDhpQ1VtdXJhQW5xM2p3SllZOEd6a0ZUdnlOcDRJMHdkU1lIcGpXZVY4VGhTdkNUM2QyeVdlRVlaQTJLcC05aC00Zw?oc=5",
-      "date": "2025-12-10",
+      "headline": "Optimize Data Center Efficiency for AI and HPC Workloads with Power Profiles | NVIDIA Technical Blog - NVIDIA Developer",
+      "source": "NVIDIA Developer",
+      "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxNa0Z6TzBZSmFoRlZmbmhzcmh6eFpyVlFTZF9ONXhMYTNUSGVVSGVQS0ljVUd1b2FmYTVUc3dVeC1wV0dONkhfczRidHJWRFhDbW1xMUtSSTdlOWtZNWNadk1TbVBFMVBXeHB2OFpLWnJRYzVqZUs1VFNNZUc5OHM2TXZMalowWVlFeXpjMzd4OC1EeWJHUUoyaHNWYXkwSXlsbzZSWHJoVENQQl9vQVl1Yg?oc=5",
+      "date": "2025-12-04",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "Optimize Data Center Efficiency for AI and HPC Workloads with Power Profiles | NVIDIA Technical Blog - NVIDIA Developer",
-      "source": "NVIDIA Developer",
-      "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxNa0Z6TzBZSmFoRlZmbmhzcmh6eFpyVlFTZF9ONXhMYTNUSGVVSGVQS0ljVUd1b2FmYTVUc3dVeC1wV0dONkhfczRidHJWRFhDbW1xMUtSSTdlOWtZNWNadk1TbVBFMVBXeHB2OFpLWnJRYzVqZUs1VFNNZUc5OHM2TXZMalowWVlFeXpjMzd4OC1EeWJHUUoyaHNWYXkwSXlsbzZSWHJoVENQQl9vQVl1Yg?oc=5",
-      "date": "2025-12-04",
+      "headline": "Opt-In NVIDIA Software Enables Data Center Fleet Management - NVIDIA Blog",
+      "source": "NVIDIA Blog",
+      "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxONkZzZVlXZjU4c0V1TEs4Z3dER3FpTVF2U3dOTnNLMlZhdi1WMmNGRHN5c3pmd3NPQmRWVkkyMXN5UDhpQ1VtdXJhQW5xM2p3SllZOEd6a0ZUdnlOcDRJMHdkU1lIcGpXZVY4VGhTdkNUM2QyeVdlRVlaQTJLcC05aC00Zw?oc=5",
+      "date": "2025-12-10",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4887,19 +4887,19 @@
       "impact": "medium"
     },
     {
-      "headline": "OpenAI and NVIDIA Announce Strategic Partnership to Deploy 10 Gigawatts of NVIDIA Systems - NVIDIA Newsroom",
-      "source": "NVIDIA Newsroom",
-      "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOQW5qdHA3WGJQOHlUT1pRdVBxOF9rcFI5aExZbllQdk1xQ1RWNGdnUGlyLVYwbG9MNEMzVzM0Tll1Zmk1N19DT2I0dHFJRXl5U2w5bmJHZ0p4T2pKMkdGRHU3LXVYX09ybm45a1RKU3RxcTlNVzRjdGxzVUswNXRpSzI2ZXB0R082Q3E5WWZIbE5Va2QwZ194eTF6WmNHWWxkcGdEWV9SVWE1Y3paSTl0aHFEMkhDQQ?oc=5",
-      "date": "2025-09-22",
+      "headline": "Building the 800 VDC Ecosystem for Efficient, Scalable AI Factories | NVIDIA Technical Blog - NVIDIA Developer",
+      "source": "NVIDIA Developer",
+      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQel9fQ2JOT1MzWGQ4S1N4b2ZuOU9QWm5yaDMzcE9DWlBXbk1NWVRZOEZpUFFwNjMxV2lTd2p5RnFubXBpdDRydHRVSU52Nm5icmdKeDlOY2FBdHBvN2ZIVUE5T3gxZ3NlU0JUY0tmMUtacHVBN3pQRE95SUxDQlhJUDM0dllOMlFDWTFnTWR1LTdGeXJDSFFDeUlpanpZUjlHa0FV?oc=5",
+      "date": "2025-10-13",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "NVIDIA Kicks Off the Next Generation of AI With Rubin \u2014 Six New Chips, One Incredible AI Supercomputer - NVIDIA Newsroom",
+      "headline": "OpenAI and NVIDIA Announce Strategic Partnership to Deploy 10 Gigawatts of NVIDIA Systems - NVIDIA Newsroom",
       "source": "NVIDIA Newsroom",
-      "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE1wVTdNYW04bUY5N2s2cWlUR25KZzZ3ZlFxdUZ2MWgwZGFmSUJqNGQxV3E5M0ktZDAzOGFkMGtSaThmSnBrc09jN1ZYakpjWDlabmdJcDYxTjV1LXpmVW16MkJ1NDNFNE9sOUYxVUR0UUtWdzdE?oc=5",
-      "date": "2026-01-05",
+      "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOQW5qdHA3WGJQOHlUT1pRdVBxOF9rcFI5aExZbllQdk1xQ1RWNGdnUGlyLVYwbG9MNEMzVzM0Tll1Zmk1N19DT2I0dHFJRXl5U2w5bmJHZ0p4T2pKMkdGRHU3LXVYX09ybm45a1RKU3RxcTlNVzRjdGxzVUswNXRpSzI2ZXB0R082Q3E5WWZIbE5Va2QwZ194eTF6WmNHWWxkcGdEWV9SVWE1Y3paSTl0aHFEMkhDQQ?oc=5",
+      "date": "2025-09-22",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -11664,25 +11664,25 @@
       }
     }
   },
-  "last_updated": "2026-05-28T09:57:26.332434+00:00",
+  "last_updated": "2026-05-29T09:50:30.842981+00:00",
   "stocks": {
     "NVDA": {
       "ticker": "NVDA",
-      "current_price": 212.6,
-      "previous_close": 135.5,
+      "current_price": 214.25,
+      "previous_close": 134.81,
       "52_week_high": 236.54,
       "52_week_low": 132.92,
-      "ytd_change_pct": 12.58,
-      "last_updated": "2026-05-28T09:57:26.409735+00:00"
+      "ytd_change_pct": 13.45,
+      "last_updated": "2026-05-29T09:50:31.032753+00:00"
     },
     "AMD": {
       "ticker": "AMD",
-      "current_price": 495.54,
-      "previous_close": 114.56,
-      "52_week_high": 510.21,
+      "current_price": 518.09,
+      "previous_close": 112.86,
+      "52_week_high": 527.2,
       "52_week_low": 108.62,
-      "ytd_change_pct": 121.75,
-      "last_updated": "2026-05-28T09:57:26.466714+00:00"
+      "ytd_change_pct": 131.84,
+      "last_updated": "2026-05-29T09:50:31.211589+00:00"
     }
   }
 }
