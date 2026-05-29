@@ -1235,11 +1235,65 @@ _GPU_SEARCH_TERMS = {
 _REDDIT_SUBREDDITS = ["MachineLearning", "LocalLLaMA", "deeplearning", "nvidia", "mlops"]
 
 
+def _get_reddit_token():
+    """Get an OAuth access token via client_credentials. Returns None if no creds.
+
+    Reads REDDIT_CLIENT_ID and REDDIT_CLIENT_SECRET from environment (or .env)
+    or from config.py. Register an app at https://www.reddit.com/prefs/apps
+    (type: "script") to get these.
+    """
+    client_id = os.environ.get("REDDIT_CLIENT_ID")
+    client_secret = os.environ.get("REDDIT_CLIENT_SECRET")
+    if not (client_id and client_secret):
+        try:
+            cfg_globals = {}
+            with open(CONFIG_PY) as f:
+                exec(f.read(), cfg_globals)
+            client_id = client_id or cfg_globals.get("REDDIT_CLIENT_ID")
+            client_secret = client_secret or cfg_globals.get("REDDIT_CLIENT_SECRET")
+        except Exception:
+            pass
+    if not (client_id and client_secret):
+        return None
+
+    if not _HAS_REQUESTS:
+        return None  # urllib basic-auth path not implemented; requests required for OAuth
+    try:
+        resp = _req.post(
+            "https://www.reddit.com/api/v1/access_token",
+            auth=(client_id, client_secret),
+            data={"grant_type": "client_credentials"},
+            headers={"User-Agent": "GPUDashboard/1.0 (market research)"},
+            timeout=15,
+        )
+        if resp.status_code != 200:
+            log_info(f"Reddit OAuth returned HTTP {resp.status_code}: {resp.text[:120]}")
+            return None
+        return resp.json().get("access_token")
+    except Exception as exc:
+        log_info(f"Reddit OAuth error: {exc}")
+        return None
+
+
 def fetch_reddit_sentiment():
-    """Fetch GPU mention counts and sentiment from Reddit public JSON API."""
+    """Fetch GPU mention counts and sentiment from Reddit OAuth API.
+
+    Reddit blocks unauthenticated traffic site-wide as of 2024+, so OAuth is
+    required. Without credentials, this returns {} (no data) and the merge
+    step preserves existing values.
+    """
     log_info("Fetching Reddit sentiment...")
+    token = _get_reddit_token()
+    if not token:
+        log_info("No Reddit OAuth token (set REDDIT_CLIENT_ID + REDDIT_CLIENT_SECRET). Skipping.")
+        return {}
+
     results = {}
-    headers = {"User-Agent": "GPUDashboard/1.0 (market research)"}
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "User-Agent": "GPUDashboard/1.0 (market research)",
+    }
+    base = "https://oauth.reddit.com"
 
     for gpu_id, terms in _GPU_SEARCH_TERMS.items():
         total_mentions = 0
@@ -1251,7 +1305,7 @@ def fetch_reddit_sentiment():
         for term in terms:
             for sub in _REDDIT_SUBREDDITS:
                 try:
-                    url = f"https://www.reddit.com/r/{sub}/search.json"
+                    url = f"{base}/r/{sub}/search"
                     params = {
                         "q": term,
                         "restrict_sr": "on",
@@ -1277,7 +1331,7 @@ def fetch_reddit_sentiment():
                                 "score": pd.get("score", 0),
                                 "subreddit": sub,
                             })
-                    time.sleep(0.5)  # Rate limit: Reddit allows ~30 req/min unauthenticated
+                    time.sleep(1.1)  # OAuth limit: 60 req/min = 1 req per 1.1s
                 except Exception:
                     continue
 
