@@ -3038,7 +3038,7 @@
       "52w_low": 132.92,
       "ytd_pct": 11.8,
       "52w_range": "$132.92-$236.54",
-      "last_updated": "2026-05-30T08:25:09.900668+00:00"
+      "last_updated": "2026-05-31T08:41:54.866118+00:00"
     },
     "amd_stock": {
       "ticker": "AMD",
@@ -3050,7 +3050,7 @@
       "52w_low": 108.62,
       "ytd_pct": 130.95,
       "52w_range": "$108.62-$527.20",
-      "last_updated": "2026-05-30T08:25:10.023371+00:00"
+      "last_updated": "2026-05-31T08:41:54.938213+00:00"
     },
     "gpu_market_size_bn": {
       "2023": 52.4,
@@ -4734,28 +4734,19 @@
       "impact": "medium"
     },
     {
-      "headline": "Chip Stocks 2026: Identifying the Semiconductor Winners vs. AI Hype - Barron's",
-      "source": "Barron's",
-      "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxPaVFkbXZPOS0wNWlYazJmYzBVU2hLSk1PdTA1cnVoVEZBaS1weElxR2NjTVRSRnA5Qzl0ekN4eXBVT2JSN1p4Z0hHZ3kwUEhYcWtxeVRDMmpKNWtzWHpSVms2V1dZUjhiQ2VIbkJfaWtDWmlpQzNOQTlJZ0k3Mmw4X0gwaU9TdklCUlVyVjZqNTZJSnUtM2dHRWVR?oc=5",
-      "date": "2026-05-29",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "NVIDIA vs. Marvell Technology: Which AI Chip Stock Has the Edge? - The Globe and Mail",
-      "source": "The Globe and Mail",
-      "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxOYzdEYVVUa3pkUnZjaGlXdXdRYzVCQkUxSTUzMV9JXzFnT2RXdUNVVUNqbXFSWFpDbE5PeV9zWDByT09LUGxiSWItTWcxYkNsVzRXVDU3c1o3N1YxUEstVUlBcURPY3dCQk5CbTdIN0d4TjhhMXRralRRWjFFbDdXSWI0SG9ZTndfX2hjRHBWRWtwbS1zemRHTE9rc2VHYjlqQjQ0MzN6UVdyYnFOc3cxb2FJTHBXYWRGX05nQzZac1BWdmJ4QjNUV1Jra3RXckpWcnJCTTRkb3NFaHZHNU42QTZB?oc=5",
-      "date": "2026-05-29",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "AI Data Center Optical Component Shortage: Nvidia's $4B Laser Lockup Pushes Rivals Past 2027 - Tech Times",
-      "source": "Tech Times",
-      "url": "https://news.google.com/rss/articles/CBMi3AFBVV95cUxOTVE2dFROelRJdnl0WnM2WGV6OEdUT053ZDlfcUgycFFUMTNXR0dwd082ZUowWTNKd3N2ang2RWIxQzNwVFZneElLQUthOW9LR3RRX0UzNEVRVEVEVzQwMU9zaW9DZE5XVzVmV2NDYjhURTV1dUNJaE1lQk9CQU1MOE13aG5jdmstZ010SDVueVlpcWRoTFdtdk1jR1FPN2V0OWxjQ2loeEdnbERrNkNRcTkyUkw4TTRTQTF3b2FZNzJxcWVKc3REX0M4b2t3MGlUUTdEYkVCM09UbnI3?oc=5",
+      "headline": "SoftBank launches sovereign AI GPU cloud - RCR Wireless News",
+      "source": "RCR Wireless News",
+      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE1paDBFZHRjSDJjWlFNbVQ2b0RGR3RJYzg1WGNEREMzX0tzV28ySE94WVhLOW1HR2lXZUZWcHJzcHBZeXA1ZVRsb205bjExT0dYeUFyTFR6U2J4aFRfU0VxaFBVWXF4Tl90aUJRVEJR?oc=5",
       "date": "2026-05-27",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Jensen Huang Calls AI Demand Parabolic - Let's Data Science",
+      "source": "Let's Data Science",
+      "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOTHVRRzlIVVhRTFBYV3dlWXl6NnBSeHZTWTM3TWhEakprTGd5aThZNU9zRm1yQTNVT3oxX0pRSVM4b0FGTUxKS24wbzRIbWh1UTV1bllNRFdQYzNDRmdVS3daZ3lKaGVYWmR2djllc0ktZmE2RUZPVkxZRzFfOFl4S1J6QlFyMG8?oc=5",
+      "date": "2026-05-30",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4770,6 +4761,15 @@
       "impact": "medium"
     },
     {
+      "headline": "AI Data Center Optical Component Shortage: Nvidia's $4B Laser Lockup Pushes Rivals Past 2027 - Tech Times",
+      "source": "Tech Times",
+      "url": "https://news.google.com/rss/articles/CBMi3AFBVV95cUxOTVE2dFROelRJdnl0WnM2WGV6OEdUT053ZDlfcUgycFFUMTNXR0dwd082ZUowWTNKd3N2ang2RWIxQzNwVFZneElLQUthOW9LR3RRX0UzNEVRVEVEVzQwMU9zaW9DZE5XVzVmV2NDYjhURTV1dUNJaE1lQk9CQU1MOE13aG5jdmstZ010SDVueVlpcWRoTFdtdk1jR1FPN2V0OWxjQ2loeEdnbERrNkNRcTkyUkw4TTRTQTF3b2FZNzJxcWVKc3REX0M4b2t3MGlUUTdEYkVCM09UbnI3?oc=5",
+      "date": "2026-05-27",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
       "headline": "800 VDC Architecture for AI Data Centers - NVIDIA",
       "source": "NVIDIA",
       "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxNbjN0NTNGSmlNLVhudEF5SUhfN3AydVJtaHRaejRlMGpGQzhiU3d3NFlNWkEwN0xoeVRNYlNBRjBjQlJ2RGhKLUVyR0ZGVEhIemVjSGFNRTBIR200RENBZVBrbm9MUkVqZWxrUEZ2Y19YZ3pramo5Qm4taFNlVDZuWg?oc=5",
@@ -4779,37 +4779,19 @@
       "impact": "medium"
     },
     {
-      "headline": "NVDA Stock Price Drop\u2014the Time to Buy Nvidia or Diversify Across the AI Datacenter Supply Chain? - TradingKey",
-      "source": "TradingKey",
-      "url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOQlAwNnB4N3RpV3B1elhmaHlOUXpnQUFnMkFKdGRaY29aMWFzVDlpb1ItbVJneEQ3SUk1cjNVZHVpc0ZfbldDbUxJOVBwRWJ4Umg5Rk1FWnJwZFdaTWNKSkduaTExWHBMcnEtbHhVRFBhcUtOQ2k2ZkhBTUZldE1vWnZVUE1hNVFyUmF6QlJ6Q041c0h6R2U0SjRNQXJaOUkxR3V2b0JiRjJKbUZyT19rMEJxVGV0b3EteV91SVAwdUhUTTFBSmFFeg?oc=5",
+      "headline": "Chip Stocks 2026: Identifying the Semiconductor Winners vs. AI Hype - Barron's",
+      "source": "Barron's",
+      "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxPaVFkbXZPOS0wNWlYazJmYzBVU2hLSk1PdTA1cnVoVEZBaS1weElxR2NjTVRSRnA5Qzl0ekN4eXBVT2JSN1p4Z0hHZ3kwUEhYcWtxeVRDMmpKNWtzWHpSVms2V1dZUjhiQ2VIbkJfaWtDWmlpQzNOQTlJZ0k3Mmw4X0gwaU9TdklCUlVyVjZqNTZJSnUtM2dHRWVR?oc=5",
       "date": "2026-05-29",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "SoftBank Intros AI Data Center GPU Cloud Powered by Infrinia AI Cloud OS for Japan\u2019s Neocloud Market - The Fast Mode",
-      "source": "The Fast Mode",
-      "url": "https://news.google.com/rss/articles/CBMi6wFBVV95cUxPczhBaUJXTWtpOFpQWkhhTm42U1FsNUNTQ0I5cFRkWVpZX0NDWUZkcXZGQ2ljTlhJLXlNZ3g5MHhNYTV1NEZsSzB2SXVfVDV1LVlycEhJMlNFd1NXLWh2bjZqazBGWl9wemFZNTZndkpuLTJ5RzRtZW41Zmhwb2o1b0t4RnZBeUxaT2pJXzUtSmdua3QzTV9qa2J0UVlTZjhXWDlZemkyYndSZXdURTFoVXZzb1BRMVFfRjJ3RTRZOUItYVdZd2FRRDhMNGhfOHdaVFpBT1J6RDFiN1BHOUhjVlNMYzZFbVpERTJr?oc=5",
-      "date": "2026-05-27",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "SoftBank to launch GPU cloud powered by Infrinia AI Cloud OS - capacityglobal.com",
-      "source": "capacityglobal.com",
-      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxQbWhsSlppWV83NlJxQi1MbktNdV80b21aT0o0aGJ6bWVZSzJ3dHAtd0xuaEMzcWhEcDlsNWJmUWYyTUthQ2xXOWRLUF9aNEIwRm9iSEhJZkZsQUdvUG9FSnJsNThhRGZKOFZnN2d6U2g3aE1YdVZtMFhCOWxvZUNSX3JlT0FKMkdXV0JqZnlPR2NHeWM?oc=5",
-      "date": "2026-05-27",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "SoftBank to launch AI data center GPU cloud in Japan - W.Media",
-      "source": "W.Media",
-      "url": "https://news.google.com/rss/articles/CBMieEFVX3lxTE1nRm96cGFFV29SY0hoZ2tydmIyeXJ0bXNEMlFFcXFNa01ja0VFUWpoNVNJbmJCRWoxQnhBcnBBUV9RTkUwVHJkYVE5X3NyRVVQSjMxOW1YNy14UFFWZC1HRFV4UzZLdnlPdW1vQzk2akpoVUJCMjhlQw?oc=5",
-      "date": "2026-05-27",
+      "headline": "NVIDIA vs. Marvell Technology: Which AI Chip Stock Has the Edge? - The Globe and Mail",
+      "source": "The Globe and Mail",
+      "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxOYzdEYVVUa3pkUnZjaGlXdXdRYzVCQkUxSTUzMV9JXzFnT2RXdUNVVUNqbXFSWFpDbE5PeV9zWDByT09LUGxiSWItTWcxYkNsVzRXVDU3c1o3N1YxUEstVUlBcURPY3dCQk5CbTdIN0d4TjhhMXRralRRWjFFbDdXSWI0SG9ZTndfX2hjRHBWRWtwbS1zemRHTE9rc2VHYjlqQjQ0MzN6UVdyYnFOc3cxb2FJTHBXYWRGX05nQzZac1BWdmJ4QjNUV1Jra3RXckpWcnJCTTRkb3NFaHZHNU42QTZB?oc=5",
+      "date": "2026-05-29",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4833,10 +4815,10 @@
       "impact": "medium"
     },
     {
-      "headline": "Jensen Huang\u2019s Taiwan Dinner: Why Taiwan\u2019s Entire Supply Chain Is Becoming the Backbone of AI Infrastructure - semivision",
-      "source": "semivision",
-      "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxPRnVfYTJ1ZnlGWV9rYzhaUXBSYzByS2FTN3NnTnRZa195UFlKVnh0RzR0UVFGWG9jM1ZZSGxFX0FQSTdUSUFpYkZOQlYyd2h0cHctOFFHMy1HdkMxLUdfdDFuWnhsb2pDTC1Palo3WjdDTjNrdFh3VTVJZ19kVlM1eTJvMXpxcGs?oc=5",
-      "date": "2026-05-29",
+      "headline": "Microsoft\u2019s strategic AI datacenter planning enables seamless, large-scale NVIDIA Rubin deployments - Microsoft Azure",
+      "source": "Microsoft Azure",
+      "url": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxQN0JzUW1qSzlXNnBqN284M1BySzh2bkk4REU4OEJoVTFzSmVRUkNNbHpGMEhVaWZrSHN0QXRVSnpXWk5qckxkaXZKaEFIbzlqTndFWGVqSGpvWFlVR28zaU1BUktHOUhRRmhBcnhxWmJkNTIwaFNJcW50T01FODhGNllGQzJjcW1MYmdIa25HQzZwbHF4Tm9aeHhlT21hUUdYUk5NMmlVbHhUZlVaNVRhRXJ0WVJhWXJTR2J1aTNWMUJmU0R4cGRyTk1OZ3Z4WUV4eGE0?oc=5",
+      "date": "2026-01-05",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4851,10 +4833,10 @@
       "impact": "medium"
     },
     {
-      "headline": "Mistral AI explores custom chip designs, announces new data center in France - Crypto Briefing",
-      "source": "Crypto Briefing",
-      "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTFBhdDlaS2tpTE9EUTBjaUEzMjViT1FxUWFlWkpSRUlscXhjMGZrOGhtMHVGUm14RFhFbU4wZTVaVXBZSWRTQ2lPNmQ4a09YdlpCRlRsaWpMYXNnUk4zdmVBVF93NHdoQXJvdnhsX0x3SWNVQjVpX0hFbi1B?oc=5",
-      "date": "2026-05-28",
+      "headline": "Jensen Huang\u2019s Taiwan Dinner: Why Taiwan\u2019s Entire Supply Chain Is Becoming the Backbone of AI Infrastructure - semivision",
+      "source": "semivision",
+      "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxPRnVfYTJ1ZnlGWV9rYzhaUXBSYzByS2FTN3NnTnRZa195UFlKVnh0RzR0UVFGWG9jM1ZZSGxFX0FQSTdUSUFpYkZOQlYyd2h0cHctOFFHMy1HdkMxLUdfdDFuWnhsb2pDTC1Palo3WjdDTjNrdFh3VTVJZ19kVlM1eTJvMXpxcGs?oc=5",
+      "date": "2026-05-29",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4900,6 +4882,24 @@
       "source": "NVIDIA Newsroom",
       "url": "https://news.google.com/rss/articles/CBMi5AFBVV95cUxOeDB1aTlUT0xDRjVCQ3lJWHBBaUJjMzZUbzZVa2s2R1RSQ01Gd1ItZGdHdm5xd256M1JocU9RUk91X2xJSUZlNHBnRWhaVm80aUdJbTgwWUtCN1c2YjRGdWl5SVV4eDM1VHFYRS1iN1lvdlI0LUcyX0NvN1Nkc2hFbDRuNzctNXV1cjFlZk83bEswblNabE5RYzA2bnpYR3dTYUdpVk5zU0o0ZVgxNk1xOVpfa2NDZFhzYWlrc1Azc25FRGFINERTeHNMeV9ua3dQSThsc2ZjLXVieG1LMTRzeDlHbTg?oc=5",
       "date": "2025-09-16",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Building the 800 VDC Ecosystem for Efficient, Scalable AI Factories | NVIDIA Technical Blog - NVIDIA Developer",
+      "source": "NVIDIA Developer",
+      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQel9fQ2JOT1MzWGQ4S1N4b2ZuOU9QWm5yaDMzcE9DWlBXbk1NWVRZOEZpUFFwNjMxV2lTd2p5RnFubXBpdDRydHRVSU52Nm5icmdKeDlOY2FBdHBvN2ZIVUE5T3gxZ3NlU0JUY0tmMUtacHVBN3pQRE95SUxDQlhJUDM0dllOMlFDWTFnTWR1LTdGeXJDSFFDeUlpanpZUjlHa0FV?oc=5",
+      "date": "2025-10-13",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "OpenAI and NVIDIA Announce Strategic Partnership to Deploy 10 Gigawatts of NVIDIA Systems - NVIDIA Newsroom",
+      "source": "NVIDIA Newsroom",
+      "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOQW5qdHA3WGJQOHlUT1pRdVBxOF9rcFI5aExZbllQdk1xQ1RWNGdnUGlyLVYwbG9MNEMzVzM0Tll1Zmk1N19DT2I0dHFJRXl5U2w5bmJHZ0p4T2pKMkdGRHU3LXVYX09ybm45a1RKU3RxcTlNVzRjdGxzVUswNXRpSzI2ZXB0R082Q3E5WWZIbE5Va2QwZ194eTF6WmNHWWxkcGdEWV9SVWE1Y3paSTl0aHFEMkhDQQ?oc=5",
+      "date": "2025-09-22",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -11664,7 +11664,7 @@
       }
     }
   },
-  "last_updated": "2026-05-30T08:25:09.747507+00:00",
+  "last_updated": "2026-05-31T08:41:54.768592+00:00",
   "stocks": {
     "NVDA": {
       "ticker": "NVDA",
@@ -11673,7 +11673,7 @@
       "52_week_high": 236.54,
       "52_week_low": 132.92,
       "ytd_change_pct": 11.8,
-      "last_updated": "2026-05-30T08:25:09.900668+00:00"
+      "last_updated": "2026-05-31T08:41:54.866118+00:00"
     },
     "AMD": {
       "ticker": "AMD",
@@ -11682,7 +11682,7 @@
       "52_week_high": 527.2,
       "52_week_low": 108.62,
       "ytd_change_pct": 130.95,
-      "last_updated": "2026-05-30T08:25:10.023371+00:00"
+      "last_updated": "2026-05-31T08:41:54.938213+00:00"
     }
   }
 }
