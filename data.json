@@ -3854,148 +3854,201 @@
     }
   },
   "inference": {
-    "MiniMax-M2.5": {
-      "params_b": 456,
+    "DeepSeek-V4-Flash": {
+      "params_b": 685,
       "type": "LLM",
       "category": "Frontier",
       "rank": 1,
-      "tokens_7d": 2571.2,
-      "context_k": 196,
+      "tokens_7d": 3110,
+      "context_k": 1048,
       "open_source": true,
-      "gpus": {
-        "H100-SXM": {
-          "tokens_per_sec": 35,
-          "cost_per_1m_tokens": 1.8,
-          "vram_gb": 320
+      "gpus": {},
+      "providers": {
+        "DeepSeek API": {
+          "input": 0.0983,
+          "output": 0.1966
         },
-        "B300": {
-          "tokens_per_sec": 100,
-          "cost_per_1m_tokens": 0.7,
-          "vram_gb": 288
-        },
-        "B200": {
-          "tokens_per_sec": 72,
-          "cost_per_1m_tokens": 0.9,
-          "vram_gb": 192
-        },
-        "A100-80GB": {
-          "tokens_per_sec": 15,
-          "cost_per_1m_tokens": 3.2,
-          "vram_gb": 320
+        "OpenRouter": {
+          "input": 0.0983,
+          "output": 0.1966
         }
       },
-      "providers": {
-        "OpenRouter": {
-          "input": 0.3,
-          "output": 1.1
-        }
-      }
+      "params_note": "estimated (685B MoE per V3 lineage)"
     },
-    "Kimi-K2.5": {
-      "params_b": 1000,
+    "Hy3-Preview": {
+      "params_b": 0,
       "type": "LLM",
       "category": "Frontier",
       "rank": 2,
-      "tokens_7d": 1036.7,
+      "tokens_7d": 3030,
       "context_k": 262,
-      "open_source": true,
-      "gpus": {
-        "H100-SXM": {
-          "tokens_per_sec": 35,
-          "cost_per_1m_tokens": 1.8,
-          "vram_gb": 320
+      "open_source": false,
+      "gpus": {},
+      "providers": {
+        "Tencent": {
+          "input": 0.066,
+          "output": 0.26
         },
-        "B300": {
-          "tokens_per_sec": 100,
-          "cost_per_1m_tokens": 0.7,
-          "vram_gb": 288
-        },
-        "B200": {
-          "tokens_per_sec": 72,
-          "cost_per_1m_tokens": 0.9,
-          "vram_gb": 192
-        },
-        "A100-80GB": {
-          "tokens_per_sec": 15,
-          "cost_per_1m_tokens": 3.2,
-          "vram_gb": 320
+        "OpenRouter": {
+          "input": 0.066,
+          "output": 0.26
         }
       },
-      "providers": {
-        "OpenRouter": {
-          "input": 0.45,
-          "output": 2.2
-        }
-      }
+      "params_note": "undisclosed (Tencent does not publish parameter counts)"
     },
-    "Gemini-3-Flash": {
-      "params_b": 80,
+    "Claude-Opus-4.7": {
+      "params_b": 350,
       "type": "LLM",
-      "category": "Large",
+      "category": "Frontier",
       "rank": 3,
-      "tokens_7d": 859.0,
+      "tokens_7d": 2320,
       "context_k": 1000,
       "open_source": false,
       "gpus": {},
       "providers": {
-        "Google AI Studio": {
-          "input": 0.5,
-          "output": 3.0
-        },
-        "Google Vertex": {
-          "input": 0.5,
-          "output": 3.0
+        "Anthropic API": {
+          "input": 5.0,
+          "output": 25.0
         },
         "OpenRouter": {
-          "input": 0.5,
-          "output": 3.0
+          "input": 5.0,
+          "output": 25.0
+        },
+        "AWS Bedrock": {
+          "input": 5.0,
+          "output": 25.0
+        },
+        "Google Vertex": {
+          "input": 5.0,
+          "output": 25.0
+        },
+        "Azure": {
+          "input": 5.0,
+          "output": 25.0
         }
-      }
+      },
+      "params_note": "estimated (Anthropic does not disclose parameter counts)"
     },
-    "GLM-5": {
-      "params_b": 600,
+    "Claude-Sonnet-4.6": {
+      "params_b": 175,
       "type": "LLM",
       "category": "Frontier",
       "rank": 4,
-      "tokens_7d": 803.4,
-      "context_k": 204,
-      "open_source": true,
-      "gpus": {
-        "H100-SXM": {
-          "tokens_per_sec": 35,
-          "cost_per_1m_tokens": 1.8,
-          "vram_gb": 320
+      "tokens_7d": 1920,
+      "context_k": 1000,
+      "open_source": false,
+      "gpus": {},
+      "providers": {
+        "Anthropic API": {
+          "input": 3.0,
+          "output": 15.0
         },
-        "B300": {
-          "tokens_per_sec": 100,
-          "cost_per_1m_tokens": 0.7,
-          "vram_gb": 288
+        "OpenRouter": {
+          "input": 3.0,
+          "output": 15.0
         },
-        "B200": {
-          "tokens_per_sec": 72,
-          "cost_per_1m_tokens": 0.9,
-          "vram_gb": 192
+        "AWS Bedrock": {
+          "input": 3.0,
+          "output": 15.0
         },
-        "A100-80GB": {
-          "tokens_per_sec": 15,
-          "cost_per_1m_tokens": 3.2,
-          "vram_gb": 320
+        "Google Vertex": {
+          "input": 3.0,
+          "output": 15.0
+        },
+        "Azure": {
+          "input": 3.0,
+          "output": 15.0
         }
       },
+      "params_note": "estimated (Anthropic does not disclose parameter counts)"
+    },
+    "Owl-Alpha": {
+      "params_b": 0,
+      "type": "LLM",
+      "category": "Frontier",
+      "rank": 5,
+      "tokens_7d": 1660,
+      "context_k": 1048,
+      "open_source": false,
+      "gpus": {},
       "providers": {
         "OpenRouter": {
-          "input": 0.95,
-          "output": 2.55
+          "input": 0.0,
+          "output": 0.0
         }
-      }
+      },
+      "params_note": "undisclosed; free preview routing through OpenRouter"
+    },
+    "MiMo-V2.5": {
+      "params_b": 200,
+      "type": "LLM",
+      "category": "Frontier",
+      "rank": 6,
+      "tokens_7d": 1460,
+      "context_k": 1048,
+      "open_source": true,
+      "gpus": {},
+      "providers": {
+        "Xiaomi": {
+          "input": 0.14,
+          "output": 0.28
+        },
+        "OpenRouter": {
+          "input": 0.14,
+          "output": 0.28
+        }
+      },
+      "params_note": "estimated (Xiaomi has not published exact count)"
+    },
+    "DeepSeek-V4-Pro": {
+      "params_b": 685,
+      "type": "LLM",
+      "category": "Frontier",
+      "rank": 7,
+      "tokens_7d": 1250,
+      "context_k": 1048,
+      "open_source": true,
+      "gpus": {},
+      "providers": {
+        "DeepSeek API": {
+          "input": 0.435,
+          "output": 0.87
+        },
+        "OpenRouter": {
+          "input": 0.435,
+          "output": 0.87
+        }
+      },
+      "params_note": "estimated (685B MoE per V3 lineage)"
+    },
+    "MiMo-V2.5-Pro": {
+      "params_b": 400,
+      "type": "LLM",
+      "category": "Frontier",
+      "rank": 8,
+      "tokens_7d": 1240,
+      "context_k": 1048,
+      "open_source": true,
+      "gpus": {},
+      "providers": {
+        "Xiaomi": {
+          "input": 0.435,
+          "output": 0.87
+        },
+        "OpenRouter": {
+          "input": 0.435,
+          "output": 0.87
+        }
+      },
+      "params_note": "estimated (Xiaomi has not published exact count)"
     },
     "DeepSeek-V3.2": {
       "params_b": 685,
       "type": "LLM",
       "category": "Frontier",
-      "rank": 5,
-      "tokens_7d": 745.1,
-      "context_k": 163,
+      "rank": 9,
+      "tokens_7d": 1040,
+      "context_k": 131,
       "open_source": true,
       "gpus": {
         "H100-SXM": {
@@ -4016,41 +4069,113 @@
       },
       "providers": {
         "DeepSeek API": {
-          "input": 0.26,
-          "output": 1.1
+          "input": 0.2288,
+          "output": 0.3432
         },
         "OpenRouter": {
-          "input": 0.26,
-          "output": 1.1
+          "input": 0.2288,
+          "output": 0.3432
         }
       }
     },
-    "Grok-4.1-Fast": {
-      "params_b": 314,
+    "Gemini-3-Flash": {
+      "params_b": 80,
       "type": "LLM",
-      "category": "Frontier",
-      "rank": 6,
-      "tokens_7d": 669.0,
-      "context_k": 2000,
+      "category": "Large",
+      "rank": 10,
+      "tokens_7d": 952,
+      "context_k": 1048,
       "open_source": false,
       "gpus": {},
       "providers": {
-        "xAI API": {
-          "input": 0.2,
-          "output": 0.5
+        "Google AI Studio": {
+          "input": 0.5,
+          "output": 3.0
+        },
+        "Google Vertex": {
+          "input": 0.5,
+          "output": 3.0
         },
         "OpenRouter": {
-          "input": 0.2,
-          "output": 0.5
+          "input": 0.5,
+          "output": 3.0
         }
-      }
+      },
+      "params_note": "estimated (Google does not disclose Gemini parameter counts)"
+    },
+    "Nemotron-3-Super": {
+      "params_b": 120,
+      "type": "LLM",
+      "category": "Large",
+      "rank": 11,
+      "tokens_7d": 668,
+      "context_k": 1000,
+      "open_source": true,
+      "gpus": {},
+      "providers": {
+        "NVIDIA NIM": {
+          "input": 0.0,
+          "output": 0.0
+        },
+        "OpenRouter": {
+          "input": 0.0,
+          "output": 0.0
+        }
+      },
+      "params_note": "120B-A12B (MoE: 120B total, 12B active)"
+    },
+    "Gemini-2.5-Flash-Lite": {
+      "params_b": 30,
+      "type": "LLM",
+      "category": "Medium",
+      "rank": 12,
+      "tokens_7d": 576,
+      "context_k": 1048,
+      "open_source": false,
+      "gpus": {},
+      "providers": {
+        "Google AI Studio": {
+          "input": 0.1,
+          "output": 0.4
+        },
+        "Google Vertex": {
+          "input": 0.1,
+          "output": 0.4
+        },
+        "OpenRouter": {
+          "input": 0.1,
+          "output": 0.4
+        }
+      },
+      "params_note": "estimated (Google does not disclose Gemini parameter counts)"
+    },
+    "Kimi-K2.6": {
+      "params_b": 1000,
+      "type": "LLM",
+      "category": "Frontier",
+      "rank": 13,
+      "tokens_7d": 552,
+      "context_k": 262,
+      "open_source": true,
+      "gpus": {},
+      "providers": {
+        "Moonshot": {
+          "input": 0.0,
+          "output": 0.0
+        },
+        "OpenRouter": {
+          "input": 0.0,
+          "output": 0.0
+        }
+      },
+      "params_note": "1T MoE (K2.5 precedent: 1000B total)"
     },
     "Claude-Opus-4.6": {
       "params_b": 350,
       "type": "LLM",
       "category": "Frontier",
-      "rank": 7,
-      "tokens_7d": 643.1,
+      "rank": 14,
+      "tokens_7d": 540,
       "context_k": 1000,
       "open_source": false,
       "gpus": {},
@@ -4074,39 +4199,6 @@
         "Azure": {
           "input": 5.0,
           "output": 25.0
-        }
-      },
-      "params_note": "estimated (Anthropic does not disclose parameter counts)"
-    },
-    "Claude-Sonnet-4.5": {
-      "params_b": 175,
-      "type": "LLM",
-      "category": "Frontier",
-      "rank": 8,
-      "tokens_7d": 534.3,
-      "context_k": 1000,
-      "open_source": false,
-      "gpus": {},
-      "providers": {
-        "Anthropic API": {
-          "input": 3.0,
-          "output": 15.0
-        },
-        "OpenRouter": {
-          "input": 3.0,
-          "output": 15.0
-        },
-        "AWS Bedrock": {
-          "input": 3.0,
-          "output": 15.0
-        },
-        "Google Vertex": {
-          "input": 3.0,
-          "output": 15.0
-        },
-        "Azure": {
-          "input": 3.0,
-          "output": 15.0
         }
       },
       "params_note": "estimated (Anthropic does not disclose parameter counts)"
@@ -4115,321 +4207,100 @@
       "params_b": 65,
       "type": "LLM",
       "category": "Large",
-      "rank": 9,
-      "tokens_7d": 451.0,
-      "context_k": 1000,
-      "open_source": false,
-      "gpus": {},
-      "providers": {
-        "Google AI Studio": {
-          "input": 0.15,
-          "output": 0.6
-        },
-        "Google Vertex": {
-          "input": 0.3,
-          "output": 2.5
-        },
-        "OpenRouter": {
-          "input": 0.3,
-          "output": 2.5
-        }
-      }
-    },
-    "Gemini-2.5-Flash-Lite": {
-      "params_b": 30,
-      "type": "LLM",
-      "category": "Medium",
-      "rank": 10,
-      "tokens_7d": 344.0,
-      "context_k": 1000,
-      "open_source": false,
-      "gpus": {},
-      "providers": {
-        "Google AI Studio": {
-          "input": 0.05,
-          "output": 0.2
-        },
-        "Google Vertex": {
-          "input": 0.1,
-          "output": 0.4
-        },
-        "OpenRouter": {
-          "input": 0.1,
-          "output": 0.4
-        }
-      }
-    },
-    "GPT-5-Nano": {
-      "params_b": 20,
-      "type": "LLM",
-      "category": "Medium",
-      "rank": 11,
-      "tokens_7d": 310.0,
-      "context_k": 400,
-      "open_source": false,
-      "gpus": {},
-      "providers": {
-        "OpenAI API": {
-          "input": 0.05,
-          "output": 0.4
-        },
-        "OpenRouter": {
-          "input": 0.05,
-          "output": 0.4
-        },
-        "Azure": {
-          "input": 0.05,
-          "output": 0.4
-        }
-      }
-    },
-    "Claude-Sonnet-4.6": {
-      "params_b": 175,
-      "type": "LLM",
-      "category": "Frontier",
-      "rank": 12,
-      "tokens_7d": 280.0,
-      "context_k": 1000,
-      "open_source": false,
-      "gpus": {},
-      "providers": {
-        "Anthropic API": {
-          "input": 3.0,
-          "output": 15.0
-        },
-        "OpenRouter": {
-          "input": 3.0,
-          "output": 15.0
-        },
-        "AWS Bedrock": {
-          "input": 3.0,
-          "output": 15.0
-        },
-        "Google Vertex": {
-          "input": 3.0,
-          "output": 15.0
-        },
-        "Azure": {
-          "input": 3.0,
-          "output": 15.0
-        }
-      },
-      "params_note": "estimated (Anthropic does not disclose parameter counts)"
-    },
-    "GPT-OSS-120B": {
-      "params_b": 120,
-      "type": "LLM",
-      "category": "Large",
-      "rank": 13,
-      "tokens_7d": 299.0,
-      "context_k": 131,
-      "open_source": true,
-      "gpus": {
-        "H100-SXM": {
-          "tokens_per_sec": 55,
-          "cost_per_1m_tokens": 1.2,
-          "vram_gb": 160
-        },
-        "B300": {
-          "tokens_per_sec": 150,
-          "cost_per_1m_tokens": 0.45,
-          "vram_gb": 160
-        },
-        "B200": {
-          "tokens_per_sec": 110,
-          "cost_per_1m_tokens": 0.6,
-          "vram_gb": 160
-        },
-        "A100-80GB": {
-          "tokens_per_sec": 25,
-          "cost_per_1m_tokens": 2.5,
-          "vram_gb": 160
-        }
-      },
-      "providers": {
-        "OpenRouter": {
-          "input": 0.039,
-          "output": 0.19
-        }
-      }
-    },
-    "GPT-5.2": {
-      "params_b": 500,
-      "type": "LLM",
-      "category": "Frontier",
-      "rank": 14,
-      "tokens_7d": 250.0,
-      "context_k": 400,
-      "open_source": false,
-      "gpus": {},
-      "providers": {
-        "OpenAI API": {
-          "input": 1.75,
-          "output": 14.0
-        },
-        "OpenRouter": {
-          "input": 1.75,
-          "output": 14.0
-        },
-        "Azure": {
-          "input": 1.75,
-          "output": 14.0
-        }
-      }
-    },
-    "Gemini-2.0-Flash": {
-      "params_b": 50,
-      "type": "LLM",
-      "category": "Large",
       "rank": 15,
-      "tokens_7d": 185.0,
-      "context_k": 1000,
+      "tokens_7d": 532,
+      "context_k": 1048,
       "open_source": false,
       "gpus": {},
       "providers": {
         "Google AI Studio": {
-          "input": 0.1,
-          "output": 0.4
+          "input": 0.3,
+          "output": 2.5
         },
         "Google Vertex": {
-          "input": 0.1,
-          "output": 0.4
+          "input": 0.3,
+          "output": 2.5
         },
         "OpenRouter": {
-          "input": 0.1,
-          "output": 0.4
+          "input": 0.3,
+          "output": 2.5
         }
-      }
+      },
+      "params_note": "estimated (Google does not disclose Gemini parameter counts)"
     },
-    "Claude-Opus-4.5": {
-      "params_b": 350,
+    "Laguna-M.1": {
+      "params_b": 0,
       "type": "LLM",
       "category": "Frontier",
       "rank": 16,
-      "tokens_7d": 370.0,
-      "context_k": 200,
+      "tokens_7d": 531,
+      "context_k": 262,
       "open_source": false,
       "gpus": {},
       "providers": {
-        "Anthropic API": {
-          "input": 5.0,
-          "output": 25.0
+        "Poolside": {
+          "input": 0.0,
+          "output": 0.0
         },
         "OpenRouter": {
-          "input": 5.0,
-          "output": 25.0
-        },
-        "AWS Bedrock": {
-          "input": 5.0,
-          "output": 25.0
-        },
-        "Google Vertex": {
-          "input": 5.0,
-          "output": 25.0
-        },
-        "Azure": {
-          "input": 5.0,
-          "output": 25.0
+          "input": 0.0,
+          "output": 0.0
         }
       },
-      "params_note": "estimated (Anthropic does not disclose parameter counts)"
+      "params_note": "undisclosed; free preview"
     },
-    "Gemini-3-Pro": {
-      "params_b": 300,
+    "Gemini-3.5-Flash": {
+      "params_b": 100,
       "type": "LLM",
-      "category": "Frontier",
+      "category": "Large",
       "rank": 17,
-      "tokens_7d": 170.0,
-      "context_k": 1000,
+      "tokens_7d": 528,
+      "context_k": 1048,
       "open_source": false,
       "gpus": {},
       "providers": {
         "Google AI Studio": {
-          "input": 2.0,
-          "output": 12.0
+          "input": 1.5,
+          "output": 9.0
         },
         "Google Vertex": {
-          "input": 2.0,
-          "output": 12.0
+          "input": 1.5,
+          "output": 9.0
         },
         "OpenRouter": {
-          "input": 2.0,
-          "output": 12.0
-        }
-      }
-    },
-    "Claude-Haiku-4.5": {
-      "params_b": 20,
-      "type": "LLM",
-      "category": "Medium",
-      "rank": 18,
-      "tokens_7d": 150.0,
-      "context_k": 200,
-      "open_source": false,
-      "gpus": {},
-      "providers": {
-        "Anthropic API": {
-          "input": 1.0,
-          "output": 5.0
-        },
-        "OpenRouter": {
-          "input": 1.0,
-          "output": 5.0
-        },
-        "AWS Bedrock": {
-          "input": 1.0,
-          "output": 5.0
-        },
-        "Google Vertex": {
-          "input": 1.0,
-          "output": 5.0
+          "input": 1.5,
+          "output": 9.0
         }
       },
-      "params_note": "estimated (Anthropic does not disclose parameter counts)"
+      "params_note": "estimated (Google does not disclose Gemini parameter counts)"
     },
-    "GLM-4.7": {
-      "params_b": 230,
+    "MiniMax-M2.7": {
+      "params_b": 456,
       "type": "LLM",
       "category": "Frontier",
-      "rank": 19,
-      "tokens_7d": 130.0,
-      "context_k": 202,
+      "rank": 18,
+      "tokens_7d": 526,
+      "context_k": 204,
       "open_source": true,
-      "gpus": {
-        "H100-SXM": {
-          "tokens_per_sec": 55,
-          "cost_per_1m_tokens": 1.2,
-          "vram_gb": 160
+      "gpus": {},
+      "providers": {
+        "MiniMax API": {
+          "input": 0.279,
+          "output": 1.2
         },
-        "B300": {
-          "tokens_per_sec": 150,
-          "cost_per_1m_tokens": 0.45,
-          "vram_gb": 160
-        },
-        "B200": {
-          "tokens_per_sec": 110,
-          "cost_per_1m_tokens": 0.6,
-          "vram_gb": 160
-        },
-        "A100-80GB": {
-          "tokens_per_sec": 25,
-          "cost_per_1m_tokens": 2.5,
-          "vram_gb": 160
+        "OpenRouter": {
+          "input": 0.279,
+          "output": 1.2
         }
       },
-      "providers": {
-        "OpenRouter": {
-          "input": 0.38,
-          "output": 1.7
-        }
-      }
+      "params_note": "estimated (MoE per M2.5 lineage)"
     },
     "GPT-4o-Mini": {
       "params_b": 8,
       "type": "LLM",
       "category": "Large",
-      "rank": 20,
-      "tokens_7d": 53.0,
+      "rank": 19,
+      "tokens_7d": 481,
       "context_k": 128,
       "open_source": false,
       "gpus": {},
@@ -4447,6 +4318,31 @@
           "output": 0.6
         }
       }
+    },
+    "GPT-5.5": {
+      "params_b": 500,
+      "type": "LLM",
+      "category": "Frontier",
+      "rank": 20,
+      "tokens_7d": 473,
+      "context_k": 1050,
+      "open_source": false,
+      "gpus": {},
+      "providers": {
+        "OpenAI API": {
+          "input": 5.0,
+          "output": 30.0
+        },
+        "OpenRouter": {
+          "input": 5.0,
+          "output": 30.0
+        },
+        "Azure": {
+          "input": 5.0,
+          "output": 30.0
+        }
+      },
+      "params_note": "estimated (OpenAI does not disclose parameter counts)"
     }
   },
   "spot": {

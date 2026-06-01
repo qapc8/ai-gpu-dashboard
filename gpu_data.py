@@ -1276,133 +1276,151 @@ TCO_COMPONENTS = TCO_PROFILES
 # ============================================================================
 
 INFERENCE_BENCHMARKS = {
-    # ── Top 20 models by weekly usage on OpenRouter (Feb 2026) ──
-    # Ranking: openrouter.ai/rankings — top-weekly (paid models, excl free promos)
-    # Pricing: $/M tokens (input/output) from OpenRouter + native APIs
-    # tokens_7d: billions of tokens/week — Feb 16 chart data for top 9,
-    #            remaining derived from "Others" bucket (~5641B) by API rank
+    # ── Top 20 models by weekly usage on OpenRouter (live as of 2026-06-01) ──
+    # Rankings: scraped from openrouter.ai/rankings (This Week view)
+    # Pricing: openrouter.ai/api/v1/models (canonical IDs, not -fast/-image variants)
+    # Anthropic native API rates verified at docs.claude.com/.../pricing
+    # tokens_7d: billions of tokens/week reported by OpenRouter
     # context_k: context window in K tokens
     # open_source: True for OSS-weight models
 
-    # #1 — MiniMax M2.5 (MiniMax) — chart: 2,571B
-    "MiniMax-M2.5": {"params_b": 456, "type": "LLM", "category": "Frontier", "rank": 1,
-        "tokens_7d": 2571.2, "context_k": 196, "open_source": True,
+    # #1 — DeepSeek-V4-Flash — chart: 3110B
+    "DeepSeek-V4-Flash": {"params_b": 685, "type": "LLM", "category": "Frontier", "rank": 1,
+        "tokens_7d": 3110, "context_k": 1048, "open_source": True,
         "gpus": {},
-        "providers": {"OpenRouter": {"input": 0.30, "output": 1.10}}
+        "providers": {"DeepSeek API": {"input": 0.0983, "output": 0.1966}, "OpenRouter": {"input": 0.0983, "output": 0.1966}},
+        "params_note": "estimated (685B MoE per V3 lineage)"
     },
-    # #2 — Kimi K2.5 (MoonshotAI) — chart: 1,037B
-    "Kimi-K2.5": {"params_b": 1000, "type": "LLM", "category": "Frontier", "rank": 2,
-        "tokens_7d": 1036.7, "context_k": 262, "open_source": True,
+    # #2 — Hy3-Preview — chart: 3030B
+    "Hy3-Preview": {"params_b": 0, "type": "LLM", "category": "Frontier", "rank": 2,
+        "tokens_7d": 3030, "context_k": 262, "open_source": False,
         "gpus": {},
-        "providers": {"OpenRouter": {"input": 0.45, "output": 2.20}}
+        "providers": {"Tencent": {"input": 0.066, "output": 0.26}, "OpenRouter": {"input": 0.066, "output": 0.26}},
+        "params_note": "undisclosed (Tencent does not publish parameter counts)"
     },
-    # #3 — Gemini 3 Flash Preview (Google) — chart: 859B
-    "Gemini-3-Flash": {"params_b": 80, "type": "LLM", "category": "Large", "rank": 3,
-        "tokens_7d": 859.0, "context_k": 1000, "open_source": False,
+    # #3 — Claude-Opus-4.7 — chart: 2320B
+    "Claude-Opus-4.7": {"params_b": 350, "type": "LLM", "category": "Frontier", "rank": 3,
+        "tokens_7d": 2320, "context_k": 1000, "open_source": False,
         "gpus": {},
-        "providers": {"Google AI Studio": {"input": 0.50, "output": 3.00}, "Google Vertex": {"input": 0.50, "output": 3.00}, "OpenRouter": {"input": 0.50, "output": 3.00}}
+        "providers": {"Anthropic API": {"input": 5.0, "output": 25.0}, "OpenRouter": {"input": 5.0, "output": 25.0}, "AWS Bedrock": {"input": 5.0, "output": 25.0}, "Google Vertex": {"input": 5.0, "output": 25.0}, "Azure": {"input": 5.0, "output": 25.0}},
+        "params_note": "estimated (Anthropic does not disclose parameter counts)"
     },
-    # #4 — GLM 5 (Z.ai) — chart: 803B
-    "GLM-5": {"params_b": 600, "type": "LLM", "category": "Frontier", "rank": 4,
-        "tokens_7d": 803.4, "context_k": 204, "open_source": True,
+    # #4 — Claude-Sonnet-4.6 — chart: 1920B
+    "Claude-Sonnet-4.6": {"params_b": 175, "type": "LLM", "category": "Frontier", "rank": 4,
+        "tokens_7d": 1920, "context_k": 1000, "open_source": False,
         "gpus": {},
-        "providers": {"OpenRouter": {"input": 0.95, "output": 2.55}}
+        "providers": {"Anthropic API": {"input": 3.0, "output": 15.0}, "OpenRouter": {"input": 3.0, "output": 15.0}, "AWS Bedrock": {"input": 3.0, "output": 15.0}, "Google Vertex": {"input": 3.0, "output": 15.0}, "Azure": {"input": 3.0, "output": 15.0}},
+        "params_note": "estimated (Anthropic does not disclose parameter counts)"
     },
-    # #5 — DeepSeek V3.2 (DeepSeek) — chart: 745B
-    "DeepSeek-V3.2": {"params_b": 685, "type": "LLM", "category": "Frontier", "rank": 5,
-        "tokens_7d": 745.1, "context_k": 163, "open_source": True,
-        "gpus": {"H100-SXM": {"tokens_per_sec": 42, "cost_per_1m_tokens": 1.60, "vram_gb": 180}, "B300": {"tokens_per_sec": 115, "cost_per_1m_tokens": 0.65, "vram_gb": 180}, "B200": {"tokens_per_sec": 85, "cost_per_1m_tokens": 0.82, "vram_gb": 180}},
-        "providers": {"DeepSeek API": {"input": 0.26, "output": 1.10}, "OpenRouter": {"input": 0.26, "output": 1.10}}
-    },
-    # #6 — Grok 4.1 Fast (xAI) — chart: 669B
-    "Grok-4.1-Fast": {"params_b": 314, "type": "LLM", "category": "Frontier", "rank": 6,
-        "tokens_7d": 669.0, "context_k": 2000, "open_source": False,
+    # #5 — Owl-Alpha — chart: 1660B
+    "Owl-Alpha": {"params_b": 0, "type": "LLM", "category": "Frontier", "rank": 5,
+        "tokens_7d": 1660, "context_k": 1048, "open_source": False,
         "gpus": {},
-        "providers": {"xAI API": {"input": 0.20, "output": 0.50}, "OpenRouter": {"input": 0.20, "output": 0.50}}
+        "providers": {"OpenRouter": {"input": 0.0, "output": 0.0}},
+        "params_note": "undisclosed; free preview routing through OpenRouter"
     },
-    # #7 — Claude Opus 4.6 (Anthropic) — chart: 643B
-    "Claude-Opus-4.6": {"params_b": 350, "type": "LLM", "category": "Frontier", "rank": 7,
-        "tokens_7d": 643.1, "context_k": 1000, "open_source": False,
+    # #6 — MiMo-V2.5 — chart: 1460B
+    "MiMo-V2.5": {"params_b": 200, "type": "LLM", "category": "Frontier", "rank": 6,
+        "tokens_7d": 1460, "context_k": 1048, "open_source": True,
         "gpus": {},
-        "providers": {"Anthropic API": {"input": 5.00, "output": 25.00}, "OpenRouter": {"input": 5.00, "output": 25.00}, "AWS Bedrock": {"input": 5.00, "output": 25.00}, "Google Vertex": {"input": 5.00, "output": 25.00}, "Azure": {"input": 5.00, "output": 25.00}}
+        "providers": {"Xiaomi": {"input": 0.14, "output": 0.28}, "OpenRouter": {"input": 0.14, "output": 0.28}},
+        "params_note": "estimated (Xiaomi has not published exact count)"
     },
-    # #8 — Claude Sonnet 4.5 (Anthropic) — chart: 534B
-    "Claude-Sonnet-4.5": {"params_b": 175, "type": "LLM", "category": "Frontier", "rank": 8,
-        "tokens_7d": 534.3, "context_k": 1000, "open_source": False,
+    # #7 — DeepSeek-V4-Pro — chart: 1250B
+    "DeepSeek-V4-Pro": {"params_b": 685, "type": "LLM", "category": "Frontier", "rank": 7,
+        "tokens_7d": 1250, "context_k": 1048, "open_source": True,
         "gpus": {},
-        "providers": {"Anthropic API": {"input": 3.00, "output": 15.00}, "OpenRouter": {"input": 3.00, "output": 15.00}, "AWS Bedrock": {"input": 3.00, "output": 15.00}, "Google Vertex": {"input": 3.00, "output": 15.00}, "Azure": {"input": 3.00, "output": 15.00}}
+        "providers": {"DeepSeek API": {"input": 0.435, "output": 0.87}, "OpenRouter": {"input": 0.435, "output": 0.87}},
+        "params_note": "estimated (685B MoE per V3 lineage)"
     },
-    # #9 — Gemini 2.5 Flash (Google) — in "Others"; prev week chart: 451B
-    "Gemini-2.5-Flash": {"params_b": 65, "type": "LLM", "category": "Large", "rank": 9,
-        "tokens_7d": 451.0, "context_k": 1000, "open_source": False,
+    # #8 — MiMo-V2.5-Pro — chart: 1240B
+    "MiMo-V2.5-Pro": {"params_b": 400, "type": "LLM", "category": "Frontier", "rank": 8,
+        "tokens_7d": 1240, "context_k": 1048, "open_source": True,
         "gpus": {},
-        "providers": {"Google AI Studio": {"input": 0.15, "output": 0.60}, "Google Vertex": {"input": 0.30, "output": 2.50}, "OpenRouter": {"input": 0.30, "output": 2.50}}
+        "providers": {"Xiaomi": {"input": 0.435, "output": 0.87}, "OpenRouter": {"input": 0.435, "output": 0.87}},
+        "params_note": "estimated (Xiaomi has not published exact count)"
     },
-    # #10 — Gemini 2.5 Flash Lite (Google) — prev weeks chart: 344B
-    "Gemini-2.5-Flash-Lite": {"params_b": 30, "type": "LLM", "category": "Medium", "rank": 10,
-        "tokens_7d": 344.0, "context_k": 1000, "open_source": False,
-        "gpus": {},
-        "providers": {"Google AI Studio": {"input": 0.05, "output": 0.20}, "Google Vertex": {"input": 0.10, "output": 0.40}, "OpenRouter": {"input": 0.10, "output": 0.40}}
+    # #9 — DeepSeek-V3.2 — chart: 1040B
+    "DeepSeek-V3.2": {"params_b": 685, "type": "LLM", "category": "Frontier", "rank": 9,
+        "tokens_7d": 1040, "context_k": 131, "open_source": True,
+        "gpus": {"H100-SXM": {"tokens_per_sec": 42, "cost_per_1m_tokens": 1.6, "vram_gb": 180}, "B300": {"tokens_per_sec": 115, "cost_per_1m_tokens": 0.65, "vram_gb": 180}, "B200": {"tokens_per_sec": 85, "cost_per_1m_tokens": 0.82, "vram_gb": 180}},
+        "providers": {"DeepSeek API": {"input": 0.2288, "output": 0.3432}, "OpenRouter": {"input": 0.2288, "output": 0.3432}}
     },
-    # #11 — GPT-5 Nano (OpenAI) — in "Others"
-    "GPT-5-Nano": {"params_b": 20, "type": "LLM", "category": "Medium", "rank": 11,
-        "tokens_7d": 310.0, "context_k": 400, "open_source": False,
+    # #10 — Gemini-3-Flash — chart: 952B
+    "Gemini-3-Flash": {"params_b": 80, "type": "LLM", "category": "Large", "rank": 10,
+        "tokens_7d": 952, "context_k": 1048, "open_source": False,
         "gpus": {},
-        "providers": {"OpenAI API": {"input": 0.05, "output": 0.40}, "OpenRouter": {"input": 0.05, "output": 0.40}, "Azure": {"input": 0.05, "output": 0.40}}
+        "providers": {"Google AI Studio": {"input": 0.5, "output": 3.0}, "Google Vertex": {"input": 0.5, "output": 3.0}, "OpenRouter": {"input": 0.5, "output": 3.0}},
+        "params_note": "estimated (Google does not disclose Gemini parameter counts)"
     },
-    # #12 — Claude Sonnet 4.6 (Anthropic) — launched Feb 17; chart partial: 46B
-    "Claude-Sonnet-4.6": {"params_b": 175, "type": "LLM", "category": "Frontier", "rank": 12,
-        "tokens_7d": 280.0, "context_k": 1000, "open_source": False,
+    # #11 — Nemotron-3-Super — chart: 668B
+    "Nemotron-3-Super": {"params_b": 120, "type": "LLM", "category": "Large", "rank": 11,
+        "tokens_7d": 668, "context_k": 1000, "open_source": True,
         "gpus": {},
-        "providers": {"Anthropic API": {"input": 3.00, "output": 15.00}, "OpenRouter": {"input": 3.00, "output": 15.00}, "AWS Bedrock": {"input": 3.00, "output": 15.00}, "Google Vertex": {"input": 3.00, "output": 15.00}, "Azure": {"input": 3.00, "output": 15.00}}
+        "providers": {"NVIDIA NIM": {"input": 0.0, "output": 0.0}, "OpenRouter": {"input": 0.0, "output": 0.0}},
+        "params_note": "120B-A12B (MoE: 120B total, 12B active)"
     },
-    # #13 — GPT-OSS-120B (OpenAI) — prev weeks chart: 299B
-    "GPT-OSS-120B": {"params_b": 120, "type": "LLM", "category": "Large", "rank": 13,
-        "tokens_7d": 299.0, "context_k": 131, "open_source": True,
+    # #12 — Gemini-2.5-Flash-Lite — chart: 576B
+    "Gemini-2.5-Flash-Lite": {"params_b": 30, "type": "LLM", "category": "Medium", "rank": 12,
+        "tokens_7d": 576, "context_k": 1048, "open_source": False,
         "gpus": {},
-        "providers": {"OpenRouter": {"input": 0.039, "output": 0.19}}
+        "providers": {"Google AI Studio": {"input": 0.1, "output": 0.4}, "Google Vertex": {"input": 0.1, "output": 0.4}, "OpenRouter": {"input": 0.1, "output": 0.4}},
+        "params_note": "estimated (Google does not disclose Gemini parameter counts)"
     },
-    # #14 — GPT-5.2 (OpenAI) — in "Others"
-    "GPT-5.2": {"params_b": 500, "type": "LLM", "category": "Frontier", "rank": 14,
-        "tokens_7d": 250.0, "context_k": 400, "open_source": False,
+    # #13 — Kimi-K2.6 — chart: 552B
+    "Kimi-K2.6": {"params_b": 1000, "type": "LLM", "category": "Frontier", "rank": 13,
+        "tokens_7d": 552, "context_k": 262, "open_source": True,
         "gpus": {},
-        "providers": {"OpenAI API": {"input": 1.75, "output": 14.00}, "OpenRouter": {"input": 1.75, "output": 14.00}, "Azure": {"input": 1.75, "output": 14.00}}
+        "providers": {"Moonshot": {"input": 0.0, "output": 0.0}, "OpenRouter": {"input": 0.0, "output": 0.0}},
+        "params_note": "1T MoE (K2.5 precedent: 1000B total)"
     },
-    # #15 — Gemini 2.0 Flash (Google) — prev weeks chart: 185B
-    "Gemini-2.0-Flash": {"params_b": 50, "type": "LLM", "category": "Large", "rank": 15,
-        "tokens_7d": 185.0, "context_k": 1000, "open_source": False,
+    # #14 — Claude-Opus-4.6 — chart: 540B
+    "Claude-Opus-4.6": {"params_b": 350, "type": "LLM", "category": "Frontier", "rank": 14,
+        "tokens_7d": 540, "context_k": 1000, "open_source": False,
         "gpus": {},
-        "providers": {"Google AI Studio": {"input": 0.10, "output": 0.40}, "Google Vertex": {"input": 0.10, "output": 0.40}, "OpenRouter": {"input": 0.10, "output": 0.40}}
+        "providers": {"Anthropic API": {"input": 5.0, "output": 25.0}, "OpenRouter": {"input": 5.0, "output": 25.0}, "AWS Bedrock": {"input": 5.0, "output": 25.0}, "Google Vertex": {"input": 5.0, "output": 25.0}, "Azure": {"input": 5.0, "output": 25.0}},
+        "params_note": "estimated (Anthropic does not disclose parameter counts)"
     },
-    # #16 — Claude Opus 4.5 (Anthropic) — prev weeks chart: 370B
-    "Claude-Opus-4.5": {"params_b": 350, "type": "LLM", "category": "Frontier", "rank": 16,
-        "tokens_7d": 370.0, "context_k": 200, "open_source": False,
+    # #15 — Gemini-2.5-Flash — chart: 532B
+    "Gemini-2.5-Flash": {"params_b": 65, "type": "LLM", "category": "Large", "rank": 15,
+        "tokens_7d": 532, "context_k": 1048, "open_source": False,
         "gpus": {},
-        "providers": {"Anthropic API": {"input": 5.00, "output": 25.00}, "OpenRouter": {"input": 5.00, "output": 25.00}, "AWS Bedrock": {"input": 5.00, "output": 25.00}, "Google Vertex": {"input": 5.00, "output": 25.00}, "Azure": {"input": 5.00, "output": 25.00}}
+        "providers": {"Google AI Studio": {"input": 0.3, "output": 2.5}, "Google Vertex": {"input": 0.3, "output": 2.5}, "OpenRouter": {"input": 0.3, "output": 2.5}},
+        "params_note": "estimated (Google does not disclose Gemini parameter counts)"
     },
-    # #17 — Gemini 3 Pro Preview (Google) — prev weeks chart: 170B
-    "Gemini-3-Pro": {"params_b": 300, "type": "LLM", "category": "Frontier", "rank": 17,
-        "tokens_7d": 170.0, "context_k": 1000, "open_source": False,
+    # #16 — Laguna-M.1 — chart: 531B
+    "Laguna-M.1": {"params_b": 0, "type": "LLM", "category": "Frontier", "rank": 16,
+        "tokens_7d": 531, "context_k": 262, "open_source": False,
         "gpus": {},
-        "providers": {"Google AI Studio": {"input": 2.00, "output": 12.00}, "Google Vertex": {"input": 2.00, "output": 12.00}, "OpenRouter": {"input": 2.00, "output": 12.00}}
+        "providers": {"Poolside": {"input": 0.0, "output": 0.0}, "OpenRouter": {"input": 0.0, "output": 0.0}},
+        "params_note": "undisclosed; free preview"
     },
-    # #18 — Claude Haiku 4.5 (Anthropic) — in "Others"
-    "Claude-Haiku-4.5": {"params_b": 20, "type": "LLM", "category": "Medium", "rank": 18,
-        "tokens_7d": 150.0, "context_k": 200, "open_source": False,
+    # #17 — Gemini-3.5-Flash — chart: 528B
+    "Gemini-3.5-Flash": {"params_b": 100, "type": "LLM", "category": "Large", "rank": 17,
+        "tokens_7d": 528, "context_k": 1048, "open_source": False,
         "gpus": {},
-        "providers": {"Anthropic API": {"input": 1.00, "output": 5.00}, "OpenRouter": {"input": 1.00, "output": 5.00}, "AWS Bedrock": {"input": 1.00, "output": 5.00}, "Google Vertex": {"input": 1.00, "output": 5.00}}
+        "providers": {"Google AI Studio": {"input": 1.5, "output": 9.0}, "Google Vertex": {"input": 1.5, "output": 9.0}, "OpenRouter": {"input": 1.5, "output": 9.0}},
+        "params_note": "estimated (Google does not disclose Gemini parameter counts)"
     },
-    # #19 — GLM 4.7 (Z.ai) — in "Others"
-    "GLM-4.7": {"params_b": 230, "type": "LLM", "category": "Frontier", "rank": 19,
-        "tokens_7d": 130.0, "context_k": 202, "open_source": True,
+    # #18 — MiniMax-M2.7 — chart: 526B
+    "MiniMax-M2.7": {"params_b": 456, "type": "LLM", "category": "Frontier", "rank": 18,
+        "tokens_7d": 526, "context_k": 204, "open_source": True,
         "gpus": {},
-        "providers": {"OpenRouter": {"input": 0.38, "output": 1.70}}
+        "providers": {"MiniMax API": {"input": 0.279, "output": 1.2}, "OpenRouter": {"input": 0.279, "output": 1.2}},
+        "params_note": "estimated (MoE per M2.5 lineage)"
     },
-    # #20 — GPT-4o Mini (OpenAI) — prev weeks chart: 53B (declining)
-    "GPT-4o-Mini": {"params_b": 8, "type": "LLM", "category": "Large", "rank": 20,
-        "tokens_7d": 53.0, "context_k": 128, "open_source": False,
+    # #19 — GPT-4o-Mini — chart: 481B
+    "GPT-4o-Mini": {"params_b": 8, "type": "LLM", "category": "Large", "rank": 19,
+        "tokens_7d": 481, "context_k": 128, "open_source": False,
         "gpus": {},
-        "providers": {"OpenAI API": {"input": 0.15, "output": 0.60}, "OpenRouter": {"input": 0.15, "output": 0.60}, "Azure": {"input": 0.15, "output": 0.60}}
+        "providers": {"OpenAI API": {"input": 0.15, "output": 0.6}, "OpenRouter": {"input": 0.15, "output": 0.6}, "Azure": {"input": 0.15, "output": 0.6}}
+    },
+    # #20 — GPT-5.5 — chart: 473B
+    "GPT-5.5": {"params_b": 500, "type": "LLM", "category": "Frontier", "rank": 20,
+        "tokens_7d": 473, "context_k": 1050, "open_source": False,
+        "gpus": {},
+        "providers": {"OpenAI API": {"input": 5.0, "output": 30.0}, "OpenRouter": {"input": 5.0, "output": 30.0}, "Azure": {"input": 5.0, "output": 30.0}},
+        "params_note": "estimated (OpenAI does not disclose parameter counts)"
     }
 }
 
