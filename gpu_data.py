@@ -1312,7 +1312,7 @@ INFERENCE_BENCHMARKS = {
     "DeepSeek-V3.2": {"params_b": 685, "type": "LLM", "category": "Frontier", "rank": 5,
         "tokens_7d": 745.1, "context_k": 163, "open_source": True,
         "gpus": {"H100-SXM": {"tokens_per_sec": 42, "cost_per_1m_tokens": 1.60, "vram_gb": 180}, "B300": {"tokens_per_sec": 115, "cost_per_1m_tokens": 0.65, "vram_gb": 180}, "B200": {"tokens_per_sec": 85, "cost_per_1m_tokens": 0.82, "vram_gb": 180}},
-        "providers": {"DeepSeek API": {"input": 0.26, "output": 0.38}, "OpenRouter": {"input": 0.26, "output": 0.38}}
+        "providers": {"DeepSeek API": {"input": 0.26, "output": 1.10}, "OpenRouter": {"input": 0.26, "output": 1.10}}
     },
     # #6 — Grok 4.1 Fast (xAI) — chart: 669B
     "Grok-4.1-Fast": {"params_b": 314, "type": "LLM", "category": "Frontier", "rank": 6,
@@ -1399,7 +1399,7 @@ INFERENCE_BENCHMARKS = {
         "providers": {"OpenRouter": {"input": 0.38, "output": 1.70}}
     },
     # #20 — GPT-4o Mini (OpenAI) — prev weeks chart: 53B (declining)
-    "GPT-4o-Mini": {"params_b": 70, "type": "LLM", "category": "Large", "rank": 20,
+    "GPT-4o-Mini": {"params_b": 8, "type": "LLM", "category": "Large", "rank": 20,
         "tokens_7d": 53.0, "context_k": 128, "open_source": False,
         "gpus": {},
         "providers": {"OpenAI API": {"input": 0.15, "output": 0.60}, "OpenRouter": {"input": 0.15, "output": 0.60}, "Azure": {"input": 0.15, "output": 0.60}}
