@@ -1324,7 +1324,7 @@ INFERENCE_BENCHMARKS = {
     "Claude-Opus-4.6": {"params_b": 350, "type": "LLM", "category": "Frontier", "rank": 7,
         "tokens_7d": 643.1, "context_k": 1000, "open_source": False,
         "gpus": {},
-        "providers": {"Anthropic API": {"input": 15.00, "output": 75.00}, "OpenRouter": {"input": 15.00, "output": 75.00}, "AWS Bedrock": {"input": 15.00, "output": 75.00}, "Google Vertex": {"input": 15.00, "output": 75.00}, "Azure": {"input": 15.00, "output": 75.00}}
+        "providers": {"Anthropic API": {"input": 5.00, "output": 25.00}, "OpenRouter": {"input": 5.00, "output": 25.00}, "AWS Bedrock": {"input": 5.00, "output": 25.00}, "Google Vertex": {"input": 5.00, "output": 25.00}, "Azure": {"input": 5.00, "output": 25.00}}
     },
     # #8 — Claude Sonnet 4.5 (Anthropic) — chart: 534B
     "Claude-Sonnet-4.5": {"params_b": 175, "type": "LLM", "category": "Frontier", "rank": 8,
@@ -1378,7 +1378,7 @@ INFERENCE_BENCHMARKS = {
     "Claude-Opus-4.5": {"params_b": 350, "type": "LLM", "category": "Frontier", "rank": 16,
         "tokens_7d": 370.0, "context_k": 200, "open_source": False,
         "gpus": {},
-        "providers": {"Anthropic API": {"input": 15.00, "output": 75.00}, "OpenRouter": {"input": 15.00, "output": 75.00}, "AWS Bedrock": {"input": 15.00, "output": 75.00}, "Google Vertex": {"input": 15.00, "output": 75.00}, "Azure": {"input": 15.00, "output": 75.00}}
+        "providers": {"Anthropic API": {"input": 5.00, "output": 25.00}, "OpenRouter": {"input": 5.00, "output": 25.00}, "AWS Bedrock": {"input": 5.00, "output": 25.00}, "Google Vertex": {"input": 5.00, "output": 25.00}, "Azure": {"input": 5.00, "output": 25.00}}
     },
     # #17 — Gemini 3 Pro Preview (Google) — prev weeks chart: 170B
     "Gemini-3-Pro": {"params_b": 300, "type": "LLM", "category": "Frontier", "rank": 17,
