@@ -4056,24 +4056,24 @@
       "gpus": {},
       "providers": {
         "Anthropic API": {
-          "input": 5.0,
-          "output": 25.0
+          "input": 15.0,
+          "output": 75.0
         },
         "OpenRouter": {
-          "input": 5.0,
-          "output": 25.0
+          "input": 15.0,
+          "output": 75.0
         },
         "AWS Bedrock": {
-          "input": 5.0,
-          "output": 25.0
+          "input": 15.0,
+          "output": 75.0
         },
         "Google Vertex": {
-          "input": 5.0,
-          "output": 25.0
+          "input": 15.0,
+          "output": 75.0
         },
         "Azure": {
-          "input": 5.0,
-          "output": 25.0
+          "input": 15.0,
+          "output": 75.0
         }
       },
       "params_note": "estimated (Anthropic does not disclose parameter counts)"
@@ -4312,24 +4312,24 @@
       "gpus": {},
       "providers": {
         "Anthropic API": {
-          "input": 5.0,
-          "output": 25.0
+          "input": 15.0,
+          "output": 75.0
         },
         "OpenRouter": {
-          "input": 5.0,
-          "output": 25.0
+          "input": 15.0,
+          "output": 75.0
         },
         "AWS Bedrock": {
-          "input": 5.0,
-          "output": 25.0
+          "input": 15.0,
+          "output": 75.0
         },
         "Google Vertex": {
-          "input": 5.0,
-          "output": 25.0
+          "input": 15.0,
+          "output": 75.0
         },
         "Azure": {
-          "input": 5.0,
-          "output": 25.0
+          "input": 15.0,
+          "output": 75.0
         }
       },
       "params_note": "estimated (Anthropic does not disclose parameter counts)"
