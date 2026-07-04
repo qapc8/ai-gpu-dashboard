@@ -3134,7 +3134,7 @@
       "52w_low": 157.34,
       "ytd_pct": 3.17,
       "52w_range": "$157.34-$236.54",
-      "last_updated": "2026-07-03T08:58:33.101263+00:00"
+      "last_updated": "2026-07-04T08:33:07.420853+00:00"
     },
     "amd_stock": {
       "ticker": "AMD",
@@ -3146,7 +3146,7 @@
       "52w_low": 133.5,
       "ytd_pct": 131.72,
       "52w_range": "$133.50-$584.73",
-      "last_updated": "2026-07-03T08:58:33.155773+00:00"
+      "last_updated": "2026-07-04T08:33:07.476540+00:00"
     },
     "gpu_market_size_bn": {
       "2023": 52.4,
@@ -4717,18 +4717,18 @@
   },
   "news": [
     {
-      "headline": "Nvidia floats double-dipping datacenter financing scheme - The Register",
-      "source": "The Register",
-      "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxPcGU1Ui1ubm1JWWRzNTk2WnRabXVWVlhqSnZNM3VoSWtwcDJGRm5YWG8zbk9ZSXY4cGlfNGR4UnpJTDRwSDhoUEpkQ3lYRDRvcXQ1ZHdsZmV4MjlPNmR1TFdERWJBX0hzMVdYbGNwUGU4Z3VlR3ZqY3Q3bmRYd2V2OTgtNHQ0N1NwTjFSdWNyR2ZhRmJENV82dThRRl95eVVhX2ltZV9ORGFLdWtwN1hmejJ3dw?oc=5",
-      "date": "2026-07-02",
+      "headline": "Nvidia and Firmus to build 170,000-GPU data center in Indonesia - Yahoo Finance",
+      "source": "Yahoo Finance",
+      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxOMmRhZHlOai1sTjd3X2Y2RlplNjg4YWZuZkFYSjlEUGxValRDNjBYLV95cjBnYjZtRmN3WG5BMHFkYklhZmZwY0NHTlVoVldMRXRSTDFialhUbThKbmRKd2h2UDlrSVhtYUxiM3lSY2JqUWNrZWQ5Tk9DaW84UU52NFhnX1UtRDJGb1JObXNsRURRcEl1c1E?oc=5",
+      "date": "2026-06-29",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "Meta reportedly plans to rent out its AI compute, sending AI stocks tumbling \u2014 'Meta Compute' would put company in direct competition with AWS - Tom's Hardware",
-      "source": "Tom's Hardware",
-      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPMzM1RnVwa2xPYnA3WmJQaUVUY0NPakVVNXZERV9ZWExnbUlScXdHTmxxeDBrTFVuNHl0QkoyS2NPUVg1b2hLSG5tUUFsRXMxVHlKY2p0RFRPcVNMYkZwTWxkVmtvZGpuTFduMTdnMXJHQzRvT1F1Y1k2SUZvNWRIaC1VM3hUUnB1ek1EQ0ZlTGNsNmZ2QlE?oc=5",
+      "headline": "Nvidia floats double-dipping datacenter financing scheme - The Register",
+      "source": "The Register",
+      "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxPcGU1Ui1ubm1JWWRzNTk2WnRabXVWVlhqSnZNM3VoSWtwcDJGRm5YWG8zbk9ZSXY4cGlfNGR4UnpJTDRwSDhoUEpkQ3lYRDRvcXQ1ZHdsZmV4MjlPNmR1TFdERWJBX0hzMVdYbGNwUGU4Z3VlR3ZqY3Q3bmRYd2V2OTgtNHQ0N1NwTjFSdWNyR2ZhRmJENV82dThRRl95eVVhX2ltZV9ORGFLdWtwN1hmejJ3dw?oc=5",
       "date": "2026-07-02",
       "category": "news",
       "sentiment": "neutral",
@@ -4753,6 +4753,15 @@
       "impact": "medium"
     },
     {
+      "headline": "Nvidia acts as backstop for customer GPUs in return for cut of cloud revenue - Data Center Dynamics",
+      "source": "Data Center Dynamics",
+      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOb1Y2MDZrY2Q4bzU5ZEQ5b1hlQXAxTlB3dWVLVkNUMUwtRXVXbjdGSEtaMUIyN21HTnZJLXZ3RW5YV3FxUGlmUG40bm5Nc1ZVbU1rSzJVa1R1cTBPZjdEall5SFdHRHZtNFgyU19sa3BlZjZVTUFrVXk3YzBndHVaWnk5czlGVmhyZTZ5WjlSLWxOYkNSU0NGR0hqM1lwVDVzbU9kVFRKSkdXVGx2blFEX3BRbHVGUjYzYjdOdA?oc=5",
+      "date": "2026-07-02",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
       "headline": "Firmus Plans 360MW Nvidia AI Data Center in Indonesia - TechRepublic",
       "source": "TechRepublic",
       "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxPYW91TVUxOUVncE54MHFTYUxVeDBHaVBQT0pHSEJTNnRaR0JRWlBtMVduWndKdWUwWENyM29RSENmZV9uMVVYWk5xRm9VXzRCd1c2RWlWN3ZQNGpPcWhfTlFpX1NfV3p2Q1V1bkQ3dDkzSlNqc3NRQmJMQzlrQ2l1M3AxdVdzTlU2c3F5enlXYw?oc=5",
@@ -4762,19 +4771,19 @@
       "impact": "medium"
     },
     {
-      "headline": "7 Best Data Center Stocks, ETFs and REITs | Investing - U.S. News - Money",
-      "source": "U.S. News - Money",
-      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFBQVlEtUGdBN0dkZkI1N0d0djdKN0xzVE10N0xBemhGQ2lJRHVfSjY3ZGQwMDhxZGRCb1B0b21kR1RNTFJxbHV1d3c5WFcyVF85ME5NRjRwX3hZblNZelFrN3lmT0hVdWIyVnM5MnhBNG5vS2h6b3c?oc=5",
-      "date": "2026-06-29",
+      "headline": "Meta reportedly plans to rent out its AI compute, sending AI stocks tumbling \u2014 'Meta Compute' would put company in direct competition with AWS - Tom's Hardware",
+      "source": "Tom's Hardware",
+      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPMzM1RnVwa2xPYnA3WmJQaUVUY0NPakVVNXZERV9ZWExnbUlScXdHTmxxeDBrTFVuNHl0QkoyS2NPUVg1b2hLSG5tUUFsRXMxVHlKY2p0RFRPcVNMYkZwTWxkVmtvZGpuTFduMTdnMXJHQzRvT1F1Y1k2SUZvNWRIaC1VM3hUUnB1ek1EQ0ZlTGNsNmZ2QlE?oc=5",
+      "date": "2026-07-02",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "Nvidia and Australian startup Firmus are building a 170,000-GPU data center in Indonesia - qz.com",
-      "source": "qz.com",
-      "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTFBLaTJza1UtNlc5Z2g5d0hKMUZCb2h5TFM4OTJmUTVoWXlPbXA4cERTekRzSTlkdjJQRmEwLU1fQzA3bWRzYW9ReHUtejF0TU1JUmNLNHhkenNzeThDd00yLXB1SnF2U1dJWkhFSkhzRFk?oc=5",
-      "date": "2026-06-29",
+      "headline": "AI: Nvidia expands Revenue Share Deals with Customers. AI-RTZ #1136 - AI: Reset to Zero",
+      "source": "AI: Reset to Zero",
+      "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE5CUXVZMFpTTHltLVRRTEMyb1lJUlhObzVlSDBhR0E3LTY2SVZ0dXF5cGxKUldmaGFqTlkxMTBBc3lhNEE1RmFxam4zZVBJNzdDWXM0ZV9yRHZRQ2JIeE5hQlB6dkF4LXlXWXhNV2NnMVN5WndRY2lIcDlXamVvNEE?oc=5",
+      "date": "2026-07-03",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4798,55 +4807,37 @@
       "impact": "medium"
     },
     {
-      "headline": "AI Data Center Graphics Processing Units (GPUs) Market Report 2026: $32.3 Bn Opportunities, Trends, Competitive Landscape, Strategies, and Forecasts, 2020-2025, 2025-2030F, 2035F - Yahoo Finance",
-      "source": "Yahoo Finance",
-      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxOQkI2MjZDNkNRaTNRQ3plUmhiUkVYVF9TdWdaU1M4N1g3bl8wUXZySUpuY3I4WDVXc2JzTTQtVVZCeXozRzBtTFVWcUNPd3g4NkhXNkFraE9SR3RBOE1mRG83eWZmalpidTJNMUdwaTUxZGQxSWNpVkwxYzlOVnA4azJ4ZklhdXZ3OHNfUXltTERqRG5xcldEdUNXSG1nTWtrd1UyMUpB?oc=5",
-      "date": "2026-04-14",
+      "headline": "Foxconn Pegs NVIDIA Vera Rubin AI Datacenter at $47 Billion Per Gigawatt, as Power Bills Hit $1.3B Yearly - Wccftech",
+      "source": "Wccftech",
+      "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNWkpEckt6MFZ6VWdEZE9ZRnpqeHdwbDVNVmdQU0g5Rk5RMGVXUFdEU3VvcEQybWJ6WjVyWTVQUktxRHNUdU55VDB0Y3MwSi1WOWxadEhQQlBkemREQlNIQi1IUlQ3cVFkWmZwTG9qM0lScGhsMy1zb1pFNVpYY1MtTVIyYUF0SkRqaVBONUFWQlBKcktnOUx1ONIBngFBVV95cUxNOURSWC1GWXF3U0ZuUjhMTXBueHdBYk96dVpCZjlycWc3SEx3dGJYZnUwdW16d21PMUgxd01GdUNLNzVyN0NmUXlKSnV3RjBMa0RaNWxJd29DTkdzZHZsVXV5djBpX2NjVGJVQjE0NHJtNXJMNUViVGxCaDZtaWFTcXJjVTlSMk10OU5xNlE4aGs2RzJHN1Iwc29PYjg4Zw?oc=5",
+      "date": "2026-06-20",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "Firmus Taps Nvidia for 170,000-GPU Indonesia Campus in $30B Compute Deal - Tech Times",
-      "source": "Tech Times",
-      "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxNckZIVU5pWTVBOVFBWVVubTZBSkFRV3J6WC11SlFqR3BTdVNwYXF6a1NWYVRGMTBuNll4cG5wUjFDY29fSlNGdEx1WldYQ2VRT1h3VHd6bTVYbVVWN2NBTWpZbE1odmRNNS1sck1lYVNFZHdkUXJxZ0lFWHJCSk5VVkx6NmozUEJsWnRnQXRaRTZxbXpvZVo0c3RvOTVSOU84Z1NjRFc1RU16bjF3VFh0R0JNaWkwa0lFYnc?oc=5",
-      "date": "2026-06-30",
+      "headline": "Nvidia-backed Firmus plans 170,000-GPU Batam AI data centre - Tech Wire Asia",
+      "source": "Tech Wire Asia",
+      "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTE1pVloyODh5QUJ0NWxWOW44aUhpd0hxT3Rfcm5kbHFaX2d4WG8wRGZpWnI1YkpqOVVFOTl1RE1oV3FNR3B5T3FldlY5VnlqNkR5SnJsNlZBRnkybE90ZjdrVHJmUmhOM0FETEZWZDFyWWc0NjhoZk1R?oc=5",
+      "date": "2026-06-29",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "Meta expands Nvidia deal to use millions of AI chips in data center build-out, including standalone CPUs - CNBC",
-      "source": "CNBC",
-      "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTFBiLXZYX1ZjaTRaenZCcmpJT0FZTksxVFpNOWhYOXBHenZDUjlKLXBoTDJuOHluYzRiSWx0YVV6Slljb3NBem9CLVlJUHlTR1FIQk15ODZGRm4yaXduckZ6YW9DNTJoYkZveDFwS3Y1amFOTkRiSi1lNDYxZlQwMFXSAYQBQVVfeXFMTVBJeVBlbFhKZDhpWE56QTZ4VDFJYjlrSk50eFgtQzViYUduMHRZRmJ2amNRdjZDeVFmUnpfNE54LUhqR2ZTSWR0eXBDcE13Q2wxekszejRCTFlKSHRZWDlWZDgzb0pqZjE4QTdrd0FhZDhQSTNHWDZDMlQtNUYya1RTVkJO?oc=5",
-      "date": "2026-02-17",
+      "headline": "NVIDIA Corp. outlines data-center momentum as AI demand reshapes its growth profile - Ad-hoc-news.de",
+      "source": "Ad-hoc-news.de",
+      "url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxOY0Y5N2VjQ01JMVBMVWRHd1Y4aGhvYWtYeE9mc2ZNdGxFN2pqeWJwNVNSdVdWR3ZjVEwwTExkMm9rLU1uV2oyMjJIOXpaQjNFQXlpUVhoMDRZS2JUM3RyMlFHRTJWVWJiQk1uWmNGb05YVHNoNS1iTm13aHRfM0hxenNPLUJMVnYtYzBxcS1qQ0tQYVBXVnRRdkVZWE5QalkxbWg1dERlbnBKVGlqajhKSHRvelQwaF9tUXU1ZnN4UGFSakxB?oc=5",
+      "date": "2026-07-04",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "Microsoft\u2019s strategic AI datacenter planning enables seamless, large-scale NVIDIA Rubin deployments - Microsoft Azure",
-      "source": "Microsoft Azure",
-      "url": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxQN0JzUW1qSzlXNnBqN284M1BySzh2bkk4REU4OEJoVTFzSmVRUkNNbHpGMEhVaWZrSHN0QXRVSnpXWk5qckxkaXZKaEFIbzlqTndFWGVqSGpvWFlVR28zaU1BUktHOUhRRmhBcnhxWmJkNTIwaFNJcW50T01FODhGNllGQzJjcW1MYmdIa25HQzZwbHF4Tm9aeHhlT21hUUdYUk5NMmlVbHhUZlVaNVRhRXJ0WVJhWXJTR2J1aTNWMUJmU0R4cGRyTk1OZ3Z4WUV4eGE0?oc=5",
-      "date": "2026-01-05",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Mistral AI Raises $830M For Nvidia Data Center With 13,800 GPUs - crn.com",
-      "source": "crn.com",
-      "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOQ2hUbkZzMENYa3lRU0dFQk1jbVJPZjNsdEFtU2JhSmQycHpoLThhT0JndkxoSjhidEVSRTZmU3pSX2VhSVd4Zi1YUUluTkU4UURyLTlYWWVxbnN6Y0l0RnViTjBPUXpHeWQxZFNMUFN0aVlZTXdNbXJpM0lhajNfUGp2MWRvUWVBQjh2ZWxub1l1b0lJczBQRTN5N2xnd1JpN0xDQVFQcw?oc=5",
-      "date": "2026-03-31",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "NVIDIA Launches Space Computing, Rocketing AI Into Orbit - NVIDIA Newsroom",
-      "source": "NVIDIA Newsroom",
-      "url": "https://news.google.com/rss/articles/CBMiXkFVX3lxTFByTFhFdVBzclhIVjNSbWNVX0tSY0FpZWdKenRYLTJNVU53ZW12ZnFBeE5GaldHTERicEIxUDlWQnJhdFFSQnh6NHNVbXMyUlNTS3AwUFZkaWN4dUxmMkE?oc=5",
-      "date": "2026-03-16",
+      "headline": "The Race to Rethink Data Centers for AI\u2019s Power Surge - Bloomberg.com",
+      "source": "Bloomberg.com",
+      "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE5ycWtOUVVzejd3bWFlZWI2MWI0SEo1SVh5R3V0Qzk4Z0hfTGRxRWo5SlhYSkFTM2FWVWtyOWphOEVaZHZta0d5YlUxcmVLNm96bFEzbDA1bWhQOHUySy13WktvZ3o2a1k0UTd6MkdURjV4UQ?oc=5",
+      "date": "2026-06-01",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4861,10 +4852,10 @@
       "impact": "medium"
     },
     {
-      "headline": "NVIDIA and LG Group Build an AI Factory to Advance Physical AI, Mobility and AI Infrastructure - NVIDIA Blog",
-      "source": "NVIDIA Blog",
-      "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE1WZWJQbW5PdHZoZmNCbExjaVVXX25PcVlWNWlEcmMwSU9YakFyNDRoVXNRTm1tZUdIeThxaEJjMmR2NHl5TnFHbHhla2ctWGVfQldZREsxWEVYNFZCSDFLbVlONEM5dVZvVzl3czBn?oc=5",
-      "date": "2026-06-07",
+      "headline": "NVIDIA Tests Recurring AI Data Center Model With Australian GPU Expansion - Yahoo Finance",
+      "source": "Yahoo Finance",
+      "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNaXFmY0dGMGdESGs5aTJJRDBPdUctNVBzeno4NkstR09BWndqV1Jaa3Q5YTZQQ2JsVDlzYVVnYUdVamdnbGMxemlucVo1QzV1MHc4cGxrVU1UM05pbTI1amNrQTdlNzc5MTlWc3ZWQzA1M0VXVHhBeWhlaFRFc1hQN0x0QWdBSTFDWUs4YjRpUGVJcVFRRXkwVHI4Yw?oc=5",
+      "date": "2026-06-13",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4879,19 +4870,28 @@
       "impact": "medium"
     },
     {
-      "headline": "NVIDIA and IREN Announce Strategic Partnership to Accelerate Deployment of up to 5 Gigawatts of AI Infrastructure - NVIDIA Newsroom",
-      "source": "NVIDIA Newsroom",
-      "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxOWUlUT1F5eFJRbjBvYVA2bzhUV3NUSExnMTNFVDVHZWlISzR2SV9mcXQzN2ZmRzJPcE84Z2xXVjVRTzhzd21ubkFuX0UxdHhPeG96dE5McTJJcklMR2VWWnNYV0FlZHRsUkZwNlg2NERiaTRGbFQ3WWs4V1dPbjdzdVNBcmlXWVVyczNuS2hwcTRSZEJnS0hVYXp5amZ3R0habHc3bktzeW9aMC1hY3RKUnBibVZlS2JaZTNnQmVjT3lkbnNjUlB0SnE4SGtaRm9Bd1I3REY1SnRMRGNmLTV4bWtn?oc=5",
-      "date": "2026-05-07",
+      "headline": "South Korea's LG to deploy Nvidia AI factory - Data Center Dynamics",
+      "source": "Data Center Dynamics",
+      "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxQXzg2cGg4RDEzeUtsVUtYbDNyQndsSE04VmRiYjJ5MjBkdTMzajNlcjQyMUQzYUdCRWVwN29mY2pxRlN3ZjFfZV9XbGh5T1hjcnBzMWVpUWx6RWtrZjFLY3JFZTlHQVJZOXJYRllhY0k4RTYydmpCWUQwWE1IaWJ6em9WU3FZN1hSZlBjcVZfaC0?oc=5",
+      "date": "2026-06-08",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "NVIDIA Kicks Off the Next Generation of AI With Rubin \u2014 Six New Chips, One Incredible AI Supercomputer - NVIDIA Newsroom",
+      "headline": "AI Data Center Graphics Processing Units (GPUs) Market Report 2026: $32.3 Bn Opportunities, Trends, Competitive Landscape, Strategies, and Forecasts, 2020-2025, 2025-2030F, 2035F - Yahoo Finance",
+      "source": "Yahoo Finance",
+      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxOQkI2MjZDNkNRaTNRQ3plUmhiUkVYVF9TdWdaU1M4N1g3bl8wUXZySUpuY3I4WDVXc2JzTTQtVVZCeXozRzBtTFVWcUNPd3g4NkhXNkFraE9SR3RBOE1mRG83eWZmalpidTJNMUdwaTUxZGQxSWNpVkwxYzlOVnA4azJ4ZklhdXZ3OHNfUXltTERqRG5xcldEdUNXSG1nTWtrd1UyMUpB?oc=5",
+      "date": "2026-04-14",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "NVIDIA and IREN Announce Strategic Partnership to Accelerate Deployment of up to 5 Gigawatts of AI Infrastructure - NVIDIA Newsroom",
       "source": "NVIDIA Newsroom",
-      "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTE1wVTdNYW04bUY5N2s2cWlUR25KZzZ3ZlFxdUZ2MWgwZGFmSUJqNGQxV3E5M0ktZDAzOGFkMGtSaThmSnBrc09jN1ZYakpjWDlabmdJcDYxTjV1LXpmVW16MkJ1NDNFNE9sOUYxVUR0UUtWdzdE?oc=5",
-      "date": "2026-01-05",
+      "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxOWUlUT1F5eFJRbjBvYVA2bzhUV3NUSExnMTNFVDVHZWlISzR2SV9mcXQzN2ZmRzJPcE84Z2xXVjVRTzhzd21ubkFuX0UxdHhPeG96dE5McTJJcklMR2VWWnNYV0FlZHRsUkZwNlg2NERiaTRGbFQ3WWs4V1dPbjdzdVNBcmlXWVVyczNuS2hwcTRSZEJnS0hVYXp5amZ3R0habHc3bktzeW9aMC1hY3RKUnBibVZlS2JaZTNnQmVjT3lkbnNjUlB0SnE4SGtaRm9Bd1I3REY1SnRMRGNmLTV4bWtn?oc=5",
+      "date": "2026-05-07",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -11656,7 +11656,7 @@
       }
     }
   },
-  "last_updated": "2026-07-03T08:58:32.980705+00:00",
+  "last_updated": "2026-07-04T08:33:07.339829+00:00",
   "stocks": {
     "NVDA": {
       "ticker": "NVDA",
@@ -11665,7 +11665,7 @@
       "52_week_high": 236.54,
       "52_week_low": 157.34,
       "ytd_change_pct": 3.17,
-      "last_updated": "2026-07-03T08:58:33.101263+00:00"
+      "last_updated": "2026-07-04T08:33:07.420853+00:00"
     },
     "AMD": {
       "ticker": "AMD",
@@ -11674,7 +11674,7 @@
       "52_week_high": 584.73,
       "52_week_low": 133.5,
       "ytd_change_pct": 131.72,
-      "last_updated": "2026-07-03T08:58:33.155773+00:00"
+      "last_updated": "2026-07-04T08:33:07.476540+00:00"
     }
   }
 }
