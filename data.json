@@ -3134,7 +3134,7 @@
       "52w_low": 157.34,
       "ytd_pct": 3.17,
       "52w_range": "$157.34-$236.54",
-      "last_updated": "2026-07-05T08:49:12.109410+00:00"
+      "last_updated": "2026-07-06T10:14:22.449345+00:00"
     },
     "amd_stock": {
       "ticker": "AMD",
@@ -3146,7 +3146,7 @@
       "52w_low": 133.5,
       "ytd_pct": 131.72,
       "52w_range": "$133.50-$584.73",
-      "last_updated": "2026-07-05T08:49:12.213334+00:00"
+      "last_updated": "2026-07-06T10:14:22.508360+00:00"
     },
     "gpu_market_size_bn": {
       "2023": 52.4,
@@ -4717,10 +4717,37 @@
   },
   "news": [
     {
-      "headline": "Nvidia and Oracle study shows AI data centers can cut power by 30% during grid stress - Crypto Briefing",
-      "source": "Crypto Briefing",
-      "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxOeVZKLXdMZ2k5VDRnMTNJb3FaUGxGUlNRQ2Q2U2hrd2tieEgyS0U0elFLNE9XcU1JTWNnRVVrS084UDdhd1JGbW95M2dZOWNiR1R2RUlfd1hNYTd2UVN0ZkxoQU54V05HVEdfOUo3MjhfMHJzNTRqRDA3MEd0U01icDNYemkydnppbkE?oc=5",
-      "date": "2026-07-04",
+      "headline": "Is NVIDIA (NVDA) Cheap Following Its New AI Partnerships And Leadership Shift? - simplywall.st",
+      "source": "simplywall.st",
+      "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxQUFBNbTJsTmFyazBxZnpKOXhhZTJqTDYzNmtXdVg5RWRoU2x4djdlU0c1Z21YQTFPbE13Z3lRQzM1WG5mS0NjZVA3NlQ5Sy1JQjhUMVIxSEhTMVh1cXphODR6amZycGJkRm93eC0yVkhycUVjNEVWbS1fc0M5a2hKMXQxc3k4YUlQd29adWdUS3VtaEF4YTRpQjRmZHloTVV6X1pGX2NnSUV1V3ZjVzZhdDdVUWtPVWQ4TVNfOG0yRWs2Q2lwMi1IUVlaSdIB0AFBVV95cUxNcWlOLUFvUVhjdnpESHc0ZVJYalFHa1FkdVgwNnJTX2d1c3lZQXhwbl9FU3BuODB0UnhhYUdTSE5MeW5YTndpejFKaGJlRFNYUVpOUVlJc0VSeFhyRjhfWWZ2YTM3bktFcWczcHh4V05DT3l6Vkdxc1dmd0RnZ3l0NmRnQTA2LW5KbXV3VXJzZXE2SGpMS0NFaGlWZWJDb055RjdmU1J1VEF3OC1USEkxLURDTGozTHJrQWI5alR1ck5WeWJoXzNRdjBfMVh5THYx?oc=5",
+      "date": "2026-07-05",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Nvidia acts as backstop for customer GPUs in return for cut of cloud revenue - Data Center Dynamics",
+      "source": "Data Center Dynamics",
+      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOb1Y2MDZrY2Q4bzU5ZEQ5b1hlQXAxTlB3dWVLVkNUMUwtRXVXbjdGSEtaMUIyN21HTnZJLXZ3RW5YV3FxUGlmUG40bm5Nc1ZVbU1rSzJVa1R1cTBPZjdEall5SFdHRHZtNFgyU19sa3BlZjZVTUFrVXk3YzBndHVaWnk5czlGVmhyZTZ5WjlSLWxOYkNSU0NGR0hqM1lwVDVzbU9kVFRKSkdXVGx2blFEX3BRbHVGUjYzYjdOdA?oc=5",
+      "date": "2026-07-02",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Nvidia floats double-dipping datacenter financing scheme - The Register",
+      "source": "The Register",
+      "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxPcGU1Ui1ubm1JWWRzNTk2WnRabXVWVlhqSnZNM3VoSWtwcDJGRm5YWG8zbk9ZSXY4cGlfNGR4UnpJTDRwSDhoUEpkQ3lYRDRvcXQ1ZHdsZmV4MjlPNmR1TFdERWJBX0hzMVdYbGNwUGU4Z3VlR3ZqY3Q3bmRYd2V2OTgtNHQ0N1NwTjFSdWNyR2ZhRmJENV82dThRRl95eVVhX2ltZV9ORGFLdWtwN1hmejJ3dw?oc=5",
+      "date": "2026-07-02",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Hotter Than a Hot Tub: The 45\u00b0C Breakthrough to Cool AI\u2019s Biggest Machines - NVIDIA Blog",
+      "source": "NVIDIA Blog",
+      "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBSN3d6OG5pZ2hJSkZ5cHhhWUxONkEyRzV0V3FwaGpNbERTSmpiU1ZkVzc4d0Vkc0Vic3J2Z3FMVkdza1M1aEE5TDJBb1NsekFGaWtVUjVEQ3VSSXFtbC1vRi1nVHdZb2pJN0E?oc=5",
+      "date": "2026-06-21",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4744,55 +4771,10 @@
       "impact": "medium"
     },
     {
-      "headline": "Nvidia floats double-dipping datacenter financing scheme - The Register",
-      "source": "The Register",
-      "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxPcGU1Ui1ubm1JWWRzNTk2WnRabXVWVlhqSnZNM3VoSWtwcDJGRm5YWG8zbk9ZSXY4cGlfNGR4UnpJTDRwSDhoUEpkQ3lYRDRvcXQ1ZHdsZmV4MjlPNmR1TFdERWJBX0hzMVdYbGNwUGU4Z3VlR3ZqY3Q3bmRYd2V2OTgtNHQ0N1NwTjFSdWNyR2ZhRmJENV82dThRRl95eVVhX2ltZV9ORGFLdWtwN1hmejJ3dw?oc=5",
-      "date": "2026-07-02",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Nvidia acts as backstop for customer GPUs in return for cut of cloud revenue - Data Center Dynamics",
-      "source": "Data Center Dynamics",
-      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOb1Y2MDZrY2Q4bzU5ZEQ5b1hlQXAxTlB3dWVLVkNUMUwtRXVXbjdGSEtaMUIyN21HTnZJLXZ3RW5YV3FxUGlmUG40bm5Nc1ZVbU1rSzJVa1R1cTBPZjdEall5SFdHRHZtNFgyU19sa3BlZjZVTUFrVXk3YzBndHVaWnk5czlGVmhyZTZ5WjlSLWxOYkNSU0NGR0hqM1lwVDVzbU9kVFRKSkdXVGx2blFEX3BRbHVGUjYzYjdOdA?oc=5",
-      "date": "2026-07-02",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Hotter Than a Hot Tub: The 45\u00b0C Breakthrough to Cool AI\u2019s Biggest Machines - NVIDIA Blog",
-      "source": "NVIDIA Blog",
-      "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBSN3d6OG5pZ2hJSkZ5cHhhWUxONkEyRzV0V3FwaGpNbERTSmpiU1ZkVzc4d0Vkc0Vic3J2Z3FMVkdza1M1aEE5TDJBb1NsekFGaWtVUjVEQ3VSSXFtbC1vRi1nVHdZb2pJN0E?oc=5",
-      "date": "2026-06-21",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Nvidia Says It Will Take a Cut of Some Customers\u2019 Cloud Revenues - The Information",
-      "source": "The Information",
-      "url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxOc3dNOVgtQWVuSExWT0xHUkZEa3RGRi1rbkdpWG1ST2YzOTEwTkx5cENOVGc3MzNXdVVfZGpid183TjJpdU9CU3pocmRSaC11MVc3TVRudS1tbmhwVlJQTHlYWnN3Q1VVd1o3Q2hjSzV6SDBuWkhVOHdNTkhTWjhjandsenhwR04zNmo3RGRfLUZMQUI2?oc=5",
-      "date": "2026-07-02",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Meta reportedly plans to rent out its AI compute, sending AI stocks tumbling \u2014 'Meta Compute' would put company in direct competition with AWS - Tom's Hardware",
+      "headline": "Singapore cops seize $42 million mansion, freeze $772k bank account of suspected Nvidia AI GPU smugglers \u2014 individuals alleged to have illegally exported data center servers to China charged with fraud, money laundering - Tom's Hardware",
       "source": "Tom's Hardware",
-      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPMzM1RnVwa2xPYnA3WmJQaUVUY0NPakVVNXZERV9ZWExnbUlScXdHTmxxeDBrTFVuNHl0QkoyS2NPUVg1b2hLSG5tUUFsRXMxVHlKY2p0RFRPcVNMYkZwTWxkVmtvZGpuTFduMTdnMXJHQzRvT1F1Y1k2SUZvNWRIaC1VM3hUUnB1ek1EQ0ZlTGNsNmZ2QlE?oc=5",
+      "url": "https://news.google.com/rss/articles/CBMi-gJBVV95cUxNTjVULS1McE9heWpyZnUwUWwyd19ya1Y2alh6T1haamRSRk93WDVSNXg2aEotT2FTTWxSRkdWN2dtc1ZDM0pnT1JIVk9DRXJLNm9YQU4xaDFvdXpYRGxoQVVSZGdaWWZseUNEYlJHZFhBWGtJbXRVaW1qenhIZGRQNUxPM0pXX1BzNVZvSWwzOWFmZW9Qa3p4MGE4YnBRZ3ZwU1owRUstTGlCU2hkY3pHLUFiTEszb05Kc19YcnZDVFoyeEphdTREaWtBbjZaWjgzWnh1cHZqNXZlY2pwVDhHaUtWTXdpOWdlaGZmUVlfTUk4c3FuWkFsdkNFMWZnNUFMTXAzM1Q4a1RuUjdJTUZqcFgzM0Nma2JBZW45RXBvRXRTdGxsV2lWVHpWNTQ3TklKRlA3c3RVeFpRTUNELTVpSG41ajRzdnlTa3RMcVVIYmR4M1U4QmdtWFJJenltQW4xX1BfT0l0b2VTYl9lT2pXRDdzTVNyU3c3VWc?oc=5",
       "date": "2026-07-02",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Firmus Plans 360MW Nvidia AI Data Center in Indonesia - TechRepublic",
-      "source": "TechRepublic",
-      "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxPYW91TVUxOUVncE54MHFTYUxVeDBHaVBQT0pHSEJTNnRaR0JRWlBtMVduWndKdWUwWENyM29RSENmZV9uMVVYWk5xRm9VXzRCd1c2RWlWN3ZQNGpPcWhfTlFpX1NfV3p2Q1V1bkQ3dDkzSlNqc3NRQmJMQzlrQ2l1M3AxdVdzTlU2c3F5enlXYw?oc=5",
-      "date": "2026-06-30",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4807,6 +4789,15 @@
       "impact": "medium"
     },
     {
+      "headline": "Firmus Plans 360MW Nvidia AI Data Center in Indonesia - TechRepublic",
+      "source": "TechRepublic",
+      "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxPYW91TVUxOUVncE54MHFTYUxVeDBHaVBQT0pHSEJTNnRaR0JRWlBtMVduWndKdWUwWENyM29RSENmZV9uMVVYWk5xRm9VXzRCd1c2RWlWN3ZQNGpPcWhfTlFpX1NfV3p2Q1V1bkQ3dDkzSlNqc3NRQmJMQzlrQ2l1M3AxdVdzTlU2c3F5enlXYw?oc=5",
+      "date": "2026-06-30",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
       "headline": "AI: Nvidia expands Revenue Share Deals with Customers. AI-RTZ #1136 - AI: Reset to Zero",
       "source": "AI: Reset to Zero",
       "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE5CUXVZMFpTTHltLVRRTEMyb1lJUlhObzVlSDBhR0E3LTY2SVZ0dXF5cGxKUldmaGFqTlkxMTBBc3lhNEE1RmFxam4zZVBJNzdDWXM0ZV9yRHZRQ2JIeE5hQlB6dkF4LXlXWXhNV2NnMVN5WndRY2lIcDlXamVvNEE?oc=5",
@@ -4816,19 +4807,28 @@
       "impact": "medium"
     },
     {
-      "headline": "Foxconn Pegs NVIDIA Vera Rubin AI Datacenter at $47 Billion Per Gigawatt, as Power Bills Hit $1.3B Yearly - Wccftech",
-      "source": "Wccftech",
-      "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNWkpEckt6MFZ6VWdEZE9ZRnpqeHdwbDVNVmdQU0g5Rk5RMGVXUFdEU3VvcEQybWJ6WjVyWTVQUktxRHNUdU55VDB0Y3MwSi1WOWxadEhQQlBkemREQlNIQi1IUlQ3cVFkWmZwTG9qM0lScGhsMy1zb1pFNVpYY1MtTVIyYUF0SkRqaVBONUFWQlBKcktnOUx1ONIBngFBVV95cUxNOURSWC1GWXF3U0ZuUjhMTXBueHdBYk96dVpCZjlycWc3SEx3dGJYZnUwdW16d21PMUgxd01GdUNLNzVyN0NmUXlKSnV3RjBMa0RaNWxJd29DTkdzZHZsVXV5djBpX2NjVGJVQjE0NHJtNXJMNUViVGxCaDZtaWFTcXJjVTlSMk10OU5xNlE4aGs2RzJHN1Iwc29PYjg4Zw?oc=5",
-      "date": "2026-06-20",
+      "headline": "SK Telecom has received government security certification for the infrastructure of the artificial i.. - \ub9e4\uc77c\uacbd\uc81c",
+      "source": "\ub9e4\uc77c\uacbd\uc81c",
+      "url": "https://news.google.com/rss/articles/CBMiS0FVX3lxTE9nQ0w4a0R3MmdRSmJWdmRhVEtObHBQZGJKejNVYVA5UDMtOURlZ2JUTGtnU2xBX2dkSVd3YTc4cVB3RVY2N1dXd0JVdw?oc=5",
+      "date": "2026-07-06",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "Singapore cops seize $42 million mansion, freeze $772k bank account of suspected Nvidia AI GPU smugglers \u2014 individuals alleged to have illegally exported data center servers to China charged with fraud, money laundering - Tom's Hardware",
-      "source": "Tom's Hardware",
-      "url": "https://news.google.com/rss/articles/CBMi-gJBVV95cUxNTjVULS1McE9heWpyZnUwUWwyd19ya1Y2alh6T1haamRSRk93WDVSNXg2aEotT2FTTWxSRkdWN2dtc1ZDM0pnT1JIVk9DRXJLNm9YQU4xaDFvdXpYRGxoQVVSZGdaWWZseUNEYlJHZFhBWGtJbXRVaW1qenhIZGRQNUxPM0pXX1BzNVZvSWwzOWFmZW9Qa3p4MGE4YnBRZ3ZwU1owRUstTGlCU2hkY3pHLUFiTEszb05Kc19YcnZDVFoyeEphdTREaWtBbjZaWjgzWnh1cHZqNXZlY2pwVDhHaUtWTXdpOWdlaGZmUVlfTUk4c3FuWkFsdkNFMWZnNUFMTXAzM1Q4a1RuUjdJTUZqcFgzM0Nma2JBZW45RXBvRXRTdGxsV2lWVHpWNTQ3TklKRlA3c3RVeFpRTUNELTVpSG41ajRzdnlTa3RMcVVIYmR4M1U4QmdtWFJJenltQW4xX1BfT0l0b2VTYl9lT2pXRDdzTVNyU3c3VWc?oc=5",
-      "date": "2026-07-02",
+      "headline": "SK Telecom's 'Haein' Cluster with 1,000+ Nvidia Blackwell GPUs Becomes First in South Korea to Earn CSAP Certification - finance.biggo.com",
+      "source": "finance.biggo.com",
+      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE1VYnRhSWFlOGo1a3FWMDIxdDhXcjdBdkdRTWFhd2xUWnJzU2dpQVJsdE54UlpRQjFRVl83M0NqQ25xaFRVU3hyakJWMUhmdDRwSkxtckE3WnVkLXRVWGE4Y3ZBZmlDUi1xTXBlaUZxYXpCRTlTOWc?oc=5",
+      "date": "2026-07-06",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Foxconn Pegs NVIDIA Vera Rubin AI Datacenter at $47 Billion Per Gigawatt, as Power Bills Hit $1.3B Yearly - Wccftech",
+      "source": "Wccftech",
+      "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNWkpEckt6MFZ6VWdEZE9ZRnpqeHdwbDVNVmdQU0g5Rk5RMGVXUFdEU3VvcEQybWJ6WjVyWTVQUktxRHNUdU55VDB0Y3MwSi1WOWxadEhQQlBkemREQlNIQi1IUlQ3cVFkWmZwTG9qM0lScGhsMy1zb1pFNVpYY1MtTVIyYUF0SkRqaVBONUFWQlBKcktnOUx1ONIBngFBVV95cUxNOURSWC1GWXF3U0ZuUjhMTXBueHdBYk96dVpCZjlycWc3SEx3dGJYZnUwdW16d21PMUgxd01GdUNLNzVyN0NmUXlKSnV3RjBMa0RaNWxJd29DTkdzZHZsVXV5djBpX2NjVGJVQjE0NHJtNXJMNUViVGxCaDZtaWFTcXJjVTlSMk10OU5xNlE4aGs2RzJHN1Iwc29PYjg4Zw?oc=5",
+      "date": "2026-06-20",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4852,19 +4852,19 @@
       "impact": "medium"
     },
     {
-      "headline": "SK Telecom and NVIDIA Build AI Infrastructure to Power Korea\u2019s AI Innovation - NVIDIA Newsroom",
-      "source": "NVIDIA Newsroom",
-      "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5FU2dZTUVESDFvTkJxbEJuWDdIS1c4SU9uaDAxLWN2c2pvVnNnNlRWM0pqZTRyTHJjREtsUEJ1TFBvcWdMdVMyejI1VWtoa0VaZHRWcVJzdUxuNXp2b095S3NjaDdmemZITVJxNXZGYWQ?oc=5",
-      "date": "2026-06-07",
+      "headline": "Nvidia's high-speed AI data center storage servers break cover, touting 2.9 petabytes of storage and extreme PCIe 6.0 performance \u2014 Wiwynn shows off SCADA server with GPU-accelerated storage - Tom's Hardware",
+      "source": "Tom's Hardware",
+      "url": "https://news.google.com/rss/articles/CBMi1AJBVV95cUxOdWpTWk9wM2RkYi0tUU9CRF8yMXFPRHhFRWs3YWhNZUxkNVVkdVhULUl5NzVRT0VLY1ZCNzgzX2xON2ZoOTFJNkpfdzg0RWpscVRNbFhSVTY3QTZQUnEwYjRjN0Rqb0liSVZtM0p3bU1XTXE0VHpkU1BUNnk2MDFuN1F4LWRmM2J6NjFaQ0dmR0N3UWNDNTVCem1FWXViTGJBMnJIM3U5NW5zeEpDNlY3cGZaOEFfRmZ6MG5VX3F5WThYeFBLUFBCLWhubjYzNDR0MEZ4TzJKbWtaU192MEQ0V2pMTEkwb0t4RG56TEtwbE9ha3JqVVNZS2RjYlAzUW5LVElGSnZmNUpuVFJ6aEVGY2xHZXlmWjBnNmVMaGY4LXlzR2dZcUNSVUhrb3hCYVVWLWw0c2hKNGZCZmJDdnlZYkduRGIyT0lFUnp4eFNWRDgyRjJo?oc=5",
+      "date": "2026-06-12",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "Nvidia's high-speed AI data center storage servers break cover, touting 2.9 petabytes of storage and extreme PCIe 6.0 performance \u2014 Wiwynn shows off SCADA server with GPU-accelerated storage - Tom's Hardware",
-      "source": "Tom's Hardware",
-      "url": "https://news.google.com/rss/articles/CBMi1AJBVV95cUxOdWpTWk9wM2RkYi0tUU9CRF8yMXFPRHhFRWs3YWhNZUxkNVVkdVhULUl5NzVRT0VLY1ZCNzgzX2xON2ZoOTFJNkpfdzg0RWpscVRNbFhSVTY3QTZQUnEwYjRjN0Rqb0liSVZtM0p3bU1XTXE0VHpkU1BUNnk2MDFuN1F4LWRmM2J6NjFaQ0dmR0N3UWNDNTVCem1FWXViTGJBMnJIM3U5NW5zeEpDNlY3cGZaOEFfRmZ6MG5VX3F5WThYeFBLUFBCLWhubjYzNDR0MEZ4TzJKbWtaU192MEQ0V2pMTEkwb0t4RG56TEtwbE9ha3JqVVNZS2RjYlAzUW5LVElGSnZmNUpuVFJ6aEVGY2xHZXlmWjBnNmVMaGY4LXlzR2dZcUNSVUhrb3hCYVVWLWw0c2hKNGZCZmJDdnlZYkduRGIyT0lFUnp4eFNWRDgyRjJo?oc=5",
-      "date": "2026-06-12",
+      "headline": "Meta Builds AI Infrastructure With NVIDIA - NVIDIA Newsroom",
+      "source": "NVIDIA Newsroom",
+      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQa2Jtb2d5VUFBazZ4U1VWS29KbmFHMkdkN1lNXzNXTHR6eUZTUjVUYWw2cndMOVhpYldLbm1Cdm1nWkxyUzFJcUo1OVBXd3lBMnBsYU1nVVNaOF9YR2pRaXNLdHowVllDdU5hNU9kWW5DV3lSWmk4MFYtQUt6ZTA1WQ?oc=5",
+      "date": "2026-02-17",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4879,10 +4879,10 @@
       "impact": "medium"
     },
     {
-      "headline": "Meta Builds AI Infrastructure With NVIDIA - NVIDIA Newsroom",
+      "headline": "SK Telecom and NVIDIA Build AI Infrastructure to Power Korea\u2019s AI Innovation - NVIDIA Newsroom",
       "source": "NVIDIA Newsroom",
-      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQa2Jtb2d5VUFBazZ4U1VWS29KbmFHMkdkN1lNXzNXTHR6eUZTUjVUYWw2cndMOVhpYldLbm1Cdm1nWkxyUzFJcUo1OVBXd3lBMnBsYU1nVVNaOF9YR2pRaXNLdHowVllDdU5hNU9kWW5DV3lSWmk4MFYtQUt6ZTA1WQ?oc=5",
-      "date": "2026-02-17",
+      "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5FU2dZTUVESDFvTkJxbEJuWDdIS1c4SU9uaDAxLWN2c2pvVnNnNlRWM0pqZTRyTHJjREtsUEJ1TFBvcWdMdVMyejI1VWtoa0VaZHRWcVJzdUxuNXp2b095S3NjaDdmemZITVJxNXZGYWQ?oc=5",
+      "date": "2026-06-07",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -11656,7 +11656,7 @@
       }
     }
   },
-  "last_updated": "2026-07-05T08:49:11.981591+00:00",
+  "last_updated": "2026-07-06T10:14:22.337315+00:00",
   "stocks": {
     "NVDA": {
       "ticker": "NVDA",
@@ -11665,7 +11665,7 @@
       "52_week_high": 236.54,
       "52_week_low": 157.34,
       "ytd_change_pct": 3.17,
-      "last_updated": "2026-07-05T08:49:12.109410+00:00"
+      "last_updated": "2026-07-06T10:14:22.449345+00:00"
     },
     "AMD": {
       "ticker": "AMD",
@@ -11674,7 +11674,7 @@
       "52_week_high": 584.73,
       "52_week_low": 133.5,
       "ytd_change_pct": 131.72,
-      "last_updated": "2026-07-05T08:49:12.213334+00:00"
+      "last_updated": "2026-07-06T10:14:22.508360+00:00"
     }
   }
 }
