@@ -3222,27 +3222,27 @@
   "indicators": {
     "nvidia_stock": {
       "ticker": "NVDA",
-      "current": 202.78,
+      "current": 210.96,
       "1m_change": 4.2,
       "3m_change": 12.8,
-      "ytd_change": 7.38,
+      "ytd_change": 11.71,
       "52w_high": 236.54,
-      "52w_low": 161.61,
-      "ytd_pct": 7.38,
-      "52w_range": "$161.61-$236.54",
-      "last_updated": "2026-07-10T09:30:26.805505+00:00"
+      "52w_low": 162.02,
+      "ytd_pct": 11.71,
+      "52w_range": "$162.02-$236.54",
+      "last_updated": "2026-07-11T07:51:07.980696+00:00"
     },
     "amd_stock": {
       "ticker": "AMD",
-      "current": 546.72,
+      "current": 557.89,
       "1m_change": -2.1,
       "3m_change": 5.3,
-      "ytd_change": 144.65,
+      "ytd_change": 149.65,
       "52w_high": 584.73,
       "52w_low": 141.6,
-      "ytd_pct": 144.65,
+      "ytd_pct": 149.65,
       "52w_range": "$141.60-$584.73",
-      "last_updated": "2026-07-10T09:30:26.861071+00:00"
+      "last_updated": "2026-07-11T07:51:08.049889+00:00"
     },
     "gpu_market_size_bn": {
       "2023": 52.4,
@@ -3362,10 +3362,10 @@
         "note": "Consumer stock available"
       }
     },
-    "nvda_price": 202.78,
-    "nvda_ytd_change": 7.38,
-    "amd_price": 546.72,
-    "amd_ytd_change": 144.65
+    "nvda_price": 210.96,
+    "nvda_ytd_change": 11.71,
+    "amd_price": 557.89,
+    "amd_ytd_change": 149.65
   },
   "regional": {
     "North America": {
@@ -4822,28 +4822,10 @@
       "impact": "medium"
     },
     {
-      "headline": "No One Can Afford to Buy Hardware, So Nvidia Made Trading Cards to Reminisce About the Good Times - Gizmodo",
-      "source": "Gizmodo",
-      "url": "https://news.google.com/rss/articles/CBMixgFBVV95cUxQdkVmUTh4RE9Lc1lKUVZCNlRvMkswSzhsNEVOX0c0ekZBMXpCY205azhHZ1lwMnBvLTFmRVk2X0ctVzgxMjJGRl9rNkRmZy1xODFhUG1NV1pOc1NQZjAtN3E2bGdrMlpIcUhLa2Y1MTlyVWhMT25fX3NxLXE2MEc3bTlEUGZEeVZfTE5tNDFPclNLcVpNVWxQX3JDU2JLemFYMnFjZVZ4Vm1yLWc5OXhpSXNNa3ZEQjhOQzk5RURja2JDbUFWNmc?oc=5",
-      "date": "2026-07-09",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Nvidia\u2019s $1 Trillion Slide Sends Valuation to Pre-AI Boom Levels - Bloomberg.com",
-      "source": "Bloomberg.com",
-      "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxPdldfaUxaVzIwN3pWLV84dUNUaXNsajJpR3ctOFdFekFsbGEwT2FjTjd3cFVRSjNLZ3VKZHpFdUw1a0VwZzlWb3JVajV0cnAzVlNYRXdjVFR5akVfR3ZNaDE1azctb0RtSXBfengxVmNVeDBwTnE5ZnBGekJfcy0yNndmRmVoT1hOQ3RqYzlFM3ZUeGxwZldyWVJabzZVbFBqdzM5dXpHbzBWS1hxQXVSWnZjMDc?oc=5",
-      "date": "2026-07-08",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "DeepInfra Expands AI Inference Capacity with First International Data Center in Toronto - EEJournal",
-      "source": "EEJournal",
-      "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxNMl9pay1UTE1KcnBvLUFFMnU4VkcyUml6RGNqODUtcFFSMEU2YXcySkREOFEyVVNndWJFTndpTUtmMTdodjcwTFotQ2FOQm9GLU1xZVNETy0yWXdYSjFnQ3EtWmZLT1I1cDBTejRUTGZEQWRwMU5BY1lQc28ybTJRWmtLRXhGa0FrbHpzbTl6MERlUEhoUlh5a3E4SkJjcm8xazV6YktZNHhBRVF1VFQ1VVR3enlrck1MQVVpY3QyLUExVkJmNm04?oc=5",
-      "date": "2026-07-09",
+      "headline": "Nvidia\u2019s $1-trillion wipeout leaves AI titan trading at pre-boom prices - Los Angeles Times",
+      "source": "Los Angeles Times",
+      "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxQNDhTUm9nUVIzTWJhSUFiT3Y2SGw0alhfLTNFVHJjYmIzeFBST2xzdUhRamg1ZE83M18tVjlZcDRQblVCLXhvNnptY2pqdWtuRjRpRUcyOVc2YzNPQl9LQzgxYXU0SDJaWGlObHhNVHlnLTc1X1N2ZGFlQzRCaVJIdE1vSEYtSGN2b3JsbGtfcVNXM0tGVmpQV0dnaWp0V0lILVVoRUx3WndIeGx4enhxS2dNSWFnU21SbTFj?oc=5",
+      "date": "2026-07-10",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4858,19 +4840,28 @@
       "impact": "medium"
     },
     {
-      "headline": "Nvidia Leads Firmus Funding Round With $500 Million Investment - TradingView",
-      "source": "TradingView",
-      "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxOTmIwc01SVlJ3Y1FNOVJhMjhfMHhvOGtIS2dSZGxmWm03bVRkZTlQcWswX0FVRzNzOUh0ZlNiRUd0TDBtbDdyUXYzQll2QlBJRnJPb3YzbTlYZDcteWRtMGh2YlZWQ3ktUlFvcDBVbEFlX1liVS1ueGwySnAwZGotbi0tSjJjbnJITThzbGZIWHpGdnhMRkJqaE9DNW1aTGhtcmFUOC1DZlp6cWxqc0hkWVY0R1YwbDAtbkhIVTdn?oc=5",
+      "headline": "Nvidia\u2019s $1 Trillion Slide Sends Valuation to Pre-AI Boom Levels - Bloomberg.com",
+      "source": "Bloomberg.com",
+      "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxPdldfaUxaVzIwN3pWLV84dUNUaXNsajJpR3ctOFdFekFsbGEwT2FjTjd3cFVRSjNLZ3VKZHpFdUw1a0VwZzlWb3JVajV0cnAzVlNYRXdjVFR5akVfR3ZNaDE1azctb0RtSXBfengxVmNVeDBwTnE5ZnBGekJfcy0yNndmRmVoT1hOQ3RqYzlFM3ZUeGxwZldyWVJabzZVbFBqdzM5dXpHbzBWS1hxQXVSWnZjMDc?oc=5",
+      "date": "2026-07-08",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "No One Can Afford to Buy Hardware, So Nvidia Made Trading Cards to Reminisce About the Good Times - Gizmodo",
+      "source": "Gizmodo",
+      "url": "https://news.google.com/rss/articles/CBMixgFBVV95cUxQdkVmUTh4RE9Lc1lKUVZCNlRvMkswSzhsNEVOX0c0ekZBMXpCY205azhHZ1lwMnBvLTFmRVk2X0ctVzgxMjJGRl9rNkRmZy1xODFhUG1NV1pOc1NQZjAtN3E2bGdrMlpIcUhLa2Y1MTlyVWhMT25fX3NxLXE2MEc3bTlEUGZEeVZfTE5tNDFPclNLcVpNVWxQX3JDU2JLemFYMnFjZVZ4Vm1yLWc5OXhpSXNNa3ZEQjhOQzk5RURja2JDbUFWNmc?oc=5",
       "date": "2026-07-09",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "Nvidia and Firmus to build 170,000-GPU data center in Indonesia - Yahoo Finance",
-      "source": "Yahoo Finance",
-      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxOMmRhZHlOai1sTjd3X2Y2RlplNjg4YWZuZkFYSjlEUGxValRDNjBYLV95cjBnYjZtRmN3WG5BMHFkYklhZmZwY0NHTlVoVldMRXRSTDFialhUbThKbmRKd2h2UDlrSVhtYUxiM3lSY2JqUWNrZWQ5Tk9DaW84UU52NFhnX1UtRDJGb1JObXNsRURRcEl1c1E?oc=5",
-      "date": "2026-06-29",
+      "headline": "Intel-backed AI chip startup SambaNova breathes new life into aging Nvidia GPUs in latest benchmarks - The Register",
+      "source": "The Register",
+      "url": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxNcXVRcUY5emNsRk4ybXE3WU1sWGJpNElJU0R2Q1Z5SElqYjRMeFJkd2NaTXFHLTBLT2NEcUlEcGNWVy1SN3hTbUtOMmNqSENja2FLOFFMVkN1NHRTalNlMHRXdkpvRTV1cEx5VTZDYThnMHp6ZjJtb3RFQjhsOXRTRnc5WFhYSWF0LUlWVlRmRmN5M2xTbXpPYjRrdENLeVZ6SHdOZjltYk9lVFBfNlVob0VrTUZ1SHpVd01lc0U4SW9sVTA0NDBpZ2hhSnJCbFI2ZkMtUnBLNVFybnFnclhLT1FXQVBXTF8yNFhnNkNR?oc=5",
+      "date": "2026-07-08",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4885,37 +4876,19 @@
       "impact": "medium"
     },
     {
-      "headline": "Nvidia acts as backstop for customer GPUs in return for cut of cloud revenue - Data Center Dynamics",
-      "source": "Data Center Dynamics",
-      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOb1Y2MDZrY2Q4bzU5ZEQ5b1hlQXAxTlB3dWVLVkNUMUwtRXVXbjdGSEtaMUIyN21HTnZJLXZ3RW5YV3FxUGlmUG40bm5Nc1ZVbU1rSzJVa1R1cTBPZjdEall5SFdHRHZtNFgyU19sa3BlZjZVTUFrVXk3YzBndHVaWnk5czlGVmhyZTZ5WjlSLWxOYkNSU0NGR0hqM1lwVDVzbU9kVFRKSkdXVGx2blFEX3BRbHVGUjYzYjdOdA?oc=5",
-      "date": "2026-07-02",
+      "headline": "Nvidia Leads Firmus Funding Round With $500 Million Investment - TradingView",
+      "source": "TradingView",
+      "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxOTmIwc01SVlJ3Y1FNOVJhMjhfMHhvOGtIS2dSZGxmWm03bVRkZTlQcWswX0FVRzNzOUh0ZlNiRUd0TDBtbDdyUXYzQll2QlBJRnJPb3YzbTlYZDcteWRtMGh2YlZWQ3ktUlFvcDBVbEFlX1liVS1ueGwySnAwZGotbi0tSjJjbnJITThzbGZIWHpGdnhMRkJqaE9DNW1aTGhtcmFUOC1DZlp6cWxqc0hkWVY0R1YwbDAtbkhIVTdn?oc=5",
+      "date": "2026-07-09",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "Nvidia floats double-dipping datacenter financing scheme - The Register",
-      "source": "The Register",
-      "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxPcGU1Ui1ubm1JWWRzNTk2WnRabXVWVlhqSnZNM3VoSWtwcDJGRm5YWG8zbk9ZSXY4cGlfNGR4UnpJTDRwSDhoUEpkQ3lYRDRvcXQ1ZHdsZmV4MjlPNmR1TFdERWJBX0hzMVdYbGNwUGU4Z3VlR3ZqY3Q3bmRYd2V2OTgtNHQ0N1NwTjFSdWNyR2ZhRmJENV82dThRRl95eVVhX2ltZV9ORGFLdWtwN1hmejJ3dw?oc=5",
-      "date": "2026-07-02",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Central Asian AI Infrastructure: Why Freedom Holding, NVIDIA, and Citi Are Partnering in Kazakhstan: By Nanne Parmar - Finextra Research",
-      "source": "Finextra Research",
-      "url": "https://news.google.com/rss/articles/CBMi1gFBVV95cUxOWUFXRE1Id3JTQ1dUNDBlTkNmSk1FOWFCM3h6bC1GY3l1SGhWRHVDSkRmTEkwWktzMHREc2hqWG1ZTlh6TERldVBXV0xJV0NDSmJDRTB5NGZoc0hkU2RiaV9wUDNqdXlxbElhSVU2NWVKc1BxT3BzdDVFRWl5NWo0Z0VxSXRRbERPMWU4R2h4NW1vYzhfZ2FXMkd1RDQwSzhsSjduNFZZbTYwOE93MnBkSFNsWDhmblRrYXlyazRRalJ3MzJaTUpXLTBmUGx1X1JCZEFacHFR?oc=5",
-      "date": "2026-07-07",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Foxconn Pegs NVIDIA Vera Rubin AI Datacenter at $47 Billion Per Gigawatt, as Power Bills Hit $1.3B Yearly - Wccftech",
-      "source": "Wccftech",
-      "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNWkpEckt6MFZ6VWdEZE9ZRnpqeHdwbDVNVmdQU0g5Rk5RMGVXUFdEU3VvcEQybWJ6WjVyWTVQUktxRHNUdU55VDB0Y3MwSi1WOWxadEhQQlBkemREQlNIQi1IUlQ3cVFkWmZwTG9qM0lScGhsMy1zb1pFNVpYY1MtTVIyYUF0SkRqaVBONUFWQlBKcktnOUx1ONIBngFBVV95cUxNOURSWC1GWXF3U0ZuUjhMTXBueHdBYk96dVpCZjlycWc3SEx3dGJYZnUwdW16d21PMUgxd01GdUNLNzVyN0NmUXlKSnV3RjBMa0RaNWxJd29DTkdzZHZsVXV5djBpX2NjVGJVQjE0NHJtNXJMNUViVGxCaDZtaWFTcXJjVTlSMk10OU5xNlE4aGs2RzJHN1Iwc29PYjg4Zw?oc=5",
-      "date": "2026-06-20",
+      "headline": "NVIDIA Tests Recurring AI Data Center Model With Australian GPU Expansion - Yahoo Finance",
+      "source": "Yahoo Finance",
+      "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNaXFmY0dGMGdESGs5aTJJRDBPdUctNVBzeno4NkstR09BWndqV1Jaa3Q5YTZQQ2JsVDlzYVVnYUdVamdnbGMxemlucVo1QzV1MHc4cGxrVU1UM05pbTI1amNrQTdlNzc5MTlWc3ZWQzA1M0VXVHhBeWhlaFRFc1hQN0x0QWdBSTFDWUs4YjRpUGVJcVFRRXkwVHI4Yw?oc=5",
+      "date": "2026-06-13",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4939,10 +4912,19 @@
       "impact": "medium"
     },
     {
-      "headline": "NVIDIA Tests Recurring AI Data Center Model With Australian GPU Expansion - Yahoo Finance",
-      "source": "Yahoo Finance",
-      "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNaXFmY0dGMGdESGs5aTJJRDBPdUctNVBzeno4NkstR09BWndqV1Jaa3Q5YTZQQ2JsVDlzYVVnYUdVamdnbGMxemlucVo1QzV1MHc4cGxrVU1UM05pbTI1amNrQTdlNzc5MTlWc3ZWQzA1M0VXVHhBeWhlaFRFc1hQN0x0QWdBSTFDWUs4YjRpUGVJcVFRRXkwVHI4Yw?oc=5",
-      "date": "2026-06-13",
+      "headline": "Meta expands Nvidia deal to use millions of AI chips in data center build-out, including standalone CPUs - CNBC",
+      "source": "CNBC",
+      "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTFBiLXZYX1ZjaTRaenZCcmpJT0FZTksxVFpNOWhYOXBHenZDUjlKLXBoTDJuOHluYzRiSWx0YVV6Slljb3NBem9CLVlJUHlTR1FIQk15ODZGRm4yaXduckZ6YW9DNTJoYkZveDFwS3Y1amFOTkRiSi1lNDYxZlQwMFXSAYQBQVVfeXFMTVBJeVBlbFhKZDhpWE56QTZ4VDFJYjlrSk50eFgtQzViYUduMHRZRmJ2amNRdjZDeVFmUnpfNE54LUhqR2ZTSWR0eXBDcE13Q2wxekszejRCTFlKSHRZWDlWZDgzb0pqZjE4QTdrd0FhZDhQSTNHWDZDMlQtNUYya1RTVkJO?oc=5",
+      "date": "2026-02-17",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Foxconn Pegs NVIDIA Vera Rubin AI Datacenter at $47 Billion Per Gigawatt, as Power Bills Hit $1.3B Yearly - Wccftech",
+      "source": "Wccftech",
+      "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNWkpEckt6MFZ6VWdEZE9ZRnpqeHdwbDVNVmdQU0g5Rk5RMGVXUFdEU3VvcEQybWJ6WjVyWTVQUktxRHNUdU55VDB0Y3MwSi1WOWxadEhQQlBkemREQlNIQi1IUlQ3cVFkWmZwTG9qM0lScGhsMy1zb1pFNVpYY1MtTVIyYUF0SkRqaVBONUFWQlBKcktnOUx1ONIBngFBVV95cUxNOURSWC1GWXF3U0ZuUjhMTXBueHdBYk96dVpCZjlycWc3SEx3dGJYZnUwdW16d21PMUgxd01GdUNLNzVyN0NmUXlKSnV3RjBMa0RaNWxJd29DTkdzZHZsVXV5djBpX2NjVGJVQjE0NHJtNXJMNUViVGxCaDZtaWFTcXJjVTlSMk10OU5xNlE4aGs2RzJHN1Iwc29PYjg4Zw?oc=5",
+      "date": "2026-06-20",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4957,19 +4939,37 @@
       "impact": "medium"
     },
     {
-      "headline": "Meta Builds AI Infrastructure With NVIDIA - NVIDIA Newsroom",
-      "source": "NVIDIA Newsroom",
-      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQa2Jtb2d5VUFBazZ4U1VWS29KbmFHMkdkN1lNXzNXTHR6eUZTUjVUYWw2cndMOVhpYldLbm1Cdm1nWkxyUzFJcUo1OVBXd3lBMnBsYU1nVVNaOF9YR2pRaXNLdHowVllDdU5hNU9kWW5DV3lSWmk4MFYtQUt6ZTA1WQ?oc=5",
-      "date": "2026-02-17",
+      "headline": "AI Data Center Graphics Processing Units (GPUs) Market Report 2026: $32.3 Bn Opportunities, Trends, Competitive Landscape, Strategies, and Forecasts, 2020-2025, 2025-2030F, 2035F - Yahoo Finance",
+      "source": "Yahoo Finance",
+      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxOQkI2MjZDNkNRaTNRQ3plUmhiUkVYVF9TdWdaU1M4N1g3bl8wUXZySUpuY3I4WDVXc2JzTTQtVVZCeXozRzBtTFVWcUNPd3g4NkhXNkFraE9SR3RBOE1mRG83eWZmalpidTJNMUdwaTUxZGQxSWNpVkwxYzlOVnA4azJ4ZklhdXZ3OHNfUXltTERqRG5xcldEdUNXSG1nTWtrd1UyMUpB?oc=5",
+      "date": "2026-04-14",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "Qualcomm debuts line of AI data center chips and systems, increasing competition with Nvidia - Yahoo Finance",
-      "source": "Yahoo Finance",
-      "url": "https://news.google.com/rss/articles/CBMi5gFBVV95cUxPODFGMmIwMnhuZ3A5dmxKV0pYRi1KTXdpdUxGcGFELVV5R0NkbHJsTUgtYjh4c0p4LVlpYU5GOEh2Tjc0TmtlWm4tYzIzdTJnUGdnaDVQeUxTVV9LMUhFSzdYQ1JObWhkTkNyZXk0Wmsya2RfQWZTU2ZPWkNxdkhuQlowaV9SekNrMVRYZzlyNzZtY2k4QXNlVzNkTzdJT0xaSlNoLU5JMG0yb3VXRXJOQzlWbXp5N2FnWVlSdVZ6Y1owYjlhMXZrN0g3aWZWRU03eDg4QlNodlE1WXc4TFpfaWxNTTlNQQ?oc=5",
-      "date": "2026-06-24",
+      "headline": "The Race to Rethink Data Centers for AI\u2019s Power Surge - Bloomberg.com",
+      "source": "Bloomberg.com",
+      "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE5ycWtOUVVzejd3bWFlZWI2MWI0SEo1SVh5R3V0Qzk4Z0hfTGRxRWo5SlhYSkFTM2FWVWtyOWphOEVaZHZta0d5YlUxcmVLNm96bFEzbDA1bWhQOHUySy13WktvZ3o2a1k0UTd6MkdURjV4UQ?oc=5",
+      "date": "2026-06-01",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Nvidia's high-speed AI data center storage servers break cover, touting 2.9 petabytes of storage and extreme PCIe 6.0 performance \u2014 Wiwynn shows off SCADA server with GPU-accelerated storage - Tom's Hardware",
+      "source": "Tom's Hardware",
+      "url": "https://news.google.com/rss/articles/CBMi1AJBVV95cUxOdWpTWk9wM2RkYi0tUU9CRF8yMXFPRHhFRWs3YWhNZUxkNVVkdVhULUl5NzVRT0VLY1ZCNzgzX2xON2ZoOTFJNkpfdzg0RWpscVRNbFhSVTY3QTZQUnEwYjRjN0Rqb0liSVZtM0p3bU1XTXE0VHpkU1BUNnk2MDFuN1F4LWRmM2J6NjFaQ0dmR0N3UWNDNTVCem1FWXViTGJBMnJIM3U5NW5zeEpDNlY3cGZaOEFfRmZ6MG5VX3F5WThYeFBLUFBCLWhubjYzNDR0MEZ4TzJKbWtaU192MEQ0V2pMTEkwb0t4RG56TEtwbE9ha3JqVVNZS2RjYlAzUW5LVElGSnZmNUpuVFJ6aEVGY2xHZXlmWjBnNmVMaGY4LXlzR2dZcUNSVUhrb3hCYVVWLWw0c2hKNGZCZmJDdnlZYkduRGIyT0lFUnp4eFNWRDgyRjJo?oc=5",
+      "date": "2026-06-12",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Meta Builds AI Infrastructure With NVIDIA - NVIDIA Newsroom",
+      "source": "NVIDIA Newsroom",
+      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQa2Jtb2d5VUFBazZ4U1VWS29KbmFHMkdkN1lNXzNXTHR6eUZTUjVUYWw2cndMOVhpYldLbm1Cdm1nWkxyUzFJcUo1OVBXd3lBMnBsYU1nVVNaOF9YR2pRaXNLdHowVllDdU5hNU9kWW5DV3lSWmk4MFYtQUt6ZTA1WQ?oc=5",
+      "date": "2026-02-17",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -11752,25 +11752,25 @@
       }
     }
   },
-  "last_updated": "2026-07-10T09:30:26.721639+00:00",
+  "last_updated": "2026-07-11T07:51:07.834811+00:00",
   "stocks": {
     "NVDA": {
       "ticker": "NVDA",
-      "current_price": 202.78,
-      "previous_close": 162.88,
+      "current_price": 210.96,
+      "previous_close": 164.1,
       "52_week_high": 236.54,
-      "52_week_low": 161.61,
-      "ytd_change_pct": 7.38,
-      "last_updated": "2026-07-10T09:30:26.805505+00:00"
+      "52_week_low": 162.02,
+      "ytd_change_pct": 11.71,
+      "last_updated": "2026-07-11T07:51:07.980696+00:00"
     },
     "AMD": {
       "ticker": "AMD",
-      "current_price": 546.72,
-      "previous_close": 138.41,
+      "current_price": 557.89,
+      "previous_close": 144.16,
       "52_week_high": 584.73,
       "52_week_low": 141.6,
-      "ytd_change_pct": 144.65,
-      "last_updated": "2026-07-10T09:30:26.861071+00:00"
+      "ytd_change_pct": 149.65,
+      "last_updated": "2026-07-11T07:51:08.049889+00:00"
     }
   }
 }
