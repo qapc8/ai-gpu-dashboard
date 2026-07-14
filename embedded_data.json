@@ -3222,27 +3222,27 @@
   "indicators": {
     "nvidia_stock": {
       "ticker": "NVDA",
-      "current": 210.96,
+      "current": 203.53,
       "1m_change": 4.2,
       "3m_change": 12.8,
-      "ytd_change": 11.71,
+      "ytd_change": 7.77,
       "52w_high": 236.54,
       "52w_low": 162.02,
-      "ytd_pct": 11.71,
+      "ytd_pct": 7.77,
       "52w_range": "$162.02-$236.54",
-      "last_updated": "2026-07-13T10:15:35.980792+00:00"
+      "last_updated": "2026-07-14T07:58:57.852854+00:00"
     },
     "amd_stock": {
       "ticker": "AMD",
-      "current": 557.89,
+      "current": 534.39,
       "1m_change": -2.1,
       "3m_change": 5.3,
-      "ytd_change": 149.65,
+      "ytd_change": 139.13,
       "52w_high": 584.73,
-      "52w_low": 141.6,
-      "ytd_pct": 149.65,
-      "52w_range": "$141.60-$584.73",
-      "last_updated": "2026-07-13T10:15:36.098989+00:00"
+      "52w_low": 141.9,
+      "ytd_pct": 139.13,
+      "52w_range": "$141.90-$584.73",
+      "last_updated": "2026-07-14T07:58:57.909546+00:00"
     },
     "gpu_market_size_bn": {
       "2023": 52.4,
@@ -3362,10 +3362,10 @@
         "note": "Consumer stock available"
       }
     },
-    "nvda_price": 210.96,
-    "nvda_ytd_change": 11.71,
-    "amd_price": 557.89,
-    "amd_ytd_change": 149.65
+    "nvda_price": 203.53,
+    "nvda_ytd_change": 7.77,
+    "amd_price": 534.39,
+    "amd_ytd_change": 139.13
   },
   "regional": {
     "North America": {
@@ -4813,10 +4813,55 @@
   },
   "news": [
     {
-      "headline": "U.S. Hyperscale Data Center Market Forecast 2026-2031 | AI Revolutionizes U.S. Hyperscale Data Centers with Record GPU Adoption - Yahoo Finance",
-      "source": "Yahoo Finance",
-      "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxQWl9abWVWaTQ0YUM0NXdSNndEMEp3eF9rOXBIUkxZTlNGNXJmLVNESkh3Z0dWWVZyMFFlaWphUFBTNnFUbDdrN21JUEdfdGZTMkh2T3Ryc3ZCUF9GX3Vja0dqQ2ZxTDFSd3Uxek9sMHlKQWlRTlRUR0trVEU4aDM1Y1NMUzVtc2c3Mk5zNE9SejNRbWRYSHljSGxPcw?oc=5",
+      "headline": "SoftBank, Yaskawa Demonstrate Physical AI Development Using AI Data Center GPU Cloud - The Fast Mode",
+      "source": "The Fast Mode",
+      "url": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxQQWpXQ2NkTy1GN2RmbEFQMnlibUpiMHJnWnVQQmNHZjBEUkl5SGNubnhyNVR1RWJOZC1oblY4S2k2czJmVnNDWkQxeHJrZVJfY2ZyYjRmWi1qSkxhR3VPLU9obE5DWGxONGVZbUJmQ201XzB4d0NfelNfSWlNX0U3dS1OVENtMUgxanhyUkNDNkFHLTZZdV9ZTUhSbHNhN05qU0RQNlVYX096aWJ6Z0FKcTJjRV9OdzhNckxyZmdKbjZFRDJ6MWcycGcwM3g5V1JvRTNxdw?oc=5",
+      "date": "2026-07-14",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "AI Fuels Rapid Growth in US Hyperscale Data Center Market - the Electrical Distributor magazine",
+      "source": "the Electrical Distributor magazine",
+      "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxObDI3ay1VMFlMWUlFLU1NbllBN3hsRVRyWjlsSTBJUWtBWnN6UG8xM0ZGZWdPTVFnLWgwbTlUa2xCLTE2WW1od1V1bjhyS1VzcEFNcDNJbVBsRG94V1QyeXZ3RFhnRzF1YkU2UDlhV1hHNWRCQUFoVjV5aWc5VHllc0JCNA?oc=5",
       "date": "2026-07-13",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "AI Infrastructure Shifts Beyond GPUs: Networking, Memory, Orchestration Gain Focus - Indiatimes",
+      "source": "Indiatimes",
+      "url": "https://news.google.com/rss/articles/CBMi_gFBVV95cUxPUklISC0yc0x3ZF9CWXNmeU8xZVEzdVR4SWxPd2lnZlhvMFAyUndMaGVPYllFM3FtdE5qT21uZnpqZ0J6S3E2cWRKZGxiWW9UYkJNNU8yTUpKZWpmbHgwSGc1RFdOX3M4SXZFQ242SUdLaTExV3dPRlgyN2Y0SEZnTUR6TmJ2a3pPZ25Kck5Jd3VjVUJWZVRuMEVTVjBvcGRkLXdOM09aSnRlc0QtVmNUY2pUeWZwQ2hCak1RSzMwbmRsRTFFdFpVWlRZaTJaZGFRWG1FTHVTM0FCMWY2bzZBOWNDYW5TRnotdi15MEZTSzRvZmFIdUJENkhkVlhRZw?oc=5",
+      "date": "2026-07-14",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Nvidia's Biggest Risk Isn't Custom AI Chips From Broadcom or AMD -- It's Something That's Hidden in Plain Sight - The Motley Fool",
+      "source": "The Motley Fool",
+      "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxOcTFhRGF6MDE0dHFHQ1R0RzE0dTNqZloxOUR4aVZSUmREYW1HaGRubUJ3cFJTam9xQ0RsSXBienhGaVZaQzA3WDJXd3NULVRhUGpvZzJXcnBwY1drNjNqcFAwaWRhS3B2cUdldGR4aE94SjFBdkExYUJTQWFjWHBvVEJCZ2tNbHdGclEtNGl6MmpSN3ZXMmZMMQ?oc=5",
+      "date": "2026-07-13",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "DeepInfra Opens 1.7MW Toronto Data Center With 1,000+ NVIDIA B300 GPUs - StorageReview.com",
+      "source": "StorageReview.com",
+      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQYmVJY05DcVlTNGZYVk1KTHNTM2hXVk1FdmFlVjUxSFRvOU1oWkRaTnV1QmZqWmdMWldnYzRZbFFlendiS2dmQWlmY1FpNkRPN3NOVEFaNXZLN0htR1hnUV9QeXZxcEtZcENwTURrUWxNam5qaGMtTWRoRm13RGFwLVRyQTJWaFU1dTJkZ3IzYUxxM21QaE8xeTNDTGxreEo3ZUd3cHRR0gGrAUFVX3lxTFBRQ1RQRTFsV0ZPWlAtdUhWOTZveGRUcUxSeThNckl3QWkwRFZLVU9HeGJrQUY1UUtyR25wM2lPMUpfZEVVeW5hV1ZBcmROVVAtMTZpZ2pDUTd0QnpxMV9remZWam9lckVzdTZGbFplTTJDTGd6LWNLNFFGUy1TMnZMUlZoM0VYWHY4aVlneDIxVTBiZnRTWTRfcHNEZmhyRi01Y21NLTI3SDBfYw?oc=5",
+      "date": "2026-07-13",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Nvidia halves Asia buyer list in China chip crackdown, FT reports - AOL.com",
+      "source": "AOL.com",
+      "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTE9ERTRScG9tZmV1OERCczdvZmNHcGNiVklJZzZYR0k3YlJ3WWU3SDIxX3d5MWxWbGUzWEhjMWJRejd4YVpYS01yR2sxSmQzb0Z6QjgxaWIyb09Yd0pjUGJaNUgwLV9Xb1E4NnR2bmhMOGhRZjhXLUlONGpiYjdrUQ?oc=5",
+      "date": "2026-07-14",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4849,10 +4894,28 @@
       "impact": "medium"
     },
     {
+      "headline": "DeepInfra Opens 1.7MW Toronto Data Center With 1,000+ NVIDIA B300 GPUs - MLQ.ai",
+      "source": "MLQ.ai",
+      "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxPM0dHYUJRdE9fUE9nczZBWlNUeXJUSHJIeGJMd0tvc2xWWHB2N3NyNWNmWmRUUFJIcmNJdWJwUDc5RFdfNEhOVm1jX1dkMnA1d0lEdHRfM1ZGU0hOakZ0V2I2VzdDWE9qSzA4Z09jQzMwam1yQ2RmTko1VFdwZjlMUndaOWRMYUVpUkV1WVctcnEzUQ?oc=5",
+      "date": "2026-07-13",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
       "headline": "5 Under the Radar AI Chip Stocks Powering the Data Center Boom - 24/7 Wall St.",
       "source": "24/7 Wall St.",
       "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxPU2RjTTA4R3N0ZlRkNDFZYjJ3QTROZ0FBR0VQV3NrVC1hdWdMRUpDZVBfSFZ2WmxqNlpqRkw0X1RnUWFwaUttZWdlZmZPaGdhWHVsbXpscHBMRmFCYXpkRzRHYktwdXBiN196Nm9uekNzOTFoSGVSNVpwX0RFSjR3ejFHNThBNHQ0Y0dqdzNxXzJ5TkJPMllhREU2dW8xWnVTdkxaZXJYVTFvQQ?oc=5",
       "date": "2026-07-11",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Nvidia and Firmus to build 170,000-GPU data center in Indonesia - Yahoo Finance",
+      "source": "Yahoo Finance",
+      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxOMmRhZHlOai1sTjd3X2Y2RlplNjg4YWZuZkFYSjlEUGxValRDNjBYLV95cjBnYjZtRmN3WG5BMHFkYklhZmZwY0NHTlVoVldMRXRSTDFialhUbThKbmRKd2h2UDlrSVhtYUxiM3lSY2JqUWNrZWQ5Tk9DaW84UU52NFhnX1UtRDJGb1JObXNsRURRcEl1c1E?oc=5",
+      "date": "2026-06-29",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4876,64 +4939,37 @@
       "impact": "medium"
     },
     {
-      "headline": "No One Can Afford to Buy Hardware, So Nvidia Made Trading Cards to Reminisce About the Good Times - Gizmodo",
-      "source": "Gizmodo",
-      "url": "https://news.google.com/rss/articles/CBMixgFBVV95cUxQdkVmUTh4RE9Lc1lKUVZCNlRvMkswSzhsNEVOX0c0ekZBMXpCY205azhHZ1lwMnBvLTFmRVk2X0ctVzgxMjJGRl9rNkRmZy1xODFhUG1NV1pOc1NQZjAtN3E2bGdrMlpIcUhLa2Y1MTlyVWhMT25fX3NxLXE2MEc3bTlEUGZEeVZfTE5tNDFPclNLcVpNVWxQX3JDU2JLemFYMnFjZVZ4Vm1yLWc5OXhpSXNNa3ZEQjhOQzk5RURja2JDbUFWNmc?oc=5",
-      "date": "2026-07-09",
+      "headline": "Kazakhstan secures $10B for AI Data Center Valley backed by NVIDIA - trend.az",
+      "source": "trend.az",
+      "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE44d2ZHdTBMVF9LX2VPVDZNNElOeFE5QldKQzBLRFhNZjBKRHNuSVN4djRMMEZUUHN6SmJSTGROQ3NMUzN2bm9QUEptV1NwYngzNlpRbA?oc=5",
+      "date": "2026-07-13",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "Nvidia acts as backstop for customer GPUs in return for cut of cloud revenue - Data Center Dynamics",
-      "source": "Data Center Dynamics",
-      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOb1Y2MDZrY2Q4bzU5ZEQ5b1hlQXAxTlB3dWVLVkNUMUwtRXVXbjdGSEtaMUIyN21HTnZJLXZ3RW5YV3FxUGlmUG40bm5Nc1ZVbU1rSzJVa1R1cTBPZjdEall5SFdHRHZtNFgyU19sa3BlZjZVTUFrVXk3YzBndHVaWnk5czlGVmhyZTZ5WjlSLWxOYkNSU0NGR0hqM1lwVDVzbU9kVFRKSkdXVGx2blFEX3BRbHVGUjYzYjdOdA?oc=5",
-      "date": "2026-07-02",
+      "headline": "Nvidia's Biggest Risk Isn't Custom AI Chips From Broadcom or AMD -- It's Something That's Hidden in Plain Sight - AOL.com",
+      "source": "AOL.com",
+      "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPd0tXM1RuSGZNSVg0enQ5R3JPdmEyTGNYOTNIaERNSTB0UWc1bEw5QmdJdk9ZVlpmV3VVa25Ub0ZUZFZHVl9QWlJvTldITGtvaGRGTGJ6enpyZEZIeU03NC1pdEtlRzNiQXlIWlcxTnR0Y0ZhcS1qaWdjMS1ZWjMyQVlR?oc=5",
+      "date": "2026-07-13",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "Singapore cops seize $42 million mansion, freeze $772k bank account of suspected Nvidia AI GPU smugglers \u2014 individuals alleged to have illegally exported data center servers to China charged with fraud, money laundering - Tom's Hardware",
-      "source": "Tom's Hardware",
-      "url": "https://news.google.com/rss/articles/CBMi-gJBVV95cUxNTjVULS1McE9heWpyZnUwUWwyd19ya1Y2alh6T1haamRSRk93WDVSNXg2aEotT2FTTWxSRkdWN2dtc1ZDM0pnT1JIVk9DRXJLNm9YQU4xaDFvdXpYRGxoQVVSZGdaWWZseUNEYlJHZFhBWGtJbXRVaW1qenhIZGRQNUxPM0pXX1BzNVZvSWwzOWFmZW9Qa3p4MGE4YnBRZ3ZwU1owRUstTGlCU2hkY3pHLUFiTEszb05Kc19YcnZDVFoyeEphdTREaWtBbjZaWjgzWnh1cHZqNXZlY2pwVDhHaUtWTXdpOWdlaGZmUVlfTUk4c3FuWkFsdkNFMWZnNUFMTXAzM1Q4a1RuUjdJTUZqcFgzM0Nma2JBZW45RXBvRXRTdGxsV2lWVHpWNTQ3TklKRlA3c3RVeFpRTUNELTVpSG41ajRzdnlTa3RMcVVIYmR4M1U4QmdtWFJJenltQW4xX1BfT0l0b2VTYl9lT2pXRDdzTVNyU3c3VWc?oc=5",
-      "date": "2026-07-02",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "The Race to Rethink Data Centers for AI\u2019s Power Surge - Bloomberg.com",
-      "source": "Bloomberg.com",
-      "url": "https://news.google.com/rss/articles/CBMickFVX3lxTE5ycWtOUVVzejd3bWFlZWI2MWI0SEo1SVh5R3V0Qzk4Z0hfTGRxRWo5SlhYSkFTM2FWVWtyOWphOEVaZHZta0d5YlUxcmVLNm96bFEzbDA1bWhQOHUySy13WktvZ3o2a1k0UTd6MkdURjV4UQ?oc=5",
-      "date": "2026-06-01",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Firmus Plans 360MW Nvidia AI Data Center in Indonesia - TechRepublic",
-      "source": "TechRepublic",
-      "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxPYW91TVUxOUVncE54MHFTYUxVeDBHaVBQT0pHSEJTNnRaR0JRWlBtMVduWndKdWUwWENyM29RSENmZV9uMVVYWk5xRm9VXzRCd1c2RWlWN3ZQNGpPcWhfTlFpX1NfV3p2Q1V1bkQ3dDkzSlNqc3NRQmJMQzlrQ2l1M3AxdVdzTlU2c3F5enlXYw?oc=5",
-      "date": "2026-06-30",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Meta expands Nvidia deal to use millions of AI chips in data center build-out, including standalone CPUs - CNBC",
-      "source": "CNBC",
-      "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTFBiLXZYX1ZjaTRaenZCcmpJT0FZTksxVFpNOWhYOXBHenZDUjlKLXBoTDJuOHluYzRiSWx0YVV6Slljb3NBem9CLVlJUHlTR1FIQk15ODZGRm4yaXduckZ6YW9DNTJoYkZveDFwS3Y1amFOTkRiSi1lNDYxZlQwMFXSAYQBQVVfeXFMTVBJeVBlbFhKZDhpWE56QTZ4VDFJYjlrSk50eFgtQzViYUduMHRZRmJ2amNRdjZDeVFmUnpfNE54LUhqR2ZTSWR0eXBDcE13Q2wxekszejRCTFlKSHRZWDlWZDgzb0pqZjE4QTdrd0FhZDhQSTNHWDZDMlQtNUYya1RTVkJO?oc=5",
-      "date": "2026-02-17",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Nvidia unveils AI computing module for space-based data centers - SpaceNews",
-      "source": "SpaceNews",
-      "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxPTVhuOHhjUjJCdjF1blhpV1ZidnQ3ZGZEbFZlOXZOQmpHaGZzd3dmQ3RrWWt3Q2NXR0g2b2JlRzh2d0lvNUNLM3BQc0d0ajdPRTEzOERRYjROTGNzRTdId1dFU3c5ZmIwa3ZxWXBSbmMtRHkyam5Sa1BiaVloUHBRWmxDU2tYdmJXR21UYWVObw?oc=5",
+      "headline": "800 VDC Architecture for AI Data Centers - NVIDIA",
+      "source": "NVIDIA",
+      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxNbjN0NTNGSmlNLVhudEF5SUhfN3AydVJtaHRaejRlMGpGQzhiU3d3NFlNWkEwN0xoeVRNYlNBRjBjQlJ2RGhKLUVyR0ZGVEhIemVjSGFNRTBIR200RENBZVBrbm9MUkVqZWxrUEZ2Y19YZ3pramo5Qm4taFNlVDZuWg?oc=5",
       "date": "2026-03-16",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Broadcom and Marvell Are Bigger Threats to Nvidia Than You Know - AOL.com",
+      "source": "AOL.com",
+      "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPNVMtR0thVXVJMnE4UTc5c3dJdG9MaTliR1ZDVUV1M0kxTU10Zm9DVzlURXdVVDNEcGo0NXhWdWtxR2s5SktET1VHd3ZBSFNuNGlqckZZTmw5RVFlTGdzWGRpQ3d0RDNoMGh1cmpQYnVfVFV5NWJndGZvWS1uSU5OUzlja2x0dHJzRHc?oc=5",
+      "date": "2026-07-13",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4948,46 +4984,10 @@
       "impact": "medium"
     },
     {
-      "headline": "NVIDIA Tests Recurring AI Data Center Model With Australian GPU Expansion - Yahoo Finance",
-      "source": "Yahoo Finance",
-      "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNaXFmY0dGMGdESGs5aTJJRDBPdUctNVBzeno4NkstR09BWndqV1Jaa3Q5YTZQQ2JsVDlzYVVnYUdVamdnbGMxemlucVo1QzV1MHc4cGxrVU1UM05pbTI1amNrQTdlNzc5MTlWc3ZWQzA1M0VXVHhBeWhlaFRFc1hQN0x0QWdBSTFDWUs4YjRpUGVJcVFRRXkwVHI4Yw?oc=5",
-      "date": "2026-06-13",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Nvidia's Latest AI Breakthrough May Not Be a Chip - And It Could Fuel the Next Data Center Boom - 24/7 Wall St.",
-      "source": "24/7 Wall St.",
-      "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxNQkR5RVNmczVfcGpIa2RzNGdqVFJrOENQcTg1b1BYS0doUF9NdElnSTk4eDFnRkFZTTVHYXpNUUFhblVLUWFka0tZMzN2VXdTRHlGQU5PUk85MlAwRU5uMnhBbGNLaE1tSWRWbUFBZnVfUENRUnNTeUFxa3F1Zm9zSTZBaDlzRHd6NGh3U1FhQ09RTWxBQVUxU3VqbDE2VEpmcDYzajVHVDduNHhPZklzOEFpNTVVeEx4X1Z1ZXd1UmlQdHVhUjREcGx3a3RqdzEzTkE?oc=5",
-      "date": "2026-06-23",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
       "headline": "SK Telecom and NVIDIA Build AI Infrastructure to Power Korea\u2019s AI Innovation - NVIDIA Newsroom",
       "source": "NVIDIA Newsroom",
       "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5FU2dZTUVESDFvTkJxbEJuWDdIS1c4SU9uaDAxLWN2c2pvVnNnNlRWM0pqZTRyTHJjREtsUEJ1TFBvcWdMdVMyejI1VWtoa0VaZHRWcVJzdUxuNXp2b095S3NjaDdmemZITVJxNXZGYWQ?oc=5",
       "date": "2026-06-07",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "AI Data Center Graphics Processing Units (GPUs) Market Report 2026: $32.3 Bn Opportunities, Trends, Competitive Landscape, Strategies, and Forecasts, 2020-2025, 2025-2030F, 2035F - Yahoo Finance",
-      "source": "Yahoo Finance",
-      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxOQkI2MjZDNkNRaTNRQ3plUmhiUkVYVF9TdWdaU1M4N1g3bl8wUXZySUpuY3I4WDVXc2JzTTQtVVZCeXozRzBtTFVWcUNPd3g4NkhXNkFraE9SR3RBOE1mRG83eWZmalpidTJNMUdwaTUxZGQxSWNpVkwxYzlOVnA4azJ4ZklhdXZ3OHNfUXltTERqRG5xcldEdUNXSG1nTWtrd1UyMUpB?oc=5",
-      "date": "2026-04-14",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "NVIDIA and IREN Announce Strategic Partnership to Accelerate Deployment of up to 5 Gigawatts of AI Infrastructure - NVIDIA Newsroom",
-      "source": "NVIDIA Newsroom",
-      "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxOWUlUT1F5eFJRbjBvYVA2bzhUV3NUSExnMTNFVDVHZWlISzR2SV9mcXQzN2ZmRzJPcE84Z2xXVjVRTzhzd21ubkFuX0UxdHhPeG96dE5McTJJcklMR2VWWnNYV0FlZHRsUkZwNlg2NERiaTRGbFQ3WWs4V1dPbjdzdVNBcmlXWVVyczNuS2hwcTRSZEJnS0hVYXp5amZ3R0habHc3bktzeW9aMC1hY3RKUnBibVZlS2JaZTNnQmVjT3lkbnNjUlB0SnE4SGtaRm9Bd1I3REY1SnRMRGNmLTV4bWtn?oc=5",
-      "date": "2026-05-07",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -11752,25 +11752,25 @@
       }
     }
   },
-  "last_updated": "2026-07-13T10:15:24.867083+00:00",
+  "last_updated": "2026-07-14T07:58:57.757017+00:00",
   "stocks": {
     "NVDA": {
       "ticker": "NVDA",
-      "current_price": 210.96,
-      "previous_close": 164.1,
+      "current_price": 203.53,
+      "previous_close": 164.92,
       "52_week_high": 236.54,
       "52_week_low": 162.02,
-      "ytd_change_pct": 11.71,
-      "last_updated": "2026-07-13T10:15:35.980792+00:00"
+      "ytd_change_pct": 7.77,
+      "last_updated": "2026-07-14T07:58:57.852854+00:00"
     },
     "AMD": {
       "ticker": "AMD",
-      "current_price": 557.89,
-      "previous_close": 144.16,
+      "current_price": 534.39,
+      "previous_close": 146.42,
       "52_week_high": 584.73,
-      "52_week_low": 141.6,
-      "ytd_change_pct": 149.65,
-      "last_updated": "2026-07-13T10:15:36.098989+00:00"
+      "52_week_low": 141.9,
+      "ytd_change_pct": 139.13,
+      "last_updated": "2026-07-14T07:58:57.909546+00:00"
     }
   }
 }
