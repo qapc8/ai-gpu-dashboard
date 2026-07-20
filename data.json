@@ -3230,7 +3230,7 @@
       "52w_low": 164.07,
       "ytd_pct": 7.39,
       "52w_range": "$164.07-$236.54",
-      "last_updated": "2026-07-19T08:11:59.278872+00:00"
+      "last_updated": "2026-07-20T08:53:06.883829+00:00"
     },
     "amd_stock": {
       "ticker": "AMD",
@@ -3242,7 +3242,7 @@
       "52w_low": 149.22,
       "ytd_pct": 121.85,
       "52w_range": "$149.22-$584.73",
-      "last_updated": "2026-07-19T08:11:59.370565+00:00"
+      "last_updated": "2026-07-20T08:53:07.058990+00:00"
     },
     "gpu_market_size_bn": {
       "2023": 52.4,
@@ -4822,6 +4822,15 @@
       "impact": "medium"
     },
     {
+      "headline": "NVIDIA's Rosa AI CPU Eyes TSMC A16, Back-Side Power for 2028 Data Center Launch - Indiatimes",
+      "source": "Indiatimes",
+      "url": "https://news.google.com/rss/articles/CBMi-wFBVV95cUxPTk50Nkp4THdUektXMGl2MHcyYnZENHJFckRWd1JuODExWmtYMnJiUWJpa3V6bEVSdFNxR29GVWtNSklIZTFLN2tiMVZCU24wOWZ0bW5UVGVFZURjV2NXZFFYZkhWYW1ocGwtWDB3cllBWVNLVVZjR0llMzV0bTBNZUdZWU5VRk1DczdBWTdqNWhHYVp3U3BTOWg2ZTlIYndzd2dSZ1JEek8xcUFmaDRTLXFfX3g5alNvSDVDeTB4UHhwRjUwZHRBTDQyc05CeDEyWHRPUkYyTFhrcW5rSk9CTlFtM0ZFNEFlaVhsd09iQTFuWjM5WFlZTi0wRQ?oc=5",
+      "date": "2026-07-19",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
       "headline": "AMD Went From AI Afterthought to Nvidia Equal in Just 3 Years. Can the Momentum Continue? - 24/7 Wall St.",
       "source": "24/7 Wall St.",
       "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxQbHhlNTNmZi04bG95MlU4OU90U0E3RjlJSkFudkk1RTdZekhid3hEcmxxMTVTM3l5UXBNSWxvdDZzNUJfeW53N2dUaTZwUzZ6VzV3T09hUFVBTW9fVmxhT2l1anVCWTVJWUgzZDdZYXV6ZlBSQWZaUWxGNDg5NFRrU0pPZ0VCT09qY25MMUdfa0QtdE4ycWd6RjZaNUlncFBwQW1PQkZtNmJIRGJLTTk5blRabGlqOHdXZl9nS3lzZ1R1SllsLTRicHBNcw?oc=5",
@@ -4840,15 +4849,6 @@
       "impact": "medium"
     },
     {
-      "headline": "Utho to acquire 10000 nvidia gpus to boost ai capabilities in india - Indiatimes",
-      "source": "Indiatimes",
-      "url": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxQVjBmOURVOU8zc0JseDlkWjRWbDhSRFdrNzVrQ0UtcFh2bmpSZ2xJZkQ1NEFyRjJYZGs1NXlFY0xoS01LX1N1TjdaRV9VekdERW9yZ3ZUSGJEZU83U1A5Ty1ZMU1IcHE1bzhfNjBra1NZc2dCdWQ5R3FlWHhNRV9iLVBnLWFJcHRUb3R4YW1BeTctZ1c5Y2lUd0h6N3BOT19PclVxcmdoak9jeVlvVG1NbVpqbVp4aE9Ebmx4ajRHZERVSTRFY1RBNjViYWY2NURHaHZpVmxqT1VEVDdDY0k0ZGV1Z2F2cXVaRzlyMEhR?oc=5",
-      "date": "2026-07-17",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
       "headline": "Nvidia Extends Its Grip On The AI Datacenter Outwards - The Next Platform",
       "source": "The Next Platform",
       "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxNSjFCa1Fmc2swMGk1TThSN184M0dKSEw2UWJDY3gtSlJaanJIVkI1Vk1rb2RjTDlFUE0zNk9acHN4QldZbXB2Si1fQmRXZUhITWRDRXRhVnNDeXVnTFZNUnRuZEN4SWo1UmlrMFB6YUsyODB1b2hsV25ld2lBUWprUHliUE1vYTREWXVyZ0FjMERqSEs5S2x6aWtrejMxRjRTUm5MZUxqYw?oc=5",
@@ -4858,18 +4858,9 @@
       "impact": "medium"
     },
     {
-      "headline": "Kazakhstan secures $10B for AI Data Center Valley backed by NVIDIA - trend.az",
-      "source": "trend.az",
-      "url": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE1IX2FwYXo1eEJNWjBMUXNDeHBLcWE1MmhodUJva3RialliMVdQX2dBSV9TdEVWUnBKUUdUejJrQWQ1clhRa1ZoZnVwT0lQYi1KVUp0eQ?oc=5",
-      "date": "2026-07-19",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Nvidia and Firmus to build 170,000-GPU data center in Indonesia - Yahoo Finance",
-      "source": "Yahoo Finance",
-      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxOMmRhZHlOai1sTjd3X2Y2RlplNjg4YWZuZkFYSjlEUGxValRDNjBYLV95cjBnYjZtRmN3WG5BMHFkYklhZmZwY0NHTlVoVldMRXRSTDFialhUbThKbmRKd2h2UDlrSVhtYUxiM3lSY2JqUWNrZWQ5Tk9DaW84UU52NFhnX1UtRDJGb1JObXNsRURRcEl1c1E?oc=5",
+      "headline": "Nvidia and Australian startup Firmus are building a 170,000-GPU data center in Indonesia - qz.com",
+      "source": "qz.com",
+      "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTFBLaTJza1UtNlc5Z2g5d0hKMUZCb2h5TFM4OTJmUTVoWXlPbXA4cERTekRzSTlkdjJQRmEwLU1fQzA3bWRzYW9ReHUtejF0TU1JUmNLNHhkenNzeThDd00yLXB1SnF2U1dJWkhFSkhzRFk?oc=5",
       "date": "2026-06-29",
       "category": "news",
       "sentiment": "neutral",
@@ -4912,10 +4903,10 @@
       "impact": "medium"
     },
     {
-      "headline": "Liquid Cooled AI Data Center: Why It's Essential for NVIDIA Vera Rubin - Nasscom",
-      "source": "Nasscom",
-      "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxOZ0sxc2dQUnVrbFFtamxqWGg1QUdmdFg1QTl3UGdiSDNZM3hhb3ZhVXA5cDI0TUxCaXMxZExCeXNqX0tlN08xTTd6UG9TN3JoTFJTM0dySmlBeVdReHpTX0c0cWl1ck5VQ3R3d3hpeURmQXdaZmlXMGExLXdXdDdUYzVuSTdXWEp5Yk1nRDNnQ2pCc05GazRLY1RGOWp0YWhiYl9MTlhZTDZ0VnJ3QlBSRHNYS0RMLUdP?oc=5",
-      "date": "2026-07-17",
+      "headline": "3 Great Stocks to Buy to Benefit From the Next Generation of AI Data Centers Led by Nvidia - Yahoo Finance",
+      "source": "Yahoo Finance",
+      "url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxPcGxNQTRocE9NM25PcFJ0ejJ4QmdBZTZybEZ3MmJ1N0VMc0F4aXhhX3hJUXFNdG5aUV9pSS1ROV9BMlNYZ1Z5OGJmWjF1OV94dGJSY3VhYkZMZGNkenJaaW40c0d4OUxBcjBTTGNMZDFNWV81LW9ya0t0d3pnWUlBSjJZYUtsczJsUWYxWWFvbVVZU05i?oc=5",
+      "date": "2026-06-26",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4939,6 +4930,15 @@
       "impact": "medium"
     },
     {
+      "headline": "Utho to acquire 10000 nvidia gpus to boost ai capabilities in india - Indiatimes",
+      "source": "Indiatimes",
+      "url": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxQVjBmOURVOU8zc0JseDlkWjRWbDhSRFdrNzVrQ0UtcFh2bmpSZ2xJZkQ1NEFyRjJYZGs1NXlFY0xoS01LX1N1TjdaRV9VekdERW9yZ3ZUSGJEZU83U1A5Ty1ZMU1IcHE1bzhfNjBra1NZc2dCdWQ5R3FlWHhNRV9iLVBnLWFJcHRUb3R4YW1BeTctZ1c5Y2lUd0h6N3BOT19PclVxcmdoak9jeVlvVG1NbVpqbVp4aE9Ebmx4ajRHZERVSTRFY1RBNjViYWY2NURHaHZpVmxqT1VEVDdDY0k0ZGV1Z2F2cXVaRzlyMEhR?oc=5",
+      "date": "2026-07-17",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
       "headline": "NVIDIA and LG Group Build an AI Factory to Advance Physical AI, Mobility and AI Infrastructure - NVIDIA Blog",
       "source": "NVIDIA Blog",
       "url": "https://news.google.com/rss/articles/CBMibkFVX3lxTE1WZWJQbW5PdHZoZmNCbExjaVVXX25PcVlWNWlEcmMwSU9YakFyNDRoVXNRTm1tZUdIeThxaEJjMmR2NHl5TnFHbHhla2ctWGVfQldZREsxWEVYNFZCSDFLbVlONEM5dVZvVzl3czBn?oc=5",
@@ -4948,10 +4948,10 @@
       "impact": "medium"
     },
     {
-      "headline": "AI Data Center Graphics Processing Units (GPUs) Market Report 2026: $32.3 Bn Opportunities, Trends, Competitive Landscape, Strategies, and Forecasts, 2020-2025, 2025-2030F, 2035F - Yahoo Finance",
+      "headline": "Qualcomm debuts line of AI data center chips and systems, increasing competition with Nvidia - Yahoo Finance",
       "source": "Yahoo Finance",
-      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxOQkI2MjZDNkNRaTNRQ3plUmhiUkVYVF9TdWdaU1M4N1g3bl8wUXZySUpuY3I4WDVXc2JzTTQtVVZCeXozRzBtTFVWcUNPd3g4NkhXNkFraE9SR3RBOE1mRG83eWZmalpidTJNMUdwaTUxZGQxSWNpVkwxYzlOVnA4azJ4ZklhdXZ3OHNfUXltTERqRG5xcldEdUNXSG1nTWtrd1UyMUpB?oc=5",
-      "date": "2026-04-14",
+      "url": "https://news.google.com/rss/articles/CBMi5gFBVV95cUxPODFGMmIwMnhuZ3A5dmxKV0pYRi1KTXdpdUxGcGFELVV5R0NkbHJsTUgtYjh4c0p4LVlpYU5GOEh2Tjc0TmtlWm4tYzIzdTJnUGdnaDVQeUxTVV9LMUhFSzdYQ1JObWhkTkNyZXk0Wmsya2RfQWZTU2ZPWkNxdkhuQlowaV9SekNrMVRYZzlyNzZtY2k4QXNlVzNkTzdJT0xaSlNoLU5JMG0yb3VXRXJOQzlWbXp5N2FnWVlSdVZ6Y1owYjlhMXZrN0g3aWZWRU03eDg4QlNodlE1WXc4TFpfaWxNTTlNQQ?oc=5",
+      "date": "2026-06-24",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4966,10 +4966,10 @@
       "impact": "medium"
     },
     {
-      "headline": "Qualcomm debuts line of AI data center chips and systems, increasing competition with Nvidia - Yahoo Finance",
+      "headline": "AI Data Center Graphics Processing Units (GPUs) Market Report 2026: $32.3 Bn Opportunities, Trends, Competitive Landscape, Strategies, and Forecasts, 2020-2025, 2025-2030F, 2035F - Yahoo Finance",
       "source": "Yahoo Finance",
-      "url": "https://news.google.com/rss/articles/CBMi5gFBVV95cUxPODFGMmIwMnhuZ3A5dmxKV0pYRi1KTXdpdUxGcGFELVV5R0NkbHJsTUgtYjh4c0p4LVlpYU5GOEh2Tjc0TmtlWm4tYzIzdTJnUGdnaDVQeUxTVV9LMUhFSzdYQ1JObWhkTkNyZXk0Wmsya2RfQWZTU2ZPWkNxdkhuQlowaV9SekNrMVRYZzlyNzZtY2k4QXNlVzNkTzdJT0xaSlNoLU5JMG0yb3VXRXJOQzlWbXp5N2FnWVlSdVZ6Y1owYjlhMXZrN0g3aWZWRU03eDg4QlNodlE1WXc4TFpfaWxNTTlNQQ?oc=5",
-      "date": "2026-06-24",
+      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxOQkI2MjZDNkNRaTNRQ3plUmhiUkVYVF9TdWdaU1M4N1g3bl8wUXZySUpuY3I4WDVXc2JzTTQtVVZCeXozRzBtTFVWcUNPd3g4NkhXNkFraE9SR3RBOE1mRG83eWZmalpidTJNMUdwaTUxZGQxSWNpVkwxYzlOVnA4azJ4ZklhdXZ3OHNfUXltTERqRG5xcldEdUNXSG1nTWtrd1UyMUpB?oc=5",
+      "date": "2026-04-14",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -11752,7 +11752,7 @@
       }
     }
   },
-  "last_updated": "2026-07-19T08:11:59.086243+00:00",
+  "last_updated": "2026-07-20T08:53:06.738226+00:00",
   "stocks": {
     "NVDA": {
       "ticker": "NVDA",
@@ -11761,7 +11761,7 @@
       "52_week_high": 236.54,
       "52_week_low": 164.07,
       "ytd_change_pct": 7.39,
-      "last_updated": "2026-07-19T08:11:59.278872+00:00"
+      "last_updated": "2026-07-20T08:53:06.883829+00:00"
     },
     "AMD": {
       "ticker": "AMD",
@@ -11770,7 +11770,7 @@
       "52_week_high": 584.73,
       "52_week_low": 149.22,
       "ytd_change_pct": 121.85,
-      "last_updated": "2026-07-19T08:11:59.370565+00:00"
+      "last_updated": "2026-07-20T08:53:07.058990+00:00"
     }
   }
 }
