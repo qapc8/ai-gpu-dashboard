@@ -3222,27 +3222,27 @@
   "indicators": {
     "nvidia_stock": {
       "ticker": "NVDA",
-      "current": 212.06,
+      "current": 208.76,
       "1m_change": 4.2,
       "3m_change": 12.8,
-      "ytd_change": 12.29,
+      "ytd_change": 10.54,
       "52w_high": 236.54,
       "52w_low": 164.07,
-      "ytd_pct": 12.29,
+      "ytd_pct": 10.54,
       "52w_range": "$164.07-$236.54",
-      "last_updated": "2026-07-23T08:25:10.413083+00:00"
+      "last_updated": "2026-07-24T08:23:18.991987+00:00"
     },
     "amd_stock": {
       "ticker": "AMD",
-      "current": 552.33,
+      "current": 539.69,
       "1m_change": -2.1,
       "3m_change": 5.3,
-      "ytd_change": 147.16,
+      "ytd_change": 141.5,
       "52w_high": 584.73,
       "52w_low": 149.22,
-      "ytd_pct": 147.16,
+      "ytd_pct": 141.5,
       "52w_range": "$149.22-$584.73",
-      "last_updated": "2026-07-23T08:25:10.556861+00:00"
+      "last_updated": "2026-07-24T08:23:19.058046+00:00"
     },
     "gpu_market_size_bn": {
       "2023": 52.4,
@@ -3362,10 +3362,10 @@
         "note": "Consumer stock available"
       }
     },
-    "nvda_price": 212.06,
-    "nvda_ytd_change": 12.29,
-    "amd_price": 552.33,
-    "amd_ytd_change": 147.16
+    "nvda_price": 208.76,
+    "nvda_ytd_change": 10.54,
+    "amd_price": 539.69,
+    "amd_ytd_change": 141.5
   },
   "regional": {
     "North America": {
@@ -4822,28 +4822,10 @@
       "impact": "medium"
     },
     {
-      "headline": "SambaNova targets AI inference boom with chips built for existing data centers - Fierce Network",
-      "source": "Fierce Network",
-      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxPdFVwS2JROExhb2EyVFNEUEJhdHZ5RkdGa09VaUdITk1sb3JzZllMV2hIUmczN3RDSmxJUjk4dzc0OUdPN2laUUJrZV9fMVNCdTVJd2pLOU9NcmdRSFk5RUFyR1FMWThFTllZV2xnSnFOd3pVM0JPWElBcUJsb2Z3NDE0VzJvSkpjS0M4RXlvdmxEdlRydEpZdFJMQXl0cU1HOFhPY25Hc25NQQ?oc=5",
-      "date": "2026-07-22",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Inside NVIDIA Rubin GPU Architecture: Powering the Era of Agentic AI - NVIDIA Developer",
+      "headline": "NVIDIA NVLink: The Scale-Up Network for AI Factories | NVIDIA Technical Blog - NVIDIA Developer",
       "source": "NVIDIA Developer",
-      "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxOSkJ3ZzhTLXhVZ0JhWGxSdGpsS0h0S0ItTmNKV1hCa0UyYkNXZm1pZ2dTaHNWeEdfWXpyV1ZxNzBOTnIyQXlWcFFkZFRpMFRUaFlFRmpMcjdqSC11TE1qdXFqbV9TSWQtQ0owNEp3SXA5ZU5GV25rUGxwNm9TZ1lTTy1HOEVxemFaY0gybjhYU01YRzUtSlV6Y0UyT0laT0FGTTczaA?oc=5",
-      "date": "2026-07-21",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Z.ai powers up a 1-gigawatt AI data center built entirely on Chinese chips, report claims \u2014 GLM developer now runs multiple 10,000-chip clusters with zero Nvidia silicon - Tom's Hardware",
-      "source": "Tom's Hardware",
-      "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxQRDNCTFMwQzB6VjdfRHB1TUhneXF0dFROTkJvWXN4ei15ZW0xdFBQVHd1UnFiWHRvVzZEOEVBU3lCRE84UXVlamFmNFU2MXY1OGVPZFhXRU56V28tcUJjZERqVzA5SFlVMGdkZGlGeHJxLXZaVHY5aVh2TzRNOS1MMkFmS1diZ291cTlTajhPbmtNdmozYXB3NzZRR2Y0Ujl4OTA2Yk8wZnJiaDZHeU4xNFppQUlzUkxRWFZHX2lIRU5yY3B1S3kxVTBCSTg?oc=5",
-      "date": "2026-07-21",
+      "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxPZnY2TGZfZ0R1ZWhudEFkblFtR05sdVYzTGFCVFFOd0Q4T3VlbXQtTUZWNUozcHRrcElUa1VXdU5zVEt0OXE1Z3lQdXBRWXF3dHUxZ3N4U0dPek9tNS0zVDc1T05nUW5JcmhIYUJFVGZ0NnM0SWw3VXd6MjVkS1FxWjFkdDB5S3MzSHVlUFJkQQ?oc=5",
+      "date": "2026-07-20",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4858,10 +4840,73 @@
       "impact": "medium"
     },
     {
+      "headline": "AMD Fires Back at Nvidia with Helios AI System, Epyc CPUs - Data Center Knowledge",
+      "source": "Data Center Knowledge",
+      "url": "https://news.google.com/rss/articles/CBMirwFBVV95cUxQX3U0WTRZRHNEUEd6N3lRaVl2SndmNmpRZFcwUmVjYl9oWlNCdllWLXVvMkRRUE1ZUTVOTHNWc19fZHktZUZWRkZQYW85ZUJCVEVQa2Q3NDZaWVRydlpjRXllV3RDcXpFcFQzeEpFdWs2S0NaaXdjeUZLMEVOS3BhaE1sVG5KblhfaXBMQ0w2NnZQZWxPeUNUXzFvQ3B6MFpJNWM1aEtYSmlaWmc0eHJn?oc=5",
+      "date": "2026-07-23",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "CM Global Services Unveils Project Santos 50-Megawatt AI Data Center Campus - The Fast Mode",
+      "source": "The Fast Mode",
+      "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxNU1pObWZMZDJ5TDgtWm5icTFLTjZSSFZ1eXBhSHhBaHJUbGtaZHNLaGNnSWZFNHJyVFJRWVVHTFpiUE9ZQVZWTTkyYjZiSlFjeS1Tdl9rZ1FReUxXaFloSmM2SGRfWDkwWkJWcGo4SkllTlYyZ21fSk8wVzZkY3JxVTFodURlUU1jX0gwWEZwWHFfWEUyUE5TODhjNGpwang1TktpM3NhSlJFWEJTZEF5Wnd1TXZ5ODhtTXR0ejcwS3VNVXRmMEZBWTNR?oc=5",
+      "date": "2026-07-24",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Z.ai powers up a 1-gigawatt AI data center built entirely on Chinese chips, report claims \u2014 GLM developer now runs multiple 10,000-chip clusters with zero Nvidia silicon - Tom's Hardware",
+      "source": "Tom's Hardware",
+      "url": "https://news.google.com/rss/articles/CBMizAFBVV95cUxQRDNCTFMwQzB6VjdfRHB1TUhneXF0dFROTkJvWXN4ei15ZW0xdFBQVHd1UnFiWHRvVzZEOEVBU3lCRE84UXVlamFmNFU2MXY1OGVPZFhXRU56V28tcUJjZERqVzA5SFlVMGdkZGlGeHJxLXZaVHY5aVh2TzRNOS1MMkFmS1diZ291cTlTajhPbmtNdmozYXB3NzZRR2Y0Ujl4OTA2Yk8wZnJiaDZHeU4xNFppQUlzUkxRWFZHX2lIRU5yY3B1S3kxVTBCSTg?oc=5",
+      "date": "2026-07-21",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "AMD launches Helios rack system and MI450 GPUs to rival Nvidia - qz.com",
+      "source": "qz.com",
+      "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTE4xWmVUajYyNzZnSlA4TTNCUjNZb2tjU1QxWXJHVjdzanVSTnp4NDNFaG9LZlRObFl3cUo4cjBUaldReHE1ZHRkbWI3aVRSd1ZsNDBrLUY1LW00MWZwWWlhclBKandzZUJLM1ZYM2NpcHQ5YmZ6U3ZB?oc=5",
+      "date": "2026-07-23",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "SambaNova targets AI inference boom with chips built for existing data centers - Fierce Network",
+      "source": "Fierce Network",
+      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxPdFVwS2JROExhb2EyVFNEUEJhdHZ5RkdGa09VaUdITk1sb3JzZllMV2hIUmczN3RDSmxJUjk4dzc0OUdPN2laUUJrZV9fMVNCdTVJd2pLOU9NcmdRSFk5RUFyR1FMWThFTllZV2xnSnFOd3pVM0JPWElBcUJsb2Z3NDE0VzJvSkpjS0M4RXlvdmxEdlRydEpZdFJMQXl0cU1HOFhPY25Hc25NQQ?oc=5",
+      "date": "2026-07-22",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Nvidia has a new way to sell more AI chips: help customers buy them - Business Insider",
+      "source": "Business Insider",
+      "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxON1lTal9JdTNrX0czWDVzVDhJSzZyYm1lVWQ4bngtcEhSRjRvdWhldTN2OHZzNmRwM2JrWFhXeWZnR1M5RkdvcnpDX2ROZFVlYjlOODk5NXZNWUFFMXUwSlZyajZocmM0S0VFWGpyZS0ycE5SRC1rQ0hkTnRXTU90T1Q5b3dEYk5fa1hNOTZ2WlFIRWU1SXRPbXBrMUR1c0lHaEU4OTFraGlUaTQ?oc=5",
+      "date": "2026-07-22",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
       "headline": "Who\u2019s afraid of the big, bad GPU? - The Verge",
       "source": "The Verge",
       "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxNQk05cHdOOVZnZlIzdDVTT081eDZzb0pRTXFlS2tGVUZHZGJSSUhJOHFGclJuV00yQ2M4TDRfSk9SVUdKRi1WMXhXYW5zZF9pcU9jbW1jUFNYRlBRTkF0RGF0TmJFV0ZJdVgwQnFRMVRaUGstNEVjeU80WTB0NXNBa0YzS1QtNEhiNXVB?oc=5",
       "date": "2026-07-21",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Cerebras Systems' AI Chip 58 Times Larger, 15 Times Faster Than NVIDIA GPUs - \uc870\uc120\uc77c\ubcf4",
+      "source": "\uc870\uc120\uc77c\ubcf4",
+      "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxNaTVRc1cwcjMyTW1PY1ZOZ1VvMm85a3Jid0JuNk5QWmYtUGVyZEFZdGdqRWdiYmNpWTlqNTA0RkxLYUFDYkRPdjBuTkZwbUFlQVhvSVRaUUR1YS1sWnUxT1RIV0ZudUhuVk8zd0w5QW5ET0QyN3BZY2VDTWpleENHT1hJOTFSOGVo?oc=5",
+      "date": "2026-07-23",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4876,19 +4921,19 @@
       "impact": "medium"
     },
     {
-      "headline": "Xiilab Joins KDCEA to Accelerate AI Data Center Business - thelec.net",
-      "source": "thelec.net",
-      "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE9lODJXNGNlVXJTYV9pTXFQMS1ubG8weXZzM3M2UHdOTU1XeXRSdElBbm9pbFhtbko5N1d3R3JYUXcxZmJXcGtkZmlDTzlHN2VOWkJfZzNpa0FteV9vRGNpUWdaWHlzaEE?oc=5",
-      "date": "2026-07-22",
+      "headline": "HBM\u2019s & DRAM\u2019s Importance Is Waning; Here\u2019s The Silent Upgrade AI Giants Are Racing To Buy Before the Next Big Wave Hits - Wccftech",
+      "source": "Wccftech",
+      "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPeGdyc2daN2hFVjRMbE5uTFVDcDVrMEtpaVZQZjN1aVdpVDNubHpPa0hDd0xzY2dKUmk0WDBuY1dWYU1pc0pncEx3V3NxNklXZlFpTzNJU256akU4TGpmSEF5WDV0Z054UFhvNWI5UkFzQkphY3ZvRWtmOEpQM25ZaVZOYjFBNXZWMGZBdWRfUjlZVmtwRndiRdIBngFBVV95cUxPZG9zTHRFN3Y0aFladXZtLVhZVUlrc1lsdjRaWWpfdldGS19tdl9oVHh5cGlYY3VGRXZMQ3NVOWRSLVVYZGlFdHo1ZHp3SUo4bnAtalVRbV8zOXVyamhwTGNXODBVS0V3WWZUTnFVRndON2NETmpnMkc1OWMtejJraDV0MGNSSjlsNUhWZXFqbWZpSm54ZW5oaUhSaURpZw?oc=5",
+      "date": "2026-07-23",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "NVIDIA Rubin GPUs Bring 10x Increase in Agentic AI Performance Versus Blackwell as Its Architecture Gets Fully Unpacked, Featuring 336 billion Transistors - Wccftech",
-      "source": "Wccftech",
-      "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE1jNVV1dXRkR3ZoTTNjeWxvSWNIcjcyMGMwUUZndTJicVh2Q3pzNnE5OWRxWFNycTVrdTJPcm5nTi0zck1TTkJOeTR2UURxem81UmFIOHRsRnJYdFhRTWdjUdIBZkFVX3lxTFA0VDJ3empFdV9UcmZ0MG01SVpQSGFuaWFKMlNLeHJlS2E1TDU0c21oaXg3NXVWTGRfVG5EcmVsb1FhVWc3Mi1pSHFMakNPcV9JelJSUzVET0YtaEpNLWx1VHh3NWR3dw?oc=5",
-      "date": "2026-07-21",
+      "headline": "Cerebras Shakes Up AI Chip Market with a Processor 58 Times Larger and 15 Times Faster Than Nvidia's GPU - finance.biggo.com",
+      "source": "finance.biggo.com",
+      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFBpMDc5d2VrQmJYOXA5Mm9senFBeWpWc1AtcjA4Zm9PTEtlRllwcm1SNmFrX2xqOVBzWERYeW5Eb2NkRTh3QjhjZ2lDQi0tdmdsdXl2LUk4c0t5SFpGUDZsSEVfeHBLNEM5UFJaM2htYnFHcm5WMEE?oc=5",
+      "date": "2026-07-23",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4903,19 +4948,19 @@
       "impact": "medium"
     },
     {
-      "headline": "Nvidia and Firmus to build 170,000-GPU data center in Indonesia - Yahoo Finance",
-      "source": "Yahoo Finance",
-      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxOMmRhZHlOai1sTjd3X2Y2RlplNjg4YWZuZkFYSjlEUGxValRDNjBYLV95cjBnYjZtRmN3WG5BMHFkYklhZmZwY0NHTlVoVldMRXRSTDFialhUbThKbmRKd2h2UDlrSVhtYUxiM3lSY2JqUWNrZWQ5Tk9DaW84UU52NFhnX1UtRDJGb1JObXNsRURRcEl1c1E?oc=5",
-      "date": "2026-06-29",
+      "headline": "Inside NVIDIA Rubin GPU Architecture: Powering the Era of Agentic AI - NVIDIA Developer",
+      "source": "NVIDIA Developer",
+      "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxOSkJ3ZzhTLXhVZ0JhWGxSdGpsS0h0S0ItTmNKV1hCa0UyYkNXZm1pZ2dTaHNWeEdfWXpyV1ZxNzBOTnIyQXlWcFFkZFRpMFRUaFlFRmpMcjdqSC11TE1qdXFqbV9TSWQtQ0owNEp3SXA5ZU5GV25rUGxwNm9TZ1lTTy1HOEVxemFaY0gybjhYU01YRzUtSlV6Y0UyT0laT0FGTTczaA?oc=5",
+      "date": "2026-07-21",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "Scalding hot AI accelerators have put datacenters in hot water. Two-phase cooling could chill them out - The Register",
-      "source": "The Register",
-      "url": "https://news.google.com/rss/articles/CBMi7AFBVV95cUxNTl8zMWRDeFZxS256ZkpnMUdvMWhIYVU4dXlPNHVWa0pwWXhzTmFfMjJwaVdXX29RcWdJU1V2VkViVXlRSTRuQmgxTGJrWTRzeWRDcWd5bjZTZzZxNThsUEYyMlBJTnZFNGZHanI1NE9KUVJPWjdPM3dMaWVEd3hRZmZJZjdFYU1ZcHdTbDd6ZHVVOFkxaW5XTmlqSkx1bUMwYUZxY3FrQ0tkNjFPNFBqRVNtTUVqekRPT0ludWtqS0V6cEYySFBQQ1RwWTByZ05YQzMzdVZCSTRrWjNBNHlseng0ZEtwdFRKUWVCag?oc=5",
-      "date": "2026-07-21",
+      "headline": "AMD takes the wraps off its Instinct MI455X AI accelerator \u2014 CDNA 5 and Helios rack-scale architecture combine to take the fight to Nvidia in the data center - Tom's Hardware",
+      "source": "Tom's Hardware",
+      "url": "https://news.google.com/rss/articles/CBMiqwJBVV95cUxOUVZVeDJaMTI3VTJKT2JNTklDODg4Z281dGFjVU9tOFNlOUt5dFh2QjB1UlE2OVdENjg3cFlOWTVrN0FyYklFNndLSTIzdlNQazZ4ejZuUjBCZ3pVdG5pN2owbXRlc3BucjU3WVFtakF3Xzd3ZEE4al9BRHB2a0E3cHdTbFAxOWYxQnY1eTI3N1g1c0cyWVZWZGlIS1FOSDdoZHlTbkZaSndqNkNabmlyT2o5VmNGVFlLY2RHcVdOVUJxUE13ck1LUGZmWFFLYlNzQWtkS3h3eXZpUmpIdkFuOFFxcldQbkZtaXVRdi1ybkU0eGp1OEYzQ01WS25TblpMcGcxX3pIb0Njb1JtS1RjT3FsdWpNZ0drYkhvS3VZcDIxQmRPSXdZdkg5NA?oc=5",
+      "date": "2026-07-23",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4925,24 +4970,6 @@
       "source": "Fierce Network",
       "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxNUEJPLXRsNkJqdkhzR1JGamFIVlUzMDE2anJpanZ0SVhYNzBCSkk0a0xoVk83ODNpS2xYY29LZ1pHNjl5VzkxUUZHcUNFbzY3SWpBM1N2S2FwWmdKTlRTSndFOXB3aXJuOGU0azJHWlBhWXZNTVRuLXhDR1FvS0R0TDVGbzFROEU?oc=5",
       "date": "2026-07-22",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "We asked AI why Nvidia hasn\u2019t moved on from the RTX 5090, and none said \u2018RAM costs\u2019 - PC Guide",
-      "source": "PC Guide",
-      "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxOa1lnTC1RV3JtMHFlYWs4YThSMDJyZldlOV8wQ3k5TzRiNi1XTXZWVnlkVWZodXpuRkcySTFEbVo1YXNnYkhBcS1ZRnBOM2R2Y3dfT09hb1BtY1ZWU2dPRnBwQ045NmpLM05xQmNxNHdKV3dYNmkyRXNFclpRZXFJNVA0TUVoQVhUZTdEV25iWG1ibGYwUVBPekhSUkN0V1p3OGhIdThQcGUyNVlsZmc?oc=5",
-      "date": "2026-07-20",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Nvidia chips reach customers as company cements 80% grip on AI GPU market - Crypto Briefing",
-      "source": "Crypto Briefing",
-      "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5LS0I0bUl6U2JyZGlHRnhFc0RwTmltQVdIdUlMdnpHbkFReFd6bnZEZ1gyQ1JfRjJpUHBjcVJqUmV4SV9JZkxJVmh6ZFFHbS02eEp4a2hfczljZm8yN0plSjhaZ3lQM0FWTlZObHZrZGE?oc=5",
-      "date": "2026-07-21",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4961,33 +4988,6 @@
       "source": "NVIDIA Blog",
       "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBSN3d6OG5pZ2hJSkZ5cHhhWUxONkEyRzV0V3FwaGpNbERTSmpiU1ZkVzc4d0Vkc0Vic3J2Z3FMVkdza1M1aEE5TDJBb1NsekFGaWtVUjVEQ3VSSXFtbC1vRi1nVHdZb2pJN0E?oc=5",
       "date": "2026-06-21",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "SpaceX\u2019s Orbital AI Compute Can Reach $6.5 Per Watt Per Year By 2031, Which Is Cheaper Than NVIDIA Blackwell-Based Terrestrial Data Centers - Wccftech",
-      "source": "Wccftech",
-      "url": "https://news.google.com/rss/articles/CBMi7wFBVV95cUxQUmFOYnVkY1FYeWdDbU82MzB0c2U2TEp6VkhtQkQwZXFOU0dHR3Q1UEVPcGhGTmtfWWcyZldVaFcxd1c2RUgxWm5fWV9pNkI1UzJ1cGtVemU1YXo5UnZzbXh0RzlQMk4wUkNnUGJhVmdSTGRJMmZCaVR4eWNYNWROdFdQSW11MnN5Ty1KY1lmQzcyNmV3MG9oWlBGMXM1ZWZwQWU5bEg5RGhUZkJ1LVhaLWJrb2V3U3l0RDRjY0lpZVpvM1VfdHVsdW9xMGg1VGU5WHNONlRVdW81bzIzU3A5U005NndUdHBNSzlKa0NnUdIB9AFBVV95cUxOU1VjOTdPcG5YTm5LLXp3eHltWHZQNlRVU2VRZllqN3BBV0UwUWtGYUFsbjhoYm1PMmtkY2xOQzhFaGJNY1gwZTlPUWYyNi1QUXZSWFpVNmNQVFhTZFd5Q0MyVGZoTklYa284dlBFX3k3REV4TFNQNGtTQTJaS3lPODB3eks4bHJfX2lWVTRubXdGT0s3UTZMMXR3YjEyVExCWUl2NWw1SFF2V212SHNjZk0zVEdEUURxazhxSVV3eTRxYUNQMHc4bWN3RzFLaElNbS00dVFnSXdqZ3FzS3phVHFwZmJVREItRWI5TEtuQm9VaHdK?oc=5",
-      "date": "2026-07-22",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Meta Builds AI Infrastructure With NVIDIA - NVIDIA Newsroom",
-      "source": "NVIDIA Newsroom",
-      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQa2Jtb2d5VUFBazZ4U1VWS29KbmFHMkdkN1lNXzNXTHR6eUZTUjVUYWw2cndMOVhpYldLbm1Cdm1nWkxyUzFJcUo1OVBXd3lBMnBsYU1nVVNaOF9YR2pRaXNLdHowVllDdU5hNU9kWW5DV3lSWmk4MFYtQUt6ZTA1WQ?oc=5",
-      "date": "2026-02-17",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "SK Telecom and NVIDIA Build AI Infrastructure to Power Korea\u2019s AI Innovation - NVIDIA Newsroom",
-      "source": "NVIDIA Newsroom",
-      "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5FU2dZTUVESDFvTkJxbEJuWDdIS1c4SU9uaDAxLWN2c2pvVnNnNlRWM0pqZTRyTHJjREtsUEJ1TFBvcWdMdVMyejI1VWtoa0VaZHRWcVJzdUxuNXp2b095S3NjaDdmemZITVJxNXZGYWQ?oc=5",
-      "date": "2026-06-07",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -11752,25 +11752,25 @@
       }
     }
   },
-  "last_updated": "2026-07-23T08:25:10.204016+00:00",
+  "last_updated": "2026-07-24T08:23:18.883302+00:00",
   "stocks": {
     "NVDA": {
       "ticker": "NVDA",
-      "current_price": 212.06,
-      "previous_close": 167.03,
+      "current_price": 208.76,
+      "previous_close": 170.78,
       "52_week_high": 236.54,
       "52_week_low": 164.07,
-      "ytd_change_pct": 12.29,
-      "last_updated": "2026-07-23T08:25:10.413083+00:00"
+      "ytd_change_pct": 10.54,
+      "last_updated": "2026-07-24T08:23:18.991987+00:00"
     },
     "AMD": {
       "ticker": "AMD",
-      "current_price": 552.33,
-      "previous_close": 154.72,
+      "current_price": 539.69,
+      "previous_close": 158.65,
       "52_week_high": 584.73,
       "52_week_low": 149.22,
-      "ytd_change_pct": 147.16,
-      "last_updated": "2026-07-23T08:25:10.556861+00:00"
+      "ytd_change_pct": 141.5,
+      "last_updated": "2026-07-24T08:23:19.058046+00:00"
     }
   }
 }
