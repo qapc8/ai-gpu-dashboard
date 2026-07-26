@@ -3230,7 +3230,7 @@
       "52w_low": 164.07,
       "ytd_pct": 9.53,
       "52w_range": "$164.07-$236.54",
-      "last_updated": "2026-07-25T08:02:22.216267+00:00"
+      "last_updated": "2026-07-26T08:22:30.228754+00:00"
     },
     "amd_stock": {
       "ticker": "AMD",
@@ -3242,7 +3242,7 @@
       "52w_low": 149.22,
       "ytd_pct": 133.57,
       "52w_range": "$149.22-$584.73",
-      "last_updated": "2026-07-25T08:02:22.278146+00:00"
+      "last_updated": "2026-07-26T08:22:30.294312+00:00"
     },
     "gpu_market_size_bn": {
       "2023": 52.4,
@@ -4822,27 +4822,9 @@
       "impact": "medium"
     },
     {
-      "headline": "Inside NVIDIA Rubin GPU Architecture: Powering the Era of Agentic AI - NVIDIA Developer",
-      "source": "NVIDIA Developer",
-      "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxOSkJ3ZzhTLXhVZ0JhWGxSdGpsS0h0S0ItTmNKV1hCa0UyYkNXZm1pZ2dTaHNWeEdfWXpyV1ZxNzBOTnIyQXlWcFFkZFRpMFRUaFlFRmpMcjdqSC11TE1qdXFqbV9TSWQtQ0owNEp3SXA5ZU5GV25rUGxwNm9TZ1lTTy1HOEVxemFaY0gybjhYU01YRzUtSlV6Y0UyT0laT0FGTTczaA?oc=5",
-      "date": "2026-07-21",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
       "headline": "SambaNova targets AI inference boom with chips built for existing data centers - Fierce Network",
       "source": "Fierce Network",
       "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxPdFVwS2JROExhb2EyVFNEUEJhdHZ5RkdGa09VaUdITk1sb3JzZllMV2hIUmczN3RDSmxJUjk4dzc0OUdPN2laUUJrZV9fMVNCdTVJd2pLOU9NcmdRSFk5RUFyR1FMWThFTllZV2xnSnFOd3pVM0JPWElBcUJsb2Z3NDE0VzJvSkpjS0M4RXlvdmxEdlRydEpZdFJMQXl0cU1HOFhPY25Hc25NQQ?oc=5",
-      "date": "2026-07-22",
-      "category": "news",
-      "sentiment": "neutral",
-      "impact": "medium"
-    },
-    {
-      "headline": "Nvidia has a new way to sell more AI chips: help customers buy them - Business Insider",
-      "source": "Business Insider",
-      "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxON1lTal9JdTNrX0czWDVzVDhJSzZyYm1lVWQ4bngtcEhSRjRvdWhldTN2OHZzNmRwM2JrWFhXeWZnR1M5RkdvcnpDX2ROZFVlYjlOODk5NXZNWUFFMXUwSlZyajZocmM0S0VFWGpyZS0ycE5SRC1rQ0hkTnRXTU90T1Q5b3dEYk5fa1hNOTZ2WlFIRWU1SXRPbXBrMUR1c0lHaEU4OTFraGlUaTQ?oc=5",
       "date": "2026-07-22",
       "category": "news",
       "sentiment": "neutral",
@@ -4858,10 +4840,19 @@
       "impact": "medium"
     },
     {
-      "headline": "Who\u2019s afraid of the big, bad GPU? - The Verge",
-      "source": "The Verge",
-      "url": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxNQk05cHdOOVZnZlIzdDVTT081eDZzb0pRTXFlS2tGVUZHZGJSSUhJOHFGclJuV00yQ2M4TDRfSk9SVUdKRi1WMXhXYW5zZF9pcU9jbW1jUFNYRlBRTkF0RGF0TmJFV0ZJdVgwQnFRMVRaUGstNEVjeU80WTB0NXNBa0YzS1QtNEhiNXVB?oc=5",
-      "date": "2026-07-21",
+      "headline": "Nvidia vs. AMD vs. Intel: Which One Actually Won the AI Chip Race in the First Half of 2026? - The Globe and Mail",
+      "source": "The Globe and Mail",
+      "url": "https://news.google.com/rss/articles/CBMigwJBVV95cUxOMDRvTl9XUTZ0LVZsWEV1ODJGbzJ2am9oQVRDNi1kdGRGek9OR1RTTmpQcG82cXRrcFh2TWt4STNZY0tTckdZelRHYmdXOTN6TnN6V2tVTnhxR3o2dWhrRmJtTE0xX2FkOFE1Q1k3T05VTVVuLVdoTmt1a1c0U3ZzaXZ6eDJZQnpRVE96aTdqWFhmN1AyYTJZNDBCR2tUOWl0eHZ0U1lxeW1uejhmTXgxdEFmVnZSbkFlVzZBblRaM3RNSUxzVDdfZUp6dnBYTExSaGswMnhPWTM3TGplLWpqVXBncmFIS250ZUROUXRyWURjNUtUMV9kNDZ6ajRTVWRBa2Rr?oc=5",
+      "date": "2026-07-25",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "2026 AI Chip Race: Nvidia, AMD, or Intel? - Intellectia AI",
+      "source": "Intellectia AI",
+      "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTE9xbUU4Wjd2bkZuenpiV3NwS3VWVHlRdnRCZUZoQjJYbTh4bXg4ZTZtdC1kMjBVSFVMX2k4MnhIeWRLdVo5S2R5RG1zZnlPZE1PeEhiWWNKNXJmT3RKQ3BOeFktNHh6X2RjMzh1ZEpzLWEtRXRsek1ZOFZuMA?oc=5",
+      "date": "2026-07-26",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4885,19 +4876,19 @@
       "impact": "medium"
     },
     {
-      "headline": "AMD launches Helios, its first rack AI system to rival Nvidia, adding Microsoft as newest buyer - CNBC",
-      "source": "CNBC",
-      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE0tRlF5bzh6NUI5VmZKRW9oTzljR3pJbjVLSl9Yb0NqeEtfMVlTQU5TcHl2dU10YkNtN1ZYb0pCWHl1RHhVd1hNZkZDQ21GSTN0NXZTVXRwalhsWk1tNjlYejF5SUF0TTNLdXVqZnROaWV6R3JfZ2fSAXtBVV95cUxPSE4wRDExampVaGU0bDg4VUVIVDFxOEo1QkxXelFLQ2RwTGpzWHJrOV9vb1l3dWIwUWtEWlU5THY0My1HTUlEMVFpRVFCOURkTUVWQXQ0aktqTzdqN3luZkZVZC05eXRwN2otTFVuSHVLdS1kVEtpNU9WT1E?oc=5",
-      "date": "2026-07-20",
+      "headline": "AMD attacks the rack with Helios systems that rival Nvidia's - The Register",
+      "source": "The Register",
+      "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxNemxwbGtuVXdXTjZnYWVQeTJEQkd2ZzBaZ1Q0U3hUTlFYX2xWZEkwZFptWEtLaFo3SEI3T1EtOXMtTklCLVdGem4ybGh3NXBWWF9uU05fMUFBM0Mza2c3S2JqdnpDY3JhcFRrNnFnWnFrbVh0bEFsazdESVp2eWlxZUo1Vks2TW9HLWl6U0p4MUI0VkhHUjZTamJRVm5jMnJGeWRMRXVteFFPTDV0QXVlNUpQTHM?oc=5",
+      "date": "2026-07-23",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
     },
     {
-      "headline": "CM Global Services Unveils Project Santos: A 50-Megawatt AI Data Center Campus in Texas - The Fast Mode",
-      "source": "The Fast Mode",
-      "url": "https://news.google.com/rss/articles/CBMiygFBVV95cUxNU1pObWZMZDJ5TDgtWm5icTFLTjZSSFZ1eXBhSHhBaHJUbGtaZHNLaGNnSWZFNHJyVFJRWVVHTFpiUE9ZQVZWTTkyYjZiSlFjeS1Tdl9rZ1FReUxXaFloSmM2SGRfWDkwWkJWcGo4SkllTlYyZ21fSk8wVzZkY3JxVTFodURlUU1jX0gwWEZwWHFfWEUyUE5TODhjNGpwang1TktpM3NhSlJFWEJTZEF5Wnd1TXZ5ODhtTXR0ejcwS3VNVXRmMEZBWTNR?oc=5",
-      "date": "2026-07-24",
+      "headline": "AMD launches Helios, its first rack AI system to rival Nvidia, adding Microsoft as newest buyer - CNBC",
+      "source": "CNBC",
+      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE0tRlF5bzh6NUI5VmZKRW9oTzljR3pJbjVLSl9Yb0NqeEtfMVlTQU5TcHl2dU10YkNtN1ZYb0pCWHl1RHhVd1hNZkZDQ21GSTN0NXZTVXRwalhsWk1tNjlYejF5SUF0TTNLdXVqZnROaWV6R3JfZ2fSAXtBVV95cUxPSE4wRDExampVaGU0bDg4VUVIVDFxOEo1QkxXelFLQ2RwTGpzWHJrOV9vb1l3dWIwUWtEWlU5THY0My1HTUlEMVFpRVFCOURkTUVWQXQ0aktqTzdqN3luZkZVZC05eXRwN2otTFVuSHVLdS1kVEtpNU9WT1E?oc=5",
+      "date": "2026-07-20",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4912,10 +4903,10 @@
       "impact": "medium"
     },
     {
-      "headline": "AMD attacks the rack with Helios systems that rival Nvidia's - The Register",
-      "source": "The Register",
-      "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxNemxwbGtuVXdXTjZnYWVQeTJEQkd2ZzBaZ1Q0U3hUTlFYX2xWZEkwZFptWEtLaFo3SEI3T1EtOXMtTklCLVdGem4ybGh3NXBWWF9uU05fMUFBM0Mza2c3S2JqdnpDY3JhcFRrNnFnWnFrbVh0bEFsazdESVp2eWlxZUo1Vks2TW9HLWl6U0p4MUI0VkhHUjZTamJRVm5jMnJGeWRMRXVteFFPTDV0QXVlNUpQTHM?oc=5",
-      "date": "2026-07-23",
+      "headline": "Hotter Than a Hot Tub: The 45\u00b0C Breakthrough to Cool AI\u2019s Biggest Machines - NVIDIA Blog",
+      "source": "NVIDIA Blog",
+      "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBSN3d6OG5pZ2hJSkZ5cHhhWUxONkEyRzV0V3FwaGpNbERTSmpiU1ZkVzc4d0Vkc0Vic3J2Z3FMVkdza1M1aEE5TDJBb1NsekFGaWtVUjVEQ3VSSXFtbC1vRi1nVHdZb2pJN0E?oc=5",
+      "date": "2026-06-21",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4948,10 +4939,19 @@
       "impact": "medium"
     },
     {
-      "headline": "Nvidia GPU Set for Lunar Debut This Year, Ushering in the Era of Space Edge AI - finance.biggo.com",
-      "source": "finance.biggo.com",
-      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFBpN1hGX3JNRDNKQnBNR0laYUZncFFOZDZlOFZxU0NfaVlMY2liR2luOUt6cllPT05BblI0TkZZX0tFNVZ1LUU4VmExLVd1WXpjSnprT2tySkt1aGxFZ3c1UDk5NGVsMjdaMWlEZ1VLWldXRVY1UkE?oc=5",
-      "date": "2026-07-24",
+      "headline": "NVIDIA stock trades near record territory as AI demand drives rapid growth - AD HOC NEWS",
+      "source": "AD HOC NEWS",
+      "url": "https://news.google.com/rss/articles/CBMizgFBVV95cUxPMWRrRm1NOVp5M2c1eTZGMmc5X2IyRDZlZWxfaTBrN1hXYkxtcmRYQzEzVU95MElEcEtlVUk0SmVFeTREMndTeXJxRl9KVGk3SjQtVXZPZVVaZjdmcVlaZ0JLNTEzMzUtUzd6TEFQR0RNSjlyM245ZTkwT25fdXdGYW5wdWw4RHA3ZTh6enFnclNiS3hHclV0NGNCNUxWTnk2N0Y1V09zN3I4WjFLcm5LNzRrTEhWX3BFc3cyOGo3ZDlvdkh0ZEp4U0tjbkhpQQ?oc=5",
+      "date": "2026-07-26",
+      "category": "news",
+      "sentiment": "neutral",
+      "impact": "medium"
+    },
+    {
+      "headline": "Micron, Nvidia, or SpaceX: Which Is the Best AI Stock to Put $1,000 in Right Now? - The Globe and Mail",
+      "source": "The Globe and Mail",
+      "url": "https://news.google.com/rss/articles/CBMi8wFBVV95cUxPSmZ6elBlbEtBOEJMTnZmeVlsZS1uVEtsZzM0T2c4T0d5a2llN3dDREFBUXFBUktKREM2V0xPc1hhdWZPeUFRSmlGcmVhUERnZ3Q4S2JfZENubzFGTm5zYUhFXzhpaXZ2OFZwdDkxUUpFZ05NZV9IWVdqcy1YT1gtYUhLRG1qQlg2eDNJdGpDdTdpZDhZSDlGb09PalRyNFh2VXdCLUFzSWVBc2RTV3g1QzJQbzcyLV9sSDZKYWt2dmFQek9JOVpnZzY4Qkx0MzFidkRyM2Focnd4cDZlLWxObDhQYUZvSW9yQ3pTdDUtWkM0VzA?oc=5",
+      "date": "2026-07-25",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -4966,10 +4966,10 @@
       "impact": "medium"
     },
     {
-      "headline": "Hotter Than a Hot Tub: The 45\u00b0C Breakthrough to Cool AI\u2019s Biggest Machines - NVIDIA Blog",
-      "source": "NVIDIA Blog",
-      "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBSN3d6OG5pZ2hJSkZ5cHhhWUxONkEyRzV0V3FwaGpNbERTSmpiU1ZkVzc4d0Vkc0Vic3J2Z3FMVkdza1M1aEE5TDJBb1NsekFGaWtVUjVEQ3VSSXFtbC1vRi1nVHdZb2pJN0E?oc=5",
-      "date": "2026-06-21",
+      "headline": "U.S. Hyperscale Data Center Market Forecast 2026-2031 | AI Revolutionizes U.S. Hyperscale Data Centers with Record GPU Adoption - Yahoo Finance",
+      "source": "Yahoo Finance",
+      "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxQWl9abWVWaTQ0YUM0NXdSNndEMEp3eF9rOXBIUkxZTlNGNXJmLVNESkh3Z0dWWVZyMFFlaWphUFBTNnFUbDdrN21JUEdfdGZTMkh2T3Ryc3ZCUF9GX3Vja0dqQ2ZxTDFSd3Uxek9sMHlKQWlRTlRUR0trVEU4aDM1Y1NMUzVtc2c3Mk5zNE9SejNRbWRYSHljSGxPcw?oc=5",
+      "date": "2026-07-13",
       "category": "news",
       "sentiment": "neutral",
       "impact": "medium"
@@ -11752,7 +11752,7 @@
       }
     }
   },
-  "last_updated": "2026-07-25T08:02:22.128348+00:00",
+  "last_updated": "2026-07-26T08:22:30.031045+00:00",
   "stocks": {
     "NVDA": {
       "ticker": "NVDA",
@@ -11761,7 +11761,7 @@
       "52_week_high": 236.54,
       "52_week_low": 164.07,
       "ytd_change_pct": 9.53,
-      "last_updated": "2026-07-25T08:02:22.216267+00:00"
+      "last_updated": "2026-07-26T08:22:30.228754+00:00"
     },
     "AMD": {
       "ticker": "AMD",
@@ -11770,7 +11770,7 @@
       "52_week_high": 584.73,
       "52_week_low": 149.22,
       "ytd_change_pct": 133.57,
-      "last_updated": "2026-07-25T08:02:22.278146+00:00"
+      "last_updated": "2026-07-26T08:22:30.294312+00:00"
     }
   }
 }
