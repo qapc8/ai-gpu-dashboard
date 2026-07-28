@@ -37,6 +37,14 @@ from update_data import (
     fetch_news_rss,
     merge_news_into_data,
     refresh_summary,
+    fetch_vastai_pricing,
+    fetch_runpod_pricing,
+    merge_live_pricing_into_data,
+    update_spot,
+    recalculate_matrix,
+    refresh_workload_recs,
+    refresh_tco,
+    build_changelog,
 )
 
 
@@ -53,10 +61,36 @@ def main():
         log_info("No existing data.json found. Cannot run daily update without base data.")
         return 1
 
+    snapshot_before = json.loads(json.dumps(data))
     data["last_updated"] = datetime.now(timezone.utc).isoformat()
 
+    # ---- Marketplace pricing ----
+    # RunPod and Vast.ai are marketplaces: their prices moved 6-31% inside a
+    # single week between full refreshes, while AWS/GCP/Azure list prices barely
+    # move. So they are refreshed daily and the derived views recomputed.
+    print("[1/3] Marketplace Pricing")
+    print("-" * 40)
+    vast = runpod = None
+    try:
+        vast = fetch_vastai_pricing()
+    except Exception as exc:
+        log_fail("Vast.ai", str(exc))
+    try:
+        runpod = fetch_runpod_pricing()
+    except Exception as exc:
+        log_fail("RunPod", str(exc))
+    if vast or runpod:
+        data = merge_live_pricing_into_data(data, vast, runpod)
+        for step, fn in (("Spot", update_spot), ("Matrix", recalculate_matrix),
+                         ("Workload Recs", refresh_workload_recs), ("TCO", refresh_tco)):
+            try:
+                data = fn(data)
+            except Exception as exc:
+                log_fail(step, str(exc))
+    print()
+
     # ---- Stock Prices ----
-    print("[1/2] Stock Prices")
+    print("[2/3] Stock Prices")
     print("-" * 40)
     stocks = []
     for ticker in ["NVDA", "AMD"]:
@@ -69,7 +103,7 @@ def main():
     print()
 
     # ---- News ----
-    print("[2/2] News Headlines")
+    print("[3/3] News Headlines")
     print("-" * 40)
     try:
         articles = fetch_news_rss()
@@ -78,7 +112,12 @@ def main():
         log_fail("Google News RSS", str(exc))
     print()
 
-    # ---- Refresh summary so the Overview tab tracks today's data ----
+    # ---- Change feed + summary ----
+    try:
+        data = build_changelog(data, snapshot_before)
+    except Exception as exc:
+        log_fail("Changelog", str(exc))
+
     try:
         refresh_summary(data)
     except Exception as exc:

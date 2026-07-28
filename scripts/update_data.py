@@ -1079,7 +1079,6 @@ def update_spot(data):
     for gpu_id in dropped:
         spot.pop(gpu_id, None)
         (data.get("forecasts") or {}).pop(gpu_id, None)
-        (data.get("reservations") or {}).pop(gpu_id, None)
     if dropped:
         log_info(f"Spot: dropped {', '.join(dropped)} (no provider lists them)")
 
@@ -1143,7 +1142,7 @@ def _avg_spot_rate(providers, gpu_id):
     return round(sum(rates) / len(rates), 2) if rates else None
 
 
-def refresh_tco_and_reservations(data):
+def refresh_tco(data):
     """Point the TCO and reservation models at live cloud prices.
 
     Both carried their own frozen cloud rates, so the same GPU was quoted at
@@ -1177,37 +1176,30 @@ def refresh_tco_and_reservations(data):
                 tco["cloud_spot_hr"] = spot_rate
             synced += 1
 
-        res = (data.get("reservations") or {}).get(gpu_id)
-        if res:
-            res["on_demand_rate"] = od
-            if spot_rate is not None:
-                res["spot_avg_rate"] = spot_rate
-            if res1 is not None:
-                res["reserved_1yr_rate"] = res1
-            if res3 is not None:
-                res["reserved_3yr_rate"] = res3
-            # Savings columns are quoted against the on-demand rate above.
-            sav = res.get("savings_at_utilization")
-            if isinstance(sav, dict):
-                for util_key, row in sav.items():
-                    try:
-                        util = int(str(util_key).split("_")[0]) / 100
-                    except (ValueError, IndexError):
-                        continue
-                    if not util:
-                        continue
-                    if spot_rate is not None:
-                        row["spot"] = round((1 - spot_rate / od) * 100)
-                    # A commitment is paid for every hour of the term, so at
-                    # partial utilization its effective per-used-hour cost is
-                    # the rate divided by utilization.
-                    if res1 is not None:
-                        row["reserved_1yr"] = round((1 - (res1 / util) / od) * 100)
-                    if res3 is not None:
-                        row["reserved_3yr"] = round((1 - (res3 / util) / od) * 100)
-            synced += 1
+        # Break-even used to live in a parallel `reservations` dataset that
+        # duplicated this maths. It is now a field on the TCO profile.
+        if tco and res1 is not None and res3 is not None:
+            tco["commitment"] = {
+                "spot_rate": spot_rate,
+                "reserved_1yr_rate": res1,
+                "reserved_3yr_rate": res3,
+                # A commitment is billed for every hour of the term, so at
+                # utilisation u its effective per-used-hour cost is rate / u.
+                # Break-even is where that equals the on-demand rate.
+                "breakeven_utilization_1yr_pct": round(res1 / od * 100),
+                "breakeven_utilization_3yr_pct": round(res3 / od * 100),
+                "savings_at_utilization": {
+                    f"{int(u*100)}_pct": {
+                        "spot": round((1 - spot_rate / od) * 100) if spot_rate else None,
+                        "reserved_1yr": round((1 - (res1 / u) / od) * 100),
+                        "reserved_3yr": round((1 - (res3 / u) / od) * 100),
+                    } for u in (0.4, 0.6, 0.8, 1.0)
+                },
+            }
+        synced += 1
 
-    log_ok("TCO / Reservations", f"{synced} entries synced to live cloud rates")
+    data.pop("reservations", None)
+    log_ok("TCO", f"{synced} profiles synced to live cloud rates")
     return data
 
 
@@ -1399,6 +1391,346 @@ def refresh_summary(data):
         summary["market_sentiment"] = data["sentiment"]
 
     log_ok("Summary", f"{summary['total_gpus_tracked']} GPUs / {summary['total_providers_tracked']} providers")
+    return data
+
+
+# ===================================================================
+# 1c. REAL REGIONAL PRICING, VOLATILITY, MODEL FIT, CHANGE FEED
+# ===================================================================
+
+# Azure publishes the same VM SKU in every region through one API, which makes
+# it the only provider here that can give a like-for-like regional comparison
+# cheaply. The old Regional tab applied invented multipliers (eu = us x 1.10)
+# to invented base prices; this measures the real spread instead.
+AZURE_REGIONS = [
+    ("eastus", "US East", "North America"),
+    ("westus2", "US West", "North America"),
+    ("northeurope", "Ireland", "Europe"),
+    ("westeurope", "Netherlands", "Europe"),
+    ("uksouth", "UK South", "Europe"),
+    ("japaneast", "Japan East", "Asia Pacific"),
+    ("southeastasia", "Singapore", "Asia Pacific"),
+    ("australiaeast", "Australia East", "Asia Pacific"),
+]
+
+# (skuName prefix, required substring, internal GPU id, GPUs per VM)
+_AZURE_REGION_SKUS = [
+    ("ND96", "H100", "H100-SXM", 8),
+    ("ND96", "A100", "A100-80GB", 8),
+    ("ND", "GB200", "GB200", 4),
+]
+
+
+def fetch_regional_pricing():
+    """Same SKU priced across regions, straight from the Azure Retail API."""
+    log_info("Fetching regional pricing (Azure, %d regions)..." % len(AZURE_REGIONS))
+    base = "https://prices.azure.com/api/retail/prices"
+    regions = {}
+
+    for arm, label, continent in AZURE_REGIONS:
+        prices = {}
+        for prefix, must, gpu_id, per_vm in _AZURE_REGION_SKUS:
+            filt = (
+                f"serviceName eq 'Virtual Machines' and armRegionName eq '{arm}' "
+                f"and priceType eq 'Consumption' and startswith(skuName, '{prefix}')"
+            )
+            try:
+                status, body = http_get(
+                    base, params={"$filter": filt, "currencyCode": "USD"}, timeout=25
+                )
+                if status != 200:
+                    continue
+                found = []
+                for it in json.loads(body).get("Items", []):
+                    sku = it.get("skuName", "")
+                    meter = (it.get("meterName") or "").lower()
+                    if "spot" in meter or "low priority" in meter:
+                        continue
+                    if must and must not in sku:
+                        continue
+                    if (it.get("unitOfMeasure") or "").lower() not in ("1 hour", "1hour"):
+                        continue
+                    up = it.get("unitPrice") or it.get("retailPrice")
+                    if up and up > 0:
+                        found.append(float(up) / per_vm)
+                if found:
+                    found.sort()
+                    prices[gpu_id] = round(found[len(found) // 2], 3)
+            except Exception:
+                continue
+        if prices:
+            regions[label] = {
+                "arm_region": arm,
+                "continent": continent,
+                "gpu_pricing": prices,
+            }
+
+    if not regions:
+        raise RuntimeError("no regional pricing returned")
+
+    # Premium vs the cheapest region, per GPU and overall.
+    for gpu_id in {g for r in regions.values() for g in r["gpu_pricing"]}:
+        quotes = [(r["gpu_pricing"][gpu_id], name) for name, r in regions.items()
+                  if gpu_id in r["gpu_pricing"]]
+        cheapest = min(quotes)[0]
+        for name, r in regions.items():
+            if gpu_id in r["gpu_pricing"]:
+                r.setdefault("premium_pct", {})[gpu_id] = round(
+                    (r["gpu_pricing"][gpu_id] / cheapest - 1) * 100, 1
+                )
+
+    for r in regions.values():
+        prem = list((r.get("premium_pct") or {}).values())
+        r["avg_premium_pct"] = round(sum(prem) / len(prem), 1) if prem else 0.0
+
+    log_ok("Regional Pricing", f"{len(regions)} regions, {len(_AZURE_REGION_SKUS)} SKUs")
+    return regions
+
+
+def build_regional(data):
+    """Replace the modelled regional block with measured cross-region pricing."""
+    try:
+        regions = fetch_regional_pricing()
+    except Exception as exc:
+        log_fail("Regional Pricing", str(exc))
+        return data
+
+    existing = data.get("regional") or {}
+    out = {}
+    for name, r in regions.items():
+        # Carry across the two curated fields worth keeping: the published
+        # industrial electricity rate (feeds TCO) and the hub list.
+        prior = next((v for k, v in existing.items() if k.startswith(r["continent"][:6])), {})
+        out[name] = {
+            **r,
+            "energy_cost_kwh": prior.get("energy_cost_kwh"),
+            "key_hubs": prior.get("key_hubs", []),
+            "source": "azure_retail_api",
+            "last_verified": datetime.now(timezone.utc).isoformat(),
+        }
+    data["regional"] = out
+    data.pop("regional_summary", None)
+    return data
+
+
+def compute_volatility(data):
+    """Describe what the price history actually shows, instead of forecasting it.
+
+    A 6-month point forecast off ~12 monthly observations is not defensible.
+    Realized volatility, drawdown and a trend classification are.
+    """
+    historical = data.get("historical") or {}
+    spot = data.get("spot") or {}
+    out = {}
+
+    for gpu_id, series in historical.items():
+        if gpu_id not in spot:
+            continue
+        # Each month is {"avg", "min", "max", "availability"}; track the average.
+        def _avg(v):
+            if isinstance(v, dict):
+                return v.get("avg")
+            return v if isinstance(v, (int, float)) else None
+
+        months = sorted(series)
+        pts = [(m, _avg(series[m])) for m in months]
+        pts = [(m, v) for m, v in pts if isinstance(v, (int, float)) and v > 0]
+        if len(pts) < 4:
+            continue
+
+        values = [v for _, v in pts]
+
+        # Only take returns between genuinely consecutive months -- the early
+        # history is quarterly, and treating a 3-month gap as one step would
+        # overstate monthly volatility.
+        def _months(label):
+            y, m = label.split("-")
+            return int(y) * 12 + int(m)
+
+        rets = []
+        for i in range(1, len(pts)):
+            if _months(pts[i][0]) - _months(pts[i - 1][0]) == 1:
+                rets.append(values[i] / values[i - 1] - 1)
+
+        peak = max(values)
+        current = values[-1]
+
+        def change_over(n):
+            if len(values) <= n:
+                return None
+            return round((current / values[-1 - n] - 1) * 100, 1)
+
+        monthly_vol = None
+        if len(rets) >= 3:
+            mean = sum(rets) / len(rets)
+            monthly_vol = (sum((r - mean) ** 2 for r in rets) / len(rets)) ** 0.5
+
+        # Classify on the compounded 3-month move, not the mean of returns: on a
+        # choppy series +67% then -35% then -28% averages to ~0 while the actual
+        # 3-month change is -23%.
+        trend = change_over(3)
+        if trend is None:
+            trend = change_over(1) or 0.0
+        if trend <= -5:
+            regime, note = "falling", "Prices trending down — favour on-demand and short commitments."
+        elif trend >= 5:
+            regime, note = "tightening", "Prices trending up — supply tightening; consider locking in capacity."
+        else:
+            regime, note = "stable", "Prices flat within noise."
+
+        out[gpu_id] = {
+            "current": round(current, 3),
+            "observations": len(values),
+            "first_month": pts[0][0],
+            "monthly_volatility_pct": round(monthly_vol * 100, 1) if monthly_vol is not None else None,
+            "annualized_volatility_pct": round(monthly_vol * (12 ** 0.5) * 100, 1) if monthly_vol is not None else None,
+            "monthly_observations": len(rets) + 1,
+            "peak": round(peak, 3),
+            "drawdown_from_peak_pct": round((current / peak - 1) * 100, 1),
+            "change_3mo_pct": change_over(3),
+            "change_6mo_pct": change_over(6),
+            "change_12mo_pct": change_over(12),
+            "regime": regime,
+            "note": note,
+        }
+
+    data["volatility"] = out
+    data.pop("forecasts", None)
+    log_ok("Volatility", f"{len(out)} GPUs described from price history")
+    return data
+
+
+# Published transformer architectures. Every number here is from the model's own
+# config, which is what makes the VRAM figures arithmetic rather than estimates.
+MODEL_ARCHITECTURES = {
+    "Llama-3.1-8B":    {"params_b": 8.03,  "layers": 32,  "kv_heads": 8, "head_dim": 128, "open": True},
+    "Llama-3.1-70B":   {"params_b": 70.6,  "layers": 80,  "kv_heads": 8, "head_dim": 128, "open": True},
+    "Llama-3.1-405B":  {"params_b": 405.9, "layers": 126, "kv_heads": 8, "head_dim": 128, "open": True},
+    "Qwen2.5-72B":     {"params_b": 72.7,  "layers": 80,  "kv_heads": 8, "head_dim": 128, "open": True},
+    "Qwen2.5-32B":     {"params_b": 32.8,  "layers": 64,  "kv_heads": 8, "head_dim": 128, "open": True},
+    "Qwen2.5-7B":      {"params_b": 7.6,   "layers": 28,  "kv_heads": 4, "head_dim": 128, "open": True},
+    "Mistral-7B":      {"params_b": 7.25,  "layers": 32,  "kv_heads": 8, "head_dim": 128, "open": True},
+    "Mixtral-8x7B":    {"params_b": 46.7,  "layers": 32,  "kv_heads": 8, "head_dim": 128, "open": True},
+    "Mixtral-8x22B":   {"params_b": 141.0, "layers": 56,  "kv_heads": 8, "head_dim": 128, "open": True},
+    "Gemma-2-27B":     {"params_b": 27.2,  "layers": 46,  "kv_heads": 16, "head_dim": 128, "open": True},
+}
+
+PRECISIONS = {"fp16": 2, "fp8": 1, "int4": 0.5}
+GIB = 1024 ** 3
+
+
+def build_modelfit(data):
+    """Which tracked GPUs can actually hold a given model, and what that costs.
+
+    Replaces the old table of invented throughput/batch numbers. Everything here
+    is computed:
+        weights   = params x bytes_per_param
+        kv_cache  = 2 x layers x kv_heads x head_dim x ctx x batch x bytes
+        overhead  = 20% of weights (activations, fragmentation, CUDA context)
+    """
+    specs = data.get("specs") or {}
+    providers = data.get("providers") or {}
+    contexts = [8192, 32768, 131072]
+    out = {}
+
+    for model, arch in MODEL_ARCHITECTURES.items():
+        entry = {
+            "params_b": arch["params_b"],
+            "layers": arch["layers"],
+            "kv_heads": arch["kv_heads"],
+            "head_dim": arch["head_dim"],
+            "open_source": arch["open"],
+            "precisions": {},
+        }
+        for prec, nbytes in PRECISIONS.items():
+            weights_gib = arch["params_b"] * 1e9 * nbytes / GIB
+            overhead_gib = weights_gib * 0.20
+            per_ctx = {}
+            for ctx in contexts:
+                # KV cache is held at fp16 even when weights are quantised.
+                kv_gib = (2 * arch["layers"] * arch["kv_heads"] * arch["head_dim"]
+                          * ctx * 2) / GIB
+                total = weights_gib + overhead_gib + kv_gib
+                fits = []
+                for gpu_id, spec in specs.items():
+                    vram = spec.get("vram_gb")
+                    if not vram:
+                        continue
+                    n_gpus = max(1, -(-int(total) // int(vram)) if total > vram else 1)
+                    if total > vram * 8:
+                        continue
+                    n_gpus = 1 if total <= vram else int(-(-total // vram))
+                    cheapest = _cheapest_provider_for(providers, gpu_id)
+                    if not cheapest:
+                        continue
+                    price, prov = cheapest
+                    fits.append({
+                        "gpu": gpu_id,
+                        "gpus_needed": n_gpus,
+                        "vram_total_gb": round(vram * n_gpus, 1),
+                        "headroom_pct": round((vram * n_gpus - total) / (vram * n_gpus) * 100, 1),
+                        "cheapest_provider": prov,
+                        "usd_per_hr": round(price * n_gpus, 3),
+                    })
+                fits.sort(key=lambda f: (f["usd_per_hr"], f["gpus_needed"]))
+                per_ctx[str(ctx)] = {
+                    "kv_cache_gib": round(kv_gib, 2),
+                    "total_vram_gib": round(total, 2),
+                    "options": fits[:6],
+                    "cheapest_usd_per_hr": fits[0]["usd_per_hr"] if fits else None,
+                }
+            entry["precisions"][prec] = {
+                "weights_gib": round(weights_gib, 2),
+                "overhead_gib": round(overhead_gib, 2),
+                "contexts": per_ctx,
+            }
+        out[model] = entry
+
+    data["modelfit"] = out
+    log_ok("Model Fit", f"{len(out)} models x {len(PRECISIONS)} precisions computed")
+    return data
+
+
+def build_changelog(data, previous):
+    """Record what moved since the last run so the console has a change feed."""
+    if not previous:
+        return data
+
+    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    events = []
+
+    old_p, new_p = previous.get("providers") or {}, data.get("providers") or {}
+    for prov, pdata in new_p.items():
+        old_gpus = (old_p.get(prov) or {}).get("gpus") or {}
+        new_gpus = pdata.get("gpus") or {}
+        for gpu_id, info in new_gpus.items():
+            new_price = info.get("price_per_gpu_hr")
+            old_price = (old_gpus.get(gpu_id) or {}).get("price_per_gpu_hr")
+            if old_price and new_price:
+                delta = (new_price / old_price - 1) * 100
+                if abs(delta) >= 3:
+                    ev = {
+                        "date": stamp, "type": "price", "provider": prov, "gpu": gpu_id,
+                        "from": old_price, "to": new_price, "change_pct": round(delta, 1),
+                    }
+                    # A >100% week-on-week move in list pricing is almost always a
+                    # scraper artefact, not the market. Flag rather than silently
+                    # publish it as a price signal.
+                    if abs(delta) > 100:
+                        ev["needs_review"] = True
+                    events.append(ev)
+            elif not old_price:
+                events.append({"date": stamp, "type": "listed", "provider": prov,
+                               "gpu": gpu_id, "to": new_price})
+        for gpu_id in old_gpus:
+            if gpu_id not in new_gpus:
+                events.append({"date": stamp, "type": "delisted", "provider": prov,
+                               "gpu": gpu_id, "from": old_gpus[gpu_id].get("price_per_gpu_hr")})
+
+    events.sort(key=lambda e: -abs(e.get("change_pct") or 0))
+    log = [e for e in (data.get("changelog") or []) if e.get("date") != stamp]
+    data["changelog"] = (events + log)[:200]
+    log_ok("Changelog", f"{len(events)} changes recorded for {stamp}")
     return data
 
 
@@ -2194,6 +2526,8 @@ def main():
         log_info("No existing data.json or embedded_data.json found. Starting fresh.")
         data = {}
 
+    _snapshot_before = json.loads(json.dumps(data)) if data else None
+
     existing_ai = load_existing(AI_ANALYSIS_JSON, EMBEDDED_AI_JSON)
     if not existing_ai:
         existing_ai = {}
@@ -2296,9 +2630,9 @@ def main():
         log_fail("Workload Recs", str(exc))
 
     try:
-        data = refresh_tco_and_reservations(data)
+        data = refresh_tco(data)
     except Exception as exc:
-        log_fail("TCO / Reservations", str(exc))
+        log_fail("TCO", str(exc))
 
     try:
         data = refresh_lead_times(data)
@@ -2367,25 +2701,29 @@ def main():
         data = merge_sentiment_into_data(data, reddit_data, hf_data, github_data)
     print()
 
-    # ---- 9. Price Forecasts ----
-    print("[9/10] Price Forecasts")
+    # ---- 9. Derived analytics: regional, volatility, model fit ----
+    print("[9/10] Regional / Volatility / Model Fit")
     print("-" * 40)
 
     try:
-        forecasts = generate_forecasts(data)
-        if forecasts:
-            # Only forecast GPUs that still have a live price -- projecting a
-            # rate no tracked provider quotes is meaningless.
-            priced = set(data.get("spot") or {})
-            data["forecasts"] = {
-                g: f for g, f in forecasts.items() if not priced or g in priced
-            }
-            forecasts = data["forecasts"]
-            log_ok("Forecasts", f"{len(forecasts)} GPUs forecasted")
-        else:
-            log_info("No historical data available for forecasting")
+        data = build_regional(data)
     except Exception as exc:
-        log_fail("Forecasts", str(exc))
+        log_fail("Regional", str(exc))
+
+    try:
+        data = compute_volatility(data)
+    except Exception as exc:
+        log_fail("Volatility", str(exc))
+
+    try:
+        data = build_modelfit(data)
+    except Exception as exc:
+        log_fail("Model Fit", str(exc))
+
+    # Retired: per-provider utilization was unsourceable, and a 6-month point
+    # forecast off ~12 monthly observations was not defensible. compute_volatility
+    # above describes what the history actually supports.
+    data.pop("utilization", None)
     print()
 
     # ---- 10. AI Analysis ----
@@ -2401,6 +2739,11 @@ def main():
     except Exception as exc:
         log_fail("Summary", str(exc))
     print()
+
+    try:
+        data = build_changelog(data, _snapshot_before)
+    except Exception as exc:
+        log_fail("Changelog", str(exc))
 
     # ---- Save ----
     print("Saving files...")

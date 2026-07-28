@@ -22,9 +22,8 @@ from gpu_data import (
     TCO_COMPONENTS, INFERENCE_BENCHMARKS, SPOT_MARKET, NEWS_FEED,
     get_cheapest_by_gpu, get_price_comparison_matrix,
     generate_market_summary, get_regional_summary, get_workload_recommendations,
-    get_utilization_summary, get_reservation_analysis, get_price_forecasts,
+    get_price_forecasts,
     get_competitive_landscape, get_sustainability_summary, get_supply_chain_summary,
-    get_model_hardware_fit,
 )
 from config import WEB_PORT
 
@@ -224,10 +223,6 @@ class DashboardHandler(SimpleHTTPRequestHandler):
                 self.send_json(generate_daily_news())
             except Exception:
                 self.send_json(NEWS_FEED)
-        elif path == "/api/utilization":
-            self.send_json(get_utilization_summary())
-        elif path == "/api/reservations":
-            self.send_json(get_reservation_analysis())
         elif path == "/api/forecasts":
             self.send_json(get_price_forecasts())
         elif path == "/api/competitive":
@@ -236,8 +231,6 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             self.send_json(get_sustainability_summary())
         elif path == "/api/supplychain":
             self.send_json(get_supply_chain_summary())
-        elif path == "/api/modelfit":
-            self.send_json(get_model_hardware_fit())
         else:
             super().do_GET()
 
