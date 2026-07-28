@@ -129,44 +129,54 @@ def http_post(url, json_body, headers=None, timeout=30):
 # ===================================================================
 
 def fetch_vastai_pricing():
-    """Fetch on-demand GPU pricing from Vast.ai API."""
+    """Fetch on-demand GPU pricing from Vast.ai API.
+
+    The endpoint caps a response at ~64 offers no matter what `limit` says, so a
+    single price-ascending query returns nothing but the cheapest consumer cards
+    -- every datacenter GPU fell off the end and the section quietly served
+    carried-forward prices. Query the cheap tail and the datacenter tier
+    separately (the VRAM filter keeps the latter in its own 64-offer budget) and
+    merge on the cheapest offer per model.
+    """
     log_info("Fetching Vast.ai pricing...")
-    # Fetch a large batch sorted by price ascending to get consumer + datacenter GPUs
-    query = json.dumps({
+    url = "https://cloud.vast.ai/api/v0/bundles/"
+    base = {
         "verified": {"eq": True},
         "external": {"eq": False},
         "rentable": {"eq": True},
         "num_gpus": {"gte": 1},
         "type": "on-demand",
-        "order": [["dph_total", "asc"]],
-        "limit": 3000,
-    })
-    url = "https://cloud.vast.ai/api/v0/bundles/"
-    status, body = http_get(url, params={"q": query}, timeout=60)
-    if status != 200:
-        raise RuntimeError(f"Vast.ai returned HTTP {status}")
+    }
+    # (extra filters, ordering) -- one pass per price tier
+    passes = [
+        ({}, [["dph_total", "asc"]]),                             # consumer / cheap
+        ({"gpu_ram": {"gte": 20000}}, [["dph_total", "asc"]]),    # datacenter, cheapest first
+        ({"gpu_ram": {"gte": 60000}}, [["dph_total", "asc"]]),    # big-VRAM (B200/B300/H200)
+    ]
 
-    data = json.loads(body)
-    offers = data if isinstance(data, list) else data.get("offers", [])
-
-    # Aggregate: cheapest price per GPU model
     gpu_prices = {}
-    for offer in offers:
-        gpu_name = offer.get("gpu_name", "")
-        price_hr = offer.get("dph_total")  # dollars per hour total
-        num_gpus = offer.get("num_gpus", 1)
-        if not gpu_name or not price_hr or num_gpus < 1:
-            continue
-        per_gpu = round(price_hr / num_gpus, 4)
-        if gpu_name not in gpu_prices or per_gpu < gpu_prices[gpu_name]["min_price"]:
-            gpu_prices[gpu_name] = {
-                "min_price": per_gpu,
-                "num_offers": gpu_prices.get(gpu_name, {}).get("num_offers", 0) + 1,
-            }
-        else:
-            gpu_prices[gpu_name]["num_offers"] += 1
+    total_offers = 0
+    for extra, order in passes:
+        query = json.dumps({**base, **extra, "order": order, "limit": 3000})
+        status, body = http_get(url, params={"q": query}, timeout=60)
+        if status != 200:
+            raise RuntimeError(f"Vast.ai returned HTTP {status}")
+        data = json.loads(body)
+        offers = data if isinstance(data, list) else data.get("offers", [])
+        total_offers += len(offers)
 
-    log_ok("Vast.ai", f"{len(gpu_prices)} GPU models, {len(offers)} total offers")
+        for offer in offers:
+            gpu_name = offer.get("gpu_name", "")
+            price_hr = offer.get("dph_total")  # dollars per hour total
+            num_gpus = offer.get("num_gpus", 1)
+            if not gpu_name or not price_hr or num_gpus < 1:
+                continue
+            per_gpu = round(price_hr / num_gpus, 4)
+            entry = gpu_prices.setdefault(gpu_name, {"min_price": per_gpu, "num_offers": 0})
+            entry["min_price"] = min(entry["min_price"], per_gpu)
+            entry["num_offers"] += 1
+
+    log_ok("Vast.ai", f"{len(gpu_prices)} GPU models, {total_offers} offers across {len(passes)} passes")
     return gpu_prices
 
 
@@ -602,104 +612,111 @@ def normalize_gpu_name(name):
 
 
 def get_hardcoded_fallback_prices():
-    """Return hardcoded prices for providers without free APIs."""
-    now = datetime.now(timezone.utc).isoformat()
+    """Last-known-good prices for provider/GPU pairs with no usable live feed.
+
+    Every figure here was verified against the provider's own published pricing
+    on VERIFIED_ON. This table is a *floor*, not a source of truth: it is only
+    written when an entry has no live-sourced price at all (see the guard in
+    merge_live_pricing_into_data), and it must never contain a price nobody
+    publishes. The previous table carried invented entries -- FluidStack B200/
+    B300, Azure H200/B200/B300/MI300X, CoreWeave B300 -- for hardware those
+    providers do not sell, and its cloud prices ran 24-69% below list, which is
+    how a single failed scrape could understate a whole provider.
+    """
+    # Bump this whenever a price below is re-checked against the provider.
+    VERIFIED_ON = "2026-07-28"
     return {
-        "GCP": {
-            "last_verified": now,
-            "source": "hardcoded_fallback",
-            "gpus": {
-                "B300": {"price_per_gpu_hr": 14.10},
-                "B200": {"price_per_gpu_hr": 5.12},
-                "H200": {"price_per_gpu_hr": 4.50},
-                "H100-SXM": {"price_per_gpu_hr": 3.40},
-                "H100-PCIe": {"price_per_gpu_hr": 2.85},
-                "A100-80GB": {"price_per_gpu_hr": 2.21},
-                "A100-40GB": {"price_per_gpu_hr": 1.38},
-                "L40S": {"price_per_gpu_hr": 1.10},
-                "L4": {"price_per_gpu_hr": 0.70},
-                "T4": {"price_per_gpu_hr": 0.35},
-            },
-        },
-        "Azure": {
-            "last_verified": now,
-            "source": "hardcoded_fallback",
-            "gpus": {
-                "B300": {"price_per_gpu_hr": 16.00},
-                "B200": {"price_per_gpu_hr": 5.53},
-                "GB200": {"price_per_gpu_hr": 27.04},
-                "H200": {"price_per_gpu_hr": 4.80},
-                "H100-SXM": {"price_per_gpu_hr": 3.67},
-                "MI300X": {"price_per_gpu_hr": 6.00},
-                "A100-80GB": {"price_per_gpu_hr": 2.52},
-                "A100-40GB": {"price_per_gpu_hr": 1.97},
-                "L40S": {"price_per_gpu_hr": 1.24},
-                "T4": {"price_per_gpu_hr": 0.53},
-            },
-        },
-        "Lambda": {
-            "last_verified": now,
-            "source": "hardcoded_fallback",
-            "gpus": {
-                "B300": {"price_per_gpu_hr": 7.46},
-                "B200": {"price_per_gpu_hr": 4.25},
-                "H200": {"price_per_gpu_hr": 3.29},
-                "H100-SXM": {"price_per_gpu_hr": 2.49},
-                "MI300X": {"price_per_gpu_hr": 3.99},
-                "A100-80GB": {"price_per_gpu_hr": 1.29},
-                "A100-40GB": {"price_per_gpu_hr": 1.10},
-            },
-        },
-        "CoreWeave": {
-            "last_verified": now,
-            "source": "hardcoded_fallback",
-            "gpus": {
-                "B300": {"price_per_gpu_hr": 4.88},
-                "B200": {"price_per_gpu_hr": 3.75},
-                "H200": {"price_per_gpu_hr": 3.49},
-                "H100-SXM": {"price_per_gpu_hr": 2.23},
-                "H100-PCIe": {"price_per_gpu_hr": 2.06},
-                "MI300X": {"price_per_gpu_hr": 2.85},
-                "A100-80GB": {"price_per_gpu_hr": 2.06},
-                "A100-40GB": {"price_per_gpu_hr": 1.62},
-                "L40S": {"price_per_gpu_hr": 1.14},
-                "RTX-4090": {"price_per_gpu_hr": 0.74},
-            },
-        },
+        # AWS EC2 on-demand, us-east-1 (per-GPU = instance price / GPU count).
+        # Cross-checked against the AWS bulk pricing API and instances.vantage.sh.
         "AWS": {
-            "last_verified": now,
+            "last_verified": VERIFIED_ON,
             "source": "hardcoded_fallback",
             "gpus": {
-                "B300": {"price_per_gpu_hr": 18.50},
-                "B200": {"price_per_gpu_hr": 5.35},
-                "H200": {"price_per_gpu_hr": 4.56},
-                "H100-SXM": {"price_per_gpu_hr": 4.28},
-                "A100-80GB": {"price_per_gpu_hr": 2.21},
-                "A100-40GB": {"price_per_gpu_hr": 1.38},
-                "L4": {"price_per_gpu_hr": 0.80},
-                "T4": {"price_per_gpu_hr": 0.53},
+                "B300": {"price_per_gpu_hr": 17.802},      # p6-b300.48xlarge $142.416/8
+                "B200": {"price_per_gpu_hr": 14.242},      # p6-b200.48xlarge $113.934/8
+                "H200": {"price_per_gpu_hr": 7.912},       # p5en.48xlarge
+                "H100-SXM": {"price_per_gpu_hr": 6.880},   # p5.48xlarge $55.04/8
+                "A100-80GB": {"price_per_gpu_hr": 3.431},  # p4de.24xlarge
+                "A100-40GB": {"price_per_gpu_hr": 2.745},  # p4d.24xlarge
+                "L40S": {"price_per_gpu_hr": 3.766},       # g6e
+                "L4": {"price_per_gpu_hr": 1.669},         # g6
+                "T4": {"price_per_gpu_hr": 0.526},         # g4dn.xlarge
             },
         },
-        "FluidStack": {
-            "last_verified": now,
+        # Google Cloud on-demand, us-central1.
+        "GCP": {
+            "last_verified": VERIFIED_ON,
             "source": "hardcoded_fallback",
             "gpus": {
-                "B300": {"price_per_gpu_hr": 3.00},
-                "B200": {"price_per_gpu_hr": 2.50},
-                "H200": {"price_per_gpu_hr": 2.30},
-                "H100-SXM": {"price_per_gpu_hr": 1.80},
-                "A100-80GB": {"price_per_gpu_hr": 1.20},
-                "A100-40GB": {"price_per_gpu_hr": 0.80},
-                "L40S": {"price_per_gpu_hr": 0.65},
+                "B200": {"price_per_gpu_hr": 8.055},       # a4-highgpu-8g
+                "H200": {"price_per_gpu_hr": 10.601},      # a3-ultragpu-8g
+                "H100-SXM": {"price_per_gpu_hr": 11.061},  # a3-highgpu-8g
+                "A100-80GB": {"price_per_gpu_hr": 5.069},  # a2-ultragpu-1g
+                "A100-40GB": {"price_per_gpu_hr": 3.673},  # a2-highgpu-1g
+                "L4": {"price_per_gpu_hr": 1.000},         # g2-standard
+                "T4": {"price_per_gpu_hr": 0.350},
             },
         },
+        # Azure Retail Prices API, eastus. Azure does not publish retail pricing
+        # for H200 / B200 / B300 / MI300X / MI325X / L40S in this region, so
+        # they are deliberately absent rather than guessed.
+        "Azure": {
+            "last_verified": VERIFIED_ON,
+            "source": "hardcoded_fallback",
+            "gpus": {
+                "GB200": {"price_per_gpu_hr": 28.512},     # ND128isrNDRGB200v6 $114.048/4
+                "H100-SXM": {"price_per_gpu_hr": 11.613},  # ND96is*H100v5 median /8
+                "A100-80GB": {"price_per_gpu_hr": 3.952},  # ND96amsA100v4
+            },
+        },
+        # Lambda Labs public on-demand rates.
+        "Lambda": {
+            "last_verified": VERIFIED_ON,
+            "source": "hardcoded_fallback",
+            "gpus": {
+                "B200": {"price_per_gpu_hr": 6.690},
+                "H100-SXM": {"price_per_gpu_hr": 3.990},
+                "H100-PCIe": {"price_per_gpu_hr": 3.290},
+                "GH200": {"price_per_gpu_hr": 2.290},
+            },
+        },
+        # CoreWeave public on-demand rates.
+        "CoreWeave": {
+            "last_verified": VERIFIED_ON,
+            "source": "hardcoded_fallback",
+            "gpus": {
+                "GB200": {"price_per_gpu_hr": 10.500},
+                "B200": {"price_per_gpu_hr": 8.600},
+                "GH200": {"price_per_gpu_hr": 6.500},
+                "H200": {"price_per_gpu_hr": 6.305},
+                "H100-SXM": {"price_per_gpu_hr": 6.155},
+                "A100-80GB": {"price_per_gpu_hr": 2.700},
+                "L40S": {"price_per_gpu_hr": 2.250},
+            },
+        },
+        # Together.ai GPU-cluster on-demand rates, read from its published price
+        # list (the HTML scraper is unreliable). It does not publish A100 or
+        # GB200/GB300 rates -- those are quote-only, so they are absent here.
         "Together": {
-            "last_verified": now,
+            "last_verified": VERIFIED_ON,
             "source": "hardcoded_fallback",
             "gpus": {
-                "B300": {"price_per_gpu_hr": 5.50},
-                "H100-SXM": {"price_per_gpu_hr": 2.50},
-                "A100-80GB": {"price_per_gpu_hr": 1.50},
+                "B200": {"price_per_gpu_hr": 8.19},
+                "H200": {"price_per_gpu_hr": 5.99},
+                "H100-SXM": {"price_per_gpu_hr": 3.99},
+            },
+        },
+        # FluidStack has no public API; rates read from its published price list.
+        # It does not sell B200 or B300 -- the previous table invented both.
+        "FluidStack": {
+            "last_verified": VERIFIED_ON,
+            "source": "hardcoded_fallback",
+            "gpus": {
+                "H200": {"price_per_gpu_hr": 2.30},
+                "H100-SXM": {"price_per_gpu_hr": 2.10},
+                "A100-40GB": {"price_per_gpu_hr": 1.80},
+                "A100-80GB": {"price_per_gpu_hr": 1.30},
+                "L40S": {"price_per_gpu_hr": 1.30},
             },
         },
     }
@@ -726,6 +743,8 @@ def _apply_scraped_prices(providers, provider_key, prices, source_tag, tracked_s
         entry["price_per_gpu_hr"] = round(float(price), 3)
         entry["source"] = source_tag
         entry["last_updated"] = now
+        entry["last_verified"] = now
+        entry.pop("stale", None)
     prov["last_updated"] = now
 
 
@@ -831,12 +850,20 @@ def merge_live_pricing_into_data(
             if gpu_id not in existing_gpus:
                 existing_gpus[gpu_id] = {}
             existing_entry = existing_gpus[gpu_id]
-            # Don't clobber a live-scraped price from this run
-            if existing_entry.get("source") in live_sources and existing_entry.get("last_updated") == now:
+            # Never downgrade a real, provider-sourced price to a constant. The
+            # old guard only protected a scrape from *this* run, so any transient
+            # scraper failure replaced a verified API price with a hardcoded one
+            # -- and those constants run 24-69% below real list prices, so a
+            # single failed fetch silently understated a whole provider. Keep the
+            # last real price and mark it stale instead.
+            if existing_entry.get("source") in live_sources and existing_entry.get("price_per_gpu_hr"):
+                if existing_entry.get("last_updated") != now:
+                    existing_entry["stale"] = True
                 continue
             existing_entry["price_per_gpu_hr"] = gpu_info["price_per_gpu_hr"]
             existing_entry["source"] = "hardcoded_fallback"
             existing_entry["last_verified"] = fb_data["last_verified"]
+            existing_entry.pop("stale", None)
 
     # Every provider carries a last_updated so the Data tab can report its
     # freshness. Fallback-only providers (e.g. FluidStack) had none at all.
@@ -1045,6 +1072,16 @@ def update_spot(data):
             "spread_pct": spread_pct,
             "last_trade": avg_od,
         }
+
+    # Drop GPUs no tracked provider prices any more, rather than leaving the
+    # last known quote sitting there looking current.
+    dropped = [g for g in list(spot) if g not in gpu_prices]
+    for gpu_id in dropped:
+        spot.pop(gpu_id, None)
+        (data.get("forecasts") or {}).pop(gpu_id, None)
+        (data.get("reservations") or {}).pop(gpu_id, None)
+    if dropped:
+        log_info(f"Spot: dropped {', '.join(dropped)} (no provider lists them)")
 
     data["spot"] = spot
     log_ok("Spot", f"{len(gpu_prices)} GPUs refreshed")
@@ -2337,7 +2374,13 @@ def main():
     try:
         forecasts = generate_forecasts(data)
         if forecasts:
-            data["forecasts"] = forecasts
+            # Only forecast GPUs that still have a live price -- projecting a
+            # rate no tracked provider quotes is meaningless.
+            priced = set(data.get("spot") or {})
+            data["forecasts"] = {
+                g: f for g, f in forecasts.items() if not priced or g in priced
+            }
+            forecasts = data["forecasts"]
             log_ok("Forecasts", f"{len(forecasts)} GPUs forecasted")
         else:
             log_info("No historical data available for forecasting")

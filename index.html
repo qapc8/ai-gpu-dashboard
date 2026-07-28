@@ -3798,6 +3798,16 @@ function buildChatContext() {
   const parts = [];
   if(!DATA) return '';
 
+  // Lead with provenance so the assistant doesn't quote an estimate as a reading.
+  const meta = DATA._meta && DATA._meta.sections;
+  if(meta){
+    const byBasis = {};
+    Object.entries(meta).forEach(([k,v]) => (byBasis[v.basis] = byBasis[v.basis] || []).push(k));
+    parts.push('DATA PROVENANCE — state the basis when a number is not measured:\n' +
+      Object.entries(byBasis).map(([b,ks]) => `  ${b}: ${ks.join(', ')}`).join('\n') +
+      '\n  "modeled" means an estimate with no public source — never present it as a measured figure.');
+  }
+
   // GPU Specs
   const specs = DATA.specs || {};
   parts.push('GPU SPECIFICATIONS:\n' + Object.entries(specs).map(([id, s]) =>
@@ -4327,12 +4337,22 @@ function renderDataAudit(searchTerm) {
     const isOpen = st ? true : false;
     const typeLabel = sec.type === 'array' ? 'ARRAY' : sec.type === 'flat-object' ? 'OBJECT' : 'COLLECTION';
 
+    // Provenance: distinguish live measurements from estimates so a modelled
+    // number is never mistaken for a reading.
+    const meta = (DATA._meta && DATA._meta.sections && DATA._meta.sections[sec.key]) || null;
+    const basisColor = { measured:'var(--green)', derived:'var(--cyan)', reference:'var(--blue)',
+                         modeled:'var(--amber)', mixed:'var(--purple)' };
+    const basisBadge = meta
+      ? `<span class="da-badge" style="background:var(--bg-2);color:${basisColor[meta.basis]||'var(--text-2)'};" title="${escHtml(meta.detail)}">${meta.basis.toUpperCase()}</span>`
+      : '';
+
     html += `<div class="da-section" data-da-idx="${idx}">
       <div class="da-header${isOpen ? ' open' : ''}" onclick="toggleDataSection(this)">
         <div class="da-header-left">
           <span class="da-chevron">&#9654;</span>
           <span class="da-title">${escHtml(sec.label)}</span>
           <span class="da-badge" style="background:var(--${sec.color}-dim);color:var(--${sec.color});">${typeLabel}</span>
+          ${basisBadge}
         </div>
         <div class="da-meta">
           <span class="da-badge" style="background:var(--bg-2);color:var(--text-2);">${count} entries</span>

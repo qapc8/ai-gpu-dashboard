@@ -18,16 +18,17 @@ from typing import Optional
 GPU_SPECS = {
     # --- NVIDIA Blackwell Ultra ---
     "B300": {
-        "name": "NVIDIA B300 256GB",
+        # HGX B300 datasheet: 288GB HBM3e, 2,250 dense FP16/BF16 TFLOPS, 75 FP32, 1,400W.
+        "name": "NVIDIA B300 288GB",
         "vendor": "NVIDIA",
-        "vram_gb": 256,
+        "vram_gb": 288,
         "arch": "Blackwell Ultra",
-        "fp16_tflops": 3000,
-        "fp32_tflops": 100,
-        "tdp_watts": 1200,
+        "fp16_tflops": 2250,
+        "fp32_tflops": 75,
+        "tdp_watts": 1400,
         "interconnect": "NVLink 5.0",
         "release_year": 2026,
-        "msrp_usd": 55000,
+        "msrp_usd": 40000,
         "tier": "flagship"
     },
     # --- NVIDIA Blackwell ---
@@ -45,16 +46,20 @@ GPU_SPECS = {
         "tier": "flagship"
     },
     "GB200": {
-        "name": "NVIDIA GB200 NVL72",
+        # Priced per GPU-hour by every provider tracked here, so this describes ONE
+        # Blackwell GPU in a GB200 system -- not the 2-GPU superchip, and not the
+        # NVL72 rack (72 GPUs / 13.4TB HBM3e / 180 PFLOPS dense FP16) the old name
+        # claimed. Per-GPU figures are the NVL72 totals divided by 72.
+        "name": "NVIDIA GB200 (Blackwell, per-GPU)",
         "vendor": "NVIDIA",
-        "vram_gb": 384,
+        "vram_gb": 186,
         "arch": "Blackwell",
-        "fp16_tflops": 4500,
-        "fp32_tflops": 150,
-        "tdp_watts": 2700,
+        "fp16_tflops": 2500,
+        "fp32_tflops": 75,
+        "tdp_watts": 1200,
         "interconnect": "NVLink 5.0",
         "release_year": 2025,
-        "msrp_usd": 70000,
+        "msrp_usd": 35000,
         "tier": "ultra"
     },
     "RTX-5090": {
@@ -95,6 +100,19 @@ GPU_SPECS = {
         "interconnect": "NVLink 4.0",
         "release_year": 2023,
         "msrp_usd": 30000,
+        "tier": "flagship"
+    },
+    "GH200": {
+        "name": "NVIDIA GH200 Grace Hopper 96GB",
+        "vendor": "NVIDIA",
+        "vram_gb": 96,
+        "arch": "Hopper",
+        "fp16_tflops": 989.5,
+        "fp32_tflops": 67,
+        "tdp_watts": 1000,
+        "interconnect": "NVLink-C2C",
+        "release_year": 2024,
+        "msrp_usd": 40000,
         "tier": "flagship"
     },
     "H100-PCIe": {
@@ -228,7 +246,7 @@ CLOUD_PRICING = {
         "provider_name": "Amazon Web Services",
         "type": "cloud",
         "gpus": {
-            "B300": {"instance": "p7-b300.48xlarge", "gpus_per_instance": 8, "price_per_gpu_hr": 18.50, "regions": {
+            "B300": {"instance": "p6-b300.48xlarge", "gpus_per_instance": 8, "price_per_gpu_hr": 18.50, "regions": {
                 "us-east-1": 18.50, "us-east-2": 18.50, "us-west-2": 18.50,
                 "eu-west-1": 20.35, "eu-central-1": 21.11,
                 "ap-northeast-1": 22.22
@@ -858,8 +876,11 @@ HISTORICAL_PRICING = {
 MARKET_INDICATORS = {
     "nvidia_stock": {"ticker": "NVDA", "current": 138.25, "1m_change": 4.2, "3m_change": 12.8, "ytd_change": 8.5, "52w_high": 153.13, "52w_low": 75.61},
     "amd_stock": {"ticker": "AMD", "current": 119.50, "1m_change": -2.1, "3m_change": 5.3, "ytd_change": 3.8, "52w_high": 164.46, "52w_low": 100.55},
-    "gpu_market_size_bn": {"2023": 52.4, "2024": 71.2, "2025": 95.8, "2026_est": 128.5, "2027_est": 168.3},
-    "ai_capex_bn": {"2023": 55, "2024": 95, "2025_est": 150, "2026_est": 210, "2027_est": 280},
+    # AI accelerator revenue, calendar year. Derived from NVIDIA reported
+    # data-center revenue over its estimated share (FY2026 ~ CY2025, $193.7B
+    # at ~80%). Prior series put 2026 below NVIDIA revenue alone.
+    "gpu_market_size_bn": {"2023": 56, "2024": 132, "2025": 242, "2026_est": 330, "2027_est": 430},
+    "ai_capex_bn": {"2023": 150, "2024": 228, "2025": 410, "2026_est": 725, "2027_est": 1000},
     "data_center_gpu_shipments_k": {"2023-Q1": 480, "2023-Q2": 520, "2023-Q3": 610, "2023-Q4": 750,
                                      "2024-Q1": 850, "2024-Q2": 920, "2024-Q3": 1050, "2024-Q4": 1180,
                                      "2025-Q1": 1320, "2025-Q2": 1450, "2025-Q3": 1580, "2025-Q4": 1700,
@@ -867,7 +888,7 @@ MARKET_INDICATORS = {
     "flagship_lead_time_weeks": {"2023-01": 48, "2023-03": 48, "2023-06": 40, "2023-09": 36, "2023-12": 28,
                               "2024-03": 16, "2024-06": 10, "2024-09": 8, "2024-11": 52,
                               "2025-01": 48, "2025-03": 44, "2025-06": 40, "2025-09": 36, "2025-12": 36, "2026-01": 36, "2026-02": 36},
-    "amd_gpu_market_share_pct": {"2023-01": 3, "2023-06": 5, "2024-01": 8, "2024-06": 12, "2025-01": 16, "2025-06": 19, "2026-01": 22},
+    "amd_gpu_market_share_pct": {"2023-01": 1, "2023-06": 2, "2024-01": 3, "2024-06": 4, "2025-01": 5, "2025-06": 5.5, "2026-01": 6},
     "gpu_lead_times": {
         "B300": {"weeks": 8, "status": "constrained", "note": "Newly launched, supply constrained"},
         "B200": {"weeks": 4, "status": "available", "note": "Shipping, broadly available"},
@@ -2117,7 +2138,7 @@ COMPETITIVE_MOAT = {
         "price_performance_ratio": 72,
         "moat_strength_score": 92,
         "market_share_pct": 78,
-        "market_share_trend": [88, 86, 84, 81, 78],
+        "market_share_trend": [87, 87, 85, 81, 78],
         "key_products": ["B300", "B200", "GB200", "H200", "H100-SXM"],
         "strengths": ["CUDA ecosystem lock-in", "NVLink/NVSwitch interconnect", "Dominant software stack", "Training performance leadership"],
         "weaknesses": ["Premium pricing", "Supply constraints on latest gen", "Growing competitive pressure"],
@@ -2129,9 +2150,9 @@ COMPETITIVE_MOAT = {
         "software_compatibility": 58,
         "price_performance_ratio": 88,
         "moat_strength_score": 48,
-        "market_share_pct": 22,
-        "market_share_trend": [12, 14, 16, 19, 22],
-        "key_products": ["MI300X", "MI325X", "MI350X"],
+        "market_share_pct": 6,
+        "market_share_trend": [3, 4, 5, 5, 6],
+        "key_products": ["MI355X", "MI325X", "MI300X"],
         "strengths": ["Price/perf advantage", "Large HBM capacity", "Open ROCm ecosystem", "Rapid market share growth"],
         "weaknesses": ["ROCm maturity gap", "Limited training adoption", "Smaller ecosystem"],
         "parity_timeline": "2027-Q2 for inference, 2028+ for training"
@@ -2142,9 +2163,9 @@ COMPETITIVE_MOAT = {
         "software_compatibility": 45,
         "price_performance_ratio": 85,
         "moat_strength_score": 55,
-        "market_share_pct": 8,
-        "market_share_trend": [5, 5, 6, 7, 8],
-        "key_products": ["TPU v5p", "TPU v5e", "TPU v6e (Trillium)"],
+        "market_share_pct": 11,
+        "market_share_trend": [4, 5, 7, 9, 11],
+        "key_products": ["TPU v7 (Ironwood)", "TPU v6e (Trillium)", "TPU v5p"],
         "strengths": ["Vertically integrated (GCP only)", "Excellent JAX/TF performance", "Competitive pricing", "Large-scale training proven"],
         "weaknesses": ["GCP lock-in", "No PyTorch native support", "Limited availability outside Google"],
         "parity_timeline": "Niche — competes in JAX/TF workloads only"
@@ -2156,8 +2177,8 @@ COMPETITIVE_MOAT = {
         "price_performance_ratio": 90,
         "moat_strength_score": 35,
         "market_share_pct": 4,
-        "market_share_trend": [1, 2, 2, 3, 4],
-        "key_products": ["Trainium2", "Inferentia2"],
+        "market_share_trend": [1, 2, 3, 3, 4],
+        "key_products": ["Trainium3", "Trainium2", "Inferentia2"],
         "strengths": ["Aggressive pricing", "AWS ecosystem integration", "Neuron SDK improving", "Cost leadership strategy"],
         "weaknesses": ["Limited model compatibility", "Early ecosystem", "Performance gaps on complex models"],
         "parity_timeline": "2028+ for broad adoption"
@@ -2168,8 +2189,8 @@ COMPETITIVE_MOAT = {
         "software_compatibility": 40,
         "price_performance_ratio": 65,
         "moat_strength_score": 22,
-        "market_share_pct": 2,
-        "market_share_trend": [4, 4, 3, 3, 2],
+        "market_share_pct": 1,
+        "market_share_trend": [2, 2, 1, 1, 1],
         "key_products": ["Gaudi 3", "Gaudi 2"],
         "strengths": ["Competitive Gaudi 3 pricing", "x86 ecosystem familiarity", "Enterprise relationships"],
         "weaknesses": ["Poor market traction", "Software maturity issues", "Shrinking share", "Strategic uncertainty"],
