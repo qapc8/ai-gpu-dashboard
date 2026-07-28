@@ -40,11 +40,16 @@ jobs:
         run: python scripts/update_daily.py
 
       - name: Copy to embedded files
+        # Run even when a fetcher failed: the updater still writes every source
+        # that did succeed, and discarding the whole refresh over one dead
+        # scraper is how the 2026-07-27 weekly update got thrown away.
+        if: always()
         run: |
           cp data.json embedded_data.json
           cp ai_analysis.json embedded_ai.json
 
       - name: Commit and push if changed
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -82,11 +87,16 @@ jobs:
         run: python scripts/update_data.py
 
       - name: Copy to embedded files
+        # Run even when a fetcher failed: the updater still writes every source
+        # that did succeed, and discarding the whole refresh over one dead
+        # scraper is how the 2026-07-27 weekly update got thrown away.
+        if: always()
         run: |
           cp data.json embedded_data.json
           cp ai_analysis.json embedded_ai.json
 
       - name: Commit and push if changed
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

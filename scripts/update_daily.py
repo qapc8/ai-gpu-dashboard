@@ -36,6 +36,7 @@ from update_data import (
     merge_stocks_into_data,
     fetch_news_rss,
     merge_news_into_data,
+    refresh_summary,
 )
 
 
@@ -75,6 +76,13 @@ def main():
         data = merge_news_into_data(data, articles)
     except Exception as exc:
         log_fail("Google News RSS", str(exc))
+    print()
+
+    # ---- Refresh summary so the Overview tab tracks today's data ----
+    try:
+        refresh_summary(data)
+    except Exception as exc:
+        log_fail("Summary", str(exc))
     print()
 
     # ---- Save ----

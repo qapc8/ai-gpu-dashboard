@@ -838,6 +838,11 @@ def merge_live_pricing_into_data(
             existing_entry["source"] = "hardcoded_fallback"
             existing_entry["last_verified"] = fb_data["last_verified"]
 
+    # Every provider carries a last_updated so the Data tab can report its
+    # freshness. Fallback-only providers (e.g. FluidStack) had none at all.
+    for prov in providers.values():
+        prov.setdefault("last_updated", now)
+
     data["providers"] = providers
     return data
 
@@ -973,13 +978,52 @@ def update_spot(data):
 
     for gpu_id, entries in gpu_prices.items():
         on_demand = [e["price"] for e in entries]
-        reserved_1yr = [e["price"] * (1 - e["res1_disc"]) for e in entries if e["res1_disc"] > 0]
-        reserved_3yr = [e["price"] * (1 - e["res3_disc"]) for e in entries if e["res3_disc"] > 0]
+        # Price reserved across the *same* provider set as on-demand. Skipping
+        # providers with no reserved discount compared different baskets, so a
+        # GPU whose cheapest provider offers no commitment discount could report
+        # reserved as more expensive than on-demand (RTX-5090: $0.59 1yr vs
+        # $0.51 on-demand). A 0% discount just means that provider charges the
+        # same rate either way, which is what the reserved figure should show.
+        reserved_1yr = [e["price"] * (1 - e["res1_disc"]) for e in entries]
+        reserved_3yr = [e["price"] * (1 - e["res3_disc"]) for e in entries]
 
         existing = spot.get(gpu_id, {})
-        # Preserve quarterly_trend, just append/shift
-        trend = existing.get("quarterly_trend", [])
         avg_od = round(sum(on_demand) / len(on_demand), 2)
+
+        # quarterly_trend used to append on *every* run, so the "last 4
+        # quarters" were really the last 4 runs -- a few updates in one day
+        # flattened it and the header ticker's change-since read 0%. Track the
+        # quarter each point belongs to and overwrite within the same quarter.
+        trend = list(existing.get("quarterly_trend") or [])
+        now = datetime.now(timezone.utc)
+        quarter = f"{now.year}Q{(now.month - 1) // 3 + 1}"
+        if existing.get("trend_quarter") == quarter and trend:
+            trend[-1] = avg_od
+        else:
+            trend.append(avg_od)
+        trend = trend[-4:]
+
+        # bid/ask must bracket last_trade. They used to be frozen at whatever
+        # value they were first seeded with while last_trade tracked the live
+        # average, so the two drifted apart (last_trade ended up outside the
+        # spread on most GPUs). Re-derive them each run from the live average,
+        # preserving whatever spread the GPU historically quoted.
+        spread_pct = existing.get("spread_pct")
+        if not spread_pct:
+            old_bid, old_ask = existing.get("bid"), existing.get("ask")
+            if old_bid and old_ask and old_ask > old_bid:
+                spread_pct = (old_ask - old_bid) / ((old_ask + old_bid) / 2) * 100
+            else:
+                spread_pct = 12.0
+        spread_pct = max(2.0, min(25.0, round(spread_pct, 1)))
+        half = avg_od * (spread_pct / 200)
+
+        # Savings percentages were frozen defaults (30/50) regardless of the
+        # reserved prices shown next to them; derive them from the real numbers.
+        avg_res1 = sum(reserved_1yr) / len(reserved_1yr) if reserved_1yr else None
+        avg_res3 = sum(reserved_3yr) / len(reserved_3yr) if reserved_3yr else None
+        res1_savings = round((1 - avg_res1 / avg_od) * 100) if avg_res1 and avg_od else existing.get("res1_savings_pct", 30)
+        res3_savings = round((1 - avg_res3 / avg_od) * 100) if avg_res3 and avg_od else existing.get("res3_savings_pct", 50)
 
         spot[gpu_id] = {
             "on_demand_low": round(min(on_demand), 2),
@@ -991,17 +1035,333 @@ def update_spot(data):
             "reserved_3yr_low": round(min(reserved_3yr), 2) if reserved_3yr else existing.get("reserved_3yr_low"),
             "reserved_3yr_avg": round(sum(reserved_3yr) / len(reserved_3yr), 2) if reserved_3yr else existing.get("reserved_3yr_avg"),
             "reserved_3yr_high": round(max(reserved_3yr), 2) if reserved_3yr else existing.get("reserved_3yr_high"),
-            "res1_savings_pct": existing.get("res1_savings_pct", 30),
-            "res3_savings_pct": existing.get("res3_savings_pct", 50),
+            "res1_savings_pct": res1_savings,
+            "res3_savings_pct": res3_savings,
             "num_providers": len(entries),
-            "quarterly_trend": (trend + [avg_od])[-4:],  # Keep last 4 quarters
-            "bid": existing.get("bid", avg_od),
-            "ask": existing.get("ask", avg_od),
+            "quarterly_trend": trend,
+            "trend_quarter": quarter,
+            "bid": round(avg_od - half, 2),
+            "ask": round(avg_od + half, 2),
+            "spread_pct": spread_pct,
             "last_trade": avg_od,
         }
 
     data["spot"] = spot
     log_ok("Spot", f"{len(gpu_prices)} GPUs refreshed")
+    return data
+
+
+def _cheapest_provider_for(providers, gpu_id):
+    """(price, provider_name) for the cheapest live listing of a GPU, or None."""
+    best = None
+    for name, prov in (providers or {}).items():
+        info = (prov.get("gpus") or {}).get(gpu_id) or {}
+        price = info.get("price_per_gpu_hr")
+        if price and price > 0 and (best is None or price < best[0]):
+            best = (round(price, 4), name)
+    return best
+
+
+def refresh_workload_recs(data):
+    """Re-price the workload recommendations from live provider data.
+
+    current_prices used to be a frozen snapshot, so it drifted away from the
+    Pricing tab -- e.g. GB200 was listed as "cheapest $27.04" when the actual
+    cheapest live listing was $10.50 (27.04 was the *most expensive*).
+    """
+    recs = data.get("workload_recs")
+    if not recs:
+        return data
+
+    providers = data.get("providers") or {}
+    repriced = 0
+    for _workload, rec in recs.items():
+        prices = rec.get("current_prices")
+        if not prices:
+            continue
+        for gpu_id in list(prices.keys()):
+            best = _cheapest_provider_for(providers, gpu_id)
+            if not best:
+                continue
+            price, provider = best
+            prices[gpu_id] = {
+                "cheapest": price,
+                "provider": provider,
+                "monthly_1gpu": round(price * 730, 2),
+            }
+            repriced += 1
+
+    log_ok("Workload Recs", f"{repriced} GPU prices re-derived from live listings")
+    return data
+
+
+def _avg_spot_rate(providers, gpu_id):
+    """Average spot-discounted rate for a GPU across the providers listing it."""
+    rates = []
+    for prov in (providers or {}).values():
+        info = (prov.get("gpus") or {}).get(gpu_id) or {}
+        price = info.get("price_per_gpu_hr")
+        if price and price > 0:
+            rates.append(price * (1 - prov.get("spot_discount", 0)))
+    return round(sum(rates) / len(rates), 2) if rates else None
+
+
+def refresh_tco_and_reservations(data):
+    """Point the TCO and reservation models at live cloud prices.
+
+    Both carried their own frozen cloud rates, so the same GPU was quoted at
+    three different on-demand prices depending on the tab -- H100-SXM was
+    $2.49/hr in TCO and $2.18/hr in reservations while Pricing showed a $5.73
+    average. TCO's cloud-vs-self-hosted breakeven is computed from those rates,
+    so a stale number there changes the conclusion, not just the display.
+    """
+    spot = data.get("spot") or {}
+    providers = data.get("providers") or {}
+    if not spot:
+        return data
+
+    synced = 0
+    for gpu_id, s in spot.items():
+        od = s.get("on_demand_avg")
+        res1 = s.get("reserved_1yr_avg")
+        res3 = s.get("reserved_3yr_avg")
+        spot_rate = _avg_spot_rate(providers, gpu_id)
+        if od is None:
+            continue
+
+        tco = (data.get("tco") or {}).get(gpu_id)
+        if tco:
+            tco["cloud_on_demand_hr"] = od
+            if res1 is not None:
+                tco["cloud_reserved_1yr_hr"] = res1
+            if res3 is not None:
+                tco["cloud_reserved_3yr_hr"] = res3
+            if spot_rate is not None:
+                tco["cloud_spot_hr"] = spot_rate
+            synced += 1
+
+        res = (data.get("reservations") or {}).get(gpu_id)
+        if res:
+            res["on_demand_rate"] = od
+            if spot_rate is not None:
+                res["spot_avg_rate"] = spot_rate
+            if res1 is not None:
+                res["reserved_1yr_rate"] = res1
+            if res3 is not None:
+                res["reserved_3yr_rate"] = res3
+            # Savings columns are quoted against the on-demand rate above.
+            sav = res.get("savings_at_utilization")
+            if isinstance(sav, dict):
+                for util_key, row in sav.items():
+                    try:
+                        util = int(str(util_key).split("_")[0]) / 100
+                    except (ValueError, IndexError):
+                        continue
+                    if not util:
+                        continue
+                    if spot_rate is not None:
+                        row["spot"] = round((1 - spot_rate / od) * 100)
+                    # A commitment is paid for every hour of the term, so at
+                    # partial utilization its effective per-used-hour cost is
+                    # the rate divided by utilization.
+                    if res1 is not None:
+                        row["reserved_1yr"] = round((1 - (res1 / util) / od) * 100)
+                    if res3 is not None:
+                        row["reserved_3yr"] = round((1 - (res3 / util) / od) * 100)
+            synced += 1
+
+    log_ok("TCO / Reservations", f"{synced} entries synced to live cloud rates")
+    return data
+
+
+def refresh_lead_times(data):
+    """Make the three places that report lead times agree with each other.
+
+    indicators.gpu_lead_times is the maintained per-GPU source. The flagship
+    lead-time series and the per-vendor supply-chain figures were separate
+    hand-written numbers, so the dashboard simultaneously claimed the flagship
+    lead time was 36 weeks (series), 8 weeks (per-GPU) and 1 week (vendor).
+    Both derived views are now computed from the per-GPU table.
+    """
+    indicators = data.get("indicators") or {}
+    gpu_lead = indicators.get("gpu_lead_times") or {}
+    specs = data.get("specs") or {}
+    if not gpu_lead or not specs:
+        return data
+
+    def newest_flagship(vendor=None):
+        candidates = [
+            gid for gid, spec in specs.items()
+            if spec.get("tier") == "flagship"
+            and gid in gpu_lead
+            and (vendor is None or spec.get("vendor") == vendor)
+        ]
+        if not candidates:
+            return None
+        return max(candidates, key=lambda g: specs[g].get("release_year") or 0)
+
+    flagship = newest_flagship()
+    if flagship:
+        weeks = gpu_lead[flagship].get("weeks")
+        if weeks is not None:
+            series = indicators.setdefault("flagship_lead_time_weeks", {})
+            series[datetime.now(timezone.utc).strftime("%Y-%m")] = weeks
+            log_ok("Lead Times", f"flagship = {flagship} @ {weeks} wk")
+
+    for vendor_key, vendor in (data.get("supplychain", {}).get("vendors") or {}).items():
+        gid = newest_flagship(vendor_key)
+        if not gid:
+            continue
+        weeks = gpu_lead[gid].get("weeks")
+        if weeks is None:
+            continue
+        vendor["lead_time_weeks"] = weeks
+        trend = vendor.get("lead_time_trend")
+        if isinstance(trend, list) and trend:
+            trend[-1] = weeks
+
+    return data
+
+
+def refresh_inference_pricing(data):
+    """Refresh inference $/M-token pricing and context windows from OpenRouter.
+
+    The leaderboard roster (which models, and their weekly token volumes) still
+    has to be refreshed by hand from openrouter.ai/rankings, since OpenRouter
+    exposes no rankings API -- but pricing and context windows are the parts
+    that actually drift, and those come straight from /api/v1/models here.
+    Entries are matched on the `openrouter_id` recorded against each model.
+    """
+    inference = data.get("inference")
+    if not inference:
+        return data
+
+    log_info("Fetching OpenRouter model catalog...")
+    status, body = http_get("https://openrouter.ai/api/v1/models", timeout=30)
+    if status != 200:
+        raise RuntimeError(f"OpenRouter returned HTTP {status}")
+
+    catalog = {m.get("id"): m for m in json.loads(body).get("data", [])}
+
+    updated, unmatched = 0, []
+    for name, entry in inference.items():
+        oid = entry.get("openrouter_id")
+        model = catalog.get(oid) if oid else None
+        if not model:
+            unmatched.append(name)
+            continue
+
+        pricing = model.get("pricing") or {}
+        try:
+            inp = round(float(pricing["prompt"]) * 1_000_000, 4)
+            outp = round(float(pricing["completion"]) * 1_000_000, 4)
+        except (KeyError, TypeError, ValueError):
+            unmatched.append(name)
+            continue
+
+        providers = entry.get("providers") or {}
+        old = (providers.get("OpenRouter") or {}).copy()
+        for pname, rates in providers.items():
+            # Vendor rows that were quoting the same rate as OpenRouter stay in
+            # step with it; a row that has deliberately diverged is left alone.
+            if pname == "OpenRouter" or (
+                rates.get("input") == old.get("input")
+                and rates.get("output") == old.get("output")
+            ):
+                rates["input"] = inp
+                rates["output"] = outp
+
+        if model.get("context_length"):
+            entry["context_k"] = round(model["context_length"] / 1000)
+        updated += 1
+
+    if unmatched:
+        log_info(f"Inference: no OpenRouter match for {', '.join(unmatched)}")
+    log_ok("Inference Pricing", f"{updated}/{len(inference)} models repriced")
+    return data
+
+
+def refresh_summary(data):
+    """Rebuild the summary block from the live data it is supposed to summarize.
+
+    Everything here used to be a hand-written snapshot that was never
+    recalculated, so the Overview tab reported a March timestamp, GPU/provider
+    counts that no longer matched the dataset, and stock prices months out of
+    date.
+    """
+    summary = data.setdefault("summary", {})
+    specs = data.get("specs") or {}
+    providers = data.get("providers") or {}
+    matrix = data.get("matrix") or []
+    indicators = data.get("indicators") or {}
+
+    summary["timestamp"] = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    summary["total_gpus_tracked"] = len(specs)
+    summary["total_providers_tracked"] = len(providers)
+
+    if matrix:
+        summary["comparison_matrix"] = matrix
+
+        best_flops = max(
+            (r for r in matrix if r.get("flops_per_dollar")),
+            key=lambda r: r["flops_per_dollar"],
+            default=None,
+        )
+        if best_flops:
+            summary["best_flops_per_dollar"] = {
+                "gpu": best_flops.get("name"),
+                "value": round(best_flops["flops_per_dollar"], 1),
+                "at_price": best_flops.get("cheapest_price"),
+                "provider": best_flops.get("cheapest_provider"),
+            }
+
+        best_vram = max(
+            (r for r in matrix if r.get("vram_per_dollar")),
+            key=lambda r: r["vram_per_dollar"],
+            default=None,
+        )
+        if best_vram:
+            summary["best_vram_per_dollar"] = {
+                "gpu": best_vram.get("name"),
+                "value": round(best_vram["vram_per_dollar"], 1),
+                "at_price": best_vram.get("cheapest_price"),
+                "provider": best_vram.get("cheapest_provider"),
+            }
+
+        biggest_drop = min(
+            (r for r in matrix if r.get("monthly_change_pct") is not None),
+            key=lambda r: r["monthly_change_pct"],
+            default=None,
+        )
+        if biggest_drop:
+            summary["biggest_price_drop"] = {
+                "gpu": biggest_drop.get("name"),
+                "change_pct": round(biggest_drop["monthly_change_pct"], 1),
+            }
+
+        competitive = max(
+            (r for r in matrix if r.get("num_providers")),
+            key=lambda r: (r["num_providers"], r.get("price_spread_pct") or 0),
+            default=None,
+        )
+        if competitive:
+            summary["most_competitive_market"] = {
+                "gpu": competitive.get("name"),
+                "num_providers": competitive["num_providers"],
+                "price_spread_pct": round(competitive.get("price_spread_pct") or 0, 1),
+            }
+
+    # Keep the summary's copy of the market indicators in step with the live
+    # ones rather than letting it sit at whatever it was seeded with.
+    mi = summary.setdefault("market_indicators", {})
+    for key, value in indicators.items():
+        if isinstance(value, dict):
+            mi[key] = value
+
+    if data.get("sentiment"):
+        summary["market_sentiment"] = data["sentiment"]
+
+    log_ok("Summary", f"{summary['total_gpus_tracked']} GPUs / {summary['total_providers_tracked']} providers")
     return data
 
 
@@ -1030,7 +1390,6 @@ def fetch_stock_price(ticker):
     r = result[0]
     meta = r.get("meta", {})
     current_price = meta.get("regularMarketPrice")
-    prev_close = meta.get("chartPreviousClose")
 
     # Extract 52-week range from indicators
     indicators = r.get("indicators", {})
@@ -1038,12 +1397,19 @@ def fetch_stock_price(ticker):
     highs = [h for h in (quotes.get("high") or []) if h is not None]
     lows = [l for l in (quotes.get("low") or []) if l is not None]
 
-    week52_high = max(highs) if highs else None
-    week52_low = min(lows) if lows else None
+    week52_high = meta.get("fiftyTwoWeekHigh") or (max(highs) if highs else None)
+    week52_low = meta.get("fiftyTwoWeekLow") or (min(lows) if lows else None)
 
     # Calculate YTD change (approximate from first trading day data)
     timestamps = r.get("timestamp", [])
     closes = quotes.get("close") or []
+
+    # Prior trading day's close. NOTE: meta.chartPreviousClose is the close
+    # immediately *before the requested range* (i.e. ~1 year ago here), not the
+    # prior session -- using it made previous_close wildly wrong. meta.previousClose
+    # is absent on range=1y responses, so derive it from the daily close series.
+    prior_closes = [c for c in closes if c is not None]
+    prev_close = prior_closes[-2] if len(prior_closes) >= 2 else meta.get("previousClose")
 
     # Find first close of current year
     current_year = datetime.now().year
@@ -1060,8 +1426,8 @@ def fetch_stock_price(ticker):
 
     stock_data = {
         "ticker": ticker,
-        "current_price": current_price,
-        "previous_close": prev_close,
+        "current_price": round(current_price, 2) if current_price else None,
+        "previous_close": round(prev_close, 2) if prev_close else None,
         "52_week_high": round(week52_high, 2) if week52_high else None,
         "52_week_low": round(week52_low, 2) if week52_low else None,
         "ytd_change_pct": ytd_change,
@@ -1578,30 +1944,51 @@ def _build_market_snapshot(data):
     }
 
 
-def _call_llm(config, system_prompt, user_prompt, max_tokens=3000):
-    """Call the LLM API and return the response content string."""
+def _call_llm(config, system_prompt, user_prompt, max_tokens=3000, max_attempts=3):
+    """Call the LLM API and return the response content string.
+
+    The configured model is a reasoning model, so its output budget is shared
+    between the hidden reasoning trace and the answer. A section whose reasoning
+    ran long used to come back with `content: null` and `finish_reason: length`,
+    which surfaced as a hard "LLM returned empty content" failure and left that
+    section frozen at whatever it last said. Retry with a bigger budget instead.
+    """
     url = f"{config['base']}/chat/completions"
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {config['key']}",
     }
-    payload = {
-        "model": config["model"],
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ],
-        "max_tokens": max_tokens,
-        "temperature": 0.3,
-    }
-    status, body = http_post(url, payload, headers=headers, timeout=120)
-    if status != 200:
-        raise RuntimeError(f"LLM API returned HTTP {status}: {body[:200]}")
-    resp = json.loads(body)
-    content = resp.get("choices", [{}])[0].get("message", {}).get("content", "")
-    if not content:
-        raise RuntimeError("LLM returned empty content")
-    return content
+
+    budget = max_tokens
+    for attempt in range(1, max_attempts + 1):
+        payload = {
+            "model": config["model"],
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            "max_tokens": budget,
+            "temperature": 0.3,
+        }
+        status, body = http_post(url, payload, headers=headers, timeout=180)
+        if status != 200:
+            raise RuntimeError(f"LLM API returned HTTP {status}: {body[:200]}")
+
+        choice = (json.loads(body).get("choices") or [{}])[0]
+        content = (choice.get("message") or {}).get("content") or ""
+        if content.strip():
+            return content
+
+        if choice.get("finish_reason") != "length" or attempt == max_attempts:
+            raise RuntimeError(
+                f"LLM returned empty content (finish_reason={choice.get('finish_reason')}, "
+                f"max_tokens={budget})"
+            )
+
+        budget *= 2
+        log_info(f"LLM spent its budget on reasoning; retrying with max_tokens={budget}")
+
+    raise RuntimeError("LLM returned empty content")
 
 
 # Section definitions: key -> (type, system_prompt, user_prompt_template)
@@ -1865,6 +2252,26 @@ def main():
         data = recalculate_matrix(data)
     except Exception as exc:
         log_fail("Matrix", str(exc))
+
+    try:
+        data = refresh_workload_recs(data)
+    except Exception as exc:
+        log_fail("Workload Recs", str(exc))
+
+    try:
+        data = refresh_tco_and_reservations(data)
+    except Exception as exc:
+        log_fail("TCO / Reservations", str(exc))
+
+    try:
+        data = refresh_lead_times(data)
+    except Exception as exc:
+        log_fail("Lead Times", str(exc))
+
+    try:
+        data = refresh_inference_pricing(data)
+    except Exception as exc:
+        log_fail("Inference Pricing", str(exc))
     print()
 
     # ---- 5. Stock Prices ----
@@ -1943,6 +2350,13 @@ def main():
     print("-" * 40)
 
     existing_ai = update_ai_analysis(data, existing_ai)
+    print()
+
+    # ---- Rebuild the summary block last, from everything above ----
+    try:
+        data = refresh_summary(data)
+    except Exception as exc:
+        log_fail("Summary", str(exc))
     print()
 
     # ---- Save ----

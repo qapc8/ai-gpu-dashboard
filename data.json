@@ -1181,7 +1181,8 @@
       },
       "reserved_1yr_discount": 0.2,
       "reserved_3yr_discount": 0.35,
-      "spot_discount": 0.45
+      "spot_discount": 0.45,
+      "last_updated": "2026-07-28T13:52:34.396768+00:00"
     },
     "Together": {
       "provider_name": "Together AI",
@@ -3222,27 +3223,27 @@
   "indicators": {
     "nvidia_stock": {
       "ticker": "NVDA",
-      "current": 196.51,
+      "current": 193.98,
       "1m_change": 4.2,
       "3m_change": 12.8,
-      "ytd_change": 4.06,
+      "ytd_change": 2.72,
       "52w_high": 236.54,
       "52w_low": 164.07,
-      "ytd_pct": 4.06,
+      "ytd_pct": 2.72,
       "52w_range": "$164.07-$236.54",
-      "last_updated": "2026-07-28T08:29:03.049768+00:00"
+      "last_updated": "2026-07-28T13:57:19.311238+00:00"
     },
     "amd_stock": {
       "ticker": "AMD",
-      "current": 494.95,
+      "current": 454.38,
       "1m_change": -2.1,
       "3m_change": 5.3,
-      "ytd_change": 121.48,
+      "ytd_change": 103.33,
       "52w_high": 584.73,
       "52w_low": 149.22,
-      "ytd_pct": 121.48,
+      "ytd_pct": 103.33,
       "52w_range": "$149.22-$584.73",
-      "last_updated": "2026-07-28T08:29:03.115112+00:00"
+      "last_updated": "2026-07-28T13:57:20.097490+00:00"
     },
     "gpu_market_size_bn": {
       "2023": 52.4,
@@ -3289,7 +3290,8 @@
       "2025-09": 36,
       "2025-12": 36,
       "2026-01": 36,
-      "2026-02": 36
+      "2026-02": 36,
+      "2026-07": 8
     },
     "amd_gpu_market_share_pct": {
       "2023-01": 3,
@@ -3362,10 +3364,10 @@
         "note": "Consumer stock available"
       }
     },
-    "nvda_price": 196.51,
-    "nvda_ytd_change": 4.06,
-    "amd_price": 494.95,
-    "amd_ytd_change": 121.48
+    "nvda_price": 193.98,
+    "nvda_ytd_change": 2.72,
+    "amd_price": 454.38,
+    "amd_ytd_change": 103.33
   },
   "regional": {
     "North America": {
@@ -3760,10 +3762,10 @@
     "H100-SXM": {
       "gpu_price_usd": 30000,
       "useful_life_years": 4,
-      "cloud_on_demand_hr": 2.49,
-      "cloud_reserved_1yr_hr": 1.74,
-      "cloud_reserved_3yr_hr": 1.12,
-      "cloud_spot_hr": 1.7,
+      "cloud_on_demand_hr": 5.73,
+      "cloud_reserved_1yr_hr": 4.01,
+      "cloud_reserved_3yr_hr": 3.01,
+      "cloud_spot_hr": 3.56,
       "self_hosted": {
         "power_kwh": 0.58,
         "power_cost_kwh": 0.08,
@@ -3779,10 +3781,10 @@
     "B300": {
       "gpu_price_usd": 55000,
       "useful_life_years": 4,
-      "cloud_on_demand_hr": 5.5,
-      "cloud_reserved_1yr_hr": 3.85,
-      "cloud_reserved_3yr_hr": 2.48,
-      "cloud_spot_hr": 3.47,
+      "cloud_on_demand_hr": 8.88,
+      "cloud_reserved_1yr_hr": 6.22,
+      "cloud_reserved_3yr_hr": 4.69,
+      "cloud_spot_hr": 5.68,
       "self_hosted": {
         "power_kwh": 0.98,
         "power_cost_kwh": 0.08,
@@ -3799,10 +3801,10 @@
     "B200": {
       "gpu_price_usd": 40000,
       "useful_life_years": 4,
-      "cloud_on_demand_hr": 3.97,
-      "cloud_reserved_1yr_hr": 2.78,
-      "cloud_reserved_3yr_hr": 1.79,
-      "cloud_spot_hr": 2.67,
+      "cloud_on_demand_hr": 7.18,
+      "cloud_reserved_1yr_hr": 5.21,
+      "cloud_reserved_3yr_hr": 4.01,
+      "cloud_spot_hr": 4.64,
       "self_hosted": {
         "power_kwh": 0.82,
         "power_cost_kwh": 0.08,
@@ -3818,10 +3820,10 @@
     "H200": {
       "gpu_price_usd": 35000,
       "useful_life_years": 4,
-      "cloud_on_demand_hr": 2.89,
-      "cloud_reserved_1yr_hr": 2.02,
-      "cloud_reserved_3yr_hr": 1.3,
-      "cloud_spot_hr": 1.97,
+      "cloud_on_demand_hr": 5.26,
+      "cloud_reserved_1yr_hr": 3.75,
+      "cloud_reserved_3yr_hr": 2.86,
+      "cloud_spot_hr": 3.26,
       "self_hosted": {
         "power_kwh": 0.58,
         "power_cost_kwh": 0.08,
@@ -3837,10 +3839,10 @@
     "GB200": {
       "gpu_price_usd": 70000,
       "useful_life_years": 4,
-      "cloud_on_demand_hr": 7.5,
-      "cloud_reserved_1yr_hr": 5.25,
-      "cloud_reserved_3yr_hr": 3.38,
-      "cloud_spot_hr": 5.0,
+      "cloud_on_demand_hr": 19.51,
+      "cloud_reserved_1yr_hr": 13.06,
+      "cloud_reserved_3yr_hr": 9.16,
+      "cloud_spot_hr": 10.92,
       "self_hosted": {
         "power_kwh": 2.2,
         "power_cost_kwh": 0.08,
@@ -3856,10 +3858,10 @@
     "A100-80GB": {
       "gpu_price_usd": 15000,
       "useful_life_years": 4,
-      "cloud_on_demand_hr": 1.89,
-      "cloud_reserved_1yr_hr": 1.32,
-      "cloud_reserved_3yr_hr": 0.85,
-      "cloud_spot_hr": 0.85,
+      "cloud_on_demand_hr": 2.34,
+      "cloud_reserved_1yr_hr": 1.63,
+      "cloud_reserved_3yr_hr": 1.21,
+      "cloud_spot_hr": 1.41,
       "self_hosted": {
         "power_kwh": 0.33,
         "power_cost_kwh": 0.08,
@@ -3875,10 +3877,10 @@
     "MI300X": {
       "gpu_price_usd": 15000,
       "useful_life_years": 4,
-      "cloud_on_demand_hr": 2.19,
-      "cloud_reserved_1yr_hr": 1.53,
-      "cloud_reserved_3yr_hr": 0.99,
-      "cloud_spot_hr": 1.5,
+      "cloud_on_demand_hr": 3.05,
+      "cloud_reserved_1yr_hr": 2.32,
+      "cloud_reserved_3yr_hr": 1.83,
+      "cloud_spot_hr": 2.11,
       "self_hosted": {
         "power_kwh": 0.62,
         "power_cost_kwh": 0.08,
@@ -3894,10 +3896,10 @@
     "MI325X": {
       "gpu_price_usd": 20000,
       "useful_life_years": 4,
-      "cloud_on_demand_hr": 3.2,
-      "cloud_reserved_1yr_hr": 2.24,
-      "cloud_reserved_3yr_hr": 1.44,
-      "cloud_spot_hr": 2.1,
+      "cloud_on_demand_hr": 4.46,
+      "cloud_reserved_1yr_hr": 3.18,
+      "cloud_reserved_3yr_hr": 2.34,
+      "cloud_spot_hr": 2.52,
       "self_hosted": {
         "power_kwh": 0.83,
         "power_cost_kwh": 0.08,
@@ -3913,10 +3915,10 @@
     "RTX-4090": {
       "gpu_price_usd": 1599,
       "useful_life_years": 4,
-      "cloud_on_demand_hr": 0.74,
-      "cloud_reserved_1yr_hr": 0.52,
-      "cloud_reserved_3yr_hr": 0.33,
-      "cloud_spot_hr": 0.29,
+      "cloud_on_demand_hr": 0.46,
+      "cloud_reserved_1yr_hr": 0.38,
+      "cloud_reserved_3yr_hr": 0.31,
+      "cloud_spot_hr": 0.28,
       "self_hosted": {
         "power_kwh": 0.37,
         "power_cost_kwh": 0.08,
@@ -3932,10 +3934,10 @@
     "L40S": {
       "gpu_price_usd": 8000,
       "useful_life_years": 4,
-      "cloud_on_demand_hr": 1.49,
-      "cloud_reserved_1yr_hr": 1.04,
-      "cloud_reserved_3yr_hr": 0.67,
-      "cloud_spot_hr": 1.14,
+      "cloud_on_demand_hr": 1.47,
+      "cloud_reserved_1yr_hr": 1.01,
+      "cloud_reserved_3yr_hr": 0.75,
+      "cloud_spot_hr": 0.85,
       "self_hosted": {
         "power_kwh": 0.3,
         "power_cost_kwh": 0.08,
@@ -3950,139 +3952,15 @@
     }
   },
   "inference": {
-    "DeepSeek-V4-Flash": {
-      "params_b": 685,
-      "type": "LLM",
-      "category": "Frontier",
-      "rank": 1,
-      "tokens_7d": 3110,
-      "context_k": 1048,
-      "open_source": true,
-      "gpus": {},
-      "providers": {
-        "DeepSeek API": {
-          "input": 0.0983,
-          "output": 0.1966
-        },
-        "OpenRouter": {
-          "input": 0.0983,
-          "output": 0.1966
-        }
-      },
-      "params_note": "estimated (685B MoE per V3 lineage)"
-    },
-    "Hy3-Preview": {
-      "params_b": 0,
-      "type": "LLM",
-      "category": "Frontier",
-      "rank": 2,
-      "tokens_7d": 3030,
-      "context_k": 262,
-      "open_source": false,
-      "gpus": {},
-      "providers": {
-        "Tencent": {
-          "input": 0.066,
-          "output": 0.26
-        },
-        "OpenRouter": {
-          "input": 0.066,
-          "output": 0.26
-        }
-      },
-      "params_note": "undisclosed (Tencent does not publish parameter counts)"
-    },
-    "Claude-Opus-4.7": {
-      "params_b": 350,
-      "type": "LLM",
-      "category": "Frontier",
-      "rank": 3,
-      "tokens_7d": 2320,
-      "context_k": 1000,
-      "open_source": false,
-      "gpus": {},
-      "providers": {
-        "Anthropic API": {
-          "input": 5.0,
-          "output": 25.0
-        },
-        "OpenRouter": {
-          "input": 5.0,
-          "output": 25.0
-        },
-        "AWS Bedrock": {
-          "input": 5.0,
-          "output": 25.0
-        },
-        "Google Vertex": {
-          "input": 5.0,
-          "output": 25.0
-        },
-        "Azure": {
-          "input": 5.0,
-          "output": 25.0
-        }
-      },
-      "params_note": "estimated (Anthropic does not disclose parameter counts)"
-    },
-    "Claude-Sonnet-4.6": {
-      "params_b": 175,
-      "type": "LLM",
-      "category": "Frontier",
-      "rank": 4,
-      "tokens_7d": 1920,
-      "context_k": 1000,
-      "open_source": false,
-      "gpus": {},
-      "providers": {
-        "Anthropic API": {
-          "input": 3.0,
-          "output": 15.0
-        },
-        "OpenRouter": {
-          "input": 3.0,
-          "output": 15.0
-        },
-        "AWS Bedrock": {
-          "input": 3.0,
-          "output": 15.0
-        },
-        "Google Vertex": {
-          "input": 3.0,
-          "output": 15.0
-        },
-        "Azure": {
-          "input": 3.0,
-          "output": 15.0
-        }
-      },
-      "params_note": "estimated (Anthropic does not disclose parameter counts)"
-    },
-    "Owl-Alpha": {
-      "params_b": 0,
-      "type": "LLM",
-      "category": "Frontier",
-      "rank": 5,
-      "tokens_7d": 1660,
-      "context_k": 1048,
-      "open_source": false,
-      "gpus": {},
-      "providers": {
-        "OpenRouter": {
-          "input": 0.0,
-          "output": 0.0
-        }
-      },
-      "params_note": "undisclosed; free preview routing through OpenRouter"
-    },
     "MiMo-V2.5": {
       "params_b": 200,
       "type": "LLM",
       "category": "Frontier",
-      "rank": 6,
-      "tokens_7d": 1460,
-      "context_k": 1048,
+      "rank": 1,
+      "tokens_7d": 10800,
+      "context_k": 1050,
       "open_source": true,
+      "openrouter_id": "xiaomi/mimo-v2.5",
       "gpus": {},
       "providers": {
         "Xiaomi": {
@@ -4095,15 +3973,60 @@
         }
       },
       "params_note": "estimated (Xiaomi has not published exact count)"
+    },
+    "DeepSeek-V4-Flash": {
+      "params_b": 685,
+      "type": "LLM",
+      "category": "Frontier",
+      "rank": 2,
+      "tokens_7d": 6730,
+      "context_k": 1049,
+      "open_source": true,
+      "openrouter_id": "deepseek/deepseek-v4-flash",
+      "gpus": {},
+      "providers": {
+        "DeepSeek API": {
+          "input": 0.14,
+          "output": 0.28
+        },
+        "OpenRouter": {
+          "input": 0.14,
+          "output": 0.28
+        }
+      },
+      "params_note": "estimated (685B MoE per V3 lineage)"
+    },
+    "Hy3": {
+      "params_b": 295,
+      "type": "LLM",
+      "category": "Frontier",
+      "rank": 3,
+      "tokens_7d": 4760,
+      "context_k": 262,
+      "open_source": true,
+      "openrouter_id": "tencent/hy3",
+      "gpus": {},
+      "providers": {
+        "Tencent": {
+          "input": 0.132,
+          "output": 0.528
+        },
+        "OpenRouter": {
+          "input": 0.132,
+          "output": 0.528
+        }
+      },
+      "params_note": "295B MoE (21B active, 192 experts) per Tencent"
     },
     "DeepSeek-V4-Pro": {
       "params_b": 685,
       "type": "LLM",
       "category": "Frontier",
-      "rank": 7,
-      "tokens_7d": 1250,
-      "context_k": 1048,
+      "rank": 4,
+      "tokens_7d": 3340,
+      "context_k": 1049,
       "open_source": true,
+      "openrouter_id": "deepseek/deepseek-v4-pro",
       "gpus": {},
       "providers": {
         "DeepSeek API": {
@@ -4117,96 +4040,37 @@
       },
       "params_note": "estimated (685B MoE per V3 lineage)"
     },
-    "MiMo-V2.5-Pro": {
-      "params_b": 400,
+    "GLM-5.2": {
+      "params_b": 0,
       "type": "LLM",
       "category": "Frontier",
-      "rank": 8,
-      "tokens_7d": 1240,
-      "context_k": 1048,
+      "rank": 5,
+      "tokens_7d": 3310,
+      "context_k": 1049,
       "open_source": true,
+      "openrouter_id": "z-ai/glm-5.2",
       "gpus": {},
       "providers": {
-        "Xiaomi": {
-          "input": 0.435,
-          "output": 0.87
+        "Z.ai": {
+          "input": 0.7686,
+          "output": 2.4156
         },
         "OpenRouter": {
-          "input": 0.435,
-          "output": 0.87
+          "input": 0.7686,
+          "output": 2.4156
         }
       },
-      "params_note": "estimated (Xiaomi has not published exact count)"
+      "params_note": "undisclosed (Z.ai does not publish parameter counts for GLM-5.2)"
     },
-    "DeepSeek-V3.2": {
-      "params_b": 685,
+    "Nemotron-3-Ultra": {
+      "params_b": 550,
       "type": "LLM",
       "category": "Frontier",
-      "rank": 9,
-      "tokens_7d": 1040,
-      "context_k": 131,
-      "open_source": true,
-      "gpus": {
-        "H100-SXM": {
-          "tokens_per_sec": 42,
-          "cost_per_1m_tokens": 1.6,
-          "vram_gb": 180
-        },
-        "B300": {
-          "tokens_per_sec": 115,
-          "cost_per_1m_tokens": 0.65,
-          "vram_gb": 180
-        },
-        "B200": {
-          "tokens_per_sec": 85,
-          "cost_per_1m_tokens": 0.82,
-          "vram_gb": 180
-        }
-      },
-      "providers": {
-        "DeepSeek API": {
-          "input": 0.2288,
-          "output": 0.3432
-        },
-        "OpenRouter": {
-          "input": 0.2288,
-          "output": 0.3432
-        }
-      }
-    },
-    "Gemini-3-Flash": {
-      "params_b": 80,
-      "type": "LLM",
-      "category": "Large",
-      "rank": 10,
-      "tokens_7d": 952,
-      "context_k": 1048,
-      "open_source": false,
-      "gpus": {},
-      "providers": {
-        "Google AI Studio": {
-          "input": 0.5,
-          "output": 3.0
-        },
-        "Google Vertex": {
-          "input": 0.5,
-          "output": 3.0
-        },
-        "OpenRouter": {
-          "input": 0.5,
-          "output": 3.0
-        }
-      },
-      "params_note": "estimated (Google does not disclose Gemini parameter counts)"
-    },
-    "Nemotron-3-Super": {
-      "params_b": 120,
-      "type": "LLM",
-      "category": "Large",
-      "rank": 11,
-      "tokens_7d": 668,
+      "rank": 6,
+      "tokens_7d": 2480,
       "context_k": 1000,
       "open_source": true,
+      "openrouter_id": "nvidia/nemotron-3-ultra-550b-a55b:free",
       "gpus": {},
       "providers": {
         "NVIDIA NIM": {
@@ -4218,69 +4082,64 @@
           "output": 0.0
         }
       },
-      "params_note": "120B-A12B (MoE: 120B total, 12B active)"
+      "params_note": "550B-A55B (MoE: 550B total, 55B active) per NVIDIA"
     },
-    "Gemini-2.5-Flash-Lite": {
-      "params_b": 30,
-      "type": "LLM",
-      "category": "Medium",
-      "rank": 12,
-      "tokens_7d": 576,
-      "context_k": 1048,
-      "open_source": false,
-      "gpus": {},
-      "providers": {
-        "Google AI Studio": {
-          "input": 0.1,
-          "output": 0.4
-        },
-        "Google Vertex": {
-          "input": 0.1,
-          "output": 0.4
-        },
-        "OpenRouter": {
-          "input": 0.1,
-          "output": 0.4
-        }
-      },
-      "params_note": "estimated (Google does not disclose Gemini parameter counts)"
-    },
-    "Kimi-K2.6": {
-      "params_b": 1000,
+    "MiniMax-M3": {
+      "params_b": 0,
       "type": "LLM",
       "category": "Frontier",
-      "rank": 13,
-      "tokens_7d": 552,
-      "context_k": 262,
+      "rank": 7,
+      "tokens_7d": 2090,
+      "context_k": 1049,
       "open_source": true,
+      "openrouter_id": "minimax/minimax-m3",
       "gpus": {},
       "providers": {
-        "Moonshot": {
-          "input": 0.0,
-          "output": 0.0
+        "MiniMax API": {
+          "input": 0.3,
+          "output": 1.2
         },
         "OpenRouter": {
-          "input": 0.0,
-          "output": 0.0
+          "input": 0.3,
+          "output": 1.2
         }
       },
-      "params_note": "1T MoE (K2.5 precedent: 1000B total)"
+      "params_note": "undisclosed (MiniMax does not publish a parameter count for M3)"
     },
-    "Claude-Opus-4.6": {
+    "Step-3.7-Flash": {
+      "params_b": 196,
+      "type": "LLM",
+      "category": "Large",
+      "rank": 8,
+      "tokens_7d": 2020,
+      "context_k": 262,
+      "open_source": true,
+      "openrouter_id": "stepfun/step-3.7-flash",
+      "gpus": {},
+      "providers": {
+        "StepFun": {
+          "input": 0.2,
+          "output": 1.15
+        },
+        "OpenRouter": {
+          "input": 0.2,
+          "output": 1.15
+        }
+      },
+      "params_note": "196B MoE (~11B active) per StepFun"
+    },
+    "Claude-Opus-4.8": {
       "params_b": 350,
       "type": "LLM",
       "category": "Frontier",
-      "rank": 14,
-      "tokens_7d": 540,
+      "rank": 9,
+      "tokens_7d": 1330,
       "context_k": 1000,
       "open_source": false,
+      "openrouter_id": "anthropic/claude-opus-4.8",
       "gpus": {},
       "providers": {
         "Anthropic API": {
-          "input": 5.0,
-          "output": 25.0
-        },
-        "OpenRouter": {
           "input": 5.0,
           "output": 25.0
         },
@@ -4295,18 +4154,199 @@
         "Azure": {
           "input": 5.0,
           "output": 25.0
+        },
+        "OpenRouter": {
+          "input": 5.0,
+          "output": 25.0
         }
       },
       "params_note": "estimated (Anthropic does not disclose parameter counts)"
+    },
+    "Kimi-K3": {
+      "params_b": 2800,
+      "type": "LLM",
+      "category": "Frontier",
+      "rank": 10,
+      "tokens_7d": 1250,
+      "context_k": 1049,
+      "open_source": true,
+      "openrouter_id": "moonshotai/kimi-k3",
+      "gpus": {},
+      "providers": {
+        "Moonshot": {
+          "input": 3.0,
+          "output": 15.0
+        },
+        "OpenRouter": {
+          "input": 3.0,
+          "output": 15.0
+        }
+      },
+      "params_note": "2.8T open-weight MoE per Moonshot AI"
+    },
+    "Claude-Sonnet-5": {
+      "params_b": 175,
+      "type": "LLM",
+      "category": "Frontier",
+      "rank": 11,
+      "tokens_7d": 1030,
+      "context_k": 1000,
+      "open_source": false,
+      "openrouter_id": "anthropic/claude-sonnet-5",
+      "gpus": {},
+      "providers": {
+        "Anthropic API": {
+          "input": 2.0,
+          "output": 10.0
+        },
+        "AWS Bedrock": {
+          "input": 2.0,
+          "output": 10.0
+        },
+        "Google Vertex": {
+          "input": 2.0,
+          "output": 10.0
+        },
+        "Azure": {
+          "input": 2.0,
+          "output": 10.0
+        },
+        "OpenRouter": {
+          "input": 2.0,
+          "output": 10.0
+        }
+      },
+      "params_note": "estimated (Anthropic does not disclose parameter counts)"
+    },
+    "Gemini-3-Flash": {
+      "params_b": 80,
+      "type": "LLM",
+      "category": "Large",
+      "rank": 12,
+      "tokens_7d": 977,
+      "context_k": 1049,
+      "open_source": false,
+      "openrouter_id": "google/gemini-3-flash-preview",
+      "gpus": {},
+      "providers": {
+        "Google AI Studio": {
+          "input": 0.5,
+          "output": 3.0
+        },
+        "Google Vertex": {
+          "input": 0.5,
+          "output": 3.0
+        },
+        "OpenRouter": {
+          "input": 0.5,
+          "output": 3.0
+        }
+      },
+      "params_note": "estimated (Google does not disclose Gemini parameter counts)"
+    },
+    "Claude-Sonnet-4.6": {
+      "params_b": 175,
+      "type": "LLM",
+      "category": "Frontier",
+      "rank": 13,
+      "tokens_7d": 788,
+      "context_k": 1000,
+      "open_source": false,
+      "openrouter_id": "anthropic/claude-sonnet-4.6",
+      "gpus": {},
+      "providers": {
+        "Anthropic API": {
+          "input": 3.0,
+          "output": 15.0
+        },
+        "AWS Bedrock": {
+          "input": 3.0,
+          "output": 15.0
+        },
+        "Google Vertex": {
+          "input": 3.0,
+          "output": 15.0
+        },
+        "Azure": {
+          "input": 3.0,
+          "output": 15.0
+        },
+        "OpenRouter": {
+          "input": 3.0,
+          "output": 15.0
+        }
+      },
+      "params_note": "estimated (Anthropic does not disclose parameter counts)"
+    },
+    "Claude-Opus-4.7": {
+      "params_b": 350,
+      "type": "LLM",
+      "category": "Frontier",
+      "rank": 14,
+      "tokens_7d": 736,
+      "context_k": 1000,
+      "open_source": false,
+      "openrouter_id": "anthropic/claude-opus-4.7",
+      "gpus": {},
+      "providers": {
+        "Anthropic API": {
+          "input": 5.0,
+          "output": 25.0
+        },
+        "AWS Bedrock": {
+          "input": 5.0,
+          "output": 25.0
+        },
+        "Google Vertex": {
+          "input": 5.0,
+          "output": 25.0
+        },
+        "Azure": {
+          "input": 5.0,
+          "output": 25.0
+        },
+        "OpenRouter": {
+          "input": 5.0,
+          "output": 25.0
+        }
+      },
+      "params_note": "estimated (Anthropic does not disclose parameter counts)"
+    },
+    "Gemini-2.5-Flash-Lite": {
+      "params_b": 30,
+      "type": "LLM",
+      "category": "Medium",
+      "rank": 15,
+      "tokens_7d": 678,
+      "context_k": 1049,
+      "open_source": false,
+      "openrouter_id": "google/gemini-2.5-flash-lite",
+      "gpus": {},
+      "providers": {
+        "Google AI Studio": {
+          "input": 0.1,
+          "output": 0.4
+        },
+        "Google Vertex": {
+          "input": 0.1,
+          "output": 0.4
+        },
+        "OpenRouter": {
+          "input": 0.1,
+          "output": 0.4
+        }
+      },
+      "params_note": "estimated (Google does not disclose Gemini parameter counts)"
     },
     "Gemini-2.5-Flash": {
       "params_b": 65,
       "type": "LLM",
       "category": "Large",
-      "rank": 15,
-      "tokens_7d": 532,
-      "context_k": 1048,
+      "rank": 16,
+      "tokens_7d": 630,
+      "context_k": 1049,
       "open_source": false,
+      "openrouter_id": "google/gemini-2.5-flash",
       "gpus": {},
       "providers": {
         "Google AI Studio": {
@@ -4324,121 +4364,97 @@
       },
       "params_note": "estimated (Google does not disclose Gemini parameter counts)"
     },
-    "Laguna-M.1": {
+    "MiMo-V2.5-Pro": {
+      "params_b": 400,
+      "type": "LLM",
+      "category": "Frontier",
+      "rank": 17,
+      "tokens_7d": 627,
+      "context_k": 1050,
+      "open_source": true,
+      "openrouter_id": "xiaomi/mimo-v2.5-pro",
+      "gpus": {},
+      "providers": {
+        "Xiaomi": {
+          "input": 0.435,
+          "output": 0.87
+        },
+        "OpenRouter": {
+          "input": 0.435,
+          "output": 0.87
+        }
+      },
+      "params_note": "estimated (Xiaomi has not published exact count)"
+    },
+    "Ling-3.0-flash": {
+      "params_b": 124,
+      "type": "LLM",
+      "category": "Large",
+      "rank": 18,
+      "tokens_7d": 612,
+      "context_k": 262,
+      "open_source": true,
+      "openrouter_id": "inclusionai/ling-3.0-flash:free",
+      "gpus": {},
+      "providers": {
+        "inclusionAI": {
+          "input": 0.0,
+          "output": 0.0
+        },
+        "OpenRouter": {
+          "input": 0.0,
+          "output": 0.0
+        }
+      },
+      "params_note": "124B MoE (~5.1B active) per inclusionAI"
+    },
+    "Gemini-3.1-Flash-Lite": {
+      "params_b": 0,
+      "type": "LLM",
+      "category": "Medium",
+      "rank": 19,
+      "tokens_7d": 587,
+      "context_k": 1049,
+      "open_source": false,
+      "openrouter_id": "google/gemini-3.1-flash-lite",
+      "gpus": {},
+      "providers": {
+        "Google AI Studio": {
+          "input": 0.25,
+          "output": 1.5
+        },
+        "Google Vertex": {
+          "input": 0.25,
+          "output": 1.5
+        },
+        "OpenRouter": {
+          "input": 0.25,
+          "output": 1.5
+        }
+      },
+      "params_note": "undisclosed (Google does not disclose Gemini parameter counts)"
+    },
+    "Grok-4.5": {
       "params_b": 0,
       "type": "LLM",
       "category": "Frontier",
-      "rank": 16,
-      "tokens_7d": 531,
-      "context_k": 262,
-      "open_source": false,
-      "gpus": {},
-      "providers": {
-        "Poolside": {
-          "input": 0.0,
-          "output": 0.0
-        },
-        "OpenRouter": {
-          "input": 0.0,
-          "output": 0.0
-        }
-      },
-      "params_note": "undisclosed; free preview"
-    },
-    "Gemini-3.5-Flash": {
-      "params_b": 100,
-      "type": "LLM",
-      "category": "Large",
-      "rank": 17,
-      "tokens_7d": 528,
-      "context_k": 1048,
-      "open_source": false,
-      "gpus": {},
-      "providers": {
-        "Google AI Studio": {
-          "input": 1.5,
-          "output": 9.0
-        },
-        "Google Vertex": {
-          "input": 1.5,
-          "output": 9.0
-        },
-        "OpenRouter": {
-          "input": 1.5,
-          "output": 9.0
-        }
-      },
-      "params_note": "estimated (Google does not disclose Gemini parameter counts)"
-    },
-    "MiniMax-M2.7": {
-      "params_b": 456,
-      "type": "LLM",
-      "category": "Frontier",
-      "rank": 18,
-      "tokens_7d": 526,
-      "context_k": 204,
-      "open_source": true,
-      "gpus": {},
-      "providers": {
-        "MiniMax API": {
-          "input": 0.279,
-          "output": 1.2
-        },
-        "OpenRouter": {
-          "input": 0.279,
-          "output": 1.2
-        }
-      },
-      "params_note": "estimated (MoE per M2.5 lineage)"
-    },
-    "GPT-4o-Mini": {
-      "params_b": 8,
-      "type": "LLM",
-      "category": "Large",
-      "rank": 19,
-      "tokens_7d": 481,
-      "context_k": 128,
-      "open_source": false,
-      "gpus": {},
-      "providers": {
-        "OpenAI API": {
-          "input": 0.15,
-          "output": 0.6
-        },
-        "OpenRouter": {
-          "input": 0.15,
-          "output": 0.6
-        },
-        "Azure": {
-          "input": 0.15,
-          "output": 0.6
-        }
-      }
-    },
-    "GPT-5.5": {
-      "params_b": 500,
-      "type": "LLM",
-      "category": "Frontier",
       "rank": 20,
-      "tokens_7d": 473,
-      "context_k": 1050,
+      "tokens_7d": 573,
+      "context_k": 500,
       "open_source": false,
+      "openrouter_id": "x-ai/grok-4.5",
       "gpus": {},
       "providers": {
-        "OpenAI API": {
-          "input": 5.0,
-          "output": 30.0
+        "xAI API": {
+          "input": 2.0,
+          "output": 6.0
         },
         "OpenRouter": {
-          "input": 5.0,
-          "output": 30.0
-        },
-        "Azure": {
-          "input": 5.0,
-          "output": 30.0
+          "input": 2.0,
+          "output": 6.0
         }
       },
-      "params_note": "estimated (OpenAI does not disclose parameter counts)"
+      "params_note": "undisclosed (xAI does not publish parameter counts)"
     }
   },
   "spot": {
@@ -4447,13 +4463,13 @@
       "on_demand_avg": 8.88,
       "on_demand_high": 17.8,
       "reserved_1yr_low": 2.4,
-      "reserved_1yr_avg": 6.53,
+      "reserved_1yr_avg": 6.22,
       "reserved_1yr_high": 10.68,
       "reserved_3yr_low": 1.95,
-      "reserved_3yr_avg": 4.81,
+      "reserved_3yr_avg": 4.69,
       "reserved_3yr_high": 7.12,
-      "res1_savings_pct": 25,
-      "res3_savings_pct": 55,
+      "res1_savings_pct": 30,
+      "res3_savings_pct": 47,
       "num_providers": 9,
       "quarterly_trend": [
         8.88,
@@ -4461,8 +4477,10 @@
         8.11,
         8.88
       ],
-      "bid": 7.9,
-      "ask": 8.95,
+      "trend_quarter": "2026Q3",
+      "bid": 8.33,
+      "ask": 9.44,
+      "spread_pct": 12.5,
       "last_trade": 8.88
     },
     "B200": {
@@ -4470,13 +4488,13 @@
       "on_demand_avg": 7.18,
       "on_demand_high": 14.24,
       "reserved_1yr_low": 2.0,
-      "reserved_1yr_avg": 5.35,
+      "reserved_1yr_avg": 5.21,
       "reserved_1yr_high": 8.55,
       "reserved_3yr_low": 1.62,
-      "reserved_3yr_avg": 4.0,
+      "reserved_3yr_avg": 4.01,
       "reserved_3yr_high": 5.7,
-      "res1_savings_pct": 25,
-      "res3_savings_pct": 50,
+      "res1_savings_pct": 27,
+      "res3_savings_pct": 44,
       "num_providers": 9,
       "quarterly_trend": [
         7.5,
@@ -4484,8 +4502,10 @@
         7.18,
         7.18
       ],
-      "bid": 6.1,
-      "ask": 6.9,
+      "trend_quarter": "2026Q3",
+      "bid": 6.74,
+      "ask": 7.62,
+      "spread_pct": 12.3,
       "last_trade": 7.18
     },
     "H200": {
@@ -4493,13 +4513,13 @@
       "on_demand_avg": 5.26,
       "on_demand_high": 10.6,
       "reserved_1yr_low": 1.84,
-      "reserved_1yr_avg": 3.93,
+      "reserved_1yr_avg": 3.75,
       "reserved_1yr_high": 6.68,
       "reserved_3yr_low": 1.49,
-      "reserved_3yr_avg": 2.92,
+      "reserved_3yr_avg": 2.86,
       "reserved_3yr_high": 4.77,
-      "res1_savings_pct": 28,
-      "res3_savings_pct": 48,
+      "res1_savings_pct": 29,
+      "res3_savings_pct": 46,
       "num_providers": 9,
       "quarterly_trend": [
         5.12,
@@ -4507,8 +4527,10 @@
         5.26,
         5.26
       ],
-      "bid": 4.95,
-      "ask": 5.65,
+      "trend_quarter": "2026Q3",
+      "bid": 4.91,
+      "ask": 5.61,
+      "spread_pct": 13.2,
       "last_trade": 5.26
     },
     "H100-SXM": {
@@ -4516,13 +4538,13 @@
       "on_demand_avg": 5.73,
       "on_demand_high": 11.61,
       "reserved_1yr_low": 1.44,
-      "reserved_1yr_avg": 4.26,
+      "reserved_1yr_avg": 4.01,
       "reserved_1yr_high": 7.43,
       "reserved_3yr_low": 1.17,
-      "reserved_3yr_avg": 3.14,
+      "reserved_3yr_avg": 3.01,
       "reserved_3yr_high": 5.11,
-      "res1_savings_pct": 35,
-      "res3_savings_pct": 55,
+      "res1_savings_pct": 30,
+      "res3_savings_pct": 47,
       "num_providers": 9,
       "quarterly_trend": [
         5.47,
@@ -4530,22 +4552,24 @@
         5.73,
         5.73
       ],
-      "bid": 2.35,
-      "ask": 2.65,
+      "trend_quarter": "2026Q3",
+      "bid": 5.39,
+      "ask": 6.07,
+      "spread_pct": 12.0,
       "last_trade": 5.73
     },
     "A100-80GB": {
       "on_demand_low": 0.53,
       "on_demand_avg": 2.34,
       "on_demand_high": 5.07,
-      "reserved_1yr_low": 0.96,
-      "reserved_1yr_avg": 1.76,
+      "reserved_1yr_low": 0.53,
+      "reserved_1yr_avg": 1.63,
       "reserved_1yr_high": 3.19,
-      "reserved_3yr_low": 0.78,
-      "reserved_3yr_avg": 1.3,
+      "reserved_3yr_low": 0.53,
+      "reserved_3yr_avg": 1.21,
       "reserved_3yr_high": 2.28,
-      "res1_savings_pct": 38,
-      "res3_savings_pct": 58,
+      "res1_savings_pct": 30,
+      "res3_savings_pct": 48,
       "num_providers": 9,
       "quarterly_trend": [
         2.35,
@@ -4553,8 +4577,10 @@
         2.34,
         2.34
       ],
-      "bid": 1.4,
-      "ask": 1.6,
+      "trend_quarter": "2026Q3",
+      "bid": 2.18,
+      "ask": 2.5,
+      "spread_pct": 13.3,
       "last_trade": 2.34
     },
     "MI300X": {
@@ -4562,13 +4588,13 @@
       "on_demand_avg": 3.05,
       "on_demand_high": 6.0,
       "reserved_1yr_low": 1.4,
-      "reserved_1yr_avg": 2.49,
+      "reserved_1yr_avg": 2.32,
       "reserved_1yr_high": 3.84,
       "reserved_3yr_low": 1.14,
-      "reserved_3yr_avg": 1.89,
+      "reserved_3yr_avg": 1.83,
       "reserved_3yr_high": 2.64,
-      "res1_savings_pct": 25,
-      "res3_savings_pct": 45,
+      "res1_savings_pct": 24,
+      "res3_savings_pct": 40,
       "num_providers": 6,
       "quarterly_trend": [
         3.05,
@@ -4576,8 +4602,10 @@
         3.05,
         3.05
       ],
-      "bid": 2.9,
-      "ask": 3.3,
+      "trend_quarter": "2026Q3",
+      "bid": 2.85,
+      "ask": 3.25,
+      "spread_pct": 12.9,
       "last_trade": 3.05
     },
     "RTX-4090": {
@@ -4585,13 +4613,13 @@
       "on_demand_avg": 0.46,
       "on_demand_high": 0.74,
       "reserved_1yr_low": 0.29,
-      "reserved_1yr_avg": 0.42,
+      "reserved_1yr_avg": 0.38,
       "reserved_1yr_high": 0.55,
       "reserved_3yr_low": 0.24,
-      "reserved_3yr_avg": 0.32,
+      "reserved_3yr_avg": 0.31,
       "reserved_3yr_high": 0.41,
-      "res1_savings_pct": 25,
-      "res3_savings_pct": 45,
+      "res1_savings_pct": 18,
+      "res3_savings_pct": 32,
       "num_providers": 3,
       "quarterly_trend": [
         0.59,
@@ -4599,8 +4627,10 @@
         0.46,
         0.46
       ],
-      "bid": 0.42,
-      "ask": 0.48,
+      "trend_quarter": "2026Q3",
+      "bid": 0.43,
+      "ask": 0.49,
+      "spread_pct": 13.3,
       "last_trade": 0.46
     },
     "MI325X": {
@@ -4613,8 +4643,8 @@
       "reserved_3yr_low": 1.76,
       "reserved_3yr_avg": 2.34,
       "reserved_3yr_high": 3.17,
-      "res1_savings_pct": 22,
-      "res3_savings_pct": 42,
+      "res1_savings_pct": 29,
+      "res3_savings_pct": 48,
       "num_providers": 3,
       "quarterly_trend": [
         4.46,
@@ -4622,22 +4652,24 @@
         4.46,
         4.46
       ],
-      "bid": 5.5,
-      "ask": 6.1,
+      "trend_quarter": "2026Q3",
+      "bid": 4.23,
+      "ask": 4.69,
+      "spread_pct": 10.3,
       "last_trade": 4.46
     },
     "L40S": {
       "on_demand_low": 0.47,
       "on_demand_avg": 1.47,
       "on_demand_high": 3.77,
-      "reserved_1yr_low": 0.52,
-      "reserved_1yr_avg": 1.1,
+      "reserved_1yr_low": 0.47,
+      "reserved_1yr_avg": 1.01,
       "reserved_1yr_high": 2.26,
       "reserved_3yr_low": 0.42,
-      "reserved_3yr_avg": 0.79,
+      "reserved_3yr_avg": 0.75,
       "reserved_3yr_high": 1.51,
-      "res1_savings_pct": 32,
-      "res3_savings_pct": 52,
+      "res1_savings_pct": 31,
+      "res3_savings_pct": 49,
       "num_providers": 7,
       "quarterly_trend": [
         1.49,
@@ -4645,22 +4677,24 @@
         1.47,
         1.47
       ],
-      "bid": 0.95,
-      "ask": 1.05,
+      "trend_quarter": "2026Q3",
+      "bid": 1.4,
+      "ask": 1.54,
+      "spread_pct": 10.0,
       "last_trade": 1.47
     },
     "A100-40GB": {
       "on_demand_low": 0.55,
       "on_demand_avg": 1.66,
       "on_demand_high": 3.67,
-      "reserved_1yr_low": 0.64,
-      "reserved_1yr_avg": 1.24,
+      "reserved_1yr_low": 0.55,
+      "reserved_1yr_avg": 1.15,
       "reserved_1yr_high": 2.31,
       "reserved_3yr_low": 0.52,
-      "reserved_3yr_avg": 0.9,
+      "reserved_3yr_avg": 0.86,
       "reserved_3yr_high": 1.65,
-      "res1_savings_pct": 30,
-      "res3_savings_pct": 50,
+      "res1_savings_pct": 31,
+      "res3_savings_pct": 48,
       "num_providers": 8,
       "quarterly_trend": [
         1.66,
@@ -4668,22 +4702,24 @@
         1.66,
         1.66
       ],
-      "bid": 1.19,
-      "ask": 1.19,
+      "trend_quarter": "2026Q3",
+      "bid": 1.56,
+      "ask": 1.76,
+      "spread_pct": 12.0,
       "last_trade": 1.66
     },
     "L4": {
       "on_demand_low": 0.33,
       "on_demand_avg": 0.86,
       "on_demand_high": 1.67,
-      "reserved_1yr_low": 0.37,
-      "reserved_1yr_avg": 0.67,
+      "reserved_1yr_low": 0.33,
+      "reserved_1yr_avg": 0.58,
       "reserved_1yr_high": 1.0,
       "reserved_3yr_low": 0.31,
-      "reserved_3yr_avg": 0.48,
+      "reserved_3yr_avg": 0.44,
       "reserved_3yr_high": 0.67,
-      "res1_savings_pct": 30,
-      "res3_savings_pct": 50,
+      "res1_savings_pct": 32,
+      "res3_savings_pct": 49,
       "num_providers": 4,
       "quarterly_trend": [
         0.85,
@@ -4691,22 +4727,24 @@
         0.86,
         0.86
       ],
-      "bid": 0.75,
-      "ask": 0.75,
+      "trend_quarter": "2026Q3",
+      "bid": 0.81,
+      "ask": 0.91,
+      "spread_pct": 12.0,
       "last_trade": 0.86
     },
     "T4": {
       "on_demand_low": 0.15,
       "on_demand_avg": 0.39,
       "on_demand_high": 0.53,
-      "reserved_1yr_low": 0.22,
-      "reserved_1yr_avg": 0.29,
+      "reserved_1yr_low": 0.15,
+      "reserved_1yr_avg": 0.26,
       "reserved_1yr_high": 0.34,
-      "reserved_3yr_low": 0.16,
-      "reserved_3yr_avg": 0.2,
+      "reserved_3yr_low": 0.15,
+      "reserved_3yr_avg": 0.19,
       "reserved_3yr_high": 0.23,
-      "res1_savings_pct": 30,
-      "res3_savings_pct": 50,
+      "res1_savings_pct": 34,
+      "res3_savings_pct": 52,
       "num_providers": 4,
       "quarterly_trend": [
         0.39,
@@ -4714,8 +4752,10 @@
         0.39,
         0.39
       ],
-      "bid": 0.39,
-      "ask": 0.39,
+      "trend_quarter": "2026Q3",
+      "bid": 0.37,
+      "ask": 0.41,
+      "spread_pct": 12.0,
       "last_trade": 0.39
     },
     "H100-PCIe": {
@@ -4723,13 +4763,13 @@
       "on_demand_avg": 2.62,
       "on_demand_high": 3.29,
       "reserved_1yr_low": 1.54,
-      "reserved_1yr_avg": 2.11,
+      "reserved_1yr_avg": 2.09,
       "reserved_1yr_high": 2.63,
       "reserved_3yr_low": 1.13,
-      "reserved_3yr_avg": 1.64,
+      "reserved_3yr_avg": 1.72,
       "reserved_3yr_high": 2.14,
-      "res1_savings_pct": 30,
-      "res3_savings_pct": 50,
+      "res1_savings_pct": 20,
+      "res3_savings_pct": 35,
       "num_providers": 5,
       "quarterly_trend": [
         2.62,
@@ -4737,8 +4777,10 @@
         2.44,
         2.62
       ],
-      "bid": 2.44,
-      "ask": 2.44,
+      "trend_quarter": "2026Q3",
+      "bid": 2.46,
+      "ask": 2.78,
+      "spread_pct": 12.0,
       "last_trade": 2.62
     },
     "GB200": {
@@ -4751,8 +4793,8 @@
       "reserved_3yr_low": 5.78,
       "reserved_3yr_avg": 9.16,
       "reserved_3yr_high": 12.55,
-      "res1_savings_pct": 30,
-      "res3_savings_pct": 50,
+      "res1_savings_pct": 33,
+      "res3_savings_pct": 53,
       "num_providers": 2,
       "quarterly_trend": [
         19.51,
@@ -4760,22 +4802,24 @@
         19.51,
         19.51
       ],
-      "bid": 27.04,
-      "ask": 27.04,
+      "trend_quarter": "2026Q3",
+      "bid": 18.34,
+      "ask": 20.68,
+      "spread_pct": 12.0,
       "last_trade": 19.51
     },
     "MI250X": {
       "on_demand_low": 0.65,
       "on_demand_avg": 0.65,
       "on_demand_high": 0.65,
-      "reserved_1yr_low": 0.4322,
-      "reserved_1yr_avg": 0.455,
-      "reserved_1yr_high": 0.4778,
-      "reserved_3yr_low": 0.3087,
-      "reserved_3yr_avg": 0.325,
-      "reserved_3yr_high": 0.3413,
-      "res1_savings_pct": 30,
-      "res3_savings_pct": 50,
+      "reserved_1yr_low": 0.65,
+      "reserved_1yr_avg": 0.65,
+      "reserved_1yr_high": 0.65,
+      "reserved_3yr_low": 0.65,
+      "reserved_3yr_avg": 0.65,
+      "reserved_3yr_high": 0.65,
+      "res1_savings_pct": 0,
+      "res3_savings_pct": 0,
       "num_providers": 1,
       "quarterly_trend": [
         0.65,
@@ -4783,22 +4827,24 @@
         0.65,
         0.65
       ],
-      "bid": 0.65,
-      "ask": 0.65,
+      "trend_quarter": "2026Q3",
+      "bid": 0.61,
+      "ask": 0.69,
+      "spread_pct": 12.0,
       "last_trade": 0.65
     },
     "RTX-5090": {
       "on_demand_low": 0.32,
       "on_demand_avg": 0.51,
       "on_demand_high": 0.69,
-      "reserved_1yr_low": 0.59,
-      "reserved_1yr_avg": 0.59,
+      "reserved_1yr_low": 0.32,
+      "reserved_1yr_avg": 0.45,
       "reserved_1yr_high": 0.59,
-      "reserved_3yr_low": 0.48,
-      "reserved_3yr_avg": 0.48,
+      "reserved_3yr_low": 0.32,
+      "reserved_3yr_avg": 0.4,
       "reserved_3yr_high": 0.48,
-      "res1_savings_pct": 30,
-      "res3_savings_pct": 50,
+      "res1_savings_pct": 11,
+      "res3_savings_pct": 21,
       "num_providers": 2,
       "quarterly_trend": [
         0.71,
@@ -4806,8 +4852,10 @@
         0.51,
         0.51
       ],
-      "bid": 0.28,
-      "ask": 0.28,
+      "trend_quarter": "2026Q3",
+      "bid": 0.48,
+      "ask": 0.54,
+      "spread_pct": 12.0,
       "last_trade": 0.51
     }
   },
@@ -5565,14 +5613,14 @@
     }
   },
   "summary": {
-    "timestamp": "2026-03-19",
-    "total_gpus_tracked": 17,
-    "total_providers_tracked": 10,
+    "timestamp": "2026-07-28",
+    "total_gpus_tracked": 16,
+    "total_providers_tracked": 9,
     "best_flops_per_dollar": {
-      "gpu": "NVIDIA RTX 4090 24GB",
-      "value": 1137.9,
-      "at_price": 0.29,
-      "provider": "Vast.ai"
+      "gpu": "NVIDIA B200 192GB",
+      "value": 900.0,
+      "at_price": 2.5,
+      "provider": "FluidStack"
     },
     "best_vram_per_dollar": {
       "gpu": "AMD MI250X 128GB",
@@ -5581,32 +5629,38 @@
       "provider": "Vast.ai"
     },
     "biggest_price_drop": {
-      "gpu": "NVIDIA RTX-4090 24GB",
-      "change_pct": -7.9
+      "gpu": "NVIDIA RTX 5090 32GB",
+      "change_pct": -28.2
     },
     "most_competitive_market": {
-      "gpu": "NVIDIA B300 256GB",
-      "num_providers": 10,
-      "price_spread_pct": 516.7
+      "gpu": "NVIDIA A100 80GB",
+      "num_providers": 9,
+      "price_spread_pct": 850.1
     },
     "market_indicators": {
       "nvidia_stock": {
         "ticker": "NVDA",
-        "current": 131.28,
+        "current": 193.98,
         "1m_change": 4.2,
         "3m_change": 12.8,
-        "ytd_change": 8.5,
-        "52w_high": 153.13,
-        "52w_low": 75.61
+        "ytd_change": 2.72,
+        "52w_high": 236.54,
+        "52w_low": 164.07,
+        "ytd_pct": 2.72,
+        "52w_range": "$164.07-$236.54",
+        "last_updated": "2026-07-28T13:57:19.311238+00:00"
       },
       "amd_stock": {
         "ticker": "AMD",
-        "current": 108.5,
+        "current": 454.38,
         "1m_change": -2.1,
         "3m_change": 5.3,
-        "ytd_change": 3.8,
-        "52w_high": 164.46,
-        "52w_low": 100.55
+        "ytd_change": 103.33,
+        "52w_high": 584.73,
+        "52w_low": 149.22,
+        "ytd_pct": 103.33,
+        "52w_range": "$149.22-$584.73",
+        "last_updated": "2026-07-28T13:57:20.097490+00:00"
       },
       "gpu_market_size_bn": {
         "2023": 52.4,
@@ -5619,8 +5673,8 @@
         "2023": 55,
         "2024": 95,
         "2025_est": 150,
-        "2026_est": 650,
-        "2027_est": 850
+        "2026_est": 300,
+        "2027_est": 420
       },
       "data_center_gpu_shipments_k": {
         "2023-Q1": 480,
@@ -5653,7 +5707,8 @@
         "2025-09": 36,
         "2025-12": 36,
         "2026-01": 36,
-        "2026-02": 36
+        "2026-02": 36,
+        "2026-07": 8
       },
       "amd_gpu_market_share_pct": {
         "2023-01": 3,
@@ -5729,6 +5784,24 @@
     },
     "comparison_matrix": [
       {
+        "gpu_id": "B200",
+        "name": "NVIDIA B200 192GB",
+        "vendor": "NVIDIA",
+        "vram_gb": 192,
+        "arch": "Blackwell",
+        "tier": "flagship",
+        "cheapest_price": 2.5,
+        "cheapest_provider": "FluidStack",
+        "cheapest_provider_type": "marketplace",
+        "most_expensive": 14.242,
+        "avg_price": 7.18,
+        "num_providers": 9,
+        "price_spread_pct": 469.7,
+        "monthly_change_pct": -4.3,
+        "flops_per_dollar": 900.0,
+        "vram_per_dollar": 76.8
+      },
+      {
         "gpu_id": "MI300X",
         "name": "AMD MI300X 192GB",
         "vendor": "AMD",
@@ -5739,10 +5812,10 @@
         "cheapest_provider": "Vast.ai",
         "cheapest_provider_type": "marketplace",
         "most_expensive": 6.0,
-        "avg_price": 3.08,
-        "num_providers": 3,
+        "avg_price": 3.05,
+        "num_providers": 6,
         "price_spread_pct": 300.0,
-        "monthly_change_pct": 62.1,
+        "monthly_change_pct": 0.0,
         "flops_per_dollar": 871.6,
         "vram_per_dollar": 128.0
       },
@@ -5756,11 +5829,11 @@
         "cheapest_price": 3.0,
         "cheapest_provider": "FluidStack",
         "cheapest_provider_type": "marketplace",
-        "most_expensive": 18.5,
-        "avg_price": 8.62,
-        "num_providers": 10,
-        "price_spread_pct": 516.7,
-        "monthly_change_pct": 16.5,
+        "most_expensive": 17.802,
+        "avg_price": 8.88,
+        "num_providers": 9,
+        "price_spread_pct": 493.4,
+        "monthly_change_pct": 0.0,
         "flops_per_dollar": 833.3,
         "vram_per_dollar": 96.0
       },
@@ -5771,52 +5844,16 @@
         "vram_gb": 32,
         "arch": "Blackwell",
         "tier": "consumer",
-        "cheapest_price": 0.2669,
+        "cheapest_price": 0.3215,
         "cheapest_provider": "Vast.ai",
         "cheapest_provider_type": "marketplace",
-        "most_expensive": 0.2669,
-        "avg_price": 0.27,
-        "num_providers": 1,
-        "price_spread_pct": 0.0,
-        "monthly_change_pct": -40.0,
-        "flops_per_dollar": 784.9,
-        "vram_per_dollar": 119.9
-      },
-      {
-        "gpu_id": "B200",
-        "name": "NVIDIA B200 192GB",
-        "vendor": "NVIDIA",
-        "vram_gb": 192,
-        "arch": "Blackwell",
-        "tier": "flagship",
-        "cheapest_price": 3.127,
-        "cheapest_provider": "Vast.ai",
-        "cheapest_provider_type": "marketplace",
-        "most_expensive": 5.35,
-        "avg_price": 4.09,
-        "num_providers": 5,
-        "price_spread_pct": 71.1,
-        "monthly_change_pct": -17.9,
-        "flops_per_dollar": 719.5,
-        "vram_per_dollar": 61.4
-      },
-      {
-        "gpu_id": "A100-80GB",
-        "name": "NVIDIA A100 80GB",
-        "vendor": "NVIDIA",
-        "vram_gb": 80,
-        "arch": "Ampere",
-        "tier": "high",
-        "cheapest_price": 0.4689,
-        "cheapest_provider": "Vast.ai",
-        "cheapest_provider_type": "marketplace",
-        "most_expensive": 2.95,
-        "avg_price": 1.74,
-        "num_providers": 10,
-        "price_spread_pct": 529.1,
-        "monthly_change_pct": 35.9,
-        "flops_per_dollar": 665.4,
-        "vram_per_dollar": 170.6
+        "most_expensive": 0.69,
+        "avg_price": 0.51,
+        "num_providers": 2,
+        "price_spread_pct": 114.6,
+        "monthly_change_pct": -28.2,
+        "flops_per_dollar": 651.6,
+        "vram_per_dollar": 99.5
       },
       {
         "gpu_id": "MI250X",
@@ -5832,9 +5869,45 @@
         "avg_price": 0.65,
         "num_providers": 1,
         "price_spread_pct": 0.0,
-        "monthly_change_pct": -18.8,
+        "monthly_change_pct": 0.0,
         "flops_per_dollar": 589.2,
         "vram_per_dollar": 196.9
+      },
+      {
+        "gpu_id": "A100-80GB",
+        "name": "NVIDIA A100 80GB",
+        "vendor": "NVIDIA",
+        "vram_gb": 80,
+        "arch": "Ampere",
+        "tier": "high",
+        "cheapest_price": 0.5335,
+        "cheapest_provider": "Vast.ai",
+        "cheapest_provider_type": "marketplace",
+        "most_expensive": 5.069,
+        "avg_price": 2.34,
+        "num_providers": 9,
+        "price_spread_pct": 850.1,
+        "monthly_change_pct": -0.4,
+        "flops_per_dollar": 584.8,
+        "vram_per_dollar": 150.0
+      },
+      {
+        "gpu_id": "RTX-4090",
+        "name": "NVIDIA RTX 4090 24GB",
+        "vendor": "NVIDIA",
+        "vram_gb": 24,
+        "arch": "Ada Lovelace",
+        "tier": "consumer",
+        "cheapest_price": 0.2896,
+        "cheapest_provider": "Vast.ai",
+        "cheapest_provider_type": "marketplace",
+        "most_expensive": 0.74,
+        "avg_price": 0.46,
+        "num_providers": 3,
+        "price_spread_pct": 155.5,
+        "monthly_change_pct": -22.0,
+        "flops_per_dollar": 570.4,
+        "vram_per_dollar": 82.9
       },
       {
         "gpu_id": "A100-40GB",
@@ -5846,11 +5919,11 @@
         "cheapest_price": 0.55,
         "cheapest_provider": "Vast.ai",
         "cheapest_provider_type": "marketplace",
-        "most_expensive": 1.97,
-        "avg_price": 1.19,
+        "most_expensive": 3.673,
+        "avg_price": 1.66,
         "num_providers": 8,
-        "price_spread_pct": 258.2,
-        "monthly_change_pct": 58.7,
+        "price_spread_pct": 567.8,
+        "monthly_change_pct": 0.0,
         "flops_per_dollar": 567.3,
         "vram_per_dollar": 72.7
       },
@@ -5861,16 +5934,16 @@
         "vram_gb": 80,
         "arch": "Hopper",
         "tier": "flagship",
-        "cheapest_price": 1.8524,
-        "cheapest_provider": "Vast.ai",
+        "cheapest_price": 1.8,
+        "cheapest_provider": "FluidStack",
         "cheapest_provider_type": "marketplace",
-        "most_expensive": 4.28,
-        "avg_price": 2.86,
+        "most_expensive": 11.613,
+        "avg_price": 5.73,
         "num_providers": 9,
-        "price_spread_pct": 131.1,
-        "monthly_change_pct": 23.3,
-        "flops_per_dollar": 534.2,
-        "vram_per_dollar": 43.2
+        "price_spread_pct": 545.2,
+        "monthly_change_pct": 4.8,
+        "flops_per_dollar": 549.7,
+        "vram_per_dollar": 44.4
       },
       {
         "gpu_id": "T4",
@@ -5879,16 +5952,16 @@
         "vram_gb": 16,
         "arch": "Turing",
         "tier": "inference",
-        "cheapest_price": 0.1477,
+        "cheapest_price": 0.1486,
         "cheapest_provider": "Vast.ai",
         "cheapest_provider_type": "marketplace",
         "most_expensive": 0.53,
         "avg_price": 0.39,
         "num_providers": 4,
-        "price_spread_pct": 258.8,
-        "monthly_change_pct": 0,
-        "flops_per_dollar": 440.1,
-        "vram_per_dollar": 108.3
+        "price_spread_pct": 256.7,
+        "monthly_change_pct": 0.0,
+        "flops_per_dollar": 437.4,
+        "vram_per_dollar": 107.7
       },
       {
         "gpu_id": "MI325X",
@@ -5904,7 +5977,7 @@
         "avg_price": 4.46,
         "num_providers": 3,
         "price_spread_pct": 140.8,
-        "monthly_change_pct": 34.3,
+        "monthly_change_pct": 0.0,
         "flops_per_dollar": 437.3,
         "vram_per_dollar": 85.6
       },
@@ -5918,85 +5991,13 @@
         "cheapest_price": 2.3,
         "cheapest_provider": "FluidStack",
         "cheapest_provider_type": "marketplace",
-        "most_expensive": 10.6,
-        "avg_price": 5.15,
-        "num_providers": 8,
+        "most_expensive": 10.601,
+        "avg_price": 5.26,
+        "num_providers": 9,
         "price_spread_pct": 360.9,
-        "monthly_change_pct": 39.2,
+        "monthly_change_pct": 2.7,
         "flops_per_dollar": 430.2,
         "vram_per_dollar": 61.3
-      },
-      {
-        "gpu_id": "L40S",
-        "name": "NVIDIA L40S 48GB",
-        "vendor": "NVIDIA",
-        "vram_gb": 48,
-        "arch": "Ada Lovelace",
-        "tier": "mid",
-        "cheapest_price": 0.4672,
-        "cheapest_provider": "Vast.ai",
-        "cheapest_provider_type": "marketplace",
-        "most_expensive": 1.86,
-        "avg_price": 1.04,
-        "num_providers": 4,
-        "price_spread_pct": 298.1,
-        "monthly_change_pct": 19.5,
-        "flops_per_dollar": 387.4,
-        "vram_per_dollar": 102.7
-      },
-      {
-        "gpu_id": "H100-PCIe",
-        "name": "NVIDIA H100 PCIe 80GB",
-        "vendor": "NVIDIA",
-        "vram_gb": 80,
-        "arch": "Hopper",
-        "tier": "flagship",
-        "cheapest_price": 2.0003,
-        "cheapest_provider": "Vast.ai",
-        "cheapest_provider_type": "marketplace",
-        "most_expensive": 2.86,
-        "avg_price": 2.44,
-        "num_providers": 4,
-        "price_spread_pct": 43.0,
-        "monthly_change_pct": 28.4,
-        "flops_per_dollar": 378.2,
-        "vram_per_dollar": 40.0
-      },
-      {
-        "gpu_id": "RTX-4090",
-        "name": "NVIDIA RTX 4090 24GB",
-        "vendor": "NVIDIA",
-        "vram_gb": 24,
-        "arch": "Ada Lovelace",
-        "tier": "consumer",
-        "cheapest_price": 0.4407,
-        "cheapest_provider": "Vast.ai",
-        "cheapest_provider_type": "marketplace",
-        "most_expensive": 0.74,
-        "avg_price": 0.59,
-        "num_providers": 2,
-        "price_spread_pct": 67.9,
-        "monthly_change_pct": 68.6,
-        "flops_per_dollar": 374.9,
-        "vram_per_dollar": 54.5
-      },
-      {
-        "gpu_id": "L4",
-        "name": "NVIDIA L4 24GB",
-        "vendor": "NVIDIA",
-        "vram_gb": 24,
-        "arch": "Ada Lovelace",
-        "tier": "inference",
-        "cheapest_price": 0.7,
-        "cheapest_provider": "Google Cloud Platform",
-        "cheapest_provider_type": "cloud",
-        "most_expensive": 0.8,
-        "avg_price": 0.75,
-        "num_providers": 2,
-        "price_spread_pct": 14.3,
-        "monthly_change_pct": 0,
-        "flops_per_dollar": 172.9,
-        "vram_per_dollar": 34.3
       },
       {
         "gpu_id": "GB200",
@@ -6005,25 +6006,79 @@
         "vram_gb": 384,
         "arch": "Blackwell",
         "tier": "ultra",
-        "cheapest_price": 27.04,
-        "cheapest_provider": "Microsoft Azure",
+        "cheapest_price": 10.5,
+        "cheapest_provider": "CoreWeave",
         "cheapest_provider_type": "cloud",
-        "most_expensive": 27.04,
-        "avg_price": 27.04,
-        "num_providers": 1,
-        "price_spread_pct": 0.0,
-        "monthly_change_pct": 0.5,
-        "flops_per_dollar": 166.4,
-        "vram_per_dollar": 14.2
+        "most_expensive": 28.512,
+        "avg_price": 19.51,
+        "num_providers": 2,
+        "price_spread_pct": 171.5,
+        "monthly_change_pct": 0.0,
+        "flops_per_dollar": 428.6,
+        "vram_per_dollar": 36.6
+      },
+      {
+        "gpu_id": "L40S",
+        "name": "NVIDIA L40S 48GB",
+        "vendor": "NVIDIA",
+        "vram_gb": 48,
+        "arch": "Ada Lovelace",
+        "tier": "mid",
+        "cheapest_price": 0.467,
+        "cheapest_provider": "Vast.ai",
+        "cheapest_provider_type": "marketplace",
+        "most_expensive": 3.766,
+        "avg_price": 1.47,
+        "num_providers": 7,
+        "price_spread_pct": 706.4,
+        "monthly_change_pct": -1.3,
+        "flops_per_dollar": 387.6,
+        "vram_per_dollar": 102.8
+      },
+      {
+        "gpu_id": "H100-PCIe",
+        "name": "NVIDIA H100 PCIe 80GB",
+        "vendor": "NVIDIA",
+        "vram_gb": 80,
+        "arch": "Hopper",
+        "tier": "flagship",
+        "cheapest_price": 2.0011,
+        "cheapest_provider": "Vast.ai",
+        "cheapest_provider_type": "marketplace",
+        "most_expensive": 3.29,
+        "avg_price": 2.62,
+        "num_providers": 5,
+        "price_spread_pct": 64.4,
+        "monthly_change_pct": 0.0,
+        "flops_per_dollar": 378.0,
+        "vram_per_dollar": 40.0
+      },
+      {
+        "gpu_id": "L4",
+        "name": "NVIDIA L4 24GB",
+        "vendor": "NVIDIA",
+        "vram_gb": 24,
+        "arch": "Ada Lovelace",
+        "tier": "inference",
+        "cheapest_price": 0.3252,
+        "cheapest_provider": "Vast.ai",
+        "cheapest_provider_type": "marketplace",
+        "most_expensive": 1.669,
+        "avg_price": 0.86,
+        "num_providers": 4,
+        "price_spread_pct": 413.2,
+        "monthly_change_pct": 1.2,
+        "flops_per_dollar": 372.1,
+        "vram_per_dollar": 73.8
       }
     ],
     "market_sentiment": {
       "H100-SXM": {
-        "score": 54,
-        "reddit_sentiment": 0.82,
-        "github_compat_score": 95,
-        "hf_models_trained": 48200,
-        "mentions_30d": 32400,
+        "score": 58,
+        "reddit_sentiment": 0.84,
+        "github_compat_score": 59,
+        "hf_models_trained": 200,
+        "mentions_30d": 29,
         "ecosystem": "mature",
         "adoption": "stable",
         "community_pick": true,
@@ -6035,16 +6090,70 @@
         "cons": [
           "Price premium vs AMD"
         ],
-        "top_use_case": "LLM training & serving at scale"
+        "top_use_case": "LLM training & serving at scale",
+        "hf_models_estimated": true,
+        "github_repos": 97,
+        "score_history": [
+          {
+            "date": "2026-06-01",
+            "score": 57
+          },
+          {
+            "date": "2026-06-08",
+            "score": 57
+          },
+          {
+            "date": "2026-06-15",
+            "score": 57
+          },
+          {
+            "date": "2026-06-22",
+            "score": 57
+          },
+          {
+            "date": "2026-06-29",
+            "score": 57
+          },
+          {
+            "date": "2026-07-06",
+            "score": 57
+          },
+          {
+            "date": "2026-07-13",
+            "score": 57
+          },
+          {
+            "date": "2026-07-20",
+            "score": 58
+          }
+        ],
+        "last_updated": "2026-07-20T09:49:46.967029+00:00",
+        "hot_topics": [
+          {
+            "title": "Fine-tuned Qwen3 SLMs (0.6-8B) beat frontier LLMs on narrow tasks",
+            "score": 429,
+            "subreddit": "LocalLLaMA"
+          },
+          {
+            "title": "New open weights models: GigaChat-3.1-Ultra-702B and GigaChat-3.1-Lightning-10B-A1.8B",
+            "score": 272,
+            "subreddit": "LocalLLaMA"
+          },
+          {
+            "title": "FlashAttention-4: 1613 TFLOPs/s, 2.7x faster than Triton, written in Python. What it means for infer",
+            "score": 232,
+            "subreddit": "LocalLLaMA"
+          }
+        ]
       },
       "B300": {
         "score": 35,
-        "reddit_sentiment": 0.75,
-        "github_compat_score": 72,
-        "hf_models_trained": 450,
-        "mentions_30d": 34200,
+        "reddit_sentiment": 0.8,
+        "github_compat_score": 21,
+        "hf_models_trained": 17,
+        "mentions_30d": 13,
         "ecosystem": "early",
-        "adoption": "rising",
+        "adoption": "stable",
         "community_pick": false,
         "pros": [
           "3000 TFLOPS FP16",
@@ -6057,16 +6166,69 @@
           "High price premium",
           "Early ecosystem"
         ],
-        "top_use_case": "Frontier LLM training & ultra-large model inference"
+        "top_use_case": "Frontier LLM training & ultra-large model inference",
+        "github_repos": 7,
+        "score_history": [
+          {
+            "date": "2026-06-01",
+            "score": 34
+          },
+          {
+            "date": "2026-06-08",
+            "score": 34
+          },
+          {
+            "date": "2026-06-15",
+            "score": 34
+          },
+          {
+            "date": "2026-06-22",
+            "score": 34
+          },
+          {
+            "date": "2026-06-29",
+            "score": 34
+          },
+          {
+            "date": "2026-07-06",
+            "score": 35
+          },
+          {
+            "date": "2026-07-13",
+            "score": 34
+          },
+          {
+            "date": "2026-07-20",
+            "score": 35
+          }
+        ],
+        "last_updated": "2026-07-20T09:49:46.967029+00:00",
+        "hot_topics": [
+          {
+            "title": "Genuinely curious what doors the M5 Ultra will open",
+            "score": 337,
+            "subreddit": "LocalLLaMA"
+          },
+          {
+            "title": "DeepSeek updated its low-level operator library DeepGEMM, basically confirming the implementation of",
+            "score": 89,
+            "subreddit": "LocalLLaMA"
+          },
+          {
+            "title": "Nemotron 3 Omni soon?",
+            "score": 34,
+            "subreddit": "LocalLLaMA"
+          }
+        ]
       },
       "B200": {
-        "score": 39,
-        "reddit_sentiment": 0.78,
-        "github_compat_score": 80,
-        "hf_models_trained": 3100,
-        "mentions_30d": 28600,
+        "score": 46,
+        "reddit_sentiment": 0.8,
+        "github_compat_score": 32,
+        "hf_models_trained": 148,
+        "mentions_30d": 23,
         "ecosystem": "growing",
-        "adoption": "rising",
+        "adoption": "stable",
         "community_pick": false,
         "pros": [
           "2x H100 perf/watt",
@@ -6076,16 +6238,69 @@
         "cons": [
           "Still ramping ecosystem"
         ],
-        "top_use_case": "Next-gen LLM training & large batch inference"
+        "top_use_case": "Next-gen LLM training & large batch inference",
+        "github_repos": 18,
+        "score_history": [
+          {
+            "date": "2026-06-01",
+            "score": 42
+          },
+          {
+            "date": "2026-06-08",
+            "score": 43
+          },
+          {
+            "date": "2026-06-15",
+            "score": 43
+          },
+          {
+            "date": "2026-06-22",
+            "score": 44
+          },
+          {
+            "date": "2026-06-29",
+            "score": 44
+          },
+          {
+            "date": "2026-07-06",
+            "score": 45
+          },
+          {
+            "date": "2026-07-13",
+            "score": 45
+          },
+          {
+            "date": "2026-07-20",
+            "score": 46
+          }
+        ],
+        "last_updated": "2026-07-20T09:49:46.967029+00:00",
+        "hot_topics": [
+          {
+            "title": "55 \u2192 282 tok/s: How I got Qwen3.5-397B running at speed on 4x RTX PRO 6000 Blackwell",
+            "score": 259,
+            "subreddit": "LocalLLaMA"
+          },
+          {
+            "title": "FlashAttention-4: 1613 TFLOPs/s, 2.7x faster than Triton, written in Python. What it means for infer",
+            "score": 231,
+            "subreddit": "LocalLLaMA"
+          },
+          {
+            "title": "I spent 8+ hours benchmarking every MoE backend for Qwen3.5-397B NVFP4 on 4x RTX PRO 6000 (SM120). H",
+            "score": 230,
+            "subreddit": "LocalLLaMA"
+          }
+        ]
       },
       "H200": {
-        "score": 47,
-        "reddit_sentiment": 0.8,
-        "github_compat_score": 92,
-        "hf_models_trained": 12500,
-        "mentions_30d": 18200,
+        "score": 48,
+        "reddit_sentiment": 0.79,
+        "github_compat_score": 36,
+        "hf_models_trained": 200,
+        "mentions_30d": 10,
         "ecosystem": "mature",
-        "adoption": "rising",
+        "adoption": "stable",
         "community_pick": false,
         "pros": [
           "141GB HBM3e",
@@ -6095,17 +6310,71 @@
         "cons": [
           "Being leapfrogged by B200"
         ],
-        "top_use_case": "Large model inference & fine-tuning"
+        "top_use_case": "Large model inference & fine-tuning",
+        "hf_models_estimated": true,
+        "github_repos": 29,
+        "score_history": [
+          {
+            "date": "2026-06-01",
+            "score": 48
+          },
+          {
+            "date": "2026-06-08",
+            "score": 48
+          },
+          {
+            "date": "2026-06-15",
+            "score": 48
+          },
+          {
+            "date": "2026-06-22",
+            "score": 48
+          },
+          {
+            "date": "2026-06-29",
+            "score": 48
+          },
+          {
+            "date": "2026-07-06",
+            "score": 48
+          },
+          {
+            "date": "2026-07-13",
+            "score": 48
+          },
+          {
+            "date": "2026-07-20",
+            "score": 48
+          }
+        ],
+        "last_updated": "2026-07-20T09:49:46.967029+00:00",
+        "hot_topics": [
+          {
+            "title": "My company just handed me a 2x H200 (282GB VRAM) rig. Help me pick the \"Intelligence\" ceiling.",
+            "score": 510,
+            "subreddit": "LocalLLaMA"
+          },
+          {
+            "title": "Genuinely curious what doors the M5 Ultra will open",
+            "score": 333,
+            "subreddit": "LocalLLaMA"
+          },
+          {
+            "title": "Running DeepSeek V3.2 with dense attention (like in llama.cpp) makes it a bit dumber",
+            "score": 72,
+            "subreddit": "LocalLLaMA"
+          }
+        ]
       },
       "A100-80GB": {
-        "score": 52,
-        "reddit_sentiment": 0.75,
-        "github_compat_score": 98,
-        "hf_models_trained": 85400,
-        "mentions_30d": 14100,
+        "score": 54,
+        "reddit_sentiment": 0.69,
+        "github_compat_score": 62,
+        "hf_models_trained": 200,
+        "mentions_30d": 32,
         "ecosystem": "mature",
         "adoption": "stable",
-        "community_pick": false,
+        "community_pick": true,
         "pros": [
           "Best price/perf for training",
           "Universal support",
@@ -6114,16 +6383,70 @@
         "cons": [
           "Aging architecture"
         ],
-        "top_use_case": "Cost-effective fine-tuning & mid-size training"
+        "top_use_case": "Cost-effective fine-tuning & mid-size training",
+        "hf_models_estimated": true,
+        "github_repos": 186,
+        "score_history": [
+          {
+            "date": "2026-06-01",
+            "score": 54
+          },
+          {
+            "date": "2026-06-08",
+            "score": 54
+          },
+          {
+            "date": "2026-06-15",
+            "score": 54
+          },
+          {
+            "date": "2026-06-22",
+            "score": 54
+          },
+          {
+            "date": "2026-06-29",
+            "score": 54
+          },
+          {
+            "date": "2026-07-06",
+            "score": 54
+          },
+          {
+            "date": "2026-07-13",
+            "score": 54
+          },
+          {
+            "date": "2026-07-20",
+            "score": 54
+          }
+        ],
+        "last_updated": "2026-07-20T09:49:46.967029+00:00",
+        "hot_topics": [
+          {
+            "title": "FlashAttention-4: 1613 TFLOPs/s, 2.7x faster than Triton, written in Python. What it means for infer",
+            "score": 233,
+            "subreddit": "LocalLLaMA"
+          },
+          {
+            "title": "Nvidia V100 32 Gb getting 115 t/s on Qwen Coder 30B A3B Q5",
+            "score": 189,
+            "subreddit": "LocalLLaMA"
+          },
+          {
+            "title": "Zero text between my agents \u2013 latent transfer now works cross-model",
+            "score": 20,
+            "subreddit": "LocalLLaMA"
+          }
+        ]
       },
       "MI300X": {
-        "score": 24,
-        "reddit_sentiment": 0.58,
-        "github_compat_score": 65,
-        "hf_models_trained": 2800,
-        "mentions_30d": 9400,
+        "score": 33,
+        "reddit_sentiment": 0.52,
+        "github_compat_score": 43,
+        "hf_models_trained": 38,
+        "mentions_30d": 3,
         "ecosystem": "growing",
-        "adoption": "rising",
+        "adoption": "stable",
         "community_pick": false,
         "pros": [
           "192GB HBM3",
@@ -6134,14 +6457,51 @@
           "ROCm gaps vs CUDA",
           "Smaller ecosystem"
         ],
-        "top_use_case": "Inference workloads & cost-optimized serving"
+        "top_use_case": "Inference workloads & cost-optimized serving",
+        "github_repos": 51,
+        "score_history": [
+          {
+            "date": "2026-06-01",
+            "score": 30
+          },
+          {
+            "date": "2026-06-08",
+            "score": 32
+          },
+          {
+            "date": "2026-06-15",
+            "score": 32
+          },
+          {
+            "date": "2026-06-22",
+            "score": 32
+          },
+          {
+            "date": "2026-06-29",
+            "score": 32
+          },
+          {
+            "date": "2026-07-06",
+            "score": 33
+          },
+          {
+            "date": "2026-07-13",
+            "score": 33
+          },
+          {
+            "date": "2026-07-20",
+            "score": 33
+          }
+        ],
+        "last_updated": "2026-07-20T09:49:46.967029+00:00",
+        "hot_topics": []
       },
       "L40S": {
-        "score": 37,
-        "reddit_sentiment": 0.7,
-        "github_compat_score": 90,
-        "hf_models_trained": 8200,
-        "mentions_30d": 6800,
+        "score": 42,
+        "reddit_sentiment": 0.87,
+        "github_compat_score": 30,
+        "hf_models_trained": 57,
+        "mentions_30d": 8,
         "ecosystem": "mature",
         "adoption": "stable",
         "community_pick": false,
@@ -6154,17 +6514,70 @@
           "No NVLink",
           "48GB VRAM limit"
         ],
-        "top_use_case": "Inference serving & fine-tuning small models"
+        "top_use_case": "Inference serving & fine-tuning small models",
+        "github_repos": 11,
+        "score_history": [
+          {
+            "date": "2026-06-01",
+            "score": 42
+          },
+          {
+            "date": "2026-06-08",
+            "score": 42
+          },
+          {
+            "date": "2026-06-15",
+            "score": 42
+          },
+          {
+            "date": "2026-06-22",
+            "score": 42
+          },
+          {
+            "date": "2026-06-29",
+            "score": 42
+          },
+          {
+            "date": "2026-07-06",
+            "score": 42
+          },
+          {
+            "date": "2026-07-13",
+            "score": 42
+          },
+          {
+            "date": "2026-07-20",
+            "score": 42
+          }
+        ],
+        "last_updated": "2026-07-20T09:49:46.967029+00:00",
+        "hot_topics": [
+          {
+            "title": "Genuinely curious what doors the M5 Ultra will open",
+            "score": 337,
+            "subreddit": "LocalLLaMA"
+          },
+          {
+            "title": "DoomVLM is now Open Source - VLM models playing Doom",
+            "score": 55,
+            "subreddit": "LocalLLaMA"
+          },
+          {
+            "title": "Optimizing Qwen3 Coder for RTX 5090 and PRO 6000 + Community Benchmarking Infrastructure",
+            "score": 16,
+            "subreddit": "LocalLLaMA"
+          }
+        ]
       },
       "RTX-4090": {
-        "score": 49,
-        "reddit_sentiment": 0.85,
-        "github_compat_score": 88,
-        "hf_models_trained": 22100,
-        "mentions_30d": 11200,
+        "score": 48,
+        "reddit_sentiment": 0.69,
+        "github_compat_score": 38,
+        "hf_models_trained": 167,
+        "mentions_30d": 87,
         "ecosystem": "mature",
         "adoption": "stable",
-        "community_pick": true,
+        "community_pick": false,
         "pros": [
           "Cheapest per hour",
           "Great for prototyping",
@@ -6174,7 +6587,60 @@
           "24GB VRAM limit",
           "Not for production"
         ],
-        "top_use_case": "Research prototyping & personal inference"
+        "top_use_case": "Research prototyping & personal inference",
+        "github_repos": 35,
+        "score_history": [
+          {
+            "date": "2026-06-01",
+            "score": 47
+          },
+          {
+            "date": "2026-06-08",
+            "score": 47
+          },
+          {
+            "date": "2026-06-15",
+            "score": 47
+          },
+          {
+            "date": "2026-06-22",
+            "score": 47
+          },
+          {
+            "date": "2026-06-29",
+            "score": 47
+          },
+          {
+            "date": "2026-07-06",
+            "score": 47
+          },
+          {
+            "date": "2026-07-13",
+            "score": 47
+          },
+          {
+            "date": "2026-07-20",
+            "score": 48
+          }
+        ],
+        "last_updated": "2026-07-20T09:49:46.967029+00:00",
+        "hot_topics": [
+          {
+            "title": "Genuinely curious what doors the M5 Ultra will open",
+            "score": 337,
+            "subreddit": "LocalLLaMA"
+          },
+          {
+            "title": "[P] Vibecoded on a home PC: building a ~2700 Elo browser-playable neural chess engine with a Karpath",
+            "score": 77,
+            "subreddit": "MachineLearning"
+          },
+          {
+            "title": "[P] I trained Qwen2.5-1.5b with RLVR (GRPO) vs SFT and compared benchmark performance",
+            "score": 26,
+            "subreddit": "MachineLearning"
+          }
+        ]
       }
     }
   },
@@ -6801,24 +7267,24 @@
           "monthly_1gpu": 2190.0
         },
         "B200": {
-          "cheapest": 2.67,
-          "provider": "Vast.ai",
-          "monthly_1gpu": 1949.1
+          "cheapest": 2.5,
+          "provider": "FluidStack",
+          "monthly_1gpu": 1825.0
         },
         "H100-SXM": {
-          "cheapest": 1.7,
-          "provider": "Vast.ai",
-          "monthly_1gpu": 1241.0
+          "cheapest": 1.8,
+          "provider": "FluidStack",
+          "monthly_1gpu": 1314.0
         },
         "H200": {
-          "cheapest": 1.97,
-          "provider": "Vast.ai",
-          "monthly_1gpu": 1438.1
+          "cheapest": 2.3,
+          "provider": "FluidStack",
+          "monthly_1gpu": 1679.0
         },
         "GB200": {
-          "cheapest": 27.04,
-          "provider": "Azure",
-          "monthly_1gpu": 19739.2
+          "cheapest": 10.5,
+          "provider": "CoreWeave",
+          "monthly_1gpu": 7665.0
         }
       }
     },
@@ -6836,14 +7302,14 @@
       "best_value": "CoreWeave H100",
       "current_prices": {
         "H100-SXM": {
-          "cheapest": 1.7,
-          "provider": "Vast.ai",
-          "monthly_1gpu": 1241.0
+          "cheapest": 1.8,
+          "provider": "FluidStack",
+          "monthly_1gpu": 1314.0
         },
         "A100-80GB": {
-          "cheapest": 0.85,
+          "cheapest": 0.5335,
           "provider": "Vast.ai",
-          "monthly_1gpu": 620.5
+          "monthly_1gpu": 389.45
         },
         "MI300X": {
           "cheapest": 1.5,
@@ -6856,9 +7322,9 @@
           "monthly_1gpu": 2190.0
         },
         "B200": {
-          "cheapest": 2.67,
-          "provider": "Vast.ai",
-          "monthly_1gpu": 1949.1
+          "cheapest": 2.5,
+          "provider": "FluidStack",
+          "monthly_1gpu": 1825.0
         }
       }
     },
@@ -6875,9 +7341,9 @@
       "best_value": "Vast.ai MI300X",
       "current_prices": {
         "A100-80GB": {
-          "cheapest": 0.85,
+          "cheapest": 0.5335,
           "provider": "Vast.ai",
-          "monthly_1gpu": 620.5
+          "monthly_1gpu": 389.45
         },
         "MI300X": {
           "cheapest": 1.5,
@@ -6885,14 +7351,14 @@
           "monthly_1gpu": 1095.0
         },
         "H100-SXM": {
-          "cheapest": 1.7,
-          "provider": "Vast.ai",
-          "monthly_1gpu": 1241.0
+          "cheapest": 1.8,
+          "provider": "FluidStack",
+          "monthly_1gpu": 1314.0
         },
         "L40S": {
-          "cheapest": 0.47,
+          "cheapest": 0.467,
           "provider": "Vast.ai",
-          "monthly_1gpu": 343.1
+          "monthly_1gpu": 340.91
         }
       }
     },
@@ -6906,9 +7372,9 @@
       "best_value": "L40S",
       "current_prices": {
         "L40S": {
-          "cheapest": 0.47,
+          "cheapest": 0.467,
           "provider": "Vast.ai",
-          "monthly_1gpu": 343.1
+          "monthly_1gpu": 340.91
         }
       }
     },
@@ -6925,14 +7391,14 @@
       "best_value": "Vast.ai RTX 4090",
       "current_prices": {
         "RTX-4090": {
-          "cheapest": 0.29,
+          "cheapest": 0.2896,
           "provider": "Vast.ai",
-          "monthly_1gpu": 211.7
+          "monthly_1gpu": 211.41
         },
         "L40S": {
-          "cheapest": 0.47,
+          "cheapest": 0.467,
           "provider": "Vast.ai",
-          "monthly_1gpu": 343.1
+          "monthly_1gpu": 340.91
         },
         "A100-40GB": {
           "cheapest": 0.55,
@@ -6957,9 +7423,9 @@
       "best_value": "Vast.ai RTX-4090 spot",
       "current_prices": {
         "RTX-4090": {
-          "cheapest": 0.29,
+          "cheapest": 0.2896,
           "provider": "Vast.ai",
-          "monthly_1gpu": 211.7
+          "monthly_1gpu": 211.41
         }
       }
     }
@@ -7962,10 +8428,10 @@
   },
   "reservations": {
     "H100-SXM": {
-      "on_demand_rate": 2.18,
-      "spot_avg_rate": 0.98,
-      "reserved_1yr_rate": 1.53,
-      "reserved_3yr_rate": 0.87,
+      "on_demand_rate": 5.73,
+      "spot_avg_rate": 3.56,
+      "reserved_1yr_rate": 4.01,
+      "reserved_3yr_rate": 3.01,
       "breakeven_hours_spot": {
         "vs_on_demand": 0,
         "description": "Spot always cheaper when available"
@@ -7980,24 +8446,24 @@
       },
       "savings_at_utilization": {
         "40_pct": {
-          "spot": 55,
-          "reserved_1yr": -8,
-          "reserved_3yr": 22
+          "spot": 38,
+          "reserved_1yr": -75,
+          "reserved_3yr": -31
         },
         "60_pct": {
-          "spot": 55,
-          "reserved_1yr": 12,
-          "reserved_3yr": 42
+          "spot": 38,
+          "reserved_1yr": -17,
+          "reserved_3yr": 12
         },
         "80_pct": {
-          "spot": 55,
-          "reserved_1yr": 25,
-          "reserved_3yr": 55
+          "spot": 38,
+          "reserved_1yr": 13,
+          "reserved_3yr": 34
         },
         "100_pct": {
-          "spot": 55,
+          "spot": 38,
           "reserved_1yr": 30,
-          "reserved_3yr": 60
+          "reserved_3yr": 47
         }
       },
       "recommended_commitment": {
@@ -8016,10 +8482,10 @@
       }
     },
     "B300": {
-      "on_demand_rate": 5.5,
-      "spot_avg_rate": 3.47,
-      "reserved_1yr_rate": 4.13,
-      "reserved_3yr_rate": 2.48,
+      "on_demand_rate": 8.88,
+      "spot_avg_rate": 5.68,
+      "reserved_1yr_rate": 6.22,
+      "reserved_3yr_rate": 4.69,
       "breakeven_hours_spot": {
         "vs_on_demand": 0,
         "description": "Spot always cheaper when available"
@@ -8034,24 +8500,24 @@
       },
       "savings_at_utilization": {
         "40_pct": {
-          "spot": 37,
-          "reserved_1yr": -12,
-          "reserved_3yr": 15
+          "spot": 36,
+          "reserved_1yr": -75,
+          "reserved_3yr": -32
         },
         "60_pct": {
-          "spot": 37,
-          "reserved_1yr": 8,
-          "reserved_3yr": 35
+          "spot": 36,
+          "reserved_1yr": -17,
+          "reserved_3yr": 12
         },
         "80_pct": {
-          "spot": 37,
-          "reserved_1yr": 20,
-          "reserved_3yr": 50
+          "spot": 36,
+          "reserved_1yr": 12,
+          "reserved_3yr": 34
         },
         "100_pct": {
-          "spot": 37,
-          "reserved_1yr": 25,
-          "reserved_3yr": 55
+          "spot": 36,
+          "reserved_1yr": 30,
+          "reserved_3yr": 47
         }
       },
       "recommended_commitment": {
@@ -8070,10 +8536,10 @@
       }
     },
     "B200": {
-      "on_demand_rate": 4.25,
-      "spot_avg_rate": 2.12,
-      "reserved_1yr_rate": 3.19,
-      "reserved_3yr_rate": 1.7,
+      "on_demand_rate": 7.18,
+      "spot_avg_rate": 4.64,
+      "reserved_1yr_rate": 5.21,
+      "reserved_3yr_rate": 4.01,
       "breakeven_hours_spot": {
         "vs_on_demand": 0,
         "description": "Spot always cheaper when available"
@@ -8088,24 +8554,24 @@
       },
       "savings_at_utilization": {
         "40_pct": {
-          "spot": 50,
-          "reserved_1yr": -10,
-          "reserved_3yr": 18
+          "spot": 35,
+          "reserved_1yr": -81,
+          "reserved_3yr": -40
         },
         "60_pct": {
-          "spot": 50,
-          "reserved_1yr": 10,
-          "reserved_3yr": 38
+          "spot": 35,
+          "reserved_1yr": -21,
+          "reserved_3yr": 7
         },
         "80_pct": {
-          "spot": 50,
-          "reserved_1yr": 22,
-          "reserved_3yr": 52
+          "spot": 35,
+          "reserved_1yr": 9,
+          "reserved_3yr": 30
         },
         "100_pct": {
-          "spot": 50,
-          "reserved_1yr": 25,
-          "reserved_3yr": 60
+          "spot": 35,
+          "reserved_1yr": 27,
+          "reserved_3yr": 44
         }
       },
       "recommended_commitment": {
@@ -8124,10 +8590,10 @@
       }
     },
     "A100-80GB": {
-      "on_demand_rate": 1.1,
-      "spot_avg_rate": 0.4,
-      "reserved_1yr_rate": 0.77,
-      "reserved_3yr_rate": 0.44,
+      "on_demand_rate": 2.34,
+      "spot_avg_rate": 1.41,
+      "reserved_1yr_rate": 1.63,
+      "reserved_3yr_rate": 1.21,
       "breakeven_hours_spot": {
         "vs_on_demand": 0,
         "description": "Spot always cheaper"
@@ -8142,24 +8608,24 @@
       },
       "savings_at_utilization": {
         "40_pct": {
-          "spot": 64,
-          "reserved_1yr": -5,
-          "reserved_3yr": 28
+          "spot": 40,
+          "reserved_1yr": -74,
+          "reserved_3yr": -29
         },
         "60_pct": {
-          "spot": 64,
-          "reserved_1yr": 15,
-          "reserved_3yr": 45
+          "spot": 40,
+          "reserved_1yr": -16,
+          "reserved_3yr": 14
         },
         "80_pct": {
-          "spot": 64,
-          "reserved_1yr": 28,
-          "reserved_3yr": 58
+          "spot": 40,
+          "reserved_1yr": 13,
+          "reserved_3yr": 35
         },
         "100_pct": {
-          "spot": 64,
+          "spot": 40,
           "reserved_1yr": 30,
-          "reserved_3yr": 60
+          "reserved_3yr": 48
         }
       },
       "recommended_commitment": {
@@ -8178,10 +8644,10 @@
       }
     },
     "MI300X": {
-      "on_demand_rate": 1.72,
-      "spot_avg_rate": 0.69,
-      "reserved_1yr_rate": 1.2,
-      "reserved_3yr_rate": 0.69,
+      "on_demand_rate": 3.05,
+      "spot_avg_rate": 2.11,
+      "reserved_1yr_rate": 2.32,
+      "reserved_3yr_rate": 1.83,
       "breakeven_hours_spot": {
         "vs_on_demand": 0,
         "description": "Spot always cheaper"
@@ -8196,24 +8662,24 @@
       },
       "savings_at_utilization": {
         "40_pct": {
-          "spot": 60,
-          "reserved_1yr": -6,
-          "reserved_3yr": 25
+          "spot": 31,
+          "reserved_1yr": -90,
+          "reserved_3yr": -50
         },
         "60_pct": {
-          "spot": 60,
-          "reserved_1yr": 13,
-          "reserved_3yr": 42
+          "spot": 31,
+          "reserved_1yr": -27,
+          "reserved_3yr": 0
         },
         "80_pct": {
-          "spot": 60,
-          "reserved_1yr": 26,
-          "reserved_3yr": 56
+          "spot": 31,
+          "reserved_1yr": 5,
+          "reserved_3yr": 25
         },
         "100_pct": {
-          "spot": 60,
-          "reserved_1yr": 30,
-          "reserved_3yr": 60
+          "spot": 31,
+          "reserved_1yr": 24,
+          "reserved_3yr": 40
         }
       },
       "recommended_commitment": {
@@ -8232,10 +8698,10 @@
       }
     },
     "H200": {
-      "on_demand_rate": 3.5,
-      "spot_avg_rate": 1.58,
-      "reserved_1yr_rate": 2.45,
-      "reserved_3yr_rate": 1.4,
+      "on_demand_rate": 5.26,
+      "spot_avg_rate": 3.26,
+      "reserved_1yr_rate": 3.75,
+      "reserved_3yr_rate": 2.86,
       "breakeven_hours_spot": {
         "vs_on_demand": 0,
         "description": "Spot always cheaper"
@@ -8250,24 +8716,24 @@
       },
       "savings_at_utilization": {
         "40_pct": {
-          "spot": 55,
-          "reserved_1yr": -9,
-          "reserved_3yr": 20
+          "spot": 38,
+          "reserved_1yr": -78,
+          "reserved_3yr": -36
         },
         "60_pct": {
-          "spot": 55,
-          "reserved_1yr": 11,
-          "reserved_3yr": 40
+          "spot": 38,
+          "reserved_1yr": -19,
+          "reserved_3yr": 9
         },
         "80_pct": {
-          "spot": 55,
-          "reserved_1yr": 24,
-          "reserved_3yr": 54
+          "spot": 38,
+          "reserved_1yr": 11,
+          "reserved_3yr": 32
         },
         "100_pct": {
-          "spot": 55,
-          "reserved_1yr": 30,
-          "reserved_3yr": 60
+          "spot": 38,
+          "reserved_1yr": 29,
+          "reserved_3yr": 46
         }
       },
       "recommended_commitment": {
@@ -8286,10 +8752,10 @@
       }
     },
     "RTX-4090": {
-      "on_demand_rate": 0.22,
-      "spot_avg_rate": 0.11,
-      "reserved_1yr_rate": 0.15,
-      "reserved_3yr_rate": 0.09,
+      "on_demand_rate": 0.46,
+      "spot_avg_rate": 0.28,
+      "reserved_1yr_rate": 0.38,
+      "reserved_3yr_rate": 0.31,
       "breakeven_hours_spot": {
         "vs_on_demand": 0,
         "description": "Spot always cheaper"
@@ -8304,24 +8770,24 @@
       },
       "savings_at_utilization": {
         "40_pct": {
-          "spot": 50,
-          "reserved_1yr": -3,
-          "reserved_3yr": 32
+          "spot": 39,
+          "reserved_1yr": -107,
+          "reserved_3yr": -68
         },
         "60_pct": {
-          "spot": 50,
-          "reserved_1yr": 18,
-          "reserved_3yr": 48
+          "spot": 39,
+          "reserved_1yr": -38,
+          "reserved_3yr": -12
         },
         "80_pct": {
-          "spot": 50,
-          "reserved_1yr": 30,
-          "reserved_3yr": 58
+          "spot": 39,
+          "reserved_1yr": -3,
+          "reserved_3yr": 16
         },
         "100_pct": {
-          "spot": 50,
-          "reserved_1yr": 32,
-          "reserved_3yr": 59
+          "spot": 39,
+          "reserved_1yr": 17,
+          "reserved_3yr": 33
         }
       },
       "recommended_commitment": {
@@ -10503,13 +10969,13 @@
         "supply_risk_score": 35,
         "tsmc_dependency_pct": 100,
         "geopolitical_risk": "medium",
-        "lead_time_weeks": 1,
+        "lead_time_weeks": 8,
         "lead_time_trend": [
           52,
           36,
           20,
           8,
-          1
+          8
         ],
         "export_control_impact": "moderate",
         "bottlenecks": [
@@ -10528,13 +10994,13 @@
         "supply_risk_score": 42,
         "tsmc_dependency_pct": 100,
         "geopolitical_risk": "medium",
-        "lead_time_weeks": 3,
+        "lead_time_weeks": 14,
         "lead_time_trend": [
           24,
           18,
           12,
           6,
-          3
+          14
         ],
         "export_control_impact": "moderate",
         "bottlenecks": [
@@ -11752,25 +12218,25 @@
       }
     }
   },
-  "last_updated": "2026-07-28T08:29:02.962345+00:00",
+  "last_updated": "2026-07-28T13:52:34.396768+00:00",
   "stocks": {
     "NVDA": {
       "ticker": "NVDA",
-      "current_price": 196.51,
-      "previous_close": 173.5,
+      "current_price": 193.98,
+      "previous_close": 196.51,
       "52_week_high": 236.54,
       "52_week_low": 164.07,
-      "ytd_change_pct": 4.06,
-      "last_updated": "2026-07-28T08:29:03.049768+00:00"
+      "ytd_change_pct": 2.72,
+      "last_updated": "2026-07-28T13:57:19.311238+00:00"
     },
     "AMD": {
       "ticker": "AMD",
-      "current_price": 494.95,
-      "previous_close": 166.47,
+      "current_price": 454.38,
+      "previous_close": 494.95,
       "52_week_high": 584.73,
       "52_week_low": 149.22,
-      "ytd_change_pct": 121.48,
-      "last_updated": "2026-07-28T08:29:03.115112+00:00"
+      "ytd_change_pct": 103.33,
+      "last_updated": "2026-07-28T13:57:20.097490+00:00"
     }
   }
 }

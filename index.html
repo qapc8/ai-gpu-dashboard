@@ -1920,19 +1920,9 @@ function renderNewsHeadline() {
   const news = DATA.news;
   if (!news || !news.length) return;
 
-  // Shift dates so news always appears recent
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  const mostRecent = new Date(Math.max(...news.map(n => new Date(n.date+'T00:00:00').getTime())));
-  const gapMs = today.getTime() - mostRecent.getTime();
-  if (gapMs > 86400000) {
-    news.forEach(n => {
-      const orig = new Date(n.date+'T00:00:00');
-      const shifted = new Date(orig.getTime() + gapMs);
-      n.date = shifted.toISOString().slice(0,10);
-    });
-  }
-
+  // Headline dates are shown as published. (This used to shift every date
+  // forward so the feed "always appeared recent", which meant a stalled feed
+  // silently reported stale stories under today's date.)
   const track = document.getElementById('newsTrack');
   const items = news.map(n =>
     `<span class="news-item"><span class="nh-dot">▸</span> <span class="nh-src">${n.source}</span> ${n.headline}</span>`
@@ -3069,7 +3059,7 @@ function renderInferenceTab(filterCat) {
   document.getElementById('inferenceStats').innerHTML=`
     <div class="kpi kpi-green"><div class="kpi-label">Cheapest Open-Source</div><div class="kpi-value">${fmtPrice(cheapOSSPrice)}</div><div class="kpi-sub">${cheapOSS||'—'} · input/M tok</div></div>
     <div class="kpi kpi-cyan"><div class="kpi-label">Cheapest Proprietary</div><div class="kpi-value">${fmtPrice(cheapPropPrice)}</div><div class="kpi-sub">${cheapProp||'—'} · input/M tok</div></div>
-    <div class="kpi kpi-purple"><div class="kpi-label">Median API Input</div><div class="kpi-value">${fmtPrice(medianInput)}</div><div class="kpi-sub">Across ${allModels.length} models</div></div>
+    <div class="kpi kpi-purple"><div class="kpi-label">Median API Input</div><div class="kpi-value">${fmtPrice(medianInput)}</div><div class="kpi-sub">Across ${allInputPrices.length} priced models</div></div>
     <div class="kpi kpi-amber"><div class="kpi-label">Weekly Token Vol</div><div class="kpi-value">${fmtTok(totalTokens)}</div><div class="kpi-sub">Total tokens/week</div></div>`;
 
   // Table: 9 fixed columns (removed Type and Best GPU)
@@ -3099,7 +3089,8 @@ function renderInferenceTab(filterCat) {
     h+=`<tr>`;
     h+=`<td style="font-family:var(--mono);font-size:11px;color:var(--text-2);text-align:center;">${d.rank||''}</td>`;
     h+=`<td class="gpu-name" style="white-space:nowrap;">${m}</td>`;
-    h+=`<td class="r" style="font-family:var(--mono);font-size:11px;">${d.params_b}B</td>`;
+    // params_b is 0 when the vendor doesn't publish a count — show a dash, not "0B".
+    h+=`<td class="r" style="font-family:var(--mono);font-size:11px;"${d.params_note?` title="${d.params_note}"`:''}>${d.params_b?d.params_b+'B':'—'}</td>`;
     h+=`<td class="r" style="font-family:var(--mono);font-size:11px;">${d.context_k?d.context_k+'K':'—'}</td>`;
     h+=`<td style="text-align:center;">${d.open_source?'<span style="color:var(--green);font-weight:700;">✓</span>':'<span style="color:var(--text-2);">✗</span>'}</td>`;
     h+=`<td class="r" style="background:rgba(34,197,94,0.05);font-family:var(--mono);font-size:11px;font-weight:700;color:var(--green);">${fmtPrice(ip)}</td>`;
@@ -3876,7 +3867,7 @@ function buildChatContext() {
   const inf = DATA.inference || {};
   if(Object.keys(inf).length) {
     parts.push('AI MODEL INFERENCE DATA:\n' + Object.entries(inf).map(([name, m]) => {
-      let line = `${name}: ${m.params_b}B params, ${m.type}, category=${m.category}, rank=#${m.rank}, context=${m.context_k}K tokens, open_source=${m.open_source}`;
+      let line = `${name}: ${m.params_b?m.params_b+'B params':'params undisclosed'}, ${m.type}, category=${m.category}, rank=#${m.rank}, context=${m.context_k}K tokens, open_source=${m.open_source}`;
       if(m.tokens_7d) line += `, weekly_usage=${m.tokens_7d}B tokens`;
       const gpuInfo = Object.entries(m.gpus || {});
       if(gpuInfo.length) {
