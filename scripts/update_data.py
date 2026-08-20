@@ -20,6 +20,7 @@ from datetime import datetime, timezone
 from xml.etree import ElementTree
 
 from forecast_engine import generate_forecasts
+from inference_market import refresh_inference_market
 from prediction_markets import (
     build_prediction_markets,
     fetch_kalshi_gpu_markets,
@@ -1607,64 +1608,6 @@ def refresh_lead_times(data):
     return data
 
 
-def refresh_inference_pricing(data):
-    """Refresh inference $/M-token pricing and context windows from OpenRouter.
-
-    The leaderboard roster (which models, and their weekly token volumes) still
-    has to be refreshed by hand from openrouter.ai/rankings, since OpenRouter
-    exposes no rankings API -- but pricing and context windows are the parts
-    that actually drift, and those come straight from /api/v1/models here.
-    Entries are matched on the `openrouter_id` recorded against each model.
-    """
-    inference = data.get("inference")
-    if not inference:
-        return data
-
-    log_info("Fetching OpenRouter model catalog...")
-    status, body = http_get("https://openrouter.ai/api/v1/models", timeout=30)
-    if status != 200:
-        raise RuntimeError(f"OpenRouter returned HTTP {status}")
-
-    catalog = {m.get("id"): m for m in json.loads(body).get("data", [])}
-
-    updated, unmatched = 0, []
-    for name, entry in inference.items():
-        oid = entry.get("openrouter_id")
-        model = catalog.get(oid) if oid else None
-        if not model:
-            unmatched.append(name)
-            continue
-
-        pricing = model.get("pricing") or {}
-        try:
-            inp = round(float(pricing["prompt"]) * 1_000_000, 4)
-            outp = round(float(pricing["completion"]) * 1_000_000, 4)
-        except (KeyError, TypeError, ValueError):
-            unmatched.append(name)
-            continue
-
-        providers = entry.get("providers") or {}
-        old = (providers.get("OpenRouter") or {}).copy()
-        for pname, rates in providers.items():
-            # Vendor rows that were quoting the same rate as OpenRouter stay in
-            # step with it; a row that has deliberately diverged is left alone.
-            if pname == "OpenRouter" or (
-                rates.get("input") == old.get("input")
-                and rates.get("output") == old.get("output")
-            ):
-                rates["input"] = inp
-                rates["output"] = outp
-
-        if model.get("context_length"):
-            entry["context_k"] = round(model["context_length"] / 1000)
-        updated += 1
-
-    if unmatched:
-        log_info(f"Inference: no OpenRouter match for {', '.join(unmatched)}")
-    log_ok("Inference Pricing", f"{updated}/{len(inference)} models repriced")
-    return data
-
-
 def refresh_summary(data):
     """Rebuild the summary block from the live data it is supposed to summarize.
 
@@ -3013,9 +2956,9 @@ def main():
         log_fail("Lead Times", str(exc))
 
     try:
-        data = refresh_inference_pricing(data)
+        data = refresh_inference_market(data, log_info=log_info, log_ok=log_ok)
     except Exception as exc:
-        log_fail("Inference Pricing", str(exc))
+        log_fail("Inference Market", str(exc))
     print()
 
     # ---- 5. Stock Prices ----

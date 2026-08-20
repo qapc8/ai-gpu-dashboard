@@ -1365,16 +1365,14 @@ loadExternalData();
   <div class="kpi-strip mb" id="inferenceStats"></div>
   <div class="card mb">
     <div class="card-hd">
-      <span class="card-hd-title">Top 20 Models by Usage — Inference Pricing</span>
+      <span class="card-hd-title">Most-Used Models — Measured Demand</span>
       <div style="display:flex;gap:8px;align-items:center;">
         <select id="inferCatFilter" style="background:var(--bg-2);color:var(--text-0);border:1px solid var(--border-0);border-radius:4px;padding:2px 8px;font-size:11px;font-family:var(--mono);">
-          <option value="all">All Categories</option>
-          <option value="Small">Small (&lt;10B)</option>
-          <option value="Medium">Medium (10-30B)</option>
-          <option value="Large">Large (30-200B)</option>
-          <option value="Frontier">Frontier (200B+)</option>
+          <option value="all">All models</option>
+          <option value="open">Open weights</option>
+          <option value="closed">Closed weights</option>
         </select>
-        <span class="dim" style="font-size:10px;font-family:var(--mono);">Provider API pricing</span>
+        <span class="dim" style="font-size:10px;font-family:var(--mono);" id="inferAsOf"></span>
       </div>
     </div>
     <div class="card-bd-flush"><table class="dt" id="inferenceTable"></table></div>
@@ -1400,19 +1398,46 @@ loadExternalData();
       <div id="beResult"></div>
     </div>
   </div>
-  <div class="grid g-2 mb">
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Usage Volume by Model — Weekly Tokens (B)</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:380px;"><canvas id="chartInferenceCost"></canvas></div></div>
+  <div class="card mb">
+    <div class="card-hd" style="flex-wrap:wrap;gap:10px;">
+      <span class="card-hd-title">Same Model, Different Bill</span>
+      <select class="ctrl-select" id="dispersionModel" onchange="renderInferenceDispersion()" style="min-width:230px;"></select>
+      <span class="dim" style="font-size:10px;font-family:var(--mono);margin-left:auto;" id="dispersionSub"></span>
     </div>
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Price & Usage Landscape — Bubble = Weekly Volume</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:380px;"><canvas id="chartInferenceThroughput"></canvas></div></div>
+    <div class="card-bd">
+      <div class="chart-wrap" style="height:340px;"><canvas id="chartDispersion"></canvas></div>
+      <div id="dispersionNote" class="dim" style="padding:10px 4px 0;font-size:11px;line-height:1.6;"></div>
     </div>
   </div>
+
+  <div class="grid g-2 mb">
+    <div class="card">
+      <div class="card-hd">
+        <span class="card-hd-title">Demand Trend — Tokens per Day</span>
+        <span class="card-hd-sub" id="demandTrendSub">accumulated one observation per refresh</span>
+      </div>
+      <div class="card-bd">
+        <div class="chart-wrap" style="height:340px;position:relative;">
+          <canvas id="chartDemandTrend"></canvas>
+          <div id="demandTrendEmpty" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;text-align:center;padding:20px;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd">
+        <span class="card-hd-title">Price vs Demand</span>
+        <span class="card-hd-sub">bubble = tokens/day · cheapest listing per model</span>
+      </div>
+      <div class="card-bd"><div class="chart-wrap" style="height:340px;"><canvas id="chartInferenceThroughput"></canvas></div></div>
+    </div>
+  </div>
+
   <div class="card">
-    <div class="card-hd"><span class="card-hd-title">Input vs Output Pricing — Top 10 Models</span></div>
-    <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartProviderCoverage"></canvas></div></div>
+    <div class="card-hd">
+      <span class="card-hd-title">Inference Providers</span>
+      <span class="dim" style="font-size:10px;font-family:var(--mono);margin-left:auto;">across every model on the leaderboard</span>
+    </div>
+    <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="inferenceProviderTable"></table></div>
   </div>
 </div>
 
@@ -3525,11 +3550,12 @@ function populateSelectors() {
 // Throughput is a user input on purpose: there is no honest universal tok/s
 // figure, so we take yours rather than inventing one.
 function calcBreakEven() {
-  const inf=DATA.inference||{}, el=document.getElementById('beResult');
+  const el=document.getElementById('beResult');
   if(!el) return;
+  const list=inferModels();
   const mSel=document.getElementById('beModel'), gSel=document.getElementById('beGpu');
-  if(mSel && !mSel.options.length){
-    mSel.innerHTML=Object.keys(inf).map(m=>`<option value="${m}">${m}</option>`).join('');
+  if(mSel && !mSel.options.length && list.length){
+    mSel.innerHTML=list.map(m=>`<option value="${m.permaslug}">${m.name}</option>`).join('');
     const priced=(DATA.matrix||[]).slice().sort((a,b)=>a.cheapest_price-b.cheapest_price);
     gSel.innerHTML=priced.map(r=>`<option value="${r.gpu_id}">${r.gpu_id} — $${r.cheapest_price.toFixed(2)}/hr (${r.cheapest_provider})</option>`).join('');
     const h100=priced.find(r=>r.gpu_id==='H100-SXM'); if(h100) gSel.value='H100-SXM';
@@ -3539,18 +3565,20 @@ function calcBreakEven() {
   const tps=parseFloat(document.getElementById('beTps').value)||1;
   const outShare=Math.min(100,Math.max(0,parseFloat(document.getElementById('beOut').value)||0))/100;
   const row=(DATA.matrix||[]).find(r=>r.gpu_id===gpuId);
-  const d=inf[model];
+  const d=list.find(m=>m.permaslug===model);
   if(!d||!row){ el.innerHTML='<span class="dim">Select a model and GPU.</span>'; return; }
 
-  const inP=getBestInputPrice(d.providers), outP=getBestOutputPrice(d.providers);
+  // Compare against the cheapest route actually on offer, not OpenRouter's
+  // headline rate — the spread between them is often several fold.
+  const inP=d.in_low ?? d.price_in, outP=d.out_low ?? d.price_out;
   if(inP==null||outP==null){
-    el.innerHTML=`<div class="dim">${model} is served free (preview pricing), so there is no API cost to beat.</div>`; return;
+    el.innerHTML=`<div class="dim">${d.name} has no priced route right now, so there is no API cost to beat.</div>`; return;
   }
   const blended=inP*(1-outShare)+outP*outShare;          // $ per 1M tokens
   // Self-hosting is only an option for open-weight models. For a proprietary
   // one the comparison is hypothetical, so say so rather than implying you
   // could go rent GPUs and serve it.
-  const closed=!d.open_source;
+  const closed=!d.open_weights;
   const hourly=row.cheapest_price*nGpu;
   const monthlyHost=hourly*730;
   const capacityM=tps*3600*730/1e6;                       // 1M-token units per month at 100% duty
@@ -3590,164 +3618,292 @@ function calcBreakEven() {
 }
 
 // ── Inference helpers ──
-function getBestInputPrice(providers) {
-  let best=Infinity;
-  for(const v of Object.values(providers||{})){
-    const p=typeof v==='object'?v.input:v;
-    if(p>0&&p<best) best=p;
-  }
-  return best===Infinity?null:best;
-}
-function getBestOutputPrice(providers) {
-  let best=Infinity;
-  for(const v of Object.values(providers||{})){
-    const p=typeof v==='object'?v.output:v;
-    if(p>0&&p<best) best=p;
-  }
-  return best===Infinity?null:best;
-}
-function getBestProviderName(providers) {
-  let best=Infinity,name='—';
-  for(const [k,v] of Object.entries(providers||{})){
-    const p=typeof v==='object'?v.input:v;
-    if(p>0&&p<best){best=p;name=k;}
-  }
-  return name;
-}
 function fmtPrice(v){
   if(v==null) return '—';
   return v<1?'$'+v.toFixed(3):'$'+v.toFixed(2);
 }
 
+// The roster and its token volumes used to be copied by hand off
+// openrouter.ai/rankings, so they aged between edits. Everything below is the
+// published daily figure: DATA.inference.models is whatever the rankings said
+// on DATA.inference.as_of, and every price is a provider's own listing.
+function inferModels() {
+  const inf = DATA.inference;
+  return (inf && Array.isArray(inf.models)) ? inf.models : [];
+}
+
+function fmtTokens(v) {
+  if (v == null) return '—';
+  if (v >= 1e12) return (v / 1e12).toFixed(1) + 'T';
+  if (v >= 1e9) return (v / 1e9).toFixed(1) + 'B';
+  if (v >= 1e6) return (v / 1e6).toFixed(1) + 'M';
+  return Math.round(v).toLocaleString();
+}
+
+function fmtCount(v) {
+  if (v == null) return '—';
+  if (v >= 1e9) return (v / 1e9).toFixed(2) + 'B';
+  if (v >= 1e6) return (v / 1e6).toFixed(1) + 'M';
+  if (v >= 1e3) return (v / 1e3).toFixed(1) + 'K';
+  return String(v);
+}
+
 function renderInferenceTab(filterCat) {
   calcBreakEven();
-  const inf=DATA.inference; if(!inf||!Object.keys(inf).length) return;
-  const allModels=Object.keys(inf);
-  const cat=filterCat||'all';
-  const models=cat==='all'?allModels:allModels.filter(m=>inf[m].category===cat);
+  const inf = DATA.inference;
+  const all = inferModels();
+  if (!all.length) return;
 
-  // Sort models by rank
-  const sorted=[...models].sort((a,b)=>(inf[a].rank||99)-(inf[b].rank||99));
+  const t = inf.totals || {};
+  const filter = filterCat || 'all';
+  const models = filter === 'open' ? all.filter(m => m.open_weights)
+    : filter === 'closed' ? all.filter(m => !m.open_weights)
+    : all;
 
-  // Compute stats
-  const allInputPrices=[], allOutputPrices=[];
-  let cheapOSS=null, cheapOSSPrice=Infinity, cheapProp=null, cheapPropPrice=Infinity, totalTokens=0;
-  allModels.forEach(m=>{
-    const d=inf[m];
-    const ip=getBestInputPrice(d.providers);
-    const op=getBestOutputPrice(d.providers);
-    if(ip!=null) allInputPrices.push(ip);
-    if(op!=null) allOutputPrices.push(op);
-    if(d.tokens_7d) totalTokens+=d.tokens_7d;
-    if(ip!=null && d.open_source && ip<cheapOSSPrice){cheapOSSPrice=ip;cheapOSS=m;}
-    if(ip!=null && !d.open_source && ip<cheapPropPrice){cheapPropPrice=ip;cheapProp=m;}
+  const asOf = document.getElementById('inferAsOf');
+  if (asOf) asOf.textContent = `OpenRouter · ${inf.as_of || ''}`;
+
+  // ── KPI strip ────────────────────────────────────────────────
+  const st = document.getElementById('inferenceStats');
+  if (st) st.innerHTML = `
+    <div class="kpi kpi-amber"><div class="kpi-label">Tokens / Day</div><div class="kpi-value">${fmtTokens(t.tokens)}</div><div class="kpi-sub">across the top ${t.models} models</div></div>
+    <div class="kpi kpi-blue"><div class="kpi-label">Requests / Day</div><div class="kpi-value">${fmtCount(t.requests)}</div><div class="kpi-sub">${t.tokens && t.requests ? Math.round(t.tokens / t.requests).toLocaleString() + ' tokens each' : ''}</div></div>
+    <div class="kpi kpi-green"><div class="kpi-label">Open Weights</div><div class="kpi-value">${t.open_weights_token_share_pct != null ? t.open_weights_token_share_pct + '%' : '—'}</div><div class="kpi-sub">of all tokens served</div></div>
+    <div class="kpi kpi-purple"><div class="kpi-label">Median Price Spread</div><div class="kpi-value">${t.median_spread_x != null ? t.median_spread_x + '×' : '—'}</div><div class="kpi-sub">dearest ÷ cheapest, same model</div></div>`;
+
+  // ── Leaderboard table ────────────────────────────────────────
+  const maxTok = Math.max(...all.map(m => m.total_tokens || 0), 1);
+  let h = '<thead><tr>';
+  h += '<th style="width:30px;">#</th><th>Model</th><th style="text-align:center;">Weights</th>';
+  h += '<th class="r">Context</th><th class="r">Tokens/day</th><th style="min-width:90px;">Share</th>';
+  h += '<th class="r">Requests</th><th class="r" title="Mean tokens per request — a proxy for how long the conversations are">Tok/req</th>';
+  h += '<th class="r" title="Share of tokens that are generated rather than prompt. High output share means expensive traffic.">Out %</th>';
+  h += '<th class="r" style="background:rgba(34,197,94,0.05);">Cheapest out</th>';
+  h += '<th class="r" title="Dearest provider divided by cheapest, for the identical model">Spread</th>';
+  h += '<th class="r">Providers</th></tr></thead><tbody>';
+
+  models.forEach(m => {
+    const barW = Math.round((m.total_tokens || 0) / maxTok * 100);
+    const spread = m.spread_x;
+    const spreadCol = spread == null ? 'var(--text-3)' : spread >= 4 ? 'var(--amber)' : spread >= 2 ? 'var(--text-1)' : 'var(--text-3)';
+    h += `<tr>
+      <td style="font-family:var(--mono);font-size:11px;color:var(--text-2);text-align:center;">${m.rank}</td>
+      <td class="gpu-name" style="white-space:nowrap;" title="${m.permaslug}">${m.name}</td>
+      <td style="text-align:center;">${m.open_weights
+        ? '<span style="color:var(--green);font-weight:700;" title="Weights published — self-hosting is possible">open</span>'
+        : '<span class="dim" title="Closed weights — API only">closed</span>'}</td>
+      <td class="r" style="font-family:var(--mono);font-size:11px;">${m.context_k ? m.context_k + 'K' : '—'}</td>
+      <td class="r" style="font-family:var(--mono);font-size:11px;font-weight:600;">${fmtTokens(m.total_tokens)}</td>
+      <td style="font-family:var(--mono);font-size:11px;"><div style="display:flex;align-items:center;gap:6px;"><span style="min-width:34px;">${m.share_pct}%</span><div style="flex:1;height:9px;background:var(--bg-2);border-radius:3px;overflow:hidden;"><div style="width:${barW}%;height:100%;background:${m.open_weights ? C.green : C.blue};border-radius:3px;"></div></div></div></td>
+      <td class="r" style="font-family:var(--mono);font-size:11px;">${fmtCount(m.requests)}</td>
+      <td class="r" style="font-family:var(--mono);font-size:11px;">${m.tokens_per_request != null ? m.tokens_per_request.toLocaleString() : '—'}</td>
+      <td class="r" style="font-family:var(--mono);font-size:11px;">${m.output_share_pct != null ? m.output_share_pct + '%' : '—'}</td>
+      <td class="r" style="background:rgba(34,197,94,0.05);font-family:var(--mono);font-size:11px;font-weight:700;color:var(--green);">${fmtPrice(m.out_low)}</td>
+      <td class="r" style="font-family:var(--mono);font-size:11px;color:${spreadCol};">${spread != null ? spread + '×' : '—'}</td>
+      <td class="r" style="font-family:var(--mono);font-size:11px;">${m.endpoint_count || 0}</td>
+    </tr>`;
   });
-  allInputPrices.sort((a,b)=>a-b);
-  const medianInput=allInputPrices.length?allInputPrices[Math.floor(allInputPrices.length/2)]:0;
-  const fmtTok=v=>v>=1000?(v/1000).toFixed(1)+'T':v.toFixed(0)+'B';
+  document.getElementById('inferenceTable').innerHTML = h + '</tbody>';
 
-  // KPIs
-  document.getElementById('inferenceStats').innerHTML=`
-    <div class="kpi kpi-green"><div class="kpi-label">Cheapest Open-Source</div><div class="kpi-value">${fmtPrice(cheapOSSPrice)}</div><div class="kpi-sub">${cheapOSS||'—'} · input/M tok</div></div>
-    <div class="kpi kpi-cyan"><div class="kpi-label">Cheapest Proprietary</div><div class="kpi-value">${fmtPrice(cheapPropPrice)}</div><div class="kpi-sub">${cheapProp||'—'} · input/M tok</div></div>
-    <div class="kpi kpi-purple"><div class="kpi-label">Median API Input</div><div class="kpi-value">${fmtPrice(medianInput)}</div><div class="kpi-sub">Across ${allInputPrices.length} priced models</div></div>
-    <div class="kpi kpi-amber"><div class="kpi-label">Weekly Token Vol</div><div class="kpi-value">${fmtTok(totalTokens)}</div><div class="kpi-sub">Total tokens/week</div></div>`;
+  populateDispersionPicker();
+  renderInferenceDispersion();
+  renderDemandTrend();
+  renderPriceVsDemand(models);
+  renderInferenceProviders();
+}
 
-  // Table: 9 fixed columns (removed Type and Best GPU)
-  const catColors={Small:'#22c55e',Medium:'#3b82f6',Large:'#a855f7',Frontier:'#f59e0b'};
-  const maxTokens=Math.max(...allModels.map(m=>inf[m].tokens_7d||0),1);
-  let h='<thead><tr>';
-  h+='<th style="width:30px;">#</th>';
-  h+='<th>Model</th>';
-  h+='<th class="r">Params</th>';
-  h+='<th class="r">Context</th>';
-  h+='<th style="text-align:center;">OS</th>';
-  h+='<th class="r" style="background:rgba(34,197,94,0.05);">Best In</th>';
-  h+='<th class="r" style="background:rgba(251,146,60,0.05);">Best Out</th>';
-  h+='<th>Provider</th>';
-  h+='<th style="min-width:110px;">Usage (7d)</th>';
-  h+='</tr></thead><tbody>';
+function populateDispersionPicker() {
+  const sel = document.getElementById('dispersionModel');
+  if (!sel) return;
+  const priced = inferModels().filter(m => (m.endpoints || []).length > 1);
+  const keep = sel.value;
+  sel.innerHTML = priced
+    .slice().sort((a, b) => (b.spread_x || 0) - (a.spread_x || 0))
+    .map(m => `<option value="${m.permaslug}">${m.name} — ${m.spread_x}× spread</option>`).join('');
+  if (keep && priced.some(m => m.permaslug === keep)) sel.value = keep;
+}
 
-  sorted.forEach(m=>{
-    const d=inf[m];
-    const ip=getBestInputPrice(d.providers);
-    const op=getBestOutputPrice(d.providers);
-    const prov=getBestProviderName(d.providers);
-    const cc=catColors[d.category]||'#666';
-    const tok7d=d.tokens_7d||0;
-    const barW=maxTokens>0?Math.round(tok7d/maxTokens*100):0;
+// The inference twin of the GPU price-dispersion card: identical model, same
+// hour, and the bill varies by up to 8x. Quantization is shown beside the price
+// because a cheap fp4 route and a bf16 route are not the same product.
+function renderInferenceDispersion() {
+  const sel = document.getElementById('dispersionModel');
+  const cv = document.getElementById('chartDispersion');
+  const note = document.getElementById('dispersionNote');
+  const sub = document.getElementById('dispersionSub');
+  if (!cv || !sel) return;
+  const m = inferModels().find(x => x.permaslug === sel.value);
+  if (charts.disp) { charts.disp.destroy(); charts.disp = null; }
+  if (!m || !(m.endpoints || []).length) {
+    if (note) note.textContent = '';
+    return;
+  }
+  const eps = m.endpoints;
+  if (sub) sub.textContent = `${eps.length} providers · ${m.open_weights ? 'open weights' : 'closed weights'}`;
 
-    h+=`<tr>`;
-    h+=`<td style="font-family:var(--mono);font-size:11px;color:var(--text-2);text-align:center;">${d.rank||''}</td>`;
-    h+=`<td class="gpu-name" style="white-space:nowrap;">${m}</td>`;
-    // params_b is 0 when the vendor doesn't publish a count — show a dash, not "0B".
-    h+=`<td class="r" style="font-family:var(--mono);font-size:11px;"${d.params_note?` title="${d.params_note}"`:''}>${d.params_b?d.params_b+'B':'—'}</td>`;
-    h+=`<td class="r" style="font-family:var(--mono);font-size:11px;">${d.context_k?d.context_k+'K':'—'}</td>`;
-    h+=`<td style="text-align:center;">${d.open_source?'<span style="color:var(--green);font-weight:700;">✓</span>':'<span style="color:var(--text-2);">✗</span>'}</td>`;
-    h+=`<td class="r" style="background:rgba(34,197,94,0.05);font-family:var(--mono);font-size:11px;font-weight:700;color:var(--green);">${fmtPrice(ip)}</td>`;
-    h+=`<td class="r" style="background:rgba(251,146,60,0.05);font-family:var(--mono);font-size:11px;color:var(--orange);">${fmtPrice(op)}</td>`;
-    h+=`<td style="font-size:10px;white-space:nowrap;">${prov}</td>`;
-    const tokLabel=tok7d>=1000?(tok7d/1000).toFixed(1)+'T':tok7d>=1?tok7d.toFixed(0)+'B':tok7d.toFixed(1)+'B';
-    h+=`<td style="font-family:var(--mono);font-size:11px;"><div style="display:flex;align-items:center;gap:6px;"><span style="min-width:36px;">${tokLabel}</span><div style="flex:1;height:10px;background:var(--bg-2);border-radius:3px;overflow:hidden;"><div style="width:${barW}%;height:100%;background:${cc};border-radius:3px;"></div></div></div></td>`;
-    h+=`</tr>`;
-  });
-  h+='</tbody>';
-  document.getElementById('inferenceTable').innerHTML=h;
-
-  // Chart 1: Usage Volume by Model (horizontal bar, colored by category)
-  if(charts.ic) charts.ic.destroy();
-  charts.ic=new Chart(document.getElementById('chartInferenceCost'),{type:'bar',
-    data:{labels:sorted.map(m=>m),datasets:[{
-      label:'Tokens/week (B)',
-      data:sorted.map(m=>inf[m].tokens_7d||0),
-      backgroundColor:sorted.map(m=>{const cc=catColors[inf[m].category]||'#666';return cc+'70';}),
-      borderColor:sorted.map(m=>catColors[inf[m].category]||'#666'),
-      borderWidth:1
-    }]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const v=ctx.raw;return v>=1000?(v/1000).toFixed(1)+'T tokens/week':v.toFixed(0)+'B tokens/week';}}}},
-      scales:{x:{title:{display:true,text:'Tokens / week'},grid:{color:'rgba(26,34,51,0.4)'},ticks:{callback:v=>v>=1000?(v/1000)+'T':v+'B'}},y:{grid:{display:false},ticks:{font:{size:9}}}}}
-  });
-
-  // Chart 2: Price & Usage Landscape — bubble (x=input, y=output, size=usage, color=OSS/proprietary)
-  const maxTok=Math.max(...allModels.map(m=>inf[m].tokens_7d||1));
-  const mkBubble=list=>list.filter(m=>getBestInputPrice(inf[m].providers)!=null).map(m=>{
-    const ip=getBestInputPrice(inf[m].providers);
-    const op=getBestOutputPrice(inf[m].providers)||ip;
-    const tok=inf[m].tokens_7d||1;
-    return {x:ip,y:op,r:Math.max(5,Math.sqrt(tok/maxTok)*35),label:m,tokens:tok,params:inf[m].params_b};
-  });
-  const ossModels=sorted.filter(m=>inf[m].open_source);
-  const propModels=sorted.filter(m=>!inf[m].open_source);
-  if(charts.it) charts.it.destroy();
-  charts.it=new Chart(document.getElementById('chartInferenceThroughput'),{type:'bubble',
-    data:{datasets:[
-      {label:'Open-Source',data:mkBubble(ossModels),backgroundColor:C.green+'70',borderColor:C.green,borderWidth:1.5},
-      {label:'Proprietary',data:mkBubble(propModels),backgroundColor:C.purple+'70',borderColor:C.purple,borderWidth:1.5},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10}}},
-        tooltip:{callbacks:{label:ctx=>{const d=ctx.raw;const tl=d.tokens>=1000?(d.tokens/1000).toFixed(1)+'T':d.tokens.toFixed(0)+'B';return [`${d.label} (${d.params}B params)`,`Input: ${fmtPrice(d.x)}/M  Output: ${fmtPrice(d.y)}/M`,`Usage: ${tl} tok/wk`];},title:()=>''}}},
-      scales:{x:{type:'logarithmic',title:{display:true,text:'Input $/M Tokens'},grid:{color:'rgba(26,34,51,0.4)'},ticks:{callback:v=>fmtPrice(v)}},
-              y:{type:'logarithmic',title:{display:true,text:'Output $/M Tokens'},grid:{color:'rgba(26,34,51,0.4)'},ticks:{callback:v=>fmtPrice(v)}}}}
+  charts.disp = new Chart(cv, {
+    type: 'bar',
+    data: {
+      labels: eps.map(e => e.provider),
+      datasets: [
+        { label: 'Output $/M', data: eps.map(e => e.output), backgroundColor: C.orange + '80', borderColor: C.orange, borderWidth: 1 },
+        { label: 'Input $/M', data: eps.map(e => e.input), backgroundColor: C.green + '80', borderColor: C.green, borderWidth: 1 },
+      ],
+    },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } },
+        tooltip: { callbacks: {
+          afterBody: items => {
+            const e = eps[items[0].dataIndex];
+            const bits = [`quantization: ${e.quantization}`];
+            if (e.context_k) bits.push(`context: ${e.context_k}K`);
+            if (e.uptime_1d != null) bits.push(`uptime 24h: ${e.uptime_1d}%`);
+            return bits;
+          },
+        } },
+      },
+      scales: {
+        x: { title: { display: true, text: '$ per 1M tokens' }, grid: { color: 'rgba(26,34,51,0.4)' } },
+        y: { grid: { display: false }, ticks: { font: { size: 10 } } },
+      },
+    },
   });
 
-  // Chart 4: Input vs Output Pricing — grouped bar, top 10
-  const top10=sorted.slice(0,10);
-  if(charts.pc) charts.pc.destroy();
-  charts.pc=new Chart(document.getElementById('chartProviderCoverage'),{type:'bar',
-    data:{labels:top10.map(m=>m),datasets:[
-      {label:'Input $/M',data:top10.map(m=>getBestInputPrice(inf[m].providers)),backgroundColor:C.green+'70',borderColor:C.green,borderWidth:1},
-      {label:'Output $/M',data:top10.map(m=>getBestOutputPrice(inf[m].providers)),backgroundColor:C.orange+'70',borderColor:C.orange,borderWidth:1},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10}}}},
-      scales:{y:{title:{display:true,text:'$/M Tokens'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false},ticks:{font:{size:9},maxRotation:45}}}}
+  if (note) {
+    const quants = (m.quantizations || []).length ? m.quantizations.join(', ') : 'not disclosed';
+    const lowUp = eps.filter(e => e.uptime_1d != null && e.uptime_1d < 95);
+    note.innerHTML =
+      `Cheapest <b style="color:var(--text-1)">${m.cheapest_provider}</b> at ${fmtPrice(m.out_low)}/M out, `
+      + `dearest <b style="color:var(--text-1)">${m.dearest_provider}</b> at ${fmtPrice(m.out_high)} — `
+      + `<b style="color:var(--amber)">${m.spread_x}×</b> for the same model. `
+      + `Quantizations in the set: ${quants}. `
+      + (lowUp.length ? `${lowUp.length} route${lowUp.length === 1 ? '' : 's'} below 95% uptime in the last 24h — cheapest is not always servable. `
+                      : 'Every route held above 95% uptime in the last 24h. ')
+      + (m.open_weights
+        ? 'Open weights are why this spread exists: anyone can serve the model, so providers compete.'
+        : 'Closed weights compress the spread — every route resells one API, so there is little to compete on.');
+  }
+}
+
+// Accumulated on our side, one point per refresh, because OpenRouter publishes
+// a snapshot rather than a series. Starts short and lengthens.
+function renderDemandTrend() {
+  const cv = document.getElementById('chartDemandTrend');
+  const sub = document.getElementById('demandTrendSub');
+  if (!cv) return;
+  const hist = (DATA.inference || {}).history || {};
+  const days = Object.keys(hist).sort();
+  const empty = document.getElementById('demandTrendEmpty');
+  if (charts.demand) { charts.demand.destroy(); charts.demand = null; }
+
+  // One observation is not a trend. Say what is happening rather than leaving
+  // an empty axis that reads as a broken chart.
+  if (days.length < 2) {
+    if (sub) sub.textContent = days.length ? `collecting since ${days[0]}` : 'no history yet';
+    cv.style.display = 'none';
+    if (empty) {
+      empty.style.display = 'flex';
+      empty.innerHTML = `<div class="dim" style="font-size:12px;line-height:1.7;max-width:420px;">
+        <div style="font-size:13px;color:var(--text-1);margin-bottom:6px;">Not enough history yet</div>
+        OpenRouter publishes a daily snapshot rather than a series, so this chart is built from
+        our own observations — one per refresh.
+        ${days.length ? `First observation ${days[0]}; a second one turns this into a trend.` : ''}
+      </div>`;
+    }
+    return;
+  }
+  cv.style.display = '';
+  if (empty) empty.style.display = 'none';
+  if (sub) sub.textContent = `${days.length} daily observations since ${days[0]}`;
+
+  const top = inferModels().slice(0, 6);
+  charts.demand = new Chart(cv, {
+    type: 'line',
+    data: {
+      labels: days,
+      datasets: top.map((m, i) => ({
+        label: m.name,
+        data: days.map(d => (hist[d] || {})[m.permaslug] ?? null),
+        borderColor: CL[i % CL.length], backgroundColor: CL[i % CL.length] + '15',
+        tension: 0.3, pointRadius: 3, borderWidth: 2, spanGaps: true,
+      })),
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 8, font: { size: 9 } } },
+        tooltip: { callbacks: { label: x => x.dataset.label + ': ' + fmtTokens(x.parsed.y) } },
+      },
+      scales: {
+        y: { title: { display: true, text: 'tokens / day' }, grid: { color: 'rgba(26,34,51,0.4)' },
+             ticks: { callback: v => fmtTokens(v) } },
+        x: { grid: { display: false } },
+      },
+    },
   });
 }
 
-// Wire up category filter
-document.getElementById('inferCatFilter')?.addEventListener('change',function(){renderInferenceTab(this.value);});
+function renderPriceVsDemand(models) {
+  const cv = document.getElementById('chartInferenceThroughput');
+  if (!cv) return;
+  const pts = models.filter(m => m.out_low > 0 && m.total_tokens);
+  const maxTok = Math.max(...pts.map(m => m.total_tokens), 1);
+  const mk = list => list.map(m => ({
+    x: m.in_low || m.price_in || 0.001,
+    y: m.out_low,
+    r: Math.max(5, Math.sqrt(m.total_tokens / maxTok) * 34),
+    label: m.name, tokens: m.total_tokens, spread: m.spread_x,
+  }));
+  if (charts.it) charts.it.destroy();
+  charts.it = new Chart(cv, {
+    type: 'bubble',
+    data: { datasets: [
+      { label: 'Open weights', data: mk(pts.filter(m => m.open_weights)), backgroundColor: C.green + '60', borderColor: C.green, borderWidth: 1 },
+      { label: 'Closed weights', data: mk(pts.filter(m => !m.open_weights)), backgroundColor: C.blue + '60', borderColor: C.blue, borderWidth: 1 },
+    ] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } },
+        tooltip: { callbacks: { label: x => {
+          const d = x.raw;
+          return `${d.label}: in ${fmtPrice(d.x)} / out ${fmtPrice(d.y)} per M · ${fmtTokens(d.tokens)} tok/day`
+            + (d.spread ? ` · ${d.spread}× spread` : '');
+        } } },
+      },
+      scales: {
+        x: { type: 'logarithmic', title: { display: true, text: 'cheapest input $/M (log)' }, grid: { color: 'rgba(26,34,51,0.4)' } },
+        y: { type: 'logarithmic', title: { display: true, text: 'cheapest output $/M (log)' }, grid: { color: 'rgba(26,34,51,0.4)' } },
+      },
+    },
+  });
+}
+
+function renderInferenceProviders() {
+  const el = document.getElementById('inferenceProviderTable');
+  if (!el) return;
+  const provs = (DATA.inference || {}).providers || [];
+  if (!provs.length) { el.innerHTML = ''; return; }
+  let h = '<thead><tr><th>Provider</th><th class="r">Models served</th><th class="r">Median output $/M</th>'
+    + '<th class="r" title="How often this provider is the cheapest route for a model on the leaderboard">Cheapest on</th>'
+    + '<th class="r">Median uptime 24h</th></tr></thead><tbody>';
+  provs.forEach(p => {
+    const up = p.median_uptime_1d;
+    const upCol = up == null ? 'var(--text-3)' : up >= 99 ? 'var(--green)' : up >= 95 ? 'var(--amber)' : 'var(--red)';
+    h += `<tr>
+      <td style="font-weight:600;color:var(--text-0);">${p.name}</td>
+      <td class="r" style="font-family:var(--mono);">${p.models}</td>
+      <td class="r" style="font-family:var(--mono);">${fmtPrice(p.median_output)}</td>
+      <td class="r" style="font-family:var(--mono);color:${p.cheapest_wins ? 'var(--green)' : 'var(--text-3)'};">${p.cheapest_wins || '—'}</td>
+      <td class="r" style="font-family:var(--mono);color:${upCol};">${up != null ? up + '%' : '—'}</td>
+    </tr>`;
+  });
+  el.innerHTML = h + '</tbody>';
+}
+
+document.getElementById('inferCatFilter')?.addEventListener('change', function () { renderInferenceTab(this.value); });
 
 // ════════════════════════════════════════════════════════════════
 // TCO
@@ -4439,26 +4595,33 @@ function buildChatContext() {
     }).join('\n'));
   }
 
-  // Inference Benchmarks (AI models, sizes, GPU requirements, API pricing)
+  // Inference market: measured demand plus the price spread per model.
   const inf = DATA.inference || {};
-  if(Object.keys(inf).length) {
-    parts.push('AI MODEL INFERENCE DATA:\n' + Object.entries(inf).map(([name, m]) => {
-      let line = `${name}: ${m.params_b?m.params_b+'B params':'params undisclosed'}, ${m.type}, category=${m.category}, rank=#${m.rank}, context=${m.context_k}K tokens, open_source=${m.open_source}`;
-      if(m.tokens_7d) line += `, weekly_usage=${m.tokens_7d}B tokens`;
-      const gpuInfo = Object.entries(m.gpus || {});
-      if(gpuInfo.length) {
-        line += ', GPU benchmarks: ' + gpuInfo.map(([gid, g]) =>
-          `${gid} (${g.tokens_per_sec} tok/s, $${g.cost_per_1m_tokens}/1M tokens, needs ${g.vram_gb}GB VRAM)`
-        ).join(', ');
-      }
-      const provInfo = Object.entries(m.providers || {});
-      if(provInfo.length) {
-        line += ', API pricing: ' + provInfo.map(([p, pr]) =>
-          `${p} ($${pr.input}/1M in, $${pr.output}/1M out)`
-        ).join(', ');
-      }
-      return line;
-    }).join('\n'));
+  const infModels = Array.isArray(inf.models) ? inf.models : [];
+  if (infModels.length) {
+    const t = inf.totals || {};
+    parts.push(`INFERENCE MARKET (OpenRouter, ${inf.as_of}):\n`
+      + `Totals: ${t.tokens} tokens/day and ${t.requests} requests/day across the top ${t.models} models, `
+      + `served by ${t.provider_count} providers. Open-weights models are ${t.open_weights_token_share_pct}% of tokens. `
+      + `Median price spread for the same model across providers: ${t.median_spread_x}x.\n`
+      + infModels.map(m => {
+        let line = `#${m.rank} ${m.name} (${m.permaslug}): ${m.total_tokens} tokens/day (${m.share_pct}% share), `
+          + `${m.requests} requests, ${m.tokens_per_request} tokens/request, ${m.output_share_pct}% output tokens, `
+          + `${m.open_weights ? 'open weights' : 'closed weights'}, context ${m.context_k}K`;
+        if (m.out_low != null) {
+          line += `, cheapest $${m.in_low}/1M in and $${m.out_low}/1M out at ${m.cheapest_provider}, `
+            + `dearest $${m.out_high}/1M out at ${m.dearest_provider} (${m.spread_x}x spread across ${m.endpoint_count} providers)`;
+          if ((m.quantizations || []).length) line += `, quantizations offered: ${m.quantizations.join('/')}`;
+        }
+        return line;
+      }).join('\n'));
+    const provs = inf.providers || [];
+    if (provs.length) {
+      parts.push('INFERENCE PROVIDERS:\n' + provs.slice(0, 25).map(p =>
+        `${p.name}: serves ${p.models} of the tracked models, median $${p.median_output}/1M out, `
+        + `cheapest route on ${p.cheapest_wins}, median 24h uptime ${p.median_uptime_1d}%`
+      ).join('\n'));
+    }
   }
 
   // Regional Data
@@ -4754,7 +4917,8 @@ const DATA_SECTIONS = [
   { key:'regional',       label:'Regional Markets',       color:'amber',  type:'dict-of-objects' },
   { key:'workloads',      label:'Workload Recommendations', color:'pink', type:'dict-of-objects' },
   { key:'tco',            label:'TCO Breakdown',          color:'red',    type:'dict-of-objects' },
-  { key:'inference',      label:'Inference Model Pricing',color:'blue',   type:'dict-of-objects' },
+  { key:'inference.models', label:'Inference Demand & Pricing', color:'blue', type:'array', metaKey:'inference' },
+  { key:'inference.providers', label:'Inference Providers', color:'cyan', type:'array', metaKey:'inference' },
   { key:'spot',           label:'Spot Market',            color:'cyan',   type:'dict-of-objects' },
   { key:'news',           label:'News Feed',              color:'amber',  type:'array' },
   { key:'volatility',     label:'Price Momentum',         color:'orange', type:'dict-of-objects' },
