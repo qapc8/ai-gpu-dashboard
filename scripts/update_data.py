@@ -20,6 +20,11 @@ from datetime import datetime, timezone
 from xml.etree import ElementTree
 
 from forecast_engine import generate_forecasts
+from prediction_markets import (
+    build_prediction_markets,
+    fetch_kalshi_gpu_markets,
+    fetch_polymarket_gpu_markets,
+)
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -219,15 +224,31 @@ def fetch_runpod_pricing():
     for gpu in gpu_types:
         name = gpu.get("displayName", gpu.get("id", "unknown"))
         lowest = gpu.get("lowestPrice", {}) or {}
-        # Prefer securePrice/communityPrice (published rates) over lowestPrice (live availability)
         secure = gpu.get("securePrice")
         community = gpu.get("communityPrice")
-        on_demand = lowest.get("uninterruptablePrice") or secure or community
+        # RunPod sells two tiers: Secure Cloud (RunPod-operated datacenters, the
+        # published on-demand rate) and Community Cloud (third-party hosts).
+        # `lowestPrice.uninterruptablePrice` tracks whatever is cheapest and
+        # available right now, which is usually a Community host -- so reading
+        # it as "the on-demand price" quietly mixed tiers across GPUs (a Secure
+        # H100 PCIe rate next to a Community B200 rate) and made RunPod
+        # incomparable to the dedicated clouds beside it in the price grid.
+        # Publish the Secure rate as on-demand and carry Community separately.
+        tier = None
+        on_demand = None
+        if secure and secure > 0:
+            on_demand, tier = secure, "secure"
+        elif community and community > 0:
+            on_demand, tier = community, "community"
         secure_spot = gpu.get("secureSpotPrice")
         community_spot = gpu.get("communitySpotPrice")
-        spot = lowest.get("minimumBidPrice") or secure_spot or community_spot
+        spot = secure_spot if (tier == "secure" and secure_spot) else None
+        if not spot:
+            spot = lowest.get("minimumBidPrice") or community_spot
         result[name] = {
             "on_demand_price": on_demand,
+            "tier": tier,
+            "community_price": community if community and community > 0 else None,
             "spot_price": spot,
             "memory_gb": gpu.get("memoryInGb"),
             "secure_cloud": gpu.get("secureCloud"),
@@ -243,6 +264,7 @@ def fetch_runpod_pricing():
 # ===================================================================
 
 import re as _re
+import html as _html
 
 
 def _extract_prices_from_html(html, patterns):
@@ -295,10 +317,19 @@ def fetch_azure_pricing():
             f"and priceType eq 'Consumption' and startswith(skuName, '{prefix}')"
         )
         try:
-            status, body = http_get(
-                base, params={"$filter": filt, "currencyCode": "USD"}, timeout=25
-            )
-            if status != 200:
+            # The retail API throttles bursts; a single 429 used to silently
+            # drop that GPU for the run (a refresh once published Azure with
+            # one SKU instead of three). Retry before giving up on a query.
+            body = None
+            for attempt in range(3):
+                status, body = http_get(
+                    base, params={"$filter": filt, "currencyCode": "USD"}, timeout=25
+                )
+                if status == 200:
+                    break
+                body = None
+                time.sleep(1.5 * (attempt + 1))
+            if body is None:
                 continue
             items = json.loads(body).get("Items", [])
             prices = []
@@ -400,25 +431,78 @@ def fetch_coreweave_pricing():
 
 
 def fetch_together_pricing():
-    """Scrape Together.ai HGX cluster on-demand prices.
+    """Scrape Together.ai GPU-cluster on-demand prices.
 
-    Page has two product lines: "Dedicated Inference" (managed endpoints) and
-    "GPU Clusters - On-Demand" (raw rental). We anchor on `HGX <gpu>` so we
-    pick the cluster rate, which is comparable to other providers' GPU rentals.
+    The pricing page carries three tables that all mention `HGX <gpu>`:
+
+      1. Dedicated Inference -- managed single-tenant endpoints (H100 $5.49,
+         B200 $8.99). A different product; not a raw GPU rental.
+      2. GPU Clusters, "Hardware | Hourly" (H100 $3.99, H200 $5.99, B200 $8.19).
+      3. GPU Clusters, "Hardware | ON-Demand | Reserved | 7-30 days | ..."
+         -- same on-demand column plus commitment tiers.
+
+    A plain `HGX <gpu> ... $x.xx` regex matches table 1 first, which is how the
+    published H100 rate drifted to $5.49 -- 38% above Together's actual
+    on-demand cluster price. Parse tables instead and keep only the GPU-cluster
+    ones, identified by their header row.
     """
     log_info("Fetching Together.ai HGX cluster pricing...")
     url = "https://www.together.ai/pricing"
     status, body = http_get(url, headers={"User-Agent": "Mozilla/5.0 (pricing-bot)"}, timeout=20)
     if status != 200:
         raise RuntimeError(f"Together returned HTTP {status}")
-    patterns = [
-        ("B200", r"HGX\s*B200[^$]{0,400}?\$(\d+\.\d{2})"),
-        ("H200", r"HGX\s*H200[^$]{0,400}?\$(\d+\.\d{2})"),
-        ("H100-SXM", r"HGX\s*H100[^$]{0,400}?\$(\d+\.\d{2})"),
-    ]
-    result = _extract_prices_from_html(body, patterns)
+
+    def cells(row_html):
+        raw = _re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", row_html, _re.IGNORECASE | _re.DOTALL)
+        return [_re.sub(r"\s+", " ", _html.unescape(_re.sub(r"<[^>]+>", " ", c))).strip() for c in raw]
+
+    def preceding_text(upto, window=2000):
+        pre = body[max(0, upto - window):upto]
+        pre = _re.sub(r"<script.*?</script>", " ", pre, flags=_re.IGNORECASE | _re.DOTALL)
+        pre = _re.sub(r"<style.*?</style>", " ", pre, flags=_re.IGNORECASE | _re.DOTALL)
+        return _re.sub(r"\s+", " ", _html.unescape(_re.sub(r"<[^>]+>", " ", pre))).lower()
+
+    anchors = [("B200", "HGX B200"), ("H200", "HGX H200"), ("H100-SXM", "HGX H100")]
+    result = {}
+    for match in _re.finditer(r"<table[^>]*>.*?</table>", body, _re.IGNORECASE | _re.DOTALL):
+        table = match.group(0)
+        if "HGX" not in table:
+            continue
+        # Keep only tables sitting under the "GPU Clusters" heading. The tables
+        # carry no usable header row (some have none; the tiered one splits its
+        # header across two rows), so the enclosing section heading is the only
+        # reliable discriminator.
+        pre = preceding_text(match.start())
+        cluster_at = pre.rfind("gpu cluster")
+        dedicated_at = pre.rfind("dedicated inference")
+        if cluster_at < 0 or cluster_at < dedicated_at:
+            continue
+        rows = _re.findall(r"<tr[^>]*>(.*?)</tr>", table, _re.IGNORECASE | _re.DOTALL)
+        for row in rows:
+            cs = cells(row)
+            if not cs:
+                continue
+            label = " ".join(cs).replace("\xa0", " ")
+            label = _re.sub(r"\s+", " ", label)
+            for gpu_id, anchor in anchors:
+                if anchor.lower() not in label.lower():
+                    continue
+                # First dollar amount in the row is the on-demand rate; later
+                # columns are commitment tiers.
+                pm = _re.search(r"\$(\d+\.\d{2})", label)
+                if not pm:
+                    continue
+                price = float(pm.group(1))
+                if not (0.05 <= price <= 500):
+                    continue
+                # Same rate appears in both cluster tables; lowest wins if they
+                # ever disagree.
+                if gpu_id not in result or price < result[gpu_id]:
+                    result[gpu_id] = price
+                break
+
     if not result:
-        raise RuntimeError("Together: no prices parsed from HTML")
+        raise RuntimeError("Together: no GPU-cluster prices parsed from HTML")
     log_ok("Together", f"{len(result)} GPU types")
     return result
 
@@ -554,6 +638,7 @@ _GPU_NAME_MAP = {
     "A100 PCIE 80GB": "A100-80GB",
     "A100 PCIE 40GB": "A100-40GB",
     "A100 SXM 80GB": "A100-80GB",
+    "A100 SXM 40GB": "A100-40GB",
     "A100_80GB": "A100-80GB",
     "A100_PCIE_80GB": "A100-80GB",
     "H100 SXM": "H100-SXM",
@@ -561,14 +646,15 @@ _GPU_NAME_MAP = {
     "H100 80GB SXM": "H100-SXM",
     "H100_SXM": "H100-SXM",
     "H100_PCIE": "H100-PCIe",
-    "H100 NVL": "H100-SXM",
+    # H100 NVL (94GB PCIe) and H200 NVL (143GB PCIe) are distinct, cheaper parts
+    # than the SXM modules. Folding them into H100-SXM / H200 let an NVL quote
+    # be published as an SXM price -- on RunPod that put H100 SXM at $2.59 when
+    # the SXM rate was $3.29. They have no spec entry, so they are dropped
+    # rather than mislabelled.
     "H200": "H200",
     "H200 SXM": "H200",
-    "NVIDIA H200 NVL": "H200",
-    "H200 NVL": "H200",
     "B200": "B200",
     "L40S": "L40S",
-    "L40": "L40S",
     "L4": "L4",
     "T4": "T4",
     "MI300X": "MI300X",
@@ -581,7 +667,6 @@ _GPU_NAME_MAP = {
     "A100-PCIE-80GB": "A100-80GB",
     "A100-PCIE-40GB": "A100-40GB",
     "H100 80GB HBM3": "H100-SXM",
-    "H100 NVL 94GB": "H100-SXM",
     "H100-SXM5-80GB": "H100-SXM",
     "H100-PCIE-80GB": "H100-PCIe",
     "MI300X": "MI300X",
@@ -590,6 +675,13 @@ _GPU_NAME_MAP = {
     "B300": "B300",
     "GB200": "GB200",
 }
+
+
+# Parts we deliberately do not track, because the substring fallback below would
+# otherwise resolve them to a neighbour and publish the wrong card's price:
+#   "H200 NVL" / "H100 NVL" -> cheaper PCIe parts, not the SXM modules
+#   "L40"                   -> would fall through to "L4"
+_GPU_NAME_UNTRACKED = ("NVL", "L40")
 
 
 def normalize_gpu_name(name):
@@ -604,8 +696,11 @@ def normalize_gpu_name(name):
     for ext, internal in _GPU_NAME_MAP.items():
         if ext.upper() == name_upper:
             return internal
-    # Substring matching for common patterns
-    for ext, internal in _GPU_NAME_MAP.items():
+    if any(_re.search(rf"\b{tok}\b", name_upper) for tok in _GPU_NAME_UNTRACKED):
+        return None
+    # Substring matching, longest key first -- "A100 SXM 40GB" must not resolve
+    # via the shorter "A100 SXM" key, and "RTX 4090 Ti" must not beat "RTX 4090".
+    for ext, internal in sorted(_GPU_NAME_MAP.items(), key=lambda kv: -len(kv[0])):
         if ext.upper() in name_upper:
             return internal
     return None
@@ -706,19 +801,9 @@ def get_hardcoded_fallback_prices():
                 "H100-SXM": {"price_per_gpu_hr": 3.99},
             },
         },
-        # FluidStack has no public API; rates read from its published price list.
-        # It does not sell B200 or B300 -- the previous table invented both.
-        "FluidStack": {
-            "last_verified": VERIFIED_ON,
-            "source": "hardcoded_fallback",
-            "gpus": {
-                "H200": {"price_per_gpu_hr": 2.30},
-                "H100-SXM": {"price_per_gpu_hr": 2.10},
-                "A100-40GB": {"price_per_gpu_hr": 1.80},
-                "A100-80GB": {"price_per_gpu_hr": 1.30},
-                "L40S": {"price_per_gpu_hr": 1.30},
-            },
-        },
+        # FluidStack was here. It no longer publishes a self-serve price list,
+        # so there is nothing to fall back to -- see the retired-provider note
+        # in merge_live_pricing_into_data.
     }
 
 
@@ -763,8 +848,16 @@ def merge_live_pricing_into_data(
     now = datetime.now(timezone.utc).isoformat()
     providers = data.get("providers", {})
 
-    # Drop providers we no longer track
-    for retired in ("Oracle",):
+    # Drop providers we no longer track.
+    #
+    # FluidStack retired 2026-08-20: it has taken down its public price list
+    # (fluidstack.io/pricing 404s) and now sells contracted capacity rather
+    # than self-serve instances. Its last figures were constants copied from
+    # third-party aggregators, and because they were the lowest numbers in the
+    # set they were being published as the cheapest listed H100 ($2.10) and
+    # H200 ($2.30) on the dashboard -- a price nobody could actually book, in
+    # the one column readers trust most. No public rate, no listing.
+    for retired in ("Oracle", "FluidStack"):
         providers.pop(retired, None)
 
     # -- Vast.ai --
@@ -812,9 +905,23 @@ def merge_live_pricing_into_data(
             if internal not in rp_gpus:
                 rp_gpus[internal] = {}
             gpu_entry = rp_gpus[internal]
+            # Several RunPod SKUs collapse to one internal id (A100 PCIe and
+            # A100 SXM both land on A100-80GB). Dict order decided the winner
+            # before; take the cheapest published rate so the result is stable.
+            already = gpu_entry.get("price_per_gpu_hr")
+            if (
+                already is not None
+                and gpu_entry.get("last_updated") == now
+                and already <= info["on_demand_price"]
+            ):
+                continue
             gpu_entry["price_per_gpu_hr"] = info["on_demand_price"]
             gpu_entry["source"] = "runpod_api"
             gpu_entry["last_updated"] = now
+            if info.get("tier"):
+                gpu_entry["tier"] = info["tier"]
+            if info.get("community_price") is not None:
+                gpu_entry["community_price"] = info["community_price"]
             if info.get("spot_price") is not None:
                 gpu_entry["spot_price"] = info["spot_price"]
             if info.get("memory_gb"):
@@ -1030,20 +1137,11 @@ def update_spot(data):
             trend.append(avg_od)
         trend = trend[-4:]
 
-        # bid/ask must bracket last_trade. They used to be frozen at whatever
-        # value they were first seeded with while last_trade tracked the live
-        # average, so the two drifted apart (last_trade ended up outside the
-        # spread on most GPUs). Re-derive them each run from the live average,
-        # preserving whatever spread the GPU historically quoted.
-        spread_pct = existing.get("spread_pct")
-        if not spread_pct:
-            old_bid, old_ask = existing.get("bid"), existing.get("ask")
-            if old_bid and old_ask and old_ask > old_bid:
-                spread_pct = (old_ask - old_bid) / ((old_ask + old_bid) / 2) * 100
-            else:
-                spread_pct = 12.0
-        spread_pct = max(2.0, min(25.0, round(spread_pct, 1)))
-        half = avg_od * (spread_pct / 200)
+        # Retired: bid / ask / spread_pct. Nothing trades against a provider
+        # list price, so those three were a fixed percentage band painted
+        # around the average and dressed up as an order book. Real quotes now
+        # live in the prediction_markets section, which is an actual venue.
+        # on_demand_low/avg/high already say what the listings do.
 
         # Savings percentages were frozen defaults (30/50) regardless of the
         # reserved prices shown next to them; derive them from the real numbers.
@@ -1067,10 +1165,6 @@ def update_spot(data):
             "num_providers": len(entries),
             "quarterly_trend": trend,
             "trend_quarter": quarter,
-            "bid": round(avg_od - half, 2),
-            "ask": round(avg_od + half, 2),
-            "spread_pct": spread_pct,
-            "last_trade": avg_od,
         }
 
     # Drop GPUs no tracked provider prices any more, rather than leaving the
@@ -2309,6 +2403,18 @@ def _build_market_snapshot(data):
         "matrix": [{"gpu_id": m["gpu_id"], "cheapest_price": m.get("cheapest_price"), "cheapest_provider": m.get("cheapest_provider"), "monthly_change_pct": m.get("monthly_change_pct"), "flops_per_dollar": m.get("flops_per_dollar")} for m in data.get("matrix", [])[:15]],
         "spot": {k: {"on_demand_avg": v.get("on_demand_avg"), "quarterly_trend": v.get("quarterly_trend")} for k, v in data.get("spot", {}).items()},
         "specs": {k: {"vram_gb": v.get("vram_gb"), "fp16_tflops": v.get("fp16_tflops"), "tdp_watts": v.get("tdp_watts")} for k, v in data.get("specs", {}).items()},
+        # Traded forward prices from Kalshi/Polymarket. The forecast section is
+        # told to anchor on these rather than invent a target range.
+        "prediction_markets": {
+            g.get("label", g.get("gpu")): {
+                "market_implied_curve": [
+                    {"month": p.get("horizon_label"), "implied_usd_per_gpu_hr": p.get("implied_price")}
+                    for p in (g.get("curve") or [])
+                ],
+                "cheapest_listed_now": g.get("listed_cheapest"),
+            }
+            for g in ((data.get("prediction_markets") or {}).get("gpus") or [])
+        },
         "date": datetime.now().strftime("%Y-%m-%d"),
     }
 
@@ -2429,7 +2535,13 @@ _AI_SECTIONS = {
             "You are a GPU market forecaster. Provide a price outlook covering: "
             "90-day forecast table (GPU, current price, target range, change %, confidence), "
             "12-month outlook table, factors driving prices up and down, "
-            "and when to act (buy now / wait). Use markdown tables. Be specific with numbers."
+            "and when to act (buy now / wait). Use markdown tables. Be specific with numbers. "
+            "Where the data includes a prediction_markets block, those are traded forward prices "
+            "from Kalshi and Polymarket: anchor your targets to that curve, cite it as the source, "
+            "and say explicitly when your view departs from it and why. Do not present a number as "
+            "a forecast when the market already quotes one. Note that the market settles on the "
+            "Ornn neocloud index, a different basket from the provider list prices, so compare "
+            "directions of travel rather than levels."
         ),
         "user": "Generate GPU price forecasts from this data:\n\n{snapshot}",
     },
@@ -2536,7 +2648,7 @@ def main():
     data["last_updated"] = datetime.now(timezone.utc).isoformat()
 
     # ---- 1. GPU Cloud Pricing ----
-    print("[1/10] GPU Cloud Pricing")
+    print("[1/11] GPU Cloud Pricing")
     print("-" * 40)
 
     vastai_prices = None
@@ -2601,7 +2713,7 @@ def main():
     print()
 
     # ---- 2. Recalculate derived data (matrix, historical, spot) ----
-    print("[2/10] Recalculate Historical")
+    print("[2/11] Recalculate Historical")
     print("-" * 40)
     try:
         data = update_historical(data)
@@ -2609,7 +2721,7 @@ def main():
         log_fail("Historical", str(exc))
     print()
 
-    print("[3/10] Recalculate Spot")
+    print("[3/11] Recalculate Spot")
     print("-" * 40)
     try:
         data = update_spot(data)
@@ -2617,7 +2729,7 @@ def main():
         log_fail("Spot", str(exc))
     print()
 
-    print("[4/10] Recalculate Matrix")
+    print("[4/11] Recalculate Matrix")
     print("-" * 40)
     try:
         data = recalculate_matrix(data)
@@ -2646,7 +2758,7 @@ def main():
     print()
 
     # ---- 5. Stock Prices ----
-    print("[5/10] Stock Prices")
+    print("[5/11] Stock Prices")
     print("-" * 40)
 
     stocks = []
@@ -2661,7 +2773,7 @@ def main():
     print()
 
     # ---- 6. News ----
-    print("[6/10] News Headlines")
+    print("[6/11] News Headlines")
     print("-" * 40)
 
     try:
@@ -2672,7 +2784,7 @@ def main():
     print()
 
     # ---- 7. Community Sentiment (Reddit + HuggingFace + GitHub) ----
-    print("[7/10] Reddit Sentiment")
+    print("[7/11] Reddit Sentiment")
     print("-" * 40)
 
     reddit_data = {}
@@ -2682,7 +2794,7 @@ def main():
         log_fail("Reddit Sentiment", str(exc))
     print()
 
-    print("[8/10] HuggingFace + GitHub")
+    print("[8/11] HuggingFace + GitHub")
     print("-" * 40)
 
     hf_data = {}
@@ -2702,7 +2814,7 @@ def main():
     print()
 
     # ---- 9. Derived analytics: regional, volatility, model fit ----
-    print("[9/10] Regional / Volatility / Model Fit")
+    print("[9/11] Regional / Volatility / Model Fit")
     print("-" * 40)
 
     try:
@@ -2726,8 +2838,37 @@ def main():
     data.pop("utilization", None)
     print()
 
-    # ---- 10. AI Analysis ----
-    print("[10/10] AI Analysis")
+    # ---- 10. Prediction markets (Kalshi + Polymarket) ----
+    print("[10/11] Prediction Markets")
+    print("-" * 40)
+
+    kalshi_curves, poly_markets = [], []
+    try:
+        log_info("Fetching Kalshi GPU compute ladders...")
+        kalshi_curves = fetch_kalshi_gpu_markets()
+        log_ok("Kalshi", f"{len(kalshi_curves)} GPU curves")
+    except Exception as exc:
+        log_fail("Kalshi", str(exc))
+
+    try:
+        log_info("Fetching Polymarket GPU rental brackets...")
+        poly_markets = fetch_polymarket_gpu_markets()
+        log_ok("Polymarket", f"{len(poly_markets)} open markets")
+    except Exception as exc:
+        log_fail("Polymarket", str(exc))
+
+    if kalshi_curves or poly_markets:
+        try:
+            data = build_prediction_markets(data, kalshi_curves, poly_markets)
+        except Exception as exc:
+            log_fail("Prediction Markets", str(exc))
+    else:
+        # Never serve a stale order book as if it were live.
+        data.pop("prediction_markets", None)
+    print()
+
+    # ---- 11. AI Analysis ----
+    print("[11/11] AI Analysis")
     print("-" * 40)
 
     existing_ai = update_ai_analysis(data, existing_ai)

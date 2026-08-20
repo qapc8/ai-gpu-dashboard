@@ -1036,21 +1036,8 @@ body {
 .ai-chip-red { background:var(--red-dim); color:var(--red); }
 .ai-chip-amber { background:var(--amber-dim); color:var(--amber); }
 
-/* ─── SPOT CARDS ─── */
-.spot-tile {
-  background: var(--bg-2);
-  border: 1px solid var(--border-0);
-  border-radius: var(--radius);
-  padding: 16px;
-  box-shadow: var(--shadow);
-}
-.spot-tile-gpu { font-family: var(--mono); font-weight: 700; color: var(--text-0); font-size: 14px; margin-bottom: 10px; }
-.spot-prices { display: flex; gap: 20px; margin-bottom: 8px; font-family: var(--mono); }
-.spot-lbl { font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; }
-.spot-bid-val { color: var(--green); font-weight: 700; font-size: 18px; }
-.spot-ask-val { color: var(--red); font-weight: 700; font-size: 18px; }
-.spot-meta-row { display: flex; gap: 14px; font-size: 10.5px; color: var(--text-3); font-family: var(--mono); }
-.spot-mini { height: 44px; margin-top: 8px; }
+/* Retired with the synthetic bid/ask spread: these styled an order-book tile
+   for quotes that never traded. Real quotes live in the Prediction Markets tab. */
 
 /* ─── REGION CARDS ─── */
 .region-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
@@ -1151,6 +1138,7 @@ loadExternalData();
   <div class="nav-item active" data-tab="overview">Overview</div>
   <div class="nav-item" data-tab="pricing">Pricing</div>
   <div class="nav-item" data-tab="trends">Trends & Forecast</div>
+  <div class="nav-item" data-tab="markets">Prediction Markets</div>
   <div class="nav-item" data-tab="providers">Providers</div>
   <div class="nav-item" data-tab="regional">Regional</div>
   <div class="nav-item" data-tab="inference">Inference</div>
@@ -1288,6 +1276,61 @@ loadExternalData();
     <div class="card">
       <div class="card-hd"><span class="card-hd-title">AI Accelerator Share Trend</span></div>
       <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartShareTrend"></canvas></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PREDICTION MARKETS ── -->
+<div class="tab-panel" id="tab-markets">
+  <div id="pmUnavailable" class="card mb" style="display:none;">
+    <div class="card-bd dim" style="padding:22px;font-size:12px;">
+      No live GPU price markets were readable on the last refresh. Nothing is shown rather than
+      serving a stale order book.
+    </div>
+  </div>
+  <div id="pmContent">
+    <div class="kpi-strip mb" id="pmStats"></div>
+
+    <div class="card mb">
+      <div class="card-hd" style="flex-wrap:wrap;gap:8px;">
+        <span class="card-hd-title">Market-Implied Forward Price</span>
+        <div id="pmGpuPicker" class="decay-picker"></div>
+        <span class="dim" style="font-size:10px;font-family:var(--mono);margin-left:auto;" id="pmCurveNote"></span>
+      </div>
+      <div class="card-bd">
+        <div class="chart-wrap" style="height:340px;"><canvas id="chartPmCurve"></canvas></div>
+        <div id="pmCurveCaption" style="padding:8px 4px 0;font-size:11px;" class="dim"></div>
+      </div>
+    </div>
+
+    <div class="grid g-2 mb">
+      <div class="card">
+        <div class="card-hd">
+          <span class="card-hd-title">Where the Price Lands</span>
+          <span class="card-hd-sub" id="pmDistSub">implied probability by price bracket</span>
+        </div>
+        <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartPmDist"></canvas></div></div>
+      </div>
+      <div class="card">
+        <div class="card-hd">
+          <span class="card-hd-title">Market vs Our Listings</span>
+          <span class="card-hd-sub">forward quote against today's cheapest listed rate</span>
+        </div>
+        <div class="card-bd-flush"><table class="dt" id="pmVsListedTable"></table></div>
+      </div>
+    </div>
+
+    <div class="card mb">
+      <div class="card-hd">
+        <span class="card-hd-title">Open Contracts</span>
+        <span class="dim" style="font-size:10px;font-family:var(--mono);margin-left:auto;">every tradeable GPU price market we can read</span>
+      </div>
+      <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="pmContractsTable"></table></div>
+    </div>
+
+    <div class="card">
+      <div class="card-hd"><span class="card-hd-title">How to Read This</span></div>
+      <div class="card-bd" id="pmMethod" style="font-size:11.5px;line-height:1.65;"></div>
     </div>
   </div>
 </div>
@@ -1712,7 +1755,8 @@ let DATA = {
   indicators:{}, regional:{}, workloads:{},
   tco:{}, inference:{}, spot:{}, news:[],
   volatility:{}, changelog:[],
-  competitive:{}, sustainability:{}, supplychain:{}, modelfit:{}, sentiment:{}
+  competitive:{}, sustainability:{}, supplychain:{}, modelfit:{}, sentiment:{},
+  prediction_markets:null
 };
 
 const C = {
@@ -1861,6 +1905,7 @@ function renderAll() {
   renderOverview();
   renderPriceMatrix();
   renderTrendsTab();
+  renderPredictionMarkets();
   renderProvidersTab();
   renderRegionalTab();
   renderWorkloadsTab();
@@ -1945,9 +1990,9 @@ function renderTicker() {
   const h100Best = getBestPrice('H100-SXM');
   const b200Best = getBestPrice('B200');
   const b300Best = getBestPrice('B300');
-  const h100Price = h100Best !== null ? '$'+h100Best.toFixed(2) : (spot?.['H100-SXM'] ? '$'+spot['H100-SXM'].last_trade.toFixed(2) : '--');
-  const b200Price = b200Best !== null ? '$'+b200Best.toFixed(2) : (spot?.['B200'] ? '$'+spot['B200'].last_trade.toFixed(2) : '--');
-  const b300Price = b300Best !== null ? '$'+b300Best.toFixed(2) : (spot?.['B300'] ? '$'+spot['B300'].last_trade.toFixed(2) : '--');
+  const h100Price = h100Best !== null ? '$'+h100Best.toFixed(2) : (spot?.['H100-SXM'] ? '$'+spot['H100-SXM'].on_demand_avg.toFixed(2) : '--');
+  const b200Price = b200Best !== null ? '$'+b200Best.toFixed(2) : (spot?.['B200'] ? '$'+spot['B200'].on_demand_avg.toFixed(2) : '--');
+  const b300Price = b300Best !== null ? '$'+b300Best.toFixed(2) : (spot?.['B300'] ? '$'+spot['B300'].on_demand_avg.toFixed(2) : '--');
 
   const h100Trend = spot?.['H100-SXM']?.quarterly_trend || [];
   const b200Trend = spot?.['B200']?.quarterly_trend || [];
@@ -2007,6 +2052,7 @@ function renderChangeFeed() {
       <div style="min-width:0;">
         <div style="font-size:11px;"><b>${e.gpu}</b> <span class="dim">at ${e.provider}</span>${e.needs_review?' <span title="unusually large move — verify" style="color:var(--amber);">⚠</span>':''}</div>
         <div class="dim" style="font-size:10px;font-family:var(--mono);">${e.date} · ${detail}</div>
+        ${e.note?`<div style="font-size:9.5px;color:var(--amber);line-height:1.4;margin-top:2px;">${e.note}</div>`:''}
       </div>${badge}</div>`;
   }).join('');
 }
@@ -2314,10 +2360,19 @@ function renderPriceMatrix() {
 
 
   // ── Provider grid table ──
-  const cloudProvs = ['AWS','GCP','Azure','Lambda','CoreWeave','Together'];
-  const mktProvs = ['RunPod','Vast.ai','FluidStack'];
-  const cloudLabels = ['AWS','GCP','Azure','Lambda','CoreW.','Tog.'];
-  const mktLabels = ['RunPod','Vast.ai','Fluid.'];
+  // Columns come from whoever is actually in the data. Hardcoding them meant
+  // retiring a provider (FluidStack, whose public price list went away) left
+  // an empty column behind, and adding one needed an edit here.
+  const PROV_ABBREV = { CoreWeave:'CoreW.', Together:'Tog.', FluidStack:'Fluid.' };
+  const provOrder = ['AWS','GCP','Azure','Lambda','CoreWeave','Together','RunPod','Vast.ai'];
+  const rank = n => { const i = provOrder.indexOf(n); return i === -1 ? provOrder.length : i; };
+  const byType = t => Object.keys(pd || {})
+    .filter(n => (pd[n] || {}).type === t && Object.keys(pd[n].gpus || {}).length)
+    .sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
+  const cloudProvs = byType('cloud');
+  const mktProvs = byType('marketplace');
+  const cloudLabels = cloudProvs.map(n => PROV_ABBREV[n] || n);
+  const mktLabels = mktProvs.map(n => PROV_ABBREV[n] || n);
 
   let h = '<thead>';
   h += '<tr><th rowspan="2">GPU</th><th rowspan="2" class="r">VRAM</th>';
@@ -2497,6 +2552,334 @@ function renderVolatilityPanel() {
       <td class="r dim">${v.monthly_observations}</td></tr>`;
   });
   const el=document.getElementById('volTable'); if(el) el.innerHTML=h+'</tbody>';
+}
+
+// ════════════════════════════════════════════════════════════════
+// PREDICTION MARKETS
+// ════════════════════════════════════════════════════════════════
+// Kalshi and Polymarket both list GPU rental-price contracts and both settle
+// against the Ornn compute index. Everything rendered here is a live quote or a
+// quantile read off one — this is the only forward-looking price on the
+// dashboard, and it is somebody else's money, not our extrapolation.
+let pmSelectedGpu = null;
+
+function pmVenueTag(venue) {
+  return venue === 'kalshi'
+    ? '<span class="tag" style="background:var(--cyan-dim);color:var(--cyan);font-size:9px;">KALSHI</span>'
+    : '<span class="tag" style="background:var(--purple-dim);color:var(--purple);font-size:9px;">POLYMARKET</span>';
+}
+
+function pmMoney(v, dp = 2) {
+  return v == null ? '<span class="dim">—</span>' : '$' + Number(v).toFixed(dp);
+}
+
+function pmNearPoly(entry) {
+  const open = (entry.markets || []).filter(m => m.implied_price != null);
+  if (!open.length) return null;
+  return open.slice().sort((a, b) => (a.end_date || '').localeCompare(b.end_date || ''))[0];
+}
+
+function renderPredictionMarkets() {
+  const pm = DATA.prediction_markets;
+  const gpus = (pm && pm.gpus) ? pm.gpus.filter(g => (g.curve || []).length || (g.markets || []).length) : [];
+  const has = gpus.length > 0;
+  const unavailable = document.getElementById('pmUnavailable');
+  const content = document.getElementById('pmContent');
+  if (unavailable) unavailable.style.display = has ? 'none' : 'block';
+  if (content) content.style.display = has ? 'block' : 'none';
+  if (!has) return;
+
+  if (!pmSelectedGpu || !gpus.some(g => g.gpu === pmSelectedGpu)) {
+    pmSelectedGpu = (gpus.find(g => (g.curve || []).length) || gpus[0]).gpu;
+  }
+
+  // ── KPI strip ────────────────────────────────────────────────
+  const contracts = gpus.reduce((n, g) => n + (g.curve || []).length + (g.markets || []).length, 0);
+  const oi = gpus.reduce((n, g) => n + (g.curve || []).reduce((s, p) => s + (p.open_interest || 0), 0), 0);
+  const polyVol = gpus.reduce((n, g) => n + (g.markets || []).reduce((s, m) => s + (m.volume || 0), 0), 0);
+
+  // Widest disagreement between the forward quote and what you can rent for now.
+  let widest = null;
+  gpus.forEach(g => {
+    if (g.near_implied == null || !g.listed_cheapest) return;
+    const gap = (g.near_implied - g.listed_cheapest) / g.listed_cheapest * 100;
+    if (!widest || Math.abs(gap) > Math.abs(widest.gap)) widest = { gpu: g.label, gap };
+  });
+
+  const curved = gpus.filter(g => g.curve_change_pct != null);
+  const steepest = curved.length
+    ? curved.slice().sort((a, b) => Math.abs(b.curve_change_pct) - Math.abs(a.curve_change_pct))[0]
+    : null;
+
+  const st = document.getElementById('pmStats');
+  if (st) st.innerHTML = `
+    <div class="kpi kpi-purple"><div class="kpi-label">Live Contracts</div><div class="kpi-value">${contracts}</div><div class="kpi-sub">${gpus.length} GPUs · 2 venues</div></div>
+    <div class="kpi kpi-blue"><div class="kpi-label">Kalshi Open Interest</div><div class="kpi-value">${oi >= 1000 ? (oi / 1000).toFixed(1) + 'k' : oi}</div><div class="kpi-sub">contracts outstanding</div></div>
+    <div class="kpi kpi-amber"><div class="kpi-label">Polymarket Volume</div><div class="kpi-value">$${polyVol >= 1000 ? (polyVol / 1000).toFixed(0) + 'k' : polyVol}</div><div class="kpi-sub">traded on open GPU markets</div></div>
+    ${steepest ? `<div class="kpi ${steepest.curve_change_pct > 0 ? 'kpi-red' : 'kpi-green'}"><div class="kpi-label">Steepest Curve</div><div class="kpi-value">${steepest.curve_change_pct > 0 ? '+' : ''}${steepest.curve_change_pct}%</div><div class="kpi-sub">${steepest.label} · ${steepest.near_horizon} → ${steepest.far_horizon}</div></div>`
+      : (widest ? `<div class="kpi kpi-green"><div class="kpi-label">Largest Basis</div><div class="kpi-value">${widest.gap > 0 ? '+' : ''}${widest.gap.toFixed(0)}%</div><div class="kpi-sub">${widest.gpu} · market vs cheapest listed</div></div>` : '')}`;
+
+  // ── GPU picker ───────────────────────────────────────────────
+  const picker = document.getElementById('pmGpuPicker');
+  if (picker) {
+    picker.innerHTML = gpus.map((g, i) => {
+      const col = CL[i % CL.length];
+      const active = g.gpu === pmSelectedGpu;
+      return `<div class="decay-chip${active ? ' active' : ''}" data-pm-gpu="${g.gpu}"
+        style="${active ? `background:${col};border-color:${col};color:#0b1017;` : ''}">${g.label}</div>`;
+    }).join('');
+    picker.querySelectorAll('[data-pm-gpu]').forEach(chip => {
+      chip.addEventListener('click', () => {
+        pmSelectedGpu = chip.dataset.pmGpu;
+        renderPredictionMarkets();
+      });
+    });
+  }
+
+  const sel = gpus.find(g => g.gpu === pmSelectedGpu);
+  renderPmCurve(sel, gpus);
+  renderPmDistribution(sel);
+  renderPmVsListed(gpus);
+  renderPmContracts(gpus);
+  renderPmMethod(pm);
+}
+
+// Forward curve for one GPU: Kalshi monthly ladder medians, with the 10-90
+// band where the ladder actually brackets those quantiles, and Polymarket
+// settlement-date quotes dropped on top as an independent read.
+function renderPmCurve(sel, gpus) {
+  const cv = document.getElementById('chartPmCurve');
+  if (!cv || !sel) return;
+  const idx = gpus.findIndex(g => g.gpu === sel.gpu);
+  const col = CL[idx % CL.length];
+  const kalshiPts = sel.curve || [];
+
+  // Polymarket resolves on a date, not a month — bucket each one onto the
+  // matching month so both venues share an x-axis. GPUs that only Polymarket
+  // lists (A100) contribute months of their own rather than dropping out.
+  const polyByMonth = {};
+  (sel.markets || []).forEach(m => {
+    if (m.implied_price == null || !m.horizon) return;
+    polyByMonth[m.horizon] = m;
+  });
+  const months = Array.from(new Set(
+    kalshiPts.map(p => p.horizon).concat(Object.keys(polyByMonth))
+  )).sort();
+  const byMonth = {};
+  kalshiPts.forEach(p => { byMonth[p.horizon] = p; });
+  const pts = months.map(mo => byMonth[mo] || {
+    horizon: mo, horizon_label: polyByMonth[mo].horizon_label, implied_price: null, p10: null, p90: null,
+  });
+  const labels = pts.map(p => p.horizon_label);
+  const polySeries = months.map(mo => (polyByMonth[mo] ? polyByMonth[mo].implied_price : null));
+  const hasKalshi = pts.some(p => p.implied_price != null);
+  const hasPoly = polySeries.some(v => v != null);
+
+  // The band only exists where the ladder brackets both tails. Draw it as a
+  // contiguous run and stop, rather than spanning the gap and tapering to a
+  // wedge that reads as "uncertainty collapsing to zero".
+  const bandPts = pts.map(p => (p.p10 != null && p.p90 != null ? p : null));
+  const datasets = [];
+  if (bandPts.some(Boolean)) {
+    datasets.push({
+      label: '10th pct', data: bandPts.map(p => (p ? p.p10 : null)), borderColor: 'transparent',
+      backgroundColor: col + '18', pointRadius: 0, fill: false, tension: 0.25, spanGaps: false,
+    });
+    datasets.push({
+      label: '90th pct', data: bandPts.map(p => (p ? p.p90 : null)), borderColor: 'transparent',
+      backgroundColor: col + '18', pointRadius: 0, fill: '-1', tension: 0.25, spanGaps: false,
+    });
+  }
+  if (hasKalshi) {
+    datasets.push({
+      label: 'Kalshi implied', data: pts.map(p => p.implied_price),
+      borderColor: col, backgroundColor: col, borderWidth: 2.5, pointRadius: 4,
+      tension: 0.25, fill: false, spanGaps: true,
+    });
+  }
+  if (hasPoly) {
+    datasets.push({
+      label: 'Polymarket implied', data: polySeries, borderColor: C.purple,
+      backgroundColor: C.purple, borderWidth: hasKalshi ? 0 : 2,
+      showLine: !hasKalshi, pointRadius: 5, pointStyle: 'rectRot',
+      tension: 0.25, spanGaps: true,
+    });
+  }
+  if (sel.listed_cheapest) {
+    datasets.push({
+      label: 'cheapest listed today', data: pts.map(() => sel.listed_cheapest),
+      borderColor: C.green, borderWidth: 1.5, borderDash: [5, 4], pointRadius: 0, fill: false,
+    });
+  }
+
+  if (charts.pmCurve) charts.pmCurve.destroy();
+  charts.pmCurve = new Chart(cv, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 8, font: { size: 9 }, filter: i => !/pct$/.test(i.text) } },
+        tooltip: { callbacks: { label: x => x.dataset.label + ': ' + (x.parsed.y == null ? '—' : '$' + x.parsed.y.toFixed(2) + '/GPU-hr') } },
+      },
+      scales: {
+        y: { title: { display: true, text: '$ / GPU-hour' }, grid: { color: 'rgba(26,34,51,0.4)' } },
+        x: { grid: { display: false } },
+      },
+    },
+  });
+
+  const note = document.getElementById('pmCurveNote');
+  if (note) {
+    const bits = [];
+    if (kalshiPts.length) bits.push(`${kalshiPts.length} Kalshi monthly contracts`);
+    const nPoly = Object.keys(polyByMonth).length;
+    if (nPoly) bits.push(`${nPoly} Polymarket settlement dates`);
+    note.textContent = bits.join(' · ');
+  }
+
+  const cap = document.getElementById('pmCurveCaption');
+  if (cap) {
+    const sentences = [];
+    if (sel.near_implied != null) {
+      let s = `Market puts ${sel.label} at <strong style="color:var(--text-0)">$${sel.near_implied.toFixed(2)}/GPU-hr</strong> for ${sel.near_horizon}`;
+      if (sel.curve_change_pct != null) {
+        const pct = sel.curve_change_pct;
+        s += pct === 0
+          ? `, and flat through ${sel.far_horizon}`
+          : `, and <strong style="color:${pct > 0 ? 'var(--red)' : 'var(--green)'}">${Math.abs(pct)}% ${pct > 0 ? 'higher' : 'lower'}</strong> by ${sel.far_horizon}`;
+      }
+      sentences.push(s);
+    }
+    if (sel.listed_cheapest) sentences.push(`Cheapest rate we track today: $${sel.listed_cheapest.toFixed(2)}`);
+    cap.innerHTML = sentences.length ? sentences.join('. ') + '.' : '';
+  }
+}
+
+function renderPmDistribution(sel) {
+  const cv = document.getElementById('chartPmDist');
+  const sub = document.getElementById('pmDistSub');
+  if (!cv || !sel) return;
+  const near = (sel.curve || [])[0];
+  const poly = pmNearPoly(sel);
+  const source = (near && (near.buckets || []).length) ? near : poly;
+  if (!source || !(source.buckets || []).length) {
+    if (charts.pmDist) { charts.pmDist.destroy(); charts.pmDist = null; }
+    if (sub) sub.textContent = 'no bracketed market for this GPU';
+    return;
+  }
+  const isKalshi = source === near;
+  if (sub) sub.textContent = `${sel.label} · ${isKalshi ? 'Kalshi' : 'Polymarket'} · ${source.horizon_label}`;
+
+  const buckets = source.buckets;
+  if (charts.pmDist) charts.pmDist.destroy();
+  charts.pmDist = new Chart(cv, {
+    type: 'bar',
+    data: {
+      labels: buckets.map(b => b.label),
+      datasets: [{
+        label: 'implied probability',
+        data: buckets.map(b => +(b.prob * 100).toFixed(1)),
+        backgroundColor: buckets.map(b => {
+          const peak = Math.max(...buckets.map(x => x.prob));
+          return b.prob === peak ? C.amber : C.blue + 'aa';
+        }),
+      }],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: x => x.parsed.y + '% chance' } },
+      },
+      scales: {
+        y: { title: { display: true, text: '% probability' }, grid: { color: 'rgba(26,34,51,0.4)' } },
+        x: { grid: { display: false }, ticks: { font: { size: 9 } } },
+      },
+    },
+  });
+}
+
+function renderPmVsListed(gpus) {
+  const el = document.getElementById('pmVsListedTable');
+  if (!el) return;
+  let h = '<thead><tr><th>GPU</th><th class="r">Cheapest listed</th><th class="r">Market (near)</th><th class="r">Basis</th><th class="r">Market (far)</th></tr></thead><tbody>';
+  gpus.forEach(g => {
+    const poly = pmNearPoly(g);
+    const near = g.near_implied != null ? g.near_implied : (poly ? poly.implied_price : null);
+    const nearLabel = g.near_horizon || (poly ? poly.horizon_label : '');
+    let basis = '<span class="dim">—</span>';
+    if (near != null && g.listed_cheapest) {
+      const pct = (near - g.listed_cheapest) / g.listed_cheapest * 100;
+      basis = `<span style="color:${pct > 2 ? 'var(--red)' : pct < -2 ? 'var(--green)' : 'var(--text-2)'}">${pct > 0 ? '+' : ''}${pct.toFixed(0)}%</span>`;
+    }
+    h += `<tr>
+      <td class="gpu-name">${g.label}</td>
+      <td class="r" style="font-family:var(--mono);">${pmMoney(g.listed_cheapest)}</td>
+      <td class="r" style="font-family:var(--mono);">${pmMoney(near)}<div class="dim" style="font-size:9px;">${nearLabel}</div></td>
+      <td class="r" style="font-family:var(--mono);">${basis}</td>
+      <td class="r" style="font-family:var(--mono);">${pmMoney(g.far_implied)}<div class="dim" style="font-size:9px;">${g.far_horizon || ''}</div></td>
+    </tr>`;
+  });
+  el.innerHTML = h + '</tbody>';
+}
+
+function renderPmContracts(gpus) {
+  const el = document.getElementById('pmContractsTable');
+  if (!el) return;
+  const rows = [];
+  gpus.forEach(g => {
+    (g.curve || []).forEach(p => rows.push({
+      venue: 'kalshi', gpu: g.label, horizon: p.horizon, horizonLabel: p.horizon_label,
+      question: p.question || `${g.label} average hourly price`, implied: p.implied_price,
+      depth: p.open_interest ? p.open_interest.toLocaleString() + ' OI' : '—', url: p.url,
+    }));
+    (g.markets || []).forEach(m => rows.push({
+      venue: 'polymarket', gpu: g.label, horizon: m.horizon, horizonLabel: m.horizon_label,
+      question: m.question, implied: m.implied_price,
+      depth: m.volume ? '$' + Math.round(m.volume).toLocaleString() + ' vol' : '—', url: m.url,
+    }));
+  });
+  rows.sort((a, b) => (a.horizon || '').localeCompare(b.horizon || '') || a.gpu.localeCompare(b.gpu));
+
+  let h = '<thead><tr><th>Venue</th><th>GPU</th><th>Settles</th><th>Contract</th><th class="r">Implied $/GPU-hr</th><th class="r">Depth</th></tr></thead><tbody>';
+  rows.forEach(r => {
+    h += `<tr>
+      <td>${pmVenueTag(r.venue)}</td>
+      <td class="gpu-name">${r.gpu}</td>
+      <td style="font-family:var(--mono);font-size:10.5px;">${r.horizonLabel || ''}</td>
+      <td style="font-size:11px;"><a href="${r.url}" target="_blank" rel="noopener noreferrer" style="color:var(--text-1);text-decoration:none;border-bottom:1px dotted var(--border-1);">${r.question}</a></td>
+      <td class="r" style="font-family:var(--mono);font-weight:600;">${pmMoney(r.implied)}</td>
+      <td class="r dim" style="font-family:var(--mono);font-size:10px;">${r.depth}</td>
+    </tr>`;
+  });
+  el.innerHTML = h + '</tbody>';
+}
+
+function renderPmMethod(pm) {
+  const el = document.getElementById('pmMethod');
+  if (!el) return;
+  const src = pm.settlement_source || {};
+  const asOf = pm.last_updated ? new Date(pm.last_updated).toISOString().replace('T', ' ').slice(0, 16) + ' UTC' : '—';
+  el.innerHTML = `
+    <p style="margin:0 0 10px;"><strong style="color:var(--text-0);">Kalshi</strong> lists a ladder of
+    &ldquo;average hourly price above $K&rdquo; binaries for each month. The mid of every rung is the market's
+    P(price &gt; K); the implied price above is where that curve crosses 50%, interpolated between rungs.
+    The shaded band is the 10th-90th percentile, drawn only where the ladder actually reaches those levels.
+    Adjacent rungs are quoted independently and occasionally cross; P(price &gt; K) has to fall as K rises, so
+    a crossed quote is clamped to the rung below it rather than published as negative probability mass.</p>
+    <p style="margin:0 0 10px;"><strong style="color:var(--text-0);">Polymarket</strong> lists mutually
+    exclusive price brackets per settlement date. Bracket prices are the probabilities directly; the implied
+    price is the median of that distribution, interpolated inside the bracket it lands in. Barrier
+    (&ldquo;hit ___&rdquo;) contracts ask a different question and are excluded.</p>
+    <p style="margin:0 0 10px;"><strong style="color:var(--amber);">Basis warning.</strong> Both venues settle on the
+    <a href="${src.url || '#'}" target="_blank" rel="noopener noreferrer" style="color:var(--blue);">${src.name || 'settlement index'}</a>,
+    which tracks neocloud rental rates. Our &ldquo;cheapest listed&rdquo; column is the lowest published
+    on-demand rate across the providers on this dashboard. They are different baskets, so a persistent gap
+    between them is a definitional difference as much as a forecast — read the direction of the curve, not
+    the level difference, as the signal.</p>
+    <p style="margin:0;" class="dim">Order books read ${asOf}. Quotes move continuously; these are not live ticks.</p>`;
 }
 
 // Vendor share of AI accelerator revenue over time (published revenue + analyst
@@ -4431,7 +4814,15 @@ const DATA_SECTIONS = [
   { key:'supplychain',    label:'Supply Chain',           color:'red',    type:'dict-of-objects' },
   { key:'modelfit',       label:'Model Fit / VRAM Sizing', color:'purple', type:'dict-of-objects' },
   { key:'sentiment',     label:'Developer & MLOps Sentiment', color:'pink', type:'dict-of-objects' },
+  { key:'prediction_markets.gpus', label:'Prediction Markets', color:'purple', type:'array',
+    metaKey:'prediction_markets' },
 ];
+
+// Sections may point at a nested key (prediction_markets.gpus) so the audit
+// table lists the rows rather than the wrapper object.
+function dataSectionValue(key) {
+  return key.split('.').reduce((obj, part) => (obj == null ? obj : obj[part]), DATA);
+}
 
 function countEntries(val, type) {
   if (!val) return 0;
@@ -4556,7 +4947,7 @@ function renderDataAudit(searchTerm) {
   let html = '';
 
   DATA_SECTIONS.forEach((sec, idx) => {
-    const val = DATA[sec.key];
+    const val = dataSectionValue(sec.key);
     const count = countEntries(val, sec.type);
     totalEntries += count;
 
@@ -4571,7 +4962,8 @@ function renderDataAudit(searchTerm) {
 
     // Provenance: distinguish live measurements from estimates so a modelled
     // number is never mistaken for a reading.
-    const meta = (DATA._meta && DATA._meta.sections && DATA._meta.sections[sec.key]) || null;
+    const meta = (DATA._meta && DATA._meta.sections
+      && DATA._meta.sections[sec.metaKey || sec.key]) || null;
     const basisColor = { measured:'var(--green)', derived:'var(--cyan)', reference:'var(--blue)',
                          modeled:'var(--amber)', mixed:'var(--purple)' };
     const basisBadge = meta
