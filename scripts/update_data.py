@@ -312,9 +312,12 @@ def fetch_azure_pricing():
     base = "https://prices.azure.com/api/retail/prices"
     result = {}
     for prefix, must_contain, gpu_id, gpus_per_vm in sku_queries:
+        # No priceType filter: 'Consumption' would exclude the Reservation rows
+        # we need for the committed rates. They are separated below by
+        # reservationTerm.
         filt = (
             f"serviceName eq 'Virtual Machines' and armRegionName eq 'eastus' "
-            f"and priceType eq 'Consumption' and startswith(skuName, '{prefix}')"
+            f"and startswith(skuName, '{prefix}')"
         )
         try:
             # The retail API throttles bursts; a single 429 used to silently
@@ -332,25 +335,61 @@ def fetch_azure_pricing():
             if body is None:
                 continue
             items = json.loads(body).get("Items", [])
-            prices = []
+            # Azure prices each SKU three ways in one response: pay-as-you-go
+            # (no reservationTerm), Spot / Low Priority (flagged in meterName),
+            # and reservations (reservationTerm "1 Year" / "3 Years", where the
+            # value is the *whole-term* total despite unitOfMeasure saying
+            # "1 Hour"). Split them out instead of taking one median across the
+            # lot, which is how a reserved total could land in an on-demand row.
+            on_demand, spot, res = [], [], {1: [], 3: []}
+            on_demand_sku = None
             for it in items:
                 sku = it.get("skuName", "")
                 meter = (it.get("meterName") or "").lower()
-                if "spot" in meter or "low priority" in meter:
-                    continue
                 if must_contain and must_contain not in sku:
+                    continue
+                up = it.get("retailPrice") or it.get("unitPrice")
+                if not up or up <= 0:
+                    continue
+                up = float(up)
+                price_type = (it.get("priceType") or "").strip()
+                term = (it.get("reservationTerm") or "").strip()
+                if term:
+                    years = {"1 Year": 1, "3 Years": 3}.get(term)
+                    if years:
+                        res[years].append(up / (years * 8760) / gpus_per_vm)
+                    continue
+                # Everything below is a pay-as-you-go rate. DevTest and other
+                # price types are not comparable to published on-demand.
+                if price_type and price_type != "Consumption":
+                    continue
+                if "low priority" in meter:
+                    continue
+                if "spot" in meter:
+                    spot.append(up / gpus_per_vm)
                     continue
                 if (it.get("unitOfMeasure") or "").lower() not in ("1 hour", "1hour"):
                     continue
-                up = it.get("unitPrice") or it.get("retailPrice")
-                if up and up > 0:
-                    prices.append(float(up) / gpus_per_vm)
-            if prices:
-                prices.sort()
-                # Pick the median to avoid promo/reserved outliers
-                median = prices[len(prices) // 2]
-                if gpu_id not in result or median < result[gpu_id]:
-                    result[gpu_id] = median
+                on_demand.append(up / gpus_per_vm)
+                on_demand_sku = on_demand_sku or sku
+
+            if not on_demand:
+                continue
+            on_demand.sort()
+            rates = {"on_demand": round(on_demand[len(on_demand) // 2], 4)}
+            if on_demand_sku:
+                rates["instance"] = on_demand_sku
+            # A "spot" meter that is not below on-demand is a mislabelled row,
+            # not a bargain. Drop it rather than publish a 0% discount.
+            cheap_spot = [s for s in spot if s < rates["on_demand"]]
+            if cheap_spot:
+                rates["spot"] = round(min(cheap_spot), 4)
+            for years, key in ((1, "reserved_1yr"), (3, "reserved_3yr")):
+                if res[years]:
+                    rates[key] = round(min(res[years]), 4)
+            prev = result.get(gpu_id)
+            if not prev or rates["on_demand"] < prev["on_demand"]:
+                result[gpu_id] = rates
         except Exception:
             continue
     if not result:
@@ -532,6 +571,7 @@ def fetch_aws_pricing():
 
     products = doc.get("products", {})
     terms = doc.get("terms", {}).get("OnDemand", {})
+    reserved_terms = doc.get("terms", {}).get("Reserved", {})
 
     # instance_type -> (internal GPU id, GPUs per VM)
     instance_map = {
@@ -561,6 +601,40 @@ def fetch_aws_pricing():
             if it in instance_map:
                 sku_to_instance[sku] = it
 
+    def reserved_rate(sku, years):
+        """Effective $/hr for a Standard RI over `years`, No Upfront preferred.
+
+        Standard (not Convertible) No Upfront is the closest thing AWS has to a
+        like-for-like committed rate: no capital outlay, so it compares
+        directly against on-demand. Fall back to the other purchase options,
+        amortising any upfront over the term.
+        """
+        want = f"{years}yr"
+        best = None
+        for _oid, term in (reserved_terms.get(sku) or {}).items():
+            ta = term.get("termAttributes", {})
+            if ta.get("LeaseContractLength") != want:
+                continue
+            if ta.get("OfferingClass") != "standard":
+                continue
+            upfront = hourly = 0.0
+            for _pid, pd in (term.get("priceDimensions") or {}).items():
+                try:
+                    val = float(pd.get("pricePerUnit", {}).get("USD", 0))
+                except (TypeError, ValueError):
+                    continue
+                if pd.get("unit") == "Quantity":
+                    upfront = val
+                elif pd.get("unit") == "Hrs":
+                    hourly = val
+            effective = hourly + upfront / (years * 8760)
+            if effective <= 0:
+                continue
+            prefer = ta.get("PurchaseOption") == "No Upfront"
+            if best is None or (prefer and not best[1]) or (prefer == best[1] and effective < best[0]):
+                best = (effective, prefer)
+        return best[0] if best else None
+
     result = {}
     for sku, inst_type in sku_to_instance.items():
         offer = terms.get(sku, {})
@@ -577,9 +651,16 @@ def fetch_aws_pricing():
                 if p <= 0:
                     continue
                 gpu_id, gpus = instance_map[inst_type]
-                per_gpu = p / gpus
-                if gpu_id not in result or per_gpu < result[gpu_id]:
-                    result[gpu_id] = per_gpu
+                rates = {"on_demand": round(p / gpus, 4), "instance": inst_type}
+                for years, key in ((1, "reserved_1yr"), (3, "reserved_3yr")):
+                    rr = reserved_rate(sku, years)
+                    # Newer instance families (p6-*) have no RI terms yet. No
+                    # rate is the honest answer; a discount guess is not.
+                    if rr:
+                        rates[key] = round(rr / gpus, 4)
+                prev = result.get(gpu_id)
+                if not prev or rates["on_demand"] < prev["on_demand"]:
+                    result[gpu_id] = rates
 
     if not result:
         raise RuntimeError("AWS: no prices parsed from index.json")
@@ -588,38 +669,95 @@ def fetch_aws_pricing():
 
 
 def fetch_gcp_pricing():
-    """Scrape GCP per-instance hourly prices, divide by GPU count.
+    """GCP accelerator-optimized rates, parsed by column.
 
-    GCP page lists machine types like 'a3-highgpu-8g' followed by an on-demand
-    hourly price. The first dollar amount after each machine type is the rate.
+    The table carries several rates per machine type, and its columns are:
+
+        Machine type | GPU | Components | Price | DWS Flex-start | DWS Calendar
+        | Current Spot | Compute Resource CUDs - 1 Year | ... - 3 Year
+
+    The old parser took the first dollar amount after the machine type. That
+    silently read the wrong column whenever "Price" was N/A: a4-highgpu-8g has
+    no published on-demand rate, so B200 was published at $8.055/GPU-hr, which
+    is really the DWS Flex-start price. Match the header row, then read cells
+    by index -- and leave a GPU out entirely when its on-demand cell is N/A
+    rather than substituting the next number along.
+
+    Returns {gpu_id: {"on_demand": x, "spot": y, "reserved_1yr": z,
+    "reserved_3yr": w}} with missing rates omitted.
     """
     log_info("Fetching GCP accelerator-optimized pricing...")
     url = "https://cloud.google.com/products/compute/pricing/accelerator-optimized"
     status, body = http_get(url, headers={"User-Agent": "Mozilla/5.0 (pricing-bot)"}, timeout=30)
     if status != 200:
         raise RuntimeError(f"GCP returned HTTP {status}")
-    # (machine_type, gpu_id, gpus_per_vm)
-    rows = [
-        ("a3-highgpu-8g", "H100-SXM", 8),
-        ("a3-ultragpu-8g", "H200", 8),
-        ("a4-highgpu-8g", "B200", 8),
-        ("a2-ultragpu-8g", "A100-80GB", 8),
-        ("a2-highgpu-8g", "A100-40GB", 8),
-        ("g2-standard-96", "L4", 8),
-    ]
+
+    # machine_type -> (gpu_id, gpus_per_vm)
+    wanted = {
+        "a3-highgpu-8g": ("H100-SXM", 8),
+        "a3-ultragpu-8g": ("H200", 8),
+        "a4-highgpu-8g": ("B200", 8),
+        "a2-ultragpu-8g": ("A100-80GB", 8),
+        "a2-highgpu-8g": ("A100-40GB", 8),
+        "g2-standard-96": ("L4", 8),
+    }
+    # our key -> substring of the column header
+    COLUMNS = {
+        "on_demand": "price (usd)",
+        "spot": "current spot",
+        "reserved_1yr": "cuds - 1 year",
+        "reserved_3yr": "cuds - 3 year",
+    }
+
+    def cells(row_html):
+        raw = _re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", row_html, _re.IGNORECASE | _re.DOTALL)
+        return [_re.sub(r"\s+", " ", _html.unescape(_re.sub(r"<[^>]+>", " ", c))).strip() for c in raw]
+
+    def money(cell):
+        if not cell or "n/a" in cell.lower():
+            return None
+        m = _re.search(r"\$\s*([\d,]+\.?\d*)", cell)
+        return float(m.group(1).replace(",", "")) if m else None
+
     result = {}
-    for mt, gpu_id, gpus in rows:
-        m = _re.search(_re.escape(mt) + r"[^$]*?\$\s*([\d,]+\.\d+)", body)
-        if not m:
+    for table in _re.findall(r"<table[^>]*>.*?</table>", body, _re.IGNORECASE | _re.DOTALL):
+        rows = _re.findall(r"<tr[^>]*>(.*?)</tr>", table, _re.IGNORECASE | _re.DOTALL)
+        if not rows:
             continue
-        try:
-            vm_price = float(m.group(1).replace(",", ""))
-            per_gpu = vm_price / gpus
-            if 0.2 <= per_gpu <= 100:
-                if gpu_id not in result or per_gpu < result[gpu_id]:
-                    result[gpu_id] = per_gpu
-        except ValueError:
+        header = [c.lower() for c in cells(rows[0])]
+        idx = {}
+        for key, needle in COLUMNS.items():
+            for i, col in enumerate(header):
+                if needle in col:
+                    idx[key] = i
+                    break
+        if "on_demand" not in idx:
             continue
+        for row in rows[1:]:
+            cs = cells(row)
+            if not cs:
+                continue
+            mt = cs[0].strip()
+            if mt not in wanted:
+                continue
+            gpu_id, gpus = wanted[mt]
+            rates = {"instance": mt}
+            for key, i in idx.items():
+                val = money(cs[i]) if i < len(cs) else None
+                if val is None:
+                    continue
+                per_gpu = val / gpus
+                if 0.01 <= per_gpu <= 200:
+                    rates[key] = round(per_gpu, 4)
+            # No published on-demand rate means no listing. The other columns
+            # are different products (Flex-start, Calendar), not a substitute.
+            if "on_demand" not in rates:
+                log_info(f"GCP: {mt} has no on-demand rate published, skipping")
+                continue
+            prev = result.get(gpu_id)
+            if not prev or rates["on_demand"] < prev["on_demand"]:
+                result[gpu_id] = rates
+
     if not result:
         raise RuntimeError("GCP: no prices parsed from HTML")
     log_ok("GCP", f"{len(result)} GPU types")
@@ -807,8 +945,19 @@ def get_hardcoded_fallback_prices():
     }
 
 
+# Committed / interruptible rates a fetcher may return alongside on-demand.
+# Absent means the provider does not publish one, which is a fact worth
+# showing; it is never filled in with a modelled discount.
+_RATE_KEYS = (("spot", "spot_hr"), ("reserved_1yr", "reserved_1yr_hr"),
+              ("reserved_3yr", "reserved_3yr_hr"))
+
+
 def _apply_scraped_prices(providers, provider_key, prices, source_tag, tracked_specs, now):
-    """Merge a {gpu_id: per_gpu_hr} dict into providers[provider_key].gpus."""
+    """Merge scraped prices into providers[provider_key].gpus.
+
+    `prices` maps gpu_id to either a bare on-demand float (older fetchers) or a
+    {"on_demand": x, "spot": y, "reserved_1yr": z, "reserved_3yr": w} dict.
+    """
     if not prices:
         return
     if provider_key not in providers:
@@ -819,13 +968,25 @@ def _apply_scraped_prices(providers, provider_key, prices, source_tag, tracked_s
         }
     prov = providers[provider_key]
     prov_gpus = prov.setdefault("gpus", {})
-    for gpu_id, price in prices.items():
+    for gpu_id, value in prices.items():
         if gpu_id not in tracked_specs:
+            continue
+        rates = value if isinstance(value, dict) else {"on_demand": value}
+        if rates.get("on_demand") is None:
             continue
         if gpu_id not in prov_gpus:
             prov_gpus[gpu_id] = {}
         entry = prov_gpus[gpu_id]
-        entry["price_per_gpu_hr"] = round(float(price), 3)
+        entry["price_per_gpu_hr"] = round(float(rates["on_demand"]), 3)
+        if rates.get("instance"):
+            entry["instance"] = rates["instance"]
+        for src_key, out_key in _RATE_KEYS:
+            val = rates.get(src_key)
+            if val is not None:
+                entry[out_key] = round(float(val), 3)
+            else:
+                # Stop publishing last run's rate if the provider withdrew it.
+                entry.pop(out_key, None)
         entry["source"] = source_tag
         entry["last_updated"] = now
         entry["last_verified"] = now
@@ -976,6 +1137,34 @@ def merge_live_pricing_into_data(
     # freshness. Fallback-only providers (e.g. FluidStack) had none at all.
     for prov in providers.values():
         prov.setdefault("last_updated", now)
+        # Retire the discount constants. reserved_1yr_discount /
+        # reserved_3yr_discount / spot_discount were seeded once and never
+        # fetched -- grep showed them being read in four places and written in
+        # none -- yet they priced every reserved and spot figure on the site,
+        # including the TCO break-even a buyer commits real money against.
+        # Committed and interruptible rates now come from the provider's own
+        # price list, per GPU, and are simply absent where none is published.
+        for stale_key in ("reserved_1yr_discount", "reserved_3yr_discount", "spot_discount"):
+            prov.pop(stale_key, None)
+
+    # Record which providers actually publish term pricing, so the UI can say
+    # "3 of 8" rather than implying the whole market offers a commitment.
+    publishes = {"reserved_1yr_hr": [], "reserved_3yr_hr": [], "spot_hr": []}
+    for prov_key, prov in providers.items():
+        for key, names in publishes.items():
+            if any(g.get(key) for g in (prov.get("gpus") or {}).values()):
+                names.append(prov_key)
+    data["rate_coverage"] = {
+        "providers_total": len(providers),
+        "reserved_1yr": sorted(publishes["reserved_1yr_hr"]),
+        "reserved_3yr": sorted(publishes["reserved_3yr_hr"]),
+        "spot": sorted(publishes["spot_hr"]),
+        "note": (
+            "Committed and spot rates are read from each provider's published "
+            "price list. Providers absent from a list do not publish that rate "
+            "publicly -- it is not shown as a discount off on-demand."
+        ),
+    }
 
     data["providers"] = providers
     return data
@@ -1094,32 +1283,34 @@ def update_spot(data):
     providers = data.get("providers", {})
     spot = data.get("spot", {})
 
-    # Collect per-GPU on-demand prices and compute spot/reserved estimates
+    # Collect per-GPU rates. Committed and spot rates come from the provider's
+    # own price list where it publishes one -- see _RATE_KEYS. They used to be
+    # derived by applying a per-provider discount constant to on-demand, but
+    # those constants were carried forward from the original seed file and
+    # nothing ever verified them: they were only ever read, never fetched. The
+    # real spread is wider and less uniform than any constant (Azure spot runs
+    # ~80% below on-demand, not the 40% that was assumed), and newer parts have
+    # no committed rate at all.
     gpu_prices = {}
     for prov_key, prov in providers.items():
-        spot_disc = prov.get("spot_discount", 0)
-        res1_disc = prov.get("reserved_1yr_discount", 0)
-        res3_disc = prov.get("reserved_3yr_discount", 0)
         for gpu_id, gpu_info in (prov.get("gpus") or {}).items():
             price = gpu_info.get("price_per_gpu_hr")
             if price is not None and price > 0:
                 gpu_prices.setdefault(gpu_id, []).append({
                     "price": price,
-                    "spot_disc": spot_disc,
-                    "res1_disc": res1_disc,
-                    "res3_disc": res3_disc,
+                    "spot": gpu_info.get("spot_hr"),
+                    "res1": gpu_info.get("reserved_1yr_hr"),
+                    "res3": gpu_info.get("reserved_3yr_hr"),
                 })
 
     for gpu_id, entries in gpu_prices.items():
         on_demand = [e["price"] for e in entries]
-        # Price reserved across the *same* provider set as on-demand. Skipping
-        # providers with no reserved discount compared different baskets, so a
-        # GPU whose cheapest provider offers no commitment discount could report
-        # reserved as more expensive than on-demand (RTX-5090: $0.59 1yr vs
-        # $0.51 on-demand). A 0% discount just means that provider charges the
-        # same rate either way, which is what the reserved figure should show.
-        reserved_1yr = [e["price"] * (1 - e["res1_disc"]) for e in entries]
-        reserved_3yr = [e["price"] * (1 - e["res3_disc"]) for e in entries]
+        # Only providers that publish a committed rate contribute one. A GPU
+        # nobody publishes a term price for reports none, rather than a number
+        # implying a discount that is not on offer anywhere.
+        reserved_1yr = [e["res1"] for e in entries if e["res1"]]
+        reserved_3yr = [e["res3"] for e in entries if e["res3"]]
+        spot_rates = [e["spot"] for e in entries if e["spot"]]
 
         existing = spot.get(gpu_id, {})
         avg_od = round(sum(on_demand) / len(on_demand), 2)
@@ -1143,29 +1334,56 @@ def update_spot(data):
         # live in the prediction_markets section, which is an actual venue.
         # on_demand_low/avg/high already say what the listings do.
 
-        # Savings percentages were frozen defaults (30/50) regardless of the
-        # reserved prices shown next to them; derive them from the real numbers.
-        avg_res1 = sum(reserved_1yr) / len(reserved_1yr) if reserved_1yr else None
-        avg_res3 = sum(reserved_3yr) / len(reserved_3yr) if reserved_3yr else None
-        res1_savings = round((1 - avg_res1 / avg_od) * 100) if avg_res1 and avg_od else existing.get("res1_savings_pct", 30)
-        res3_savings = round((1 - avg_res3 / avg_od) * 100) if avg_res3 and avg_od else existing.get("res3_savings_pct", 50)
+        def band(key):
+            """Low / avg / high for a rate, plus the saving against the SAME
+            providers' on-demand prices.
 
-        spot[gpu_id] = {
+            Comparing a committed average taken over three providers against an
+            on-demand average taken over eight measures basket composition, not
+            the discount. Match them.
+            """
+            pairs = [(e[key], e["price"]) for e in entries if e[key]]
+            if not pairs:
+                return None
+            rates = [r for r, _ in pairs]
+            base = sum(od for _, od in pairs)
+            return {
+                "low": round(min(rates), 2),
+                "avg": round(sum(rates) / len(rates), 2),
+                "high": round(max(rates), 2),
+                "savings_pct": round((1 - sum(rates) / base) * 100) if base else None,
+                # On-demand over the SAME providers. Without it the committed
+                # average looks dearer than on-demand whenever the cheap
+                # marketplaces (which publish no term rate) drag the all-provider
+                # on-demand average down -- H100-SXM reads $7.38 committed
+                # against a $6.16 blended on-demand, which is a basket artefact,
+                # not a price. Anything comparing levels must use this.
+                "vs_ondemand": round(base / len(pairs), 2),
+                "providers": len(pairs),
+            }
+
+        res1, res3, sp = band("res1"), band("res3"), band("spot")
+        record = {
             "on_demand_low": round(min(on_demand), 2),
             "on_demand_avg": avg_od,
             "on_demand_high": round(max(on_demand), 2),
-            "reserved_1yr_low": round(min(reserved_1yr), 2) if reserved_1yr else existing.get("reserved_1yr_low"),
-            "reserved_1yr_avg": round(sum(reserved_1yr) / len(reserved_1yr), 2) if reserved_1yr else existing.get("reserved_1yr_avg"),
-            "reserved_1yr_high": round(max(reserved_1yr), 2) if reserved_1yr else existing.get("reserved_1yr_high"),
-            "reserved_3yr_low": round(min(reserved_3yr), 2) if reserved_3yr else existing.get("reserved_3yr_low"),
-            "reserved_3yr_avg": round(sum(reserved_3yr) / len(reserved_3yr), 2) if reserved_3yr else existing.get("reserved_3yr_avg"),
-            "reserved_3yr_high": round(max(reserved_3yr), 2) if reserved_3yr else existing.get("reserved_3yr_high"),
-            "res1_savings_pct": res1_savings,
-            "res3_savings_pct": res3_savings,
             "num_providers": len(entries),
             "quarterly_trend": trend,
             "trend_quarter": quarter,
         }
+        # Absent means nobody publishes that rate for this GPU. Previously these
+        # fell back to `existing`, which quietly resurrected the old modelled
+        # numbers run after run.
+        for prefix, vals in (("reserved_1yr", res1), ("reserved_3yr", res3), ("spot", sp)):
+            if not vals:
+                continue
+            record[f"{prefix}_low"] = vals["low"]
+            record[f"{prefix}_avg"] = vals["avg"]
+            record[f"{prefix}_high"] = vals["high"]
+            record[f"{prefix}_savings_pct"] = vals["savings_pct"]
+            record[f"{prefix}_vs_ondemand"] = vals["vs_ondemand"]
+            record[f"{prefix}_providers"] = vals["providers"]
+        spot[gpu_id] = record
 
     # Drop GPUs no tracked provider prices any more, rather than leaving the
     # last known quote sitting there looking current.
@@ -1226,13 +1444,20 @@ def refresh_workload_recs(data):
 
 
 def _avg_spot_rate(providers, gpu_id):
-    """Average spot-discounted rate for a GPU across the providers listing it."""
-    rates = []
-    for prov in (providers or {}).values():
-        info = (prov.get("gpus") or {}).get(gpu_id) or {}
-        price = info.get("price_per_gpu_hr")
-        if price and price > 0:
-            rates.append(price * (1 - prov.get("spot_discount", 0)))
+    """Average published spot rate for a GPU, or None if nobody publishes one.
+
+    This used to apply a per-provider spot_discount constant to the on-demand
+    price, which produced a spot rate for every GPU at every provider whether
+    or not one existed. Only Azure and GCP publish interruptible rates through
+    an API; AWS spot needs a signed EC2 call and is not in the public bulk
+    pricing file, so AWS contributes nothing here.
+    """
+    rates = [
+        info["spot_hr"]
+        for prov in (providers or {}).values()
+        for gid, info in (prov.get("gpus") or {}).items()
+        if gid == gpu_id and info.get("spot_hr")
+    ]
     return round(sum(rates) / len(rates), 2) if rates else None
 
 

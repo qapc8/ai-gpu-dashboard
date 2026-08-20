@@ -1139,7 +1139,6 @@ loadExternalData();
   <div class="nav-item" data-tab="pricing">Pricing</div>
   <div class="nav-item" data-tab="trends">Trends & Forecast</div>
   <div class="nav-item" data-tab="markets">Prediction Markets</div>
-  <div class="nav-item" data-tab="providers">Providers</div>
   <div class="nav-item" data-tab="regional">Regional</div>
   <div class="nav-item" data-tab="inference">Inference</div>
   <div class="nav-item" data-tab="tco">TCO</div>
@@ -1173,22 +1172,9 @@ loadExternalData();
     </div>
   </div>
 
-  <!-- Price Trends -->
-  <div class="card mb">
-    <div class="card-hd"><span class="card-hd-title">GPU Price Change — % per Month</span></div>
-    <div class="card-bd">
-      <div class="chart-wrap" style="height:280px;"><canvas id="chartOverviewTrends"></canvas></div>
-      <div class="ai-commentary" id="priceAiCommentary">
-        <div class="ai-commentary-header">
-          <span class="ai-commentary-icon">&#9733;</span>
-          <span class="ai-commentary-label">AI Price Analysis</span>
-        </div>
-        <div class="ai-commentary-body" id="priceAiCommentaryBody">
-          <div class="ai-commentary-loading"><span class="ai-commentary-dot"></span> Analyzing price dynamics...</div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- The month-on-month chart that sat here duplicated Trends, which already
+       carries momentum, history and decay off the same 12 monthly points. The
+       AI price read moved with it. -->
 
   <!-- Sentiment -->
   <div class="card mb">
@@ -1222,24 +1208,34 @@ loadExternalData();
     </div>
     <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="priceMatrixTable"></table></div>
   </div>
-  <div class="grid g-2 mb">
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Quarterly On-Demand Trend</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartSpotMomentum"></canvas></div></div>
+  <div class="card mb">
+    <div class="card-hd">
+      <span class="card-hd-title">Performance per Dollar (FP16 TFLOPS/$)</span>
+      <span class="card-hd-sub">at each GPU's cheapest listed rate</span>
     </div>
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Performance per Dollar (FP16 TFLOPS/$)</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartFlopsPerDollar"></canvas></div></div>
-    </div>
+    <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartFlopsPerDollar"></canvas></div></div>
   </div>
-  <div class="grid g-2">
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">On-Demand vs Reserved ($/hr)</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartPriceDist"></canvas></div></div>
+
+  <!-- Folded in from the old Providers tab: same `providers` data, per-GPU. -->
+  <div class="card mb">
+    <div class="card-hd" style="flex-wrap:wrap;gap:10px;">
+      <span class="card-hd-title" id="providerChartTitle">Provider Detail</span>
+      <select class="ctrl-select" id="providerGpuSelect" onchange="updateProviderView()"></select>
+      <span class="dim" style="font-size:10px;font-family:var(--mono);margin-left:auto;">every provider listing this GPU, cheapest first</span>
     </div>
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Reserved Savings vs On-Demand (%)</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartSpotDiscount"></canvas></div></div>
+    <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartProviders"></canvas></div></div>
+    <div class="card-bd-flush"><table class="dt" id="providerCloudTable"></table></div>
+    <div class="card-bd-flush" style="border-top:1px solid var(--border-0);"><table class="dt" id="providerMktTable"></table></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-hd-title">Commitment &amp; Spot Discounts</span>
+      <span class="card-hd-sub" id="commitRateSub">read from provider price lists — absent where none is published</span>
+    </div>
+    <div class="card-bd">
+      <div class="chart-wrap" style="height:320px;"><canvas id="chartPriceDist"></canvas></div>
+      <div id="commitRateNote" class="dim" style="padding:10px 4px 0;font-size:11px;line-height:1.6;"></div>
     </div>
   </div>
 </div>
@@ -1256,7 +1252,18 @@ loadExternalData();
       <select class="ctrl-select trend-gpu-sel" id="trendGpuSelect" onchange="updateTrendChart()"></select>
       <span class="card-hd-title" style="opacity:0.6;font-size:11px;">Historical Prices</span>
     </div>
-    <div class="card-bd"><div class="chart-wrap" style="height:360px;"><canvas id="chartTrends"></canvas></div></div>
+    <div class="card-bd">
+      <div class="chart-wrap" style="height:360px;"><canvas id="chartTrends"></canvas></div>
+      <div class="ai-commentary" id="priceAiCommentary">
+        <div class="ai-commentary-header">
+          <span class="ai-commentary-icon">&#9733;</span>
+          <span class="ai-commentary-label">AI Price Analysis</span>
+        </div>
+        <div class="ai-commentary-body" id="priceAiCommentaryBody">
+          <div class="ai-commentary-loading"><span class="ai-commentary-dot"></span> Analyzing price dynamics...</div>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="card mb">
     <div class="card-hd" style="flex-wrap:wrap;gap:8px;">
@@ -1332,32 +1339,6 @@ loadExternalData();
       <div class="card-hd"><span class="card-hd-title">How to Read This</span></div>
       <div class="card-bd" id="pmMethod" style="font-size:11.5px;line-height:1.65;"></div>
     </div>
-  </div>
-</div>
-
-<!-- ── PROVIDERS ── -->
-<div class="tab-panel" id="tab-providers">
-  <div style="margin-bottom:14px;display:flex;gap:10px;align-items:center;">
-    <span class="dim" style="font-size:11px;">Select GPU:</span>
-    <select class="ctrl-select" id="providerGpuSelect" onchange="updateProviderView()"></select>
-  </div>
-  <div class="grid g-2 mb">
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title" id="providerChartTitle">Price Comparison</span><span class="card-hd-badge" style="background:var(--cyan-dim,rgba(34,211,238,0.12));color:var(--cyan,#22d3ee);">Cloud</span><span class="card-hd-badge" style="background:var(--amber-dim);color:var(--amber);margin-left:4px;">Marketplace</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:340px;"><canvas id="chartProviders"></canvas></div></div>
-    </div>
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">On-Demand vs Reserved vs Spot</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:340px;"><canvas id="chartPriceTypes"></canvas></div></div>
-    </div>
-  </div>
-  <div class="card mb">
-    <div class="card-hd"><span class="card-hd-title">Cloud Providers</span><span class="card-hd-badge" style="background:var(--blue-dim);color:var(--blue);">Own Infrastructure</span></div>
-    <div class="card-bd-flush"><table class="dt" id="providerCloudTable"></table></div>
-  </div>
-  <div class="card">
-    <div class="card-hd"><span class="card-hd-title">GPU Marketplaces</span><span class="card-hd-badge" style="background:var(--amber-dim);color:var(--amber);">Aggregated / Community Hardware</span></div>
-    <div class="card-bd-flush"><table class="dt" id="providerMktTable"></table></div>
   </div>
 </div>
 
@@ -1488,17 +1469,13 @@ loadExternalData();
       </div>
     </div>
   </div>
-  <div class="grid g-2 mb">
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Cost Breakdown Waterfall — $/hr</span>
-        <select class="ctrl-select" id="tcoWaterfallGpu" onchange="renderTcoWaterfall()" style="font-size:10px;min-width:120px;"></select>
-      </div>
-      <div class="card-bd"><div class="chart-wrap" style="height:320px;" id="tcoWaterfallWrap"><canvas></canvas></div></div>
+  <!-- The perf/$ scatter that sat beside this was the third view of FP16
+       TFLOPS per dollar (Pricing has the chart, the grid has the column). -->
+  <div class="card mb">
+    <div class="card-hd"><span class="card-hd-title">Cost Breakdown Waterfall — $/hr</span>
+      <select class="ctrl-select" id="tcoWaterfallGpu" onchange="renderTcoWaterfall()" style="font-size:10px;min-width:120px;"></select>
     </div>
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Perf/$ Efficiency — FP16 TFLOPS vs Cost</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:320px;"><canvas id="chartTcoScatter"></canvas></div></div>
-    </div>
+    <div class="card-bd"><div class="chart-wrap" style="height:320px;" id="tcoWaterfallWrap"><canvas></canvas></div></div>
   </div>
   <div class="card mb">
     <div class="card-hd"><span class="card-hd-title">TCO Comparison by GPU</span></div>
@@ -2110,46 +2087,9 @@ function renderOverview() {
   const m = DATA.matrix;
   if (!m || !m.length) return;
   renderGpuCarousel();
-  renderOverviewTrendChart();
   fetchPriceAiCommentary();
 }
 
-function renderOverviewTrendChart() {
-  const hist = DATA.historical;
-  const gpus = ['B300','B200','GB200','H200','H100-SXM','A100-80GB','MI300X'];
-  const ap = new Set();
-  gpus.forEach(g => { if(hist[g]) Object.keys(hist[g]).forEach(p => ap.add(p)); });
-  const periods = [...ap].sort().slice(-13); // 13 to get 12 month-over-month changes
-  const pctLabels = periods.slice(1); // labels for the MoM changes
-
-  const ds = gpus.map((g,i) => {
-    const pctData = [];
-    for(let j=1; j<periods.length; j++) {
-      const prev = hist[g]?.[periods[j-1]]?.avg;
-      const cur = hist[g]?.[periods[j]]?.avg;
-      pctData.push(prev && cur ? +((cur-prev)/prev*100).toFixed(2) : null);
-    }
-    return {
-      label:g, data:pctData,
-      backgroundColor:CL[i%CL.length]+'CC',
-      borderColor:CL[i%CL.length],
-      borderWidth:1, borderRadius:3,
-    };
-  });
-  if(charts.ot) charts.ot.destroy();
-  charts.ot = new Chart(document.getElementById('chartOverviewTrends'),{
-    type:'bar', data:{labels:pctLabels, datasets:ds},
-    options:{responsive:true, maintainAspectRatio:false,
-      plugins:{legend:{position:'top'},
-        tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+(ctx.parsed.y>0?'+':'')+ctx.parsed.y+'%'}}},
-      scales:{
-        y:{title:{display:true,text:'% Change MoM'},grid:{color:'rgba(255,255,255,0.04)'},
-          ticks:{callback:v=>(v>0?'+':'')+v+'%'}},
-        x:{grid:{display:false}}
-      }
-    }
-  });
-}
 
 // ── AI PRICE COMMENTARY ──
 let _priceCommentaryCache = null;
@@ -2327,26 +2267,6 @@ function renderWorkloadMatcher() {
 }
 
 // ── SPOT VS RESERVED SAVINGS ──
-function renderSpotSavingsChart() {
-  const spot = DATA.spot||{};
-  const gpus = Object.keys(spot).sort((a,b) => (spot[b].res1_savings_pct||0) - (spot[a].res1_savings_pct||0)).slice(0, 8);
-  if(!gpus.length) return;
-  if(charts.spotSav) charts.spotSav.destroy();
-  charts.spotSav = new Chart(document.getElementById('chartSpotSavings'), {
-    type: 'bar',
-    data: {
-      labels: gpus,
-      datasets: [
-        {label:'1yr Reserved Savings', data:gpus.map(g=>spot[g].res1_savings_pct||0), backgroundColor:C.cyan+'70', borderColor:C.cyan, borderWidth:1, borderRadius:3},
-        {label:'3yr Reserved Savings', data:gpus.map(g=>spot[g].res3_savings_pct||0), backgroundColor:C.purple+'70', borderColor:C.purple, borderWidth:1, borderRadius:3}
-      ]
-    },
-    options:{responsive:true, maintainAspectRatio:false,
-      plugins:{legend:{position:'top'}},
-      scales:{y:{title:{display:true,text:'% Savings'},grid:{color:'rgba(255,255,255,0.04)'}},x:{grid:{display:false},ticks:{maxRotation:45}}}
-    }
-  });
-}
 
 // ════════════════════════════════════════════════════════════════
 // PRICE MATRIX
@@ -2440,35 +2360,30 @@ function renderPriceMatrix() {
     const gbd = sp0.vram_gb && r.cheapest_price ? sp0.vram_gb/r.cheapest_price : null;
     h += `<td class="r" style="font-family:var(--mono);color:var(--purple);">${tfd?tfd.toFixed(0):'—'}</td>`;
     h += `<td class="r" style="font-family:var(--mono);color:var(--purple);">${gbd?gbd.toFixed(0):'—'}</td>`;
-    // Reserved columns
-    const sp = spot[gpuId];
-    if (sp) {
-      h += `<td class="r" style="color:var(--cyan);">$${sp.reserved_1yr_avg.toFixed(2)}</td>`;
-      h += `<td class="r c-green">$${sp.reserved_3yr_avg.toFixed(2)}</td>`;
-    } else {
-      h += '<td class="pg-cell-na">—</td><td class="pg-cell-na">—</td>';
-    }
+    // Committed columns. Blank when no provider publishes a term rate for this
+    // GPU — newer parts (B200, B300) have none yet.
+    const sp = spot[gpuId] || {};
+    // Only the clouds publish term rates, so this average is over a different
+    // (dearer) set of providers than "Best $/hr" beside it. Spell that out on
+    // hover rather than let the two columns be read as comparable.
+    const cell = (prefix, cls) => {
+      const v = sp[prefix + '_avg'];
+      if (v == null) return '<td class="pg-cell-na" title="No provider publishes a committed rate for this GPU">—</td>';
+      const n = sp[prefix + '_providers'], base = sp[prefix + '_vs_ondemand'], pct = sp[prefix + '_savings_pct'];
+      const tip = `${pct}% below on-demand at the ${n} provider${n === 1 ? '' : 's'} publishing this term `
+        + `($${v.toFixed(2)} vs $${base != null ? base.toFixed(2) : '?'}). Not comparable to Best $/hr, which spans every provider.`;
+      return `<td class="r ${cls}" title="${tip}">$${v.toFixed(2)}<span class="dim" style="font-size:9px;"> −${pct}%</span></td>`;
+    };
+    h += cell('reserved_1yr', 'c-cyan') + cell('reserved_3yr', 'c-green');
     h += '</tr>';
   });
   h += '</tbody>';
   document.getElementById('priceMatrixTable').innerHTML = h;
 
-  // ── Chart 1: Quarterly On-Demand Trend (line) ──
-  if (charts.sm) charts.sm.destroy();
-  if (spotGpus.length) {
-    const quarters = ['Q3 2025','Q4 2025','Q1 2026','Q2 2026'];
-    charts.sm = new Chart(document.getElementById('chartSpotMomentum'),{type:'line',
-      data:{labels:quarters,datasets:spotGpus.map((g,i)=>({
-        label:g,data:spot[g].quarterly_trend||[],borderColor:CL[i%CL.length],backgroundColor:CL[i%CL.length]+'15',
-        tension:0.3,pointRadius:3,borderWidth:2
-      }))},
-      options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10}}}},
-        scales:{y:{title:{display:true,text:'Avg On-Demand $/hr'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
-    });
-  }
+  // The quarterly on-demand line that sat here plotted four points off the
+  // same `historical` series the Trends tab already renders three ways.
 
-  // ── Chart 2: TFLOPS per Dollar (horizontal bar) ──
+  // ── TFLOPS per Dollar (horizontal bar) ──
   if (charts.fpd) charts.fpd.destroy();
   charts.fpd = new Chart(document.getElementById('chartFlopsPerDollar'),{type:'bar',
     data:{labels:m.map(r=>r.gpu_id),datasets:[{label:'FP16 TFLOPS/$',data:m.map(r=>r.flops_per_dollar),
@@ -2477,34 +2392,87 @@ function renderPriceMatrix() {
       scales:{x:{title:{display:true,text:'TFLOPS/$'},grid:{color:'rgba(26,34,51,0.4)'}},y:{grid:{display:false}}}}
   });
 
-  // ── Chart 3: On-Demand vs Reserved grouped bar ──
-  if (charts.pd) charts.pd.destroy();
-  if (spotGpus.length) {
-    charts.pd = new Chart(document.getElementById('chartPriceDist'),{type:'bar',
-      data:{labels:spotGpus,datasets:[
-        {label:'On-Demand',data:spotVals.map(d=>d.on_demand_avg),backgroundColor:C.red+'60',borderColor:C.red,borderWidth:1},
-        {label:'1yr Reserved',data:spotVals.map(d=>d.reserved_1yr_avg),backgroundColor:C.amber+'60',borderColor:C.amber,borderWidth:1},
-        {label:'3yr Reserved',data:spotVals.map(d=>d.reserved_3yr_avg),backgroundColor:C.cyan+'70',borderColor:C.cyan,borderWidth:1}
-      ]},
-      options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10}}}},
-        scales:{y:{title:{display:true,text:'$/hr per GPU'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
-    });
-  }
+  renderCommitmentRates();
+}
 
-  // ── Chart 4: Reserved Savings % (horizontal bar) ──
-  if (charts.sd) charts.sd.destroy();
-  if (spotGpus.length) {
-    charts.sd = new Chart(document.getElementById('chartSpotDiscount'),{type:'bar',
-      data:{labels:spotGpus,datasets:[
-        {label:'1yr Reserved %',data:spotVals.map(d=>d.res1_savings_pct),backgroundColor:C.amber+'60',borderColor:C.amber,borderWidth:1},
-        {label:'3yr Reserved %',data:spotVals.map(d=>d.res3_savings_pct),backgroundColor:C.cyan+'70',borderColor:C.cyan,borderWidth:1}
-      ]},
-      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10}}}},
-        scales:{x:{title:{display:true,text:'Savings %'},grid:{color:'rgba(26,34,51,0.4)'},max:60},y:{grid:{display:false}}}}
-    });
+// One chart where there were two. The pair before it ("On-Demand vs Reserved"
+// and "Reserved Savings %") plotted the same numbers twice — and those numbers
+// were on-demand times an unverified discount constant, so every provider
+// appeared to offer a commitment. This plots only rates a provider publishes,
+// and names who does.
+function renderCommitmentRates() {
+  const el = document.getElementById('chartPriceDist');
+  const note = document.getElementById('commitRateNote');
+  const sub = document.getElementById('commitRateSub');
+  if (!el) return;
+  const spot = DATA.spot || {};
+  const gpus = Object.keys(spot).filter(g =>
+    spot[g].reserved_1yr_avg != null || spot[g].reserved_3yr_avg != null || spot[g].spot_avg != null);
+
+  if (charts.pd) { charts.pd.destroy(); charts.pd = null; }
+  if (!gpus.length) {
+    if (note) note.innerHTML = 'No provider on this dashboard publishes a committed or interruptible rate right now.';
+    return;
   }
+  gpus.sort((a, b) => (spot[b].on_demand_avg || 0) - (spot[a].on_demand_avg || 0));
+
+  // Plotted as a discount, not as levels. Only the clouds publish term rates,
+  // so a committed *level* sits above the blended on-demand average whenever
+  // the marketplaces undercut them — H100 committed $7.38 against a $6.16
+  // blend, which would read as "committing costs more" when it is really a
+  // 35% saving at the providers that offer it. Discounts are same-basket.
+  const series = [
+    ['1yr committed', 'reserved_1yr', C.amber],
+    ['3yr committed', 'reserved_3yr', C.cyan],
+    ['Spot / preemptible', 'spot', C.green],
+  ];
+  charts.pd = new Chart(el, {
+    type: 'bar',
+    data: {
+      labels: gpus,
+      datasets: series.map(([label, prefix, col]) => ({
+        label,
+        data: gpus.map(g => spot[g][prefix + '_savings_pct'] ?? null),
+        backgroundColor: col + '60', borderColor: col, borderWidth: 1, borderRadius: 3,
+        prefix,
+      })),
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } },
+        tooltip: { callbacks: {
+          label: x => {
+            const s = spot[x.label] || {}, p = x.dataset.prefix;
+            if (x.parsed.y == null) return x.dataset.label + ': not published';
+            const n = s[p + '_providers'];
+            return `${x.dataset.label}: ${x.parsed.y}% below on-demand`
+              + ` ($${(s[p + '_avg']).toFixed(2)} vs $${(s[p + '_vs_ondemand']).toFixed(2)}`
+              + ` at the same ${n} provider${n === 1 ? '' : 's'})`;
+          },
+        } },
+      },
+      scales: {
+        y: { title: { display: true, text: '% below on-demand' }, grid: { color: 'rgba(26,34,51,0.4)' },
+             ticks: { callback: v => v + '%' } },
+        x: { grid: { display: false } },
+      },
+    },
+  });
+
+  const cov = DATA.rate_coverage || {};
+  const total = cov.providers_total || Object.keys(DATA.providers || {}).length;
+  const line = (label, names) => {
+    if (!names || !names.length) return `<div>${label}: <span style="color:var(--amber)">none of ${total} providers publish one</span></div>`;
+    return `<div>${label}: <b style="color:var(--text-1)">${names.length} of ${total}</b> providers — ${names.join(', ')}</div>`;
+  };
+  if (sub) sub.textContent = 'published rates only — a gap means the provider does not offer one publicly';
+  if (note) note.innerHTML =
+    line('1yr committed', cov.reserved_1yr) +
+    line('3yr committed', cov.reserved_3yr) +
+    line('Spot / preemptible', cov.spot) +
+    '<div style="margin-top:6px;">Savings are measured against the same providers\' own on-demand rates, not against the full-market average. '
+    + 'AWS spot needs a signed EC2 call and is not in its public bulk price file, so AWS contributes no spot rate here.</div>';
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -3211,21 +3179,22 @@ function renderProvidersTab() { updateProviderView(); }
 
 function updateProviderView() {
   const sel0=document.getElementById('providerGpuSelect');
-  if(!sel0.value){
-    const pd=DATA.providers, hasMkt=g=>Object.values(pd).some(p=>p.type==='marketplace'&&p.gpus?.[g]);
-    const best=[...sel0.options].find(o=>hasMkt(o.value));
-    if(best) sel0.value=best.value;
-  }
   const gpuId = sel0.value || 'H100-SXM';
-  document.getElementById('providerChartTitle').textContent = `Price Comparison — ${gpuId}`;
+  document.getElementById('providerChartTitle').textContent = `Provider Detail — ${gpuId}`;
   const pd = DATA.providers;
   const rows = [];
   for(const [prov,p] of Object.entries(pd)){
     if(p.gpus&&p.gpus[gpuId]){
-      const g=p.gpus[gpuId]; const spot=g.price_per_gpu_hr*(1-p.spot_discount);
-      const r1=g.price_per_gpu_hr*(1-p.reserved_1yr_discount); const r3=g.price_per_gpu_hr*(1-p.reserved_3yr_discount);
-      rows.push({provider:prov,name:p.provider_name,type:p.type||'cloud',instance:g.instance,ondemand:g.price_per_gpu_hr,
-        spot:p.spot_discount>0?spot:null,res1:r1,res3:r3,monthly:g.price_per_gpu_hr*730,regions:g.regions||{},spot_discount:p.spot_discount,stale:g.stale,source:g.source,lastVerified:g.last_verified});
+      const g=p.gpus[gpuId];
+      // Committed and spot rates are whatever the provider publishes. They used
+      // to be on-demand multiplied by a per-provider discount constant that
+      // nothing ever verified, so every provider appeared to offer a
+      // commitment. A dash here means the provider does not publish one.
+      rows.push({provider:prov,name:p.provider_name,type:p.type||'cloud',instance:g.instance,
+        ondemand:g.price_per_gpu_hr,
+        spot:g.spot_hr??null, res1:g.reserved_1yr_hr??null, res3:g.reserved_3yr_hr??null,
+        monthly:g.price_per_gpu_hr*730,regions:g.regions||{},
+        stale:g.stale,source:g.source,lastVerified:g.last_verified});
     }
   }
   rows.sort((a,b)=>a.ondemand-b.ondemand);
@@ -3235,9 +3204,15 @@ function updateProviderView() {
 
   // Horizontal range bars: best price → on-demand per provider
   if(charts.pv) charts.pv.destroy();
+  // Floating bar from the provider's cheapest rate to its on-demand rate. When
+  // a provider publishes no cheaper term (most of them now that the discount
+  // constants are gone), best === ondemand and a floating bar has zero width —
+  // the whole chart rendered blank for B300. Fall back to a plain 0→on-demand
+  // bar so "no commitment on offer" still shows the price.
   const rangeData=rows.map(r=>{
-    const best=Math.min(r.ondemand, r.spot||Infinity, r.res3||Infinity, r.res1||Infinity);
-    return [+best.toFixed(3), +r.ondemand.toFixed(3)];
+    const cheaper=[r.spot,r.res1,r.res3].filter(v=>v!=null&&v<r.ondemand);
+    const best=cheaper.length?Math.min(...cheaper):null;
+    return [best!=null?+best.toFixed(3):0, +r.ondemand.toFixed(3)];
   });
   charts.pv = new Chart(document.getElementById('chartProviders'),{type:'bar',
     data:{labels:rows.map(r=>r.provider),datasets:[{label:'Price Range $/hr',data:rangeData,
@@ -3246,28 +3221,22 @@ function updateProviderView() {
     }]},
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
       tooltip:{callbacks:{
-        label:(ctx)=>{const r=rows[ctx.dataIndex],d=ctx.raw;return `Best: $${d[0].toFixed(2)} → On-Demand: $${d[1].toFixed(2)}`;},
-        afterLabel:(ctx)=>{const r=rows[ctx.dataIndex];const save=((1-ctx.raw[0]/ctx.raw[1])*100);return (r.type==='marketplace'?'Marketplace':'Cloud')+(save>0?' · Save up to '+save.toFixed(0)+'%':'');}
+        label:(ctx)=>{const d=ctx.raw;return d[0]>0?`Cheapest term: $${d[0].toFixed(2)} → On-demand: $${d[1].toFixed(2)}`:`On-demand: $${d[1].toFixed(2)}`;},
+        afterLabel:(ctx)=>{const r=rows[ctx.dataIndex];const kind=r.type==='marketplace'?'Marketplace':'Cloud';
+          if(!(ctx.raw[0]>0)) return kind+' · no committed or spot rate published';
+          return kind+' · save up to '+((1-ctx.raw[0]/ctx.raw[1])*100).toFixed(0)+'%';}
       }}},
       scales:{x:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}},y:{grid:{display:false}}}}
   });
 
-  // Grouped bar: on-demand/spot/reserved
-  if(charts.pt) charts.pt.destroy();
-  charts.pt = new Chart(document.getElementById('chartPriceTypes'),{type:'bar',
-    data:{labels:rows.map(r=>r.provider),datasets:[
-      {label:'On-Demand',data:rows.map(r=>r.ondemand),backgroundColor:C.amber+'70',borderColor:C.amber,borderWidth:1},
-      {label:'Spot',data:rows.map(r=>r.spot||0),backgroundColor:C.green+'70',borderColor:C.green,borderWidth:1},
-      {label:'1yr Reserved',data:rows.map(r=>r.res1),backgroundColor:C.blue+'70',borderColor:C.blue,borderWidth:1},
-      {label:'3yr Reserved',data:rows.map(r=>r.res3),backgroundColor:C.purple+'70',borderColor:C.purple,borderWidth:1},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
-  });
-
   // Render cloud table
-  const renderProvTable = (tableRows, elId) => {
-    const best = tableRows[0]?.ondemand || 1;
-    let h=`<thead><tr><th>Provider</th><th>Instance</th><th class="r">On-Demand</th><th class="r">Spot</th><th class="r">1yr Res.</th><th class="r">3yr Res.</th><th class="r">Monthly</th><th class="r">Annual</th><th class="r">vs Best</th><th>Source</th></tr></thead><tbody>`;
+  // "vs Best" must mean best across every provider. Taking it per table made
+  // the cheapest cloud and the cheapest marketplace both read BEST.
+  const overallBest = rows[0]?.ondemand || 1;
+  const renderProvTable = (tableRows, elId, heading) => {
+    const best = overallBest;
+    let h=`<thead><tr><th colspan="10" style="font-size:10px;letter-spacing:0.5px;text-transform:uppercase;color:var(--text-3);padding-top:10px;">${heading}</th></tr>`;
+    h+=`<tr><th>Provider</th><th>Instance</th><th class="r">On-Demand</th><th class="r">Spot</th><th class="r">1yr Res.</th><th class="r">3yr Res.</th><th class="r">Monthly</th><th class="r">Annual</th><th class="r">vs Best</th><th>Source</th></tr></thead><tbody>`;
     if(!tableRows.length) { h += '<tr><td colspan="10" class="dim" style="text-align:center;padding:20px;">No providers offer this GPU</td></tr>'; }
     tableRows.forEach(r=>{
       const prem=((r.ondemand-best)/best*100);
@@ -3277,14 +3246,17 @@ function updateProviderView() {
       const fresh = r.stale ? {c:'var(--amber)',t:'Carried forward — not confirmed on the latest refresh'}
                   : r.source==='hardcoded_fallback' ? {c:'var(--blue)',t:'From the provider\'s published price list, verified '+(r.lastVerified||'')}
                   : {c:'var(--green)',t:'Confirmed live this run'+(r.lastVerified?' ('+r.lastVerified.slice(0,10)+')':'')};
-      h+=`<tr><td style="color:${PC[r.provider]||C.blue};font-weight:700;"><span title="${fresh.t}" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${fresh.c};margin-right:6px;vertical-align:middle;"></span>${r.provider}</td><td class="dim">${r.instance}</td><td class="r c-green fw">$${r.ondemand.toFixed(2)}</td><td class="r" style="color:var(--green)">${r.spot?'$'+r.spot.toFixed(2):'—'}</td><td class="r">$${r.res1.toFixed(2)}</td><td class="r c-cyan">$${r.res3.toFixed(2)}</td><td class="r">$${r.monthly.toFixed(0)}</td><td class="r">$${(r.monthly*12).toFixed(0)}</td><td class="r ${pc}">${prem===0?'BEST':'+'+prem.toFixed(1)+'%'}</td><td class="dim" style="font-size:10px;">${(r.source||'').replace(/_/g,' ')}</td></tr>`;
+      // A dash is a fact: this provider publishes no rate for that term.
+      const rate=(v,cls)=>v?`<td class="r ${cls||''}">$${v.toFixed(2)}</td>`
+        :'<td class="r dim" title="This provider does not publish a rate for this term">—</td>';
+      h+=`<tr><td style="color:${PC[r.provider]||C.blue};font-weight:700;"><span title="${fresh.t}" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${fresh.c};margin-right:6px;vertical-align:middle;"></span>${r.provider}</td><td class="dim">${r.instance||'—'}</td><td class="r c-green fw">$${r.ondemand.toFixed(2)}</td>${rate(r.spot,'c-green')}${rate(r.res1)}${rate(r.res3,'c-cyan')}<td class="r">$${r.monthly.toFixed(0)}</td><td class="r">$${(r.monthly*12).toFixed(0)}</td><td class="r ${pc}">${prem===0?'BEST':'+'+prem.toFixed(1)+'%'}</td><td class="dim" style="font-size:10px;">${(r.source||'').replace(/_/g,' ')}</td></tr>`;
     });
     h+='</tbody>';
     document.getElementById(elId).innerHTML=h;
   };
 
-  renderProvTable(cloudRows, 'providerCloudTable');
-  renderProvTable(mktRows, 'providerMktTable');
+  renderProvTable(cloudRows, 'providerCloudTable', 'Cloud providers — own infrastructure');
+  renderProvTable(mktRows, 'providerMktTable', 'Marketplaces — aggregated / community hardware');
 
   // If marketplace table is empty, show which GPUs are available
   if(!mktRows.length){
@@ -3529,7 +3501,18 @@ function populateSelectors() {
       gpus.filter(g=>{if(sel.id==='trendGpuSelect')return DATA.historical[g]; if(isProv)return provGpus.has(g); return true;})
         .filter(g=>sel.id!=='calcGpu'||provGpus.has(g))
         .map(g=>`<option value="${g}" ${g===ex?'selected':''}>${DATA.specs[g]?.name||g}</option>`).join('');
-    if(!ex&&!hb&&sel.options.length) sel.value=sel.options[0].value;
+    if(!ex&&!hb&&sel.options.length){
+      // The provider panel opens on whichever GPU the most providers list, so
+      // it starts on a real comparison. Falling through to options[0] opened it
+      // on B300 — carried by two providers, with no term rate anywhere.
+      if(isProv){
+        const count=g=>Object.values(DATA.providers).filter(p=>p.gpus?.[g]).length;
+        sel.value=[...sel.options].map(o=>o.value)
+          .sort((a,b)=>count(b)-count(a))[0];
+      } else {
+        sel.value=sel.options[0].value;
+      }
+    }
   });
 }
 
@@ -3928,7 +3911,6 @@ function renderTcoTab() {
   renderTcoWaterfall();
 
   // ── Scatter chart ──
-  renderTcoScatter();
 
   // ── Table ──
   var h='<thead><tr><th>GPU</th><th class="r">VRAM</th><th class="r">FP16</th><th class="r">Cloud OD</th><th class="r">1yr Res</th><th class="r">3yr Res</th><th class="r">Self-Host</th><th class="r">Break-Even</th><th class="r">Perf/$</th><th class="r">3yr Savings</th></tr></thead><tbody>';
@@ -4069,43 +4051,6 @@ function renderTcoWaterfall(){
   });
 }
 
-function renderTcoScatter(){
-  var rows=_tcoRows; if(!rows||!rows.length) return;
-  var canvas=document.getElementById('chartTcoScatter');
-  if(!canvas) return;
-
-  var datasets=rows.map(function(r,i){
-    return {
-      label:r.gpu,
-      data:[{x:r.selfTotal,y:r.perf,r:Math.max(r.vram/8,4)}],
-      backgroundColor:CL[i%CL.length]+'80',
-      borderColor:CL[i%CL.length],
-      borderWidth:1.5,
-      pointRadius:Math.max(r.vram/8,4),
-      pointHoverRadius:Math.max(r.vram/8,4)+3
-    };
-  });
-
-  if(charts.tsc) charts.tsc.destroy();
-  charts.tsc=new Chart(canvas,{type:'scatter',
-    data:{datasets:datasets},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{
-        legend:{display:true,position:'top',labels:{boxWidth:8,font:{size:9},usePointStyle:true,pointStyle:'circle'}},
-        tooltip:{callbacks:{
-          label:function(ctx){
-            var r=rows[ctx.datasetIndex];
-            return r.gpu+': '+r.perf+' TFLOPS @ $'+r.selfTotal.toFixed(2)+'/hr ('+r.vram+'GB)';
-          }
-        }}
-      },
-      scales:{
-        x:{title:{display:true,text:'Self-Hosted Cost ($/hr)',color:'rgba(255,255,255,0.4)',font:{size:10}},grid:{color:'rgba(26,34,51,0.3)'}},
-        y:{title:{display:true,text:'FP16 TFLOPS',color:'rgba(255,255,255,0.4)',font:{size:10}},grid:{color:'rgba(26,34,51,0.3)'}}
-      }
-    }
-  });
-}
 
 // ════════════════════════════════════════════════════════════════
 // EFFICIENCY TAB
@@ -4441,7 +4386,12 @@ function buildChatContext() {
   const spot = DATA.spot || {};
   if(Object.keys(spot).length) {
     parts.push('SPOT & RESERVED PRICING:\n' + Object.entries(spot).map(([id, s]) =>
-      `${id}: On-demand $${s.on_demand_low}-$${s.on_demand_high}/hr (avg $${s.on_demand_avg}), 1yr reserved $${s.reserved_1yr_avg}/hr (${s.res1_savings_pct}% savings), 3yr reserved $${s.reserved_3yr_avg}/hr (${s.res3_savings_pct}% savings)`
+      // "not published" is the truth for GPUs no provider offers a term rate
+      // on, and the assistant should say that rather than infer a discount.
+      `${id}: On-demand $${s.on_demand_low}-$${s.on_demand_high}/hr (avg $${s.on_demand_avg})`
+      + (s.reserved_1yr_avg != null ? `, 1yr committed $${s.reserved_1yr_avg}/hr (${s.reserved_1yr_savings_pct}% below the same providers' on-demand, ${s.reserved_1yr_providers} provider(s))` : ', 1yr committed: not published by any tracked provider')
+      + (s.reserved_3yr_avg != null ? `, 3yr committed $${s.reserved_3yr_avg}/hr (${s.reserved_3yr_savings_pct}% below, ${s.reserved_3yr_providers} provider(s))` : ', 3yr committed: not published')
+      + (s.spot_avg != null ? `, spot $${s.spot_avg}/hr (${s.spot_savings_pct}% below, ${s.spot_providers} provider(s))` : '')
     ).join('\n'));
   }
 
