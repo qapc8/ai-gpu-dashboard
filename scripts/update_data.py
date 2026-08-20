@@ -881,7 +881,11 @@ def get_hardcoded_fallback_prices():
             "last_verified": VERIFIED_ON,
             "source": "hardcoded_fallback",
             "gpus": {
-                "B200": {"price_per_gpu_hr": 8.055},       # a4-highgpu-8g
+                # No B200: Google publishes no on-demand rate for a4-highgpu-8g.
+                # The 8.055 that used to sit here was $64.44/8 -- the DWS
+                # Flex-start price, a different product, picked up by a parser
+                # that took the first dollar amount in the row. It survived the
+                # parser fix because this table put it straight back.
                 "H200": {"price_per_gpu_hr": 10.601},      # a3-ultragpu-8g
                 "H100-SXM": {"price_per_gpu_hr": 11.061},  # a3-highgpu-8g
                 "A100-80GB": {"price_per_gpu_hr": 5.069},  # a2-ultragpu-1g
@@ -968,6 +972,23 @@ def _apply_scraped_prices(providers, provider_key, prices, source_tag, tracked_s
         }
     prov = providers[provider_key]
     prov_gpus = prov.setdefault("gpus", {})
+
+    # A successful fetch that omits a GPU is evidence the provider no longer
+    # lists it -- not a fetch failure. Without this the entry sat there forever
+    # marked `stale: true` and kept being published: GCP's B200 stayed on the
+    # grid at $8.055 after we established that Google publishes no on-demand
+    # price for a4-highgpu-8g and that $8.055 was the DWS Flex-start rate read
+    # from the wrong column. Only prune what this same source put there;
+    # fallbacks and other sources are not ours to withdraw.
+    withdrawn = [
+        gpu_id for gpu_id, entry in prov_gpus.items()
+        if entry.get("source") == source_tag and gpu_id not in prices
+    ]
+    for gpu_id in withdrawn:
+        prov_gpus.pop(gpu_id, None)
+    if withdrawn:
+        log_info(f"{provider_key}: no longer listed, removed {', '.join(sorted(withdrawn))}")
+
     for gpu_id, value in prices.items():
         if gpu_id not in tracked_specs:
             continue
@@ -1132,6 +1153,21 @@ def merge_live_pricing_into_data(
             existing_entry["source"] = "hardcoded_fallback"
             existing_entry["last_verified"] = fb_data["last_verified"]
             existing_entry.pop("stale", None)
+
+        # Mirror of the prune in _apply_scraped_prices. Dropping a bad constant
+        # from the table above is not enough on its own: the entry it wrote on
+        # an earlier run is still sitting in data.json under the
+        # hardcoded_fallback source, which also shields it from the live-fetch
+        # prune. GCP's B200 survived two separate fixes that way. If we no
+        # longer stand behind a constant, withdraw the price it produced.
+        orphaned = [
+            gpu_id for gpu_id, entry in existing_gpus.items()
+            if entry.get("source") == "hardcoded_fallback" and gpu_id not in fb_data["gpus"]
+        ]
+        for gpu_id in orphaned:
+            existing_gpus.pop(gpu_id, None)
+        if orphaned:
+            log_info(f"{provider_key}: withdrawn from fallback table, removed {', '.join(sorted(orphaned))}")
 
     # Every provider carries a last_updated so the Data tab can report its
     # freshness. Fallback-only providers (e.g. FluidStack) had none at all.
