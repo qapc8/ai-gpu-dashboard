@@ -206,8 +206,10 @@ def build_inference(data, as_of, rankings, catalog, endpoints_by_slug, log=lambd
             "name": name,
             "author": slug.split("/")[0] if "/" in slug else None,
             # A HuggingFace id is OpenRouter's own marker that the weights are
-            # published. It is a fact about the listing, not our judgement.
+            # published. It is a fact about the listing, not our judgement --
+            # and it is the key the model-fit sizing reads architecture from.
             "open_weights": bool(meta.get("hugging_face_id")),
+            "hf_id": meta.get("hugging_face_id"),
             "context_k": round(meta["context_length"] / 1000) if meta.get("context_length") else None,
             "total_tokens": r["total_tokens"],
             "prompt_tokens": r["prompt_tokens"],

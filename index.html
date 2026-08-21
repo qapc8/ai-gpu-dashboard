@@ -276,7 +276,19 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
   background: var(--bg-3);
+}
+/* Had no rule at all: it only looked right while it was the header's sole
+   sibling and space-between pushed it to the far edge. With a third element in
+   the header it collided with the title. */
+.card-hd-sub {
+  font-size: 10.5px;
+  color: var(--text-3);
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .card-hd-title {
   font-family: var(--sans);
@@ -1519,8 +1531,13 @@ loadExternalData();
 <div class="tab-panel" id="tab-workloads">
   <div class="kpi-strip mb" id="fitStats"></div>
   <div class="card mb">
-    <div class="card-hd"><span class="card-hd-title">Workload-Based GPU Recommendations</span></div>
-    <div class="card-bd-flush"><table class="dt" id="workloadTable"></table></div>
+    <div class="card-hd">
+      <span class="card-hd-title">What It Takes to Self-Host</span>
+      <span class="card-hd-sub">open-weights models ranked by real demand · fp8 @ 32K context</span>
+      <span class="dim" style="font-size:10px;font-family:var(--mono);margin-left:auto;">architecture from each model's HuggingFace config</span>
+    </div>
+    <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="workloadTable"></table></div>
+    <div class="card-bd dim" style="font-size:11px;line-height:1.6;padding-top:0;" id="fitFootnote"></div>
   </div>
   <div class="grid g-2 mb">
     <div class="card">
@@ -2263,33 +2280,6 @@ function goCarousel(idx) {
   document.querySelectorAll('.carousel-dot').forEach((d,i) => d.classList.toggle('active', i===idx));
 }
 
-// ── WORKLOAD MATCHER ──
-function renderWorkloadMatcher() {
-  const wl = DATA.workloads || {};
-  const el = document.getElementById('workloadMatcher');
-  if(!el || !Object.keys(wl).length) return;
-
-  const workloads = Object.entries(wl).slice(0, 4);
-  el.innerHTML = '<div class="wl-grid">' + workloads.map(([name, w]) => {
-    const topGpu = (w.recommended||[])[0] || '--';
-    const cp = w.current_prices?.[topGpu] || {};
-    const price = cp.cheapest ? '$'+cp.cheapest.toFixed(2)+'/hr' : '--';
-    const provider = cp.provider || '--';
-    const minGpus = w.min_gpus || 1;
-    const budgetLow = w.budget_monthly_low ? '$'+Math.round(w.budget_monthly_low).toLocaleString() : '--';
-    const budgetHigh = w.budget_monthly_high ? '$'+Math.round(w.budget_monthly_high).toLocaleString() : '--';
-
-    return `<div class="wl-card">
-      <div class="wl-card-title">${name}</div>
-      <div class="wl-card-gpu">${topGpu}</div>
-      <div class="wl-card-detail">
-        Min <b>${minGpus} GPU${minGpus>1?'s':''}</b> · Best on <b>${provider}</b><br>
-        Budget: <b>${budgetLow} – ${budgetHigh}</b>/mo
-      </div>
-      <div class="wl-card-price">${price}</div>
-    </div>`;
-  }).join('') + '</div>';
-}
 
 // ── SPOT VS RESERVED SAVINGS ──
 
@@ -3375,29 +3365,38 @@ function renderWorkloadsTab() {
 
   // Headline: the cheapest way to serve each model at fp8 / 32K.
   const rows=models.map(m=>{
-    const c=mf[m].precisions.fp8?.contexts?.['32768'];
-    return {m, gib:c?.total_vram_gib, best:c?.options?.[0]};
-  }).filter(r=>r.best);
-  const cheapest=rows.slice().sort((a,b)=>a.best.usd_per_hr-b.best.usd_per_hr)[0];
+    const e=mf[m], c=e.precisions.fp8?.contexts?.['32768'];
+    return {m, e, gib:c?.total_vram_gib, best:c?.options?.[0], be:c?.breakeven_tok_s};
+  }).filter(r=>r.gib!=null);
+  const withFit=rows.filter(r=>r.best);
+  const cheapest=withFit.slice().sort((a,b)=>a.best.usd_per_hr-b.best.usd_per_hr)[0];
   const biggest=rows.slice().sort((a,b)=>b.gib-a.gib)[0];
+  // The lowest bar to clear is the model where self-hosting is most winnable.
+  const easiest=rows.filter(r=>r.be).sort((a,b)=>a.be-b.be)[0];
+  const topDemand=rows.slice().sort((a,b)=>(a.e.demand_rank||99)-(b.e.demand_rank||99))[0];
+  const short=s=>s.length>26?s.slice(0,25)+'…':s;
   document.getElementById('fitStats').innerHTML=`
-    <div class="kpi kpi-green"><div class="kpi-label">Cheapest to Serve</div><div class="kpi-value">$${cheapest.best.usd_per_hr.toFixed(2)}</div><div class="kpi-sub">${cheapest.m} · fp8 · 32K ctx</div></div>
-    <div class="kpi kpi-amber"><div class="kpi-label">Largest Footprint</div><div class="kpi-value">${biggest.gib.toFixed(0)} GiB</div><div class="kpi-sub">${biggest.m} at fp8, 32K ctx</div></div>
-    <div class="kpi kpi-cyan"><div class="kpi-label">Models Sized</div><div class="kpi-value">${models.length}</div><div class="kpi-sub">weights + KV cache, computed</div></div>
-    <div class="kpi kpi-purple"><div class="kpi-label">GPUs Considered</div><div class="kpi-value">${Object.keys(DATA.specs||{}).length}</div><div class="kpi-sub">priced across ${Object.keys(DATA.providers||{}).length} providers</div></div>`;
+    ${cheapest?`<div class="kpi kpi-green"><div class="kpi-label">Cheapest to Serve</div><div class="kpi-value">$${cheapest.best.usd_per_hr.toFixed(2)}<span style="font-size:12px;">/hr</span></div><div class="kpi-sub">${short(cheapest.m)} · ${cheapest.best.gpus_needed}× ${cheapest.best.gpu}</div></div>`:''}
+    ${topDemand?`<div class="kpi kpi-cyan"><div class="kpi-label">Most-Used Open Model</div><div class="kpi-value" style="font-size:17px;">${short(topDemand.m)}</div><div class="kpi-sub">${topDemand.gib.toFixed(0)} GiB at fp8 · 32K ctx</div></div>`:''}
+    ${easiest?`<div class="kpi kpi-amber"><div class="kpi-label">Lowest Break-Even</div><div class="kpi-value">${easiest.be.toLocaleString()}<span style="font-size:12px;"> tok/s</span></div><div class="kpi-sub">${short(easiest.m)} · beats its cheapest API route above this</div></div>`:''}
+    <div class="kpi kpi-purple"><div class="kpi-label">Largest Footprint</div><div class="kpi-value">${biggest.gib>=1024?(biggest.gib/1024).toFixed(1)+' TiB':biggest.gib.toFixed(0)+' GiB'}</div><div class="kpi-sub">${short(biggest.m)} at fp8, 32K ctx</div></div>`;
 
   // Cost to serve each model, cheapest viable config, by precision.
   const precs=['fp16','fp8','int4'];
   const pc={fp16:C.red,fp8:C.amber,int4:C.green};
   if(charts.fft) charts.fft.destroy();
+  const shortLbl=m=>m.replace(/^[^:]+:\s*/,'').replace(/\s*\(\d{4}-\d{2}-\d{2}\)$/,'');
   charts.fft=new Chart(document.getElementById('chartFitFrontier'),{type:'bar',
-    data:{labels:models,datasets:precs.map(p=>({label:p,
+    data:{labels:models.map(shortLbl),datasets:precs.map(p=>({label:p,
       data:models.map(m=>mf[m].precisions[p]?.contexts?.['32768']?.cheapest_usd_per_hr??null),
       backgroundColor:pc[p]+'70',borderColor:pc[p],borderWidth:1}))},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{position:'top',labels:{boxWidth:8,font:{size:9}}},
-        tooltip:{callbacks:{label:c=>c.dataset.label+': $'+(c.parsed.y??0).toFixed(3)+'/hr'}}},
-      scales:{y:{title:{display:true,text:'$/hr — cheapest viable config'},type:'logarithmic',grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
+        tooltip:{callbacks:{
+          title:items=>models[items[0].dataIndex],
+          label:c=>c.parsed.y==null?c.dataset.label+': no viable config':c.dataset.label+': $'+c.parsed.y.toFixed(3)+'/hr'}}},
+      scales:{y:{title:{display:true,text:'$/hr — cheapest viable config'},type:'logarithmic',grid:{color:'rgba(26,34,51,0.4)'}},
+        x:{grid:{display:false},ticks:{font:{size:9},maxRotation:38,minRotation:38,autoSkip:false}}}}
   });
 }
 
@@ -3494,21 +3493,60 @@ function calcCost() {
 }
 
 // Workload shortlists, re-priced from live listings.
+// Replaces a table of editorial workload shortlists — hand-picked GPU lists,
+// invented min_gpus and budget bands, and a "best value" string naming a
+// provider that had not been cheapest in months. This one is all arithmetic
+// over published architectures and live prices, for models people actually use.
 function renderWorkloadTable() {
-  const wl=DATA.workload_recs||DATA.workloads; const el=document.getElementById('workloadTable');
-  if(!wl||!el) return;
-  let h='<thead><tr><th>Workload</th><th>Recommended GPUs</th><th class="r">Min GPUs</th><th>Cheapest today</th><th class="r">$/GPU-hr</th><th class="r">Monthly (1 GPU)</th></tr></thead><tbody>';
-  Object.entries(wl).forEach(([name,w])=>{
-    const prices=Object.entries(w.current_prices||{});
-    const best=prices.sort((a,b)=>a[1].cheapest-b[1].cheapest)[0];
-    h+=`<tr><td class="gpu-name">${name}</td>
-      <td class="dim" style="font-size:10px;">${(w.recommended||[]).join(' · ')}</td>
-      <td class="r">${w.min_gpus||'—'}</td>
-      <td>${best?best[0]+' @ '+best[1].provider:'—'}</td>
-      <td class="r c-green fw" style="font-family:var(--mono);">${best?'$'+best[1].cheapest.toFixed(2):'—'}</td>
-      <td class="r" style="font-family:var(--mono);">${best?'$'+best[1].monthly_1gpu.toLocaleString('en',{maximumFractionDigits:0}):'—'}</td></tr>`;
+  const mf = DATA.modelfit || {};
+  const el = document.getElementById('workloadTable');
+  if (!el || !Object.keys(mf).length) return;
+
+  const rows = Object.values(mf)
+    .map(e => ({ e, c: e.precisions?.fp8?.contexts?.['32768'] }))
+    .filter(r => r.c)
+    .sort((a, b) => (a.e.demand_rank || 99) - (b.e.demand_rank || 99));
+
+  let h = '<thead><tr>';
+  h += '<th style="width:30px;" title="Rank by tokens served on the inference leaderboard">#</th><th>Model</th>';
+  h += '<th class="r" title="Exact count from the model\'s HuggingFace safetensors index">Params</th>';
+  h += '<th class="r" title="Experts firing per token out of the total. All experts sit in VRAM; only these run.">MoE active</th>';
+  h += '<th class="r" title="Layers holding a KV cache, out of total layers. Mamba blocks hold none.">Attn layers</th>';
+  h += '<th class="r">VRAM fp8</th><th>Smallest rig</th><th class="r">$/hr</th>';
+  h += '<th class="r" title="Cheapest published API route for this same model">API $/M out</th>';
+  h += '<th class="r" title="Output tokens/sec the rig must sustain to match that API price. Solved for, not assumed.">Break-even</th>';
+  h += '</tr></thead><tbody>';
+
+  rows.forEach(({ e, c }) => {
+    const o = (c.options || [])[0];
+    const moe = (e.experts && e.active_experts) ? `${e.active_experts}/${e.experts}` : '—';
+    const attn = e.attention_layers === e.layers ? `${e.layers}` : `${e.attention_layers}/${e.layers}`;
+    const hybrid = e.attention_layers !== e.layers;
+    h += `<tr>
+      <td style="font-family:var(--mono);font-size:11px;color:var(--text-2);text-align:center;">${e.demand_rank || ''}</td>
+      <td class="gpu-name" style="white-space:nowrap;" title="${e.hf_id}">${e.name}</td>
+      <td class="r" style="font-family:var(--mono);font-size:11px;">${e.params_b >= 1000 ? (e.params_b / 1000).toFixed(2) + 'T' : e.params_b.toFixed(0) + 'B'}</td>
+      <td class="r" style="font-family:var(--mono);font-size:11px;">${moe}</td>
+      <td class="r" style="font-family:var(--mono);font-size:11px;${hybrid ? 'color:var(--cyan);' : ''}" ${hybrid ? 'title="Mamba hybrid — most layers hold no KV cache"' : ''}>${attn}</td>
+      <td class="r" style="font-family:var(--mono);font-size:11px;">${c.total_vram_gib.toFixed(0)} GiB</td>
+      <td style="font-size:11px;white-space:nowrap;">${o ? `${o.gpus_needed}× ${o.gpu} <span class="dim">${o.cheapest_provider}</span>` : '<span class="dim">no single-node fit</span>'}</td>
+      <td class="r c-green fw" style="font-family:var(--mono);font-size:11px;">${o ? '$' + o.usd_per_hr.toFixed(2) : '—'}</td>
+      <td class="r" style="font-family:var(--mono);font-size:11px;color:var(--orange);">${e.api_out_per_m != null ? fmtPrice(e.api_out_per_m) : '—'}</td>
+      <td class="r" style="font-family:var(--mono);font-size:11px;font-weight:600;">${c.breakeven_tok_s ? c.breakeven_tok_s.toLocaleString() + ' tok/s' : '—'}</td>
+    </tr>`;
   });
-  el.innerHTML=h+'</tbody>';
+  el.innerHTML = h + '</tbody>';
+
+  const note = document.getElementById('fitFootnote');
+  if (note) {
+    const noFit = rows.filter(r => !(r.c.options || []).length).length;
+    note.innerHTML =
+      'VRAM is weights + KV cache + 20% for activations and fragmentation — that 20% is the only assumption here. '
+      + 'Rigs are sized to 1/2/4/8 GPUs because tensor parallelism splits attention heads, so a 5-GPU config is not something you can run. '
+      + '<b>Break-even</b> is the output throughput the rig must hold to match the cheapest API route for the same model: above it, self-hosting wins; below it, the API is cheaper. '
+      + 'It is solved for rather than assumed, so no tokens/sec figure here is invented.'
+      + (noFit ? ` ${noFit} model${noFit === 1 ? '' : 's'} need more than 8 GPUs at this precision and context.` : '');
+  }
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -4576,23 +4614,28 @@ function buildChatContext() {
       : `${e.date}: ${e.gpu} at ${e.provider} ${e.type==='price'?`${e.from} -> ${e.to} (${e.change_pct}%)`:e.type}`).join('\n'));
   }
 
-  // Workload Recommendations
-  const wl = DATA.workloads || DATA.workload_recs || {};
-  if(Object.keys(wl).length) {
-    parts.push('WORKLOAD RECOMMENDATIONS:\n' + Object.entries(wl).map(([name, w]) =>
-      `${name}: Recommended GPUs: ${(w.recommended||[]).join(', ')}, min ${w.min_gpus} GPUs, budget $${w.budget_monthly_low?.toLocaleString()}-$${w.budget_monthly_high?.toLocaleString()}/mo, best value: ${w.best_value||'N/A'}`
-    ).join('\n'));
-  }
-
-  // Model-Hardware Fit
-  const mf = DATA.modelfit || {};
-  if(Object.keys(mf).length) {
-    parts.push('MODEL-HARDWARE FIT:\n' + Object.entries(mf).map(([size, m]) => {
-      const gpuFits = Object.entries(m.gpus || {}).map(([gid, g]) =>
-        `${gid}: ${g.optimal_config}, ${g.throughput_tok_s} tok/s, $${g.cost_per_1m_tokens}/1M tokens (score: ${g.fit_score}/100)`
-      ).join('; ');
-      return `${size}B params (${(m.models||[]).join(', ')}, needs ${m.vram_required_gb}GB VRAM): ${gpuFits}`;
-    }).join('\n'));
+  // Workload shortlists retired: they were editorial GPU picks with invented
+  // budget bands. The model-sizing block below carries the sourced version.
+  // Model-hardware fit: what it takes to self-host the open models in demand.
+  const mfit = DATA.modelfit || {};
+  if (Object.keys(mfit).length) {
+    parts.push('SELF-HOSTING THE MODELS IN DEMAND (VRAM = weights + KV cache + 20% overhead;\n'
+      + 'parameter counts from each model\'s HuggingFace safetensors index, architecture from its config.json;\n'
+      + 'rigs sized to 1/2/4/8 GPUs because tensor parallelism splits attention heads):\n'
+      + Object.values(mfit).map(e => {
+        const c = e.precisions?.fp8?.contexts?.['32768'];
+        const o = c && (c.options || [])[0];
+        let line = `${e.name} (${e.hf_id}): ${e.params_b}B params`;
+        if (e.experts && e.active_experts) line += `, MoE ${e.active_experts} of ${e.experts} experts active per token (all resident in VRAM)`;
+        if (e.attention_layers !== e.layers) line += `, hybrid: ${e.attention_layers} of ${e.layers} layers hold a KV cache`;
+        else line += `, ${e.layers} layers`;
+        if (c) line += `, needs ${c.total_vram_gib} GiB at fp8/32K`;
+        line += o ? `, smallest rig ${o.gpus_needed}x ${o.gpu} at $${o.usd_per_hr}/hr via ${o.cheapest_provider}`
+                  : ', does not fit in 8 GPUs at fp8/32K';
+        if (e.api_out_per_m != null) line += `, cheapest API route $${e.api_out_per_m}/1M output tokens`;
+        if (c && c.breakeven_tok_s) line += `, so self-hosting wins above ${c.breakeven_tok_s} output tokens/sec`;
+        return line;
+      }).join('\n'));
   }
 
   // Inference market: measured demand plus the price spread per model.
@@ -4915,7 +4958,6 @@ const DATA_SECTIONS = [
   { key:'historical',     label:'Historical Pricing',     color:'purple', type:'dict-of-objects' },
   { key:'indicators',     label:'Market Indicators',      color:'green',  type:'flat-object' },
   { key:'regional',       label:'Regional Markets',       color:'amber',  type:'dict-of-objects' },
-  { key:'workloads',      label:'Workload Recommendations', color:'pink', type:'dict-of-objects' },
   { key:'tco',            label:'TCO Breakdown',          color:'red',    type:'dict-of-objects' },
   { key:'inference.models', label:'Inference Demand & Pricing', color:'blue', type:'array', metaKey:'inference' },
   { key:'inference.providers', label:'Inference Providers', color:'cyan', type:'array', metaKey:'inference' },
@@ -4926,7 +4968,7 @@ const DATA_SECTIONS = [
   { key:'competitive',    label:'Competitive Landscape',  color:'blue',   type:'dict-of-objects' },
   { key:'sustainability', label:'Sustainability Metrics', color:'green',  type:'dict-of-objects' },
   { key:'supplychain',    label:'Supply Chain',           color:'red',    type:'dict-of-objects' },
-  { key:'modelfit',       label:'Model Fit / VRAM Sizing', color:'purple', type:'dict-of-objects' },
+  { key:'modelfit',       label:'Self-Hosting Fit / VRAM Sizing', color:'purple', type:'dict-of-objects' },
   { key:'sentiment',     label:'Developer & MLOps Sentiment', color:'pink', type:'dict-of-objects' },
   { key:'prediction_markets.gpus', label:'Prediction Markets', color:'purple', type:'array',
     metaKey:'prediction_markets' },

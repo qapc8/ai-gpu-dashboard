@@ -21,6 +21,7 @@ from xml.etree import ElementTree
 
 from forecast_engine import generate_forecasts
 from inference_market import refresh_inference_market
+from model_fit import build_model_fit
 from prediction_markets import (
     build_prediction_markets,
     fetch_kalshi_gpu_markets,
@@ -1447,39 +1448,6 @@ def _cheapest_provider_for(providers, gpu_id):
     return best
 
 
-def refresh_workload_recs(data):
-    """Re-price the workload recommendations from live provider data.
-
-    current_prices used to be a frozen snapshot, so it drifted away from the
-    Pricing tab -- e.g. GB200 was listed as "cheapest $27.04" when the actual
-    cheapest live listing was $10.50 (27.04 was the *most expensive*).
-    """
-    recs = data.get("workload_recs")
-    if not recs:
-        return data
-
-    providers = data.get("providers") or {}
-    repriced = 0
-    for _workload, rec in recs.items():
-        prices = rec.get("current_prices")
-        if not prices:
-            continue
-        for gpu_id in list(prices.keys()):
-            best = _cheapest_provider_for(providers, gpu_id)
-            if not best:
-                continue
-            price, provider = best
-            prices[gpu_id] = {
-                "cheapest": price,
-                "provider": provider,
-                "monthly_1gpu": round(price * 730, 2),
-            }
-            repriced += 1
-
-    log_ok("Workload Recs", f"{repriced} GPU prices re-derived from live listings")
-    return data
-
-
 def _avg_spot_rate(providers, gpu_id):
     """Average published spot rate for a GPU, or None if nobody publishes one.
 
@@ -1895,97 +1863,6 @@ def compute_volatility(data):
     data["volatility"] = out
     data.pop("forecasts", None)
     log_ok("Volatility", f"{len(out)} GPUs described from price history")
-    return data
-
-
-# Published transformer architectures. Every number here is from the model's own
-# config, which is what makes the VRAM figures arithmetic rather than estimates.
-MODEL_ARCHITECTURES = {
-    "Llama-3.1-8B":    {"params_b": 8.03,  "layers": 32,  "kv_heads": 8, "head_dim": 128, "open": True},
-    "Llama-3.1-70B":   {"params_b": 70.6,  "layers": 80,  "kv_heads": 8, "head_dim": 128, "open": True},
-    "Llama-3.1-405B":  {"params_b": 405.9, "layers": 126, "kv_heads": 8, "head_dim": 128, "open": True},
-    "Qwen2.5-72B":     {"params_b": 72.7,  "layers": 80,  "kv_heads": 8, "head_dim": 128, "open": True},
-    "Qwen2.5-32B":     {"params_b": 32.8,  "layers": 64,  "kv_heads": 8, "head_dim": 128, "open": True},
-    "Qwen2.5-7B":      {"params_b": 7.6,   "layers": 28,  "kv_heads": 4, "head_dim": 128, "open": True},
-    "Mistral-7B":      {"params_b": 7.25,  "layers": 32,  "kv_heads": 8, "head_dim": 128, "open": True},
-    "Mixtral-8x7B":    {"params_b": 46.7,  "layers": 32,  "kv_heads": 8, "head_dim": 128, "open": True},
-    "Mixtral-8x22B":   {"params_b": 141.0, "layers": 56,  "kv_heads": 8, "head_dim": 128, "open": True},
-    "Gemma-2-27B":     {"params_b": 27.2,  "layers": 46,  "kv_heads": 16, "head_dim": 128, "open": True},
-}
-
-PRECISIONS = {"fp16": 2, "fp8": 1, "int4": 0.5}
-GIB = 1024 ** 3
-
-
-def build_modelfit(data):
-    """Which tracked GPUs can actually hold a given model, and what that costs.
-
-    Replaces the old table of invented throughput/batch numbers. Everything here
-    is computed:
-        weights   = params x bytes_per_param
-        kv_cache  = 2 x layers x kv_heads x head_dim x ctx x batch x bytes
-        overhead  = 20% of weights (activations, fragmentation, CUDA context)
-    """
-    specs = data.get("specs") or {}
-    providers = data.get("providers") or {}
-    contexts = [8192, 32768, 131072]
-    out = {}
-
-    for model, arch in MODEL_ARCHITECTURES.items():
-        entry = {
-            "params_b": arch["params_b"],
-            "layers": arch["layers"],
-            "kv_heads": arch["kv_heads"],
-            "head_dim": arch["head_dim"],
-            "open_source": arch["open"],
-            "precisions": {},
-        }
-        for prec, nbytes in PRECISIONS.items():
-            weights_gib = arch["params_b"] * 1e9 * nbytes / GIB
-            overhead_gib = weights_gib * 0.20
-            per_ctx = {}
-            for ctx in contexts:
-                # KV cache is held at fp16 even when weights are quantised.
-                kv_gib = (2 * arch["layers"] * arch["kv_heads"] * arch["head_dim"]
-                          * ctx * 2) / GIB
-                total = weights_gib + overhead_gib + kv_gib
-                fits = []
-                for gpu_id, spec in specs.items():
-                    vram = spec.get("vram_gb")
-                    if not vram:
-                        continue
-                    n_gpus = max(1, -(-int(total) // int(vram)) if total > vram else 1)
-                    if total > vram * 8:
-                        continue
-                    n_gpus = 1 if total <= vram else int(-(-total // vram))
-                    cheapest = _cheapest_provider_for(providers, gpu_id)
-                    if not cheapest:
-                        continue
-                    price, prov = cheapest
-                    fits.append({
-                        "gpu": gpu_id,
-                        "gpus_needed": n_gpus,
-                        "vram_total_gb": round(vram * n_gpus, 1),
-                        "headroom_pct": round((vram * n_gpus - total) / (vram * n_gpus) * 100, 1),
-                        "cheapest_provider": prov,
-                        "usd_per_hr": round(price * n_gpus, 3),
-                    })
-                fits.sort(key=lambda f: (f["usd_per_hr"], f["gpus_needed"]))
-                per_ctx[str(ctx)] = {
-                    "kv_cache_gib": round(kv_gib, 2),
-                    "total_vram_gib": round(total, 2),
-                    "options": fits[:6],
-                    "cheapest_usd_per_hr": fits[0]["usd_per_hr"] if fits else None,
-                }
-            entry["precisions"][prec] = {
-                "weights_gib": round(weights_gib, 2),
-                "overhead_gib": round(overhead_gib, 2),
-                "contexts": per_ctx,
-            }
-        out[model] = entry
-
-    data["modelfit"] = out
-    log_ok("Model Fit", f"{len(out)} models x {len(PRECISIONS)} precisions computed")
     return data
 
 
@@ -2941,11 +2818,6 @@ def main():
         log_fail("Matrix", str(exc))
 
     try:
-        data = refresh_workload_recs(data)
-    except Exception as exc:
-        log_fail("Workload Recs", str(exc))
-
-    try:
         data = refresh_tco(data)
     except Exception as exc:
         log_fail("TCO", str(exc))
@@ -3032,7 +2904,7 @@ def main():
         log_fail("Volatility", str(exc))
 
     try:
-        data = build_modelfit(data)
+        data = build_model_fit(data, log_info=log_info, log_ok=log_ok)
     except Exception as exc:
         log_fail("Model Fit", str(exc))
 
