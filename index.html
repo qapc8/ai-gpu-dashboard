@@ -2035,44 +2035,6 @@ function renderOverview() {
 
 
 // ── AI PRICE COMMENTARY ──
-let _priceCommentaryCache = null;
-async function fetchPriceAiCommentary() {
-  const el = document.getElementById('priceAiCommentaryBody');
-  if(!el) return;
-  if(_priceCommentaryCache) { el.innerHTML = _priceCommentaryCache; return; }
-
-  // Build concise price data summary for the prompt
-  const hist = DATA.historical||{};
-  const gpus = ['B300','B200','GB200','H200','H100-SXM','A100-80GB','MI300X'];
-  const fc = DATA.volatility||{};
-  let priceSummary = '';
-  gpus.forEach(g => {
-    const h = hist[g]||{};
-    const periods = Object.keys(h).sort();
-    const recent = periods.slice(-4);
-    const prices = recent.map(p => `${p}: $${h[p]?.avg?.toFixed(2)||'?'}`).join(', ');
-    const regime = fc[g]?.regime || 'unknown';
-    priceSummary += `${g}: ${prices} | forecast: ${regime}\n`;
-  });
-
-  const messages = [
-    { role: 'system', content: `You are HyperFusion AI, a GPU compute market analyst. Write a brief, insightful commentary (150 words max) on GPU price dynamics based on the data below. For each GPU, explain the MoM price trend and the likely reasons (supply/demand, new chip launches, contract shifts, AI training demand, etc). Use bold for GPU names. Be specific with numbers. No greetings or introductions — start directly with the analysis. Format as a short flowing paragraph, not bullet points.` },
-    { role: 'user', content: `Recent monthly average prices and forecast regime:\n${priceSummary}\nAnalyze the price dynamics and reasons for each GPU type.` }
-  ];
-
-  try {
-    const resp = await _chatRequest(messages);
-    if(!resp.ok) throw new Error('API error');
-    const data = await resp.json();
-    const text = data.choices?.[0]?.message?.content || 'No analysis available.';
-    // Simple markdown bold → HTML
-    const html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
-    _priceCommentaryCache = html;
-    el.innerHTML = html;
-  } catch(e) {
-    el.innerHTML = '<span class="ai-commentary-error">Unable to load AI analysis.</span>';
-  }
-}
 
 // ── GPU CAROUSEL ──
 let _carouselIdx = 0, _carouselTimer = null;
@@ -4532,17 +4494,40 @@ document.addEventListener('click', function(e) {
 // a failure.
 function _esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
-async function _chatRequest(messages) {
-  return fetch('/api/chat', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({messages, max_tokens: 1024}),
-  });
-}
+// _chatRequest is gone with the last browser-to-LLM call. Everything the page
+// shows from a language model is now written by the pipeline into
+// ai_analysis.json and served as static text, so nothing here needs a
+// credential or a backend.
 
 // ════════════════════════════════════════════════════════════════
 // SENTIMENT
 // ════════════════════════════════════════════════════════════════
+
+// Both commentary boxes are written by the daily pipeline into
+// ai_analysis.json, the same as every other AI section. They used to build a
+// prompt in the browser and call the LLM directly, which required a
+// credential reachable from the page -- on GitHub Pages that was the embedded
+// key, and once it was removed they just showed "Unable to load AI analysis".
+// Static text needs neither a key nor a backend.
+function _renderCommentary(elId, key) {
+  const el = document.getElementById(elId);
+  if(!el) return;
+  const entry = EMBEDDED_AI && EMBEDDED_AI[key];
+  const raw = entry && (entry.analysis || entry.content || '');
+  if(!raw) {
+    el.innerHTML = '<span class="ai-commentary-error">Not generated on the last run.</span>';
+    return;
+  }
+  el.innerHTML = raw.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+}
+
+function fetchPriceAiCommentary() {
+  _renderCommentary('priceAiCommentaryBody', 'price_commentary');
+}
+
+function fetchSentimentAiCommentary() {
+  _renderCommentary('sentimentAiCommentaryBody', 'sentiment_commentary');
+}
 
 function renderSentimentPanel() {
   const sent = DATA.sentiment;
@@ -4623,37 +4608,6 @@ function renderSentimentPanel() {
 }
 
 // ── AI SENTIMENT COMMENTARY ──
-let _sentimentCommentaryCache = null;
-async function fetchSentimentAiCommentary() {
-  const el = document.getElementById('sentimentAiCommentaryBody');
-  if(!el) return;
-  if(_sentimentCommentaryCache) { el.innerHTML = _sentimentCommentaryCache; return; }
-
-  const sent = DATA.sentiment||{};
-  let sentSummary = '';
-  Object.entries(sent).sort((a,b) => b[1].score - a[1].score).forEach(([gpu, s]) => {
-    sentSummary += `${gpu}: score=${s.score}, reddit=${(s.reddit_sentiment*100).toFixed(0)}% positive, github=${s.github_compat_score}/100, HF models=${s.hf_models_trained||0}, mentions=${s.mentions_30d||0}/30d, ecosystem=${s.ecosystem}, adoption=${s.adoption}`;
-    if(s.hot_topics?.length) sentSummary += `, trending: "${s.hot_topics[0].title}"`;
-    sentSummary += '\n';
-  });
-
-  const messages = [
-    { role: 'system', content: `You are HyperFusion AI, analyzing developer and MLOps community sentiment for GPU hardware. Write a brief insightful commentary (120 words max) on community sentiment trends. Compare GPU popularity, highlight which GPUs are gaining or losing developer mindshare and why (new framework support, price changes, new releases, ecosystem maturity). Use bold for GPU names. Start directly with the analysis — no intro. Flowing paragraph style, no bullet points.` },
-    { role: 'user', content: `Current developer & MLOps sentiment data:\n${sentSummary}\nAnalyze the community sentiment dynamics.` }
-  ];
-
-  try {
-    const resp = await _chatRequest(messages);
-    if(!resp.ok) throw new Error('API error');
-    const data = await resp.json();
-    const text = data.choices?.[0]?.message?.content || 'No analysis available.';
-    const html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
-    _sentimentCommentaryCache = html;
-    el.innerHTML = html;
-  } catch(e) {
-    el.innerHTML = '<span class="ai-commentary-error">Unable to load AI analysis.</span>';
-  }
-}
 
 // ════════════════════════════════════════════════════════════════
 // DATA AUDIT

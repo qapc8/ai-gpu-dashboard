@@ -2657,6 +2657,38 @@ _AI_SECTIONS = {
         ),
         "user": "Generate a supply chain and sustainability analysis from this data:\n\n{snapshot}",
     },
+    # The two inline commentary boxes -- price dynamics on Trends, community
+    # sentiment on Overview. They used to be generated in the browser, which
+    # meant a live LLM call from the page and therefore a reachable credential:
+    # on GitHub Pages that was the embedded key, and once that was removed they
+    # simply failed. Generated here, they behave like every other AI section --
+    # written once per run into ai_analysis.json and served as static text.
+    "price_commentary": {
+        "type": "price_commentary",
+        "system": (
+            "You are a GPU compute market analyst. Write a brief, insightful commentary "
+            "(150 words max) on GPU price dynamics based on the data below. For each GPU, "
+            "explain the month-over-month price trend and the likely reasons (supply/demand, "
+            "new chip launches, contract shifts, AI training demand). Use **bold** for GPU "
+            "names. Be specific with numbers. No greetings or introductions -- start directly "
+            "with the analysis. A short flowing paragraph, not bullet points. The monthly "
+            "history is short by design: it only covers the period measured on one consistent "
+            "basis, so do not infer year-on-year trends from it."
+        ),
+        "user": "Analyse the price dynamics and the reasons behind them:\n\n{snapshot}",
+    },
+    "sentiment_commentary": {
+        "type": "sentiment_commentary",
+        "system": (
+            "You are analysing developer and MLOps community sentiment for GPU hardware. "
+            "Write a brief insightful commentary (120 words max) on sentiment trends. Compare "
+            "GPU popularity and highlight which are gaining or losing developer mindshare and "
+            "why (framework support, price changes, new releases, ecosystem maturity). Use "
+            "**bold** for GPU names. Start directly with the analysis -- no intro. A flowing "
+            "paragraph, not bullet points."
+        ),
+        "user": "Analyse the community sentiment dynamics:\n\n{snapshot}",
+    },
 }
 
 
