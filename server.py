@@ -132,7 +132,8 @@ class DashboardHandler(SimpleHTTPRequestHandler):
             if msg["role"] not in ("system", "user", "assistant"):
                 self.send_json({"error": "Invalid message role."}, status=400)
                 return
-            if len(msg["content"]) > 10000:
+            limit = 60000 if msg["role"] == "system" else 10000
+            if len(msg["content"]) > limit:
                 self.send_json({"error": "Message too long."}, status=400)
                 return
 

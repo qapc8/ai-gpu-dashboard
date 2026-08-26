@@ -4653,16 +4653,33 @@ document.addEventListener('click', function(e) {
 // AI CHAT SYSTEM
 // ════════════════════════════════════════════════════════════════
 
+// Chat talks only to /api/chat, which holds the credentials server-side
+// (api/chat.js on Vercel, or server.py locally). It used to fall back to
+// calling the provider straight from the browser with the key base64-encoded
+// in this file -- and since GitHub Pages has no serverless runtime, that
+// fallback was what every visitor actually ran. Base64 is not encryption: the
+// key was readable in View Source, and it is still in this repo's git history
+// from 2026-03-11, which is why it had to be rotated rather than merely
+// removed. Where no proxy exists, chat now says so instead of leaking a
+// credential.
 const _cp = '/api/chat';
 function _esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
-const _k=atob('c2stTWc3S1JuRjVoMzNYeVJNQTdGdmVSZw==');
-const _u=atob('aHR0cHM6Ly9hcGkuaHlwZXJmdXNpb24uaW8vdjEvY2hhdC9jb21wbGV0aW9ucw==');
-const _m=atob('cXdlbi9xd2VuMy0zMmI=');
+let chatAvailable = null;   // null = untested, false = no proxy on this host
 let chatHistory = [];
 
 function initChat() {
+  updateChatStatus();
+}
+
+// The status line used to always read "AI Chat Ready" regardless of whether a
+// backend existed -- true only because the page carried a key of its own.
+function updateChatStatus() {
   const statusEl = document.getElementById('chatApiStatus');
-  if(statusEl) {
+  if(!statusEl) return;
+  if(chatAvailable === false) {
+    statusEl.textContent = 'Chat unavailable — no proxy on this host';
+    statusEl.style.color = 'var(--amber)';
+  } else {
     statusEl.textContent = 'AI Chat Ready';
     statusEl.style.color = 'var(--green)';
   }
@@ -4854,20 +4871,25 @@ function askSuggestion(el) {
 }
 
 async function _chatRequest(messages) {
-  // Try server proxy first (works on Vercel/server deployments)
-  try {
-    const r = await fetch(_cp, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({messages, max_tokens:1024})
-    });
-    if(r.ok || (r.status >= 400 && r.status < 500 && r.status !== 404 && r.status !== 405)) return r;
-  } catch(e) {}
-  // Direct fallback for static hosting (GitHub Pages)
-  return fetch(_u, {
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+_k},
-    body: JSON.stringify({model:_m, messages, max_tokens:1024, temperature:0.7})
+  const r = await fetch(_cp, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({messages, max_tokens:1024})
   });
+  // No proxy on this host is a deployment fact, not a request failure. Detect
+  // it by the response not being JSON rather than by status code alone: a
+  // static file server answers POST with 404, 405 or 501 depending on which
+  // one it is (python -m http.server returns 501 and an HTML body), and the
+  // first version of this check missed that and surfaced a page of HTML as an
+  // "API Error".
+  const ct = r.headers.get('content-type') || '';
+  if(!ct.includes('json')) {
+    chatAvailable = false;
+    const err = new Error('no-proxy');
+    err.noProxy = true;
+    throw err;
+  }
+  chatAvailable = true;
+  return r;
 }
 
 async function sendChat() {
@@ -4924,7 +4946,18 @@ ${buildChatContext()}`;
 
   } catch(e) {
     removeTyping();
-    appendChatMsg('ai', '<p style="color:var(--red);">Connection failed: '+_esc(String(e.message))+'</p>');
+    if(e.noProxy) {
+      // Static hosting with no serverless runtime. Saying so is better than a
+      // generic failure, and far better than the old behaviour of shipping a
+      // credential to the browser so it could work here.
+      appendChatMsg('ai', '<p style="color:var(--amber);">Chat needs a server-side proxy to hold the API key, '
+        + 'and this deployment does not have one. It works when the dashboard is served by Vercel '
+        + '(<code>api/chat.js</code>) or locally via <code>python3 server.py</code>. '
+        + 'Every other tab is unaffected.</p>');
+      updateChatStatus();
+    } else {
+      appendChatMsg('ai', '<p style="color:var(--red);">Connection failed: '+_esc(String(e.message))+'</p>');
+    }
   }
 
   btn.disabled = false;

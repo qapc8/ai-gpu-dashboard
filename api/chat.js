@@ -84,7 +84,12 @@ export default async function handler(req, res) {
     if (!['system', 'user', 'assistant'].includes(msg.role)) {
       return res.status(400).json({ error: 'Invalid message role.' });
     }
-    if (msg.content.length > 10000) {
+    // The cap is abuse protection for user input. The system message is the
+    // dashboard's own generated context and runs far longer -- it broke chat
+    // at 24k characters once the inference and prediction-market sections were
+    // added to it -- so it gets its own limit.
+    const limit = msg.role === 'system' ? 60000 : 10000;
+    if (msg.content.length > limit) {
       return res.status(400).json({ error: 'Message too long.' });
     }
   }
