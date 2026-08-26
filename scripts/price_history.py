@@ -30,7 +30,7 @@ import json
 import subprocess
 from datetime import datetime, timedelta, timezone
 
-HISTORY_DAYS = 120
+HISTORY_DAYS = 200  # ~6 months: enough to rebuild monthly history from
 DATA_FILE = "data.json"
 
 
@@ -98,6 +98,22 @@ def backfill_from_git(history, repo_dir, log_info=lambda m: None, max_commits=40
 # the $2.39 Secure rate from the new one.
 METHODOLOGY_CHANGES = [
     {
+        # Commit d274895, "Add GCP scraper and prefer Together HGX cluster
+        # rates". Before this the cloud prices were hardcoded seed values;
+        # after, they are scraped. The step is enormous and entirely ours --
+        # GCP's H100 went 3.40 -> 11.06 overnight, AWS 4.28 -> 6.88, Azure
+        # 3.67 -> 11.61 -- so no month before May 2026 is comparable with any
+        # month after it. `scope: all` trims the monthly series to the first
+        # clean month rather than merely flagging it, because a 3x artefact at
+        # the head of a six-month chart swamps everything real in it.
+        "date": "2026-04-30",
+        "providers": ["AWS", "GCP", "Azure", "Lambda", "CoreWeave", "Together", "RunPod", "Vast.ai"],
+        "gpus": None,
+        "scope": "all",
+        "reason": ("live scraping replaced hardcoded seed prices for the cloud "
+                   "providers; figures before this date are not comparable"),
+    },
+    {
         "date": "2026-08-20",
         "providers": ["RunPod"],
         "gpus": None,  # every RunPod listing
@@ -158,6 +174,307 @@ def _nearest_on_or_before(series, target):
         else:
             break
     return best
+
+
+def rebuild_historical(data, history, log_ok=lambda a, b="": None):
+    """Recompute the monthly price history from the daily per-provider record.
+
+    `historical` was a splice of two incompatible things. Months up to 2026-03
+    were hand-seeded in gpu_data.py; from 2026-04 the pipeline started
+    computing them from live providers. The two averaged different provider
+    sets -- the seeded era never included hyperscaler list prices -- so the
+    join produced a cliff that was pure methodology:
+
+        H100-SXM  2026-03  avg $2.86, max $4.28   (seeded)
+                  2026-04  avg $5.45, max $11.61  (computed, Azure now in)
+
+    Nothing about the market did that. But `volatility` reads this series, so
+    the dashboard was reporting H100 up 202% year-on-year and six GPUs
+    "tightening" while real H100 prices were falling -- the prediction markets
+    on the next tab price it flat.
+
+    Recomputing every month from the daily record fixes the basis: one
+    provider set throughout, and every figure traceable to a published price.
+    The series gets shorter -- it can only start where the daily record does --
+    which is the honest length.
+    """
+    if not history:
+        return data
+
+    # Average over the provider set we track *today*, in every month. The daily
+    # record carries whoever was tracked at the time -- Oracle through April,
+    # FluidStack until August -- so averaging "whatever was there" would make a
+    # provider joining or leaving look like a price move. Same set throughout
+    # means month-to-month change is the market.
+    current = set(data.get("providers") or {})
+
+    # A change marked `scope: all` rewrote every provider's basis, so months
+    # before it cannot be compared with months after. Start the series at the
+    # first whole month following the most recent one.
+    wholesale = [c["date"] for c in METHODOLOGY_CHANGES if c.get("scope") == "all"]
+    first_month = None
+    if wholesale:
+        cut = max(wholesale)
+        year, mon = int(cut[:4]), int(cut[5:7])
+        year, mon = (year + 1, 1) if mon == 12 else (year, mon + 1)
+        first_month = f"{year:04d}-{mon:02d}"
+
+    by_month = {}
+    month_provs = {}
+    for date in sorted(history):
+        month = date[:7]
+        if first_month and month < first_month:
+            continue
+        for provider, gpus in (history[date] or {}).items():
+            if provider not in current:
+                continue
+            for gpu_id, price in (gpus or {}).items():
+                if price and price > 0:
+                    by_month.setdefault(gpu_id, {}).setdefault(month, []).append(price)
+                    month_provs.setdefault(month, set()).add(provider)
+
+    historical = {}
+    for gpu_id, months in by_month.items():
+        series = {}
+        for month, prices in sorted(months.items()):
+            entry = {
+                "avg": round(sum(prices) / len(prices), 2),
+                "min": round(min(prices), 2),
+                "max": round(max(prices), 2),
+                "observations": len(prices),
+                "providers": len(month_provs.get(month) or ()),
+            }
+            # A month in which we changed how a provider is read is not
+            # comparable with its neighbours; say so rather than let the step
+            # be read as market movement.
+            changed = [c["reason"] for c in METHODOLOGY_CHANGES if c["date"][:7] == month
+                       and (not c["gpus"] or gpu_id in c["gpus"])]
+            if changed:
+                entry["measurement_changed"] = changed[0]
+            series[month] = entry
+        if series:
+            historical[gpu_id] = series
+
+    if not historical:
+        return data
+    data["historical"] = historical
+
+    meta = data.setdefault("_meta", {}).setdefault("sections", {})
+    months = sorted({m for s in historical.values() for m in s})
+    meta["historical"] = {
+        "basis": "derived",
+        "detail": (
+            "Monthly min/average/max per GPU, aggregated from the daily "
+            "per-provider price record over the provider set tracked today, so "
+            "a provider joining or leaving cannot read as a price move. "
+            "Replaces a series that spliced a hand-seeded era onto live "
+            "figures: it showed H100 doubling in a month and drove a false "
+            "202% year-on-year rise into the volatility panel, which then "
+            "labelled six GPUs 'tightening' while prices were flat or falling. "
+            f"It starts at {months[0]} because live scraping replaced "
+            "hardcoded seed prices on 2026-04-30 and nothing before that is "
+            "comparable -- short and true rather than long and spliced."
+        ),
+    }
+    log_ok("Historical", f"{len(historical)} GPUs over {len(months)} months from the daily record")
+    return data
+
+
+def compute_volatility_daily(data, history, log_ok=lambda a, b="": None):
+    """Realized volatility per GPU, from the daily market average.
+
+    This used to run off the monthly series. Rebuilding that series on a single
+    comparable basis left four months -- three month-over-month returns -- and
+    an annualized volatility from three returns is noise dressed as a
+    statistic. The daily record holds ~160 observations of the same thing, so
+    use those and report how many stand behind each figure.
+    """
+    current = set(data.get("providers") or {})
+    wholesale = [c["date"] for c in METHODOLOGY_CHANGES if c.get("scope") == "all"]
+    floor = max(wholesale) if wholesale else None
+
+    # Average over a basket that held one basis for the whole window.
+    #
+    # The first attempt averaged every current provider and then discarded any
+    # GPU whose basket contained a change. Because RunPod, Together and Azure
+    # all changed in the same week, and between them carry nearly every part,
+    # that marked 15 of 17 GPUs "unmeasurable" -- destroying the panel to fix
+    # three listings. Dropping just the unstable providers keeps a comparable
+    # series for everything, and they rejoin by themselves once their change
+    # falls out of the longest window.
+    horizon = (datetime.now(timezone.utc) - timedelta(days=90)).strftime("%Y-%m-%d")
+    unstable = {p for c in METHODOLOGY_CHANGES if c["date"] >= horizon and c.get("scope") != "all"
+                for p in c["providers"]}
+    basket = sorted(current - unstable)
+    if not basket:
+        return data
+
+    dates = [d for d in sorted(history) if not (floor and d <= floor)]
+    if not dates:
+        return data
+
+    # A provider must carry the GPU on essentially every day to be in its
+    # average. Otherwise the basket changes size mid-series and the average
+    # steps for a reason that has nothing to do with price: Vast.ai's T4
+    # listing disappeared on 2026-07-28 and came back on 08-14, so the "T4
+    # market average" jumped 0.34 -> 0.53 -> 0.34 between a two-provider and a
+    # one-provider basket, and reported 118% annualized volatility on a part
+    # whose price never moved.
+    coverage = {}
+    for date in dates:
+        for provider, gpus in (history[date] or {}).items():
+            if provider not in basket:
+                continue
+            for gpu_id, price in (gpus or {}).items():
+                if price and price > 0:
+                    coverage.setdefault(gpu_id, {}).setdefault(provider, 0)
+                    coverage[gpu_id][provider] += 1
+    consistent = {
+        gpu_id: {p for p, n in provs.items() if n >= 0.9 * len(dates)}
+        for gpu_id, provs in coverage.items()
+    }
+
+    series = {}
+    for date in dates:
+        prices = {}
+        for provider, gpus in (history[date] or {}).items():
+            if provider not in basket:
+                continue
+            for gpu_id, price in (gpus or {}).items():
+                if price and price > 0 and provider in consistent.get(gpu_id, ()):
+                    prices.setdefault(gpu_id, []).append(price)
+        for gpu_id, vals in prices.items():
+            # Only average a full basket; a day missing a member is skipped
+            # rather than averaged over a smaller set.
+            if len(vals) == len(consistent.get(gpu_id, ())):
+                series.setdefault(gpu_id, []).append((date, sum(vals) / len(vals)))
+
+    # Which providers carry each GPU, so a GPU-level average can be checked for
+    # methodology changes among its constituents. The market average is
+    # dominated by whoever lists the part -- MI300X is essentially RunPod and
+    # Vast.ai -- so RunPod's tier fix showed up as MI300X "rising 378% in a
+    # week" with 1194% annualized volatility. That is our change, not a market.
+    carriers = {}
+    for date in history:
+        for provider, gpus in (history[date] or {}).items():
+            if provider in basket:
+                for gpu_id in (gpus or {}):
+                    carriers.setdefault(gpu_id, set()).add(provider)
+
+    def _changed_since(gpu_id, since):
+        for provider in carriers.get(gpu_id, ()):
+            why = _correction_in_window(provider, gpu_id, since)
+            if why:
+                return f"{provider}: {why}"
+        return None
+
+    def _pct_change(pts, days_back, gpu_id):
+        target = (datetime.strptime(pts[-1][0], "%Y-%m-%d") - timedelta(days=days_back)).strftime("%Y-%m-%d")
+        prior = _nearest_on_or_before(pts, target)
+        if not prior or not prior[1]:
+            return None, None
+        why = _changed_since(gpu_id, prior[0])
+        if why:
+            return None, why
+        return round((pts[-1][1] / prior[1] - 1) * 100, 1), None
+
+    out = {}
+    for gpu_id, pts in series.items():
+        if len(pts) < 10:
+            continue
+        values = [v for _, v in pts]
+        current_price = values[-1]
+
+        # Volatility over a window containing one of our own changes measures
+        # the change, not the market.
+        vol_since = pts[max(0, len(pts) - 90)][0]
+        vol_blocked = _changed_since(gpu_id, vol_since)
+        rets = [b / a - 1 for a, b in zip(values, values[1:]) if a]
+        vol = median_move = None
+        days_moved = None
+        if len(rets) >= 20 and not vol_blocked:
+            mean = sum(rets) / len(rets)
+            var = sum((r - mean) ** 2 for r in rets) / (len(rets) - 1)
+            vol = round((var ** 0.5) * (365 ** 0.5) * 100, 1)
+            # Annualized volatility alone misleads here. A marketplace quote is
+            # the cheapest *available* offer, so when cheap stock runs out it
+            # steps to a much dearer machine -- Vast.ai's RTX-4090 went $0.40 to
+            # $2.00 in a day and back. Real quotes, but supply gaps rather than
+            # repricing, and squaring them puts annualized volatility at 787%:
+            # arithmetically right, useless to read. The plain median is no
+            # better, because most days see no change at all and it lands on
+            # zero. So report how often the price moves, and how far when it
+            # does -- two facts that actually describe the listing.
+            moved = [abs(r) for r in rets if abs(r) > 0.005]
+            days_moved = round(len(moved) / len(rets) * 100)
+            if moved:
+                mv = sorted(moved)
+                mid = len(mv) // 2
+                median_move = round((mv[mid] if len(mv) % 2 else (mv[mid - 1] + mv[mid]) / 2) * 100, 1)
+
+        peak = max(values)
+        c7, why7 = _pct_change(pts, 7, gpu_id)
+        c30, why30 = _pct_change(pts, 30, gpu_id)
+        c90, why90 = _pct_change(pts, 90, gpu_id)
+
+        # Classify on the 30-day move, with a dead band wide enough that noise
+        # does not get called a trend. No comparable window means no verdict.
+        regime = "stable"
+        if c30 is None:
+            regime = "unmeasurable" if why30 else "stable"
+        else:
+            regime = "tightening" if c30 > 3 else "falling" if c30 < -3 else "stable"
+
+        rec = {
+            "current": round(current_price, 2),
+            "change_7d_pct": c7,
+            "change_30d_pct": c30,
+            "change_90d_pct": c90,
+            "annualized_volatility_pct": vol,
+            "days_moved_pct": days_moved,
+            "typical_move_pct": median_move,
+            "drawdown_from_peak_pct": round((current_price - peak) / peak * 100, 1) if peak else None,
+            "daily_observations": len(pts),
+            "first_observed": pts[0][0],
+            "regime": regime,
+            "providers_in_average": sorted(consistent.get(gpu_id, ())),
+            "note": (f"{len(pts)} daily observations, averaged over the "
+                     f"{len(consistent.get(gpu_id, ()))} providers that list this GPU "
+                     f"every day since {pts[0][0]}"),
+        }
+        why = why30 or why7 or why90 or vol_blocked
+        if why:
+            rec["measurement_changed"] = why
+            rec["note"] = ("A provider carrying this GPU changed how it is read within "
+                           f"the window, so the comparison is not like-for-like -- {why}")
+        out[gpu_id] = rec
+
+    if not out:
+        return data
+    data["volatility"] = out
+    data["volatility_basket"] = {
+        "providers": basket,
+        "excluded": sorted(unstable & current),
+        "note": ("Averaged over providers whose basis held for the whole window. "
+                 "Excluded providers changed how we read them within the last 90 "
+                 "days and rejoin automatically once that falls out of the window."),
+    }
+
+    meta = data.setdefault("_meta", {}).setdefault("sections", {})
+    meta["volatility"] = {
+        "basis": "derived",
+        "detail": (
+            "Realized volatility, drawdown and trend per GPU, computed from the "
+            "daily market average across the providers tracked today. "
+            "Previously computed from the monthly series, which after being "
+            "rebuilt on one comparable basis holds four points -- three "
+            "returns. Annualized volatility is only reported where at least 20 "
+            "daily returns stand behind it, and the observation count is "
+            "published with every figure."
+        ),
+    }
+    log_ok("Volatility", f"{len(out)} GPUs from daily observations")
+    return data
 
 
 def build_price_history(data, repo_dir, log_info=lambda m: None, log_ok=lambda a, b="": None):
@@ -259,6 +576,9 @@ def build_price_history(data, repo_dir, log_info=lambda m: None, log_ok=lambda a
         summary.append(row)
     # Unmeasurable providers sort last rather than reading as perfectly stable.
     summary.sort(key=lambda s: (s["avg_daily_move_pct"] is None, -(s["avg_daily_move_pct"] or 0)))
+
+    data = rebuild_historical(data, history, log_ok=log_ok)
+    data = compute_volatility_daily(data, history, log_ok=log_ok)
 
     dates = sorted(history)
     data["price_history"] = {

@@ -1274,8 +1274,9 @@ loadExternalData();
 <div class="tab-panel" id="tab-trends">
   <div class="kpi-strip mb" id="volStats"></div>
   <div class="card mb">
-    <div class="card-hd"><span class="card-hd-title">Price Momentum &amp; Volatility</span><span class="card-hd-sub">measured from price history — no forecasting</span></div>
+    <div class="card-hd"><span class="card-hd-title">Price Momentum &amp; Volatility</span><span class="card-hd-sub">measured from the daily price record — no forecasting</span></div>
     <div class="card-bd-flush"><table class="dt" id="volTable"></table></div>
+    <div class="card-bd dim" id="volBasketNote" style="font-size:11px;line-height:1.6;padding-top:10px;"></div>
   </div>
   <div class="card mb">
     <div class="card-hd" style="flex-direction:row;gap:14px;justify-content:flex-start;">
@@ -1305,7 +1306,7 @@ loadExternalData();
       <div id="decayStats" style="padding:8px 16px 12px;"></div>
     </div>
   </div>
-  <div class="grid g-2 mb">
+  <div class="mb">
     <div class="card">
       <div class="card-hd">
         <span class="card-hd-title">Supply Lead Times</span>
@@ -1318,10 +1319,6 @@ loadExternalData();
           <div id="leadTimeList" style="max-height:120px;overflow-y:auto;"></div>
         </div>
       </div>
-    </div>
-    <div class="card">
-      <div class="card-hd"><span class="card-hd-title">AI Accelerator Share Trend</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartShareTrend"></canvas></div></div>
     </div>
   </div>
 </div>
@@ -2601,7 +2598,6 @@ function renderTrendsTab() {
   updateTrendChart();
   renderDecayChart();
   renderMarketSupplyChart();
-  renderShareTrendChart();
 }
 
 // What the price history actually supports: realized volatility, drawdown and a
@@ -2610,36 +2606,54 @@ function renderTrendsTab() {
 function renderVolatilityPanel() {
   const vol=DATA.volatility||{}; const ids=Object.keys(vol);
   if(!ids.length) return;
-  const byMove=ids.slice().sort((a,b)=>(vol[b].change_3mo_pct??0)-(vol[a].change_3mo_pct??0));
+  // Now computed from ~115 daily observations rather than four monthly points,
+  // over the providers that list each GPU every day. The 3mo/12mo columns are
+  // gone: the comparable price record only starts in May 2026, so a 12-month
+  // figure was arithmetic on a splice — it once read H100 +202%.
+  const withMove=ids.filter(g=>vol[g].change_30d_pct!=null);
+  const byMove=withMove.slice().sort((a,b)=>vol[b].change_30d_pct-vol[a].change_30d_pct);
   const rising=byMove[0], falling=byMove[byMove.length-1];
-  const mostVol=ids.filter(g=>vol[g].annualized_volatility_pct!=null)
-                   .sort((a,b)=>vol[b].annualized_volatility_pct-vol[a].annualized_volatility_pct)[0];
+  const jumpy=ids.filter(g=>vol[g].typical_move_pct!=null)
+                 .sort((a,b)=>(vol[b].days_moved_pct*vol[b].typical_move_pct)-(vol[a].days_moved_pct*vol[a].typical_move_pct))[0];
   const tightening=ids.filter(g=>vol[g].regime==='tightening').length;
+  const basket=(DATA.volatility_basket||{});
 
   const st=document.getElementById('volStats');
   if(st) st.innerHTML=`
-    <div class="kpi kpi-red"><div class="kpi-label">Fastest Rising</div><div class="kpi-value">${rising}</div><div class="kpi-sub">${vol[rising].change_3mo_pct>0?'+':''}${vol[rising].change_3mo_pct}% over 3 months</div></div>
-    <div class="kpi kpi-green"><div class="kpi-label">Fastest Falling</div><div class="kpi-value">${falling}</div><div class="kpi-sub">${vol[falling].change_3mo_pct}% over 3 months</div></div>
-    <div class="kpi kpi-amber"><div class="kpi-label">Most Volatile</div><div class="kpi-value">${mostVol}</div><div class="kpi-sub">${vol[mostVol].annualized_volatility_pct}% annualised</div></div>
-    <div class="kpi kpi-purple"><div class="kpi-label">Tightening</div><div class="kpi-value">${tightening}/${ids.length}</div><div class="kpi-sub">GPUs with rising prices</div></div>`;
+    ${rising?`<div class="kpi kpi-red"><div class="kpi-label">Fastest Rising</div><div class="kpi-value">${rising}</div><div class="kpi-sub">${vol[rising].change_30d_pct>0?'+':''}${vol[rising].change_30d_pct}% over 30 days</div></div>`:''}
+    ${falling&&falling!==rising?`<div class="kpi kpi-green"><div class="kpi-label">Fastest Falling</div><div class="kpi-value">${falling}</div><div class="kpi-sub">${vol[falling].change_30d_pct}% over 30 days</div></div>`:''}
+    ${jumpy?`<div class="kpi kpi-amber"><div class="kpi-label">Most Restless</div><div class="kpi-value">${jumpy}</div><div class="kpi-sub">reprices ${vol[jumpy].days_moved_pct}% of days, ${vol[jumpy].typical_move_pct}% when it does</div></div>`:''}
+    <div class="kpi kpi-purple"><div class="kpi-label">Rising</div><div class="kpi-value">${tightening}/${ids.length}</div><div class="kpi-sub">up more than 3% in 30 days</div></div>`;
 
-  const rc={falling:'var(--green)',stable:'var(--text-2)',tightening:'var(--red)'};
-  let h='<thead><tr><th>GPU</th><th class="r">Now</th><th class="r">3mo</th><th class="r">12mo</th><th class="r">Volatility</th><th class="r">From peak</th><th>Regime</th><th class="r">Obs</th></tr></thead><tbody>';
-  byMove.forEach(g=>{
+  const rc={falling:'var(--green)',stable:'var(--text-2)',tightening:'var(--red)',unmeasurable:'var(--amber)'};
+  let h='<thead><tr><th>GPU</th><th class="r">Now</th><th class="r">7d</th><th class="r">30d</th><th class="r">90d</th>'
+    +'<th class="r" title="Share of days on which the published average changed at all">Moves</th>'
+    +'<th class="r" title="Median move on the days it does move — a marketplace steps to a dearer machine when cheap stock runs out, so this is more telling than an average">By</th>'
+    +'<th class="r" title="Standard deviation of daily returns, annualised. Large for marketplace listings because a supply gap shows up as a price spike.">Annualised</th>'
+    +'<th>Trend</th><th class="r" title="Providers listing this GPU every day in the window">In avg</th></tr></thead><tbody>';
+  const order=ids.slice().sort((a,b)=>(vol[b].change_30d_pct??-999)-(vol[a].change_30d_pct??-999));
+  order.forEach(g=>{
     const v=vol[g];
     const pct=(x)=>x==null?'<span class="dim">—</span>':`<span style="color:${x>0.5?'var(--red)':x<-0.5?'var(--green)':'var(--text-2)'}">${x>0?'+':''}${x}%</span>`;
     h+=`<tr><td class="gpu-name">${g}</td>
       <td class="r" style="font-family:var(--mono);">$${v.current.toFixed(2)}</td>
-      <td class="r" style="font-family:var(--mono);">${pct(v.change_3mo_pct)}</td>
-      <td class="r" style="font-family:var(--mono);">${pct(v.change_12mo_pct)}</td>
+      <td class="r" style="font-family:var(--mono);">${pct(v.change_7d_pct)}</td>
+      <td class="r" style="font-family:var(--mono);">${pct(v.change_30d_pct)}</td>
+      <td class="r" style="font-family:var(--mono);">${pct(v.change_90d_pct)}</td>
+      <td class="r" style="font-family:var(--mono);">${v.days_moved_pct!=null?v.days_moved_pct+'%':'<span class="dim">—</span>'}</td>
+      <td class="r" style="font-family:var(--mono);">${v.typical_move_pct!=null?v.typical_move_pct+'%':'<span class="dim">—</span>'}</td>
       <td class="r" style="font-family:var(--mono);">${v.annualized_volatility_pct!=null?v.annualized_volatility_pct+'%':'<span class="dim">—</span>'}</td>
-      <td class="r" style="font-family:var(--mono);color:${v.drawdown_from_peak_pct<-5?'var(--green)':'var(--text-2)'}">${v.drawdown_from_peak_pct}%</td>
-      <td style="color:${rc[v.regime]};font-weight:600;text-transform:uppercase;font-size:10px;" title="${v.note}">${v.regime}</td>
-      <td class="r dim">${v.monthly_observations}</td></tr>`;
+      <td style="color:${rc[v.regime]||'var(--text-2)'};font-weight:600;text-transform:uppercase;font-size:10px;" title="${escHtml(v.note||'')}">${v.regime}</td>
+      <td class="r dim" style="font-size:10px;" title="${(v.providers_in_average||[]).join(', ')}">${(v.providers_in_average||[]).length}</td></tr>`;
   });
   const el=document.getElementById('volTable'); if(el) el.innerHTML=h+'</tbody>';
-}
 
+  const note=document.getElementById('volBasketNote');
+  if(note&&basket.providers){
+    note.innerHTML=`Averaged over <b style="color:var(--text-1)">${basket.providers.join(', ')}</b>, and only over those listing a given GPU every day — otherwise a listing appearing or vanishing reads as a price move (Vast.ai's T4 dropped out for a fortnight and the "T4 average" swung 55% with no price change).`
+      +(basket.excluded&&basket.excluded.length?` <span style="color:var(--amber)">${basket.excluded.join(', ')}</span> are held out: how we read them changed in the last 90 days, and they rejoin once that ages out.`:'');
+  }
+}
 // ════════════════════════════════════════════════════════════════
 // PREDICTION MARKETS
 // ════════════════════════════════════════════════════════════════
@@ -2968,23 +2982,6 @@ function renderPmMethod(pm) {
     <p style="margin:0;" class="dim">Order books read ${asOf}. Quotes move continuously; these are not live ticks.</p>`;
 }
 
-// Vendor share of AI accelerator revenue over time (published revenue + analyst
-// estimates). Replaces a radar of five editorial 0-100 scores that had no method.
-function renderShareTrendChart() {
-  const c=DATA.competitive||{}; const names=Object.keys(c);
-  if(!names.length) return;
-  const n=Math.max(...names.map(v=>(c[v].market_share_trend||[]).length));
-  const labels=Array.from({length:n},(_,i)=>`T-${n-1-i}`);
-  if(charts.mst) charts.mst.destroy();
-  charts.mst=new Chart(document.getElementById('chartShareTrend'),{type:'line',
-    data:{labels,datasets:names.map((v,i)=>({label:v.replace('_',' '),data:c[v].market_share_trend||[],
-      borderColor:CL[i],backgroundColor:CL[i]+'20',tension:0.3,borderWidth:2,pointRadius:3,fill:false}))},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'top',labels:{boxWidth:8,font:{size:9}}},
-        tooltip:{callbacks:{label:x=>x.dataset.label+': '+x.parsed.y+'%'}}},
-      scales:{y:{title:{display:true,text:'% of AI accelerator revenue'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false}}}}
-  });
-}
 
 function updateTrendChart() {
   const sel=document.getElementById('trendGpuSelect');
@@ -4728,8 +4725,10 @@ function buildChatContext() {
   const fc = DATA.volatility || {};
   if(Object.keys(fc).length) {
     parts.push('PRICE MOMENTUM (measured, not forecast):\n' + Object.entries(fc).map(([id, f]) =>
-      `${id}: $${f.current}/hr now, 3mo ${f.change_3mo_pct ?? 'n/a'}%, 12mo ${f.change_12mo_pct ?? 'n/a'}%, `
-      + `annualised volatility ${f.annualized_volatility_pct ?? 'n/a'}%, ${f.drawdown_from_peak_pct}% off peak, regime: ${f.regime}`
+      `${id}: $${f.current}/hr now, 7d ${f.change_7d_pct ?? 'n/a'}%, 30d ${f.change_30d_pct ?? 'n/a'}%, 90d ${f.change_90d_pct ?? 'n/a'}%, `
+      + `moves on ${f.days_moved_pct ?? 'n/a'}% of days by ${f.typical_move_pct ?? 'n/a'}% when it does, `
+      + `annualised volatility ${f.annualized_volatility_pct ?? 'n/a'}%, ${f.drawdown_from_peak_pct}% off peak, trend: ${f.regime}`
+      + (f.measurement_changed ? ` (NOT comparable: ${f.measurement_changed})` : '')
     ).join('\n'));
   }
   const cl = DATA.changelog || [];
@@ -5089,7 +5088,6 @@ const DATA_SECTIONS = [
   { key:'news',           label:'News Feed',              color:'amber',  type:'array' },
   { key:'volatility',     label:'Price Momentum',         color:'orange', type:'dict-of-objects' },
   { key:'changelog',      label:'Change Feed',            color:'green',  type:'array' },
-  { key:'competitive',    label:'Competitive Landscape',  color:'blue',   type:'dict-of-objects' },
   { key:'sustainability', label:'Sustainability Metrics', color:'green',  type:'dict-of-objects' },
   { key:'supplychain',    label:'Supply Chain',           color:'red',    type:'dict-of-objects' },
   { key:'modelfit',       label:'Self-Hosting Fit / VRAM Sizing', color:'purple', type:'dict-of-objects' },

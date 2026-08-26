@@ -23,6 +23,7 @@ from forecast_engine import generate_forecasts
 from inference_market import refresh_inference_market
 from model_fit import build_model_fit
 from price_history import build_price_history
+from sustainability import build_gpu_carbon
 from prediction_markets import (
     build_prediction_markets,
     fetch_kalshi_gpu_markets,
@@ -1280,43 +1281,6 @@ def recalculate_matrix(data):
     return data
 
 
-def update_historical(data):
-    """Append a new monthly data point from current provider prices."""
-    providers = data.get("providers", {})
-    historical = data.get("historical", {})
-    current_month = datetime.now(timezone.utc).strftime("%Y-%m")
-
-    # Collect per-GPU prices from providers
-    gpu_prices = {}
-    for prov_key, prov in providers.items():
-        for gpu_id, gpu_info in (prov.get("gpus") or {}).items():
-            price = gpu_info.get("price_per_gpu_hr")
-            if price is not None and price > 0:
-                gpu_prices.setdefault(gpu_id, []).append(price)
-
-    updated_count = 0
-    for gpu_id, prices in gpu_prices.items():
-        if gpu_id not in historical:
-            historical[gpu_id] = {}
-        # Only update if we have data and don't already have this month with live source
-        entry = historical[gpu_id].get(current_month, {})
-        avg_price = round(sum(prices) / len(prices), 2)
-        min_price = round(min(prices), 2)
-        max_price = round(max(prices), 2)
-
-        historical[gpu_id][current_month] = {
-            "avg": avg_price,
-            "min": min_price,
-            "max": max_price,
-            "availability": entry.get("availability", "available"),
-        }
-        updated_count += 1
-
-    data["historical"] = historical
-    log_ok("Historical", f"{updated_count} GPUs updated for {current_month}")
-    return data
-
-
 def update_spot(data):
     """Refresh spot data from current provider prices and discounts."""
     providers = data.get("providers", {})
@@ -1499,7 +1463,32 @@ def refresh_tco(data):
                 tco["cloud_reserved_3yr_hr"] = res3
             if spot_rate is not None:
                 tco["cloud_spot_hr"] = spot_rate
+
             synced += 1
+
+    # The self-hosted side held its own copies of power draw, purchase price,
+    # FLOPS and VRAM -- the same fact in three places (specs, gpu_carbon, here)
+    # and free to disagree. GB200 did: 2.2 kWh/hr here and in gpu_carbon from
+    # the 2700W superchip, against specs' 1200W per GPU.
+    #
+    # This runs over every TCO profile rather than only those with a cloud
+    # price. Nesting it in the loop above missed MI325X, which no provider
+    # currently lists, so it kept a stale 0.83 kWh against the derived 0.82 --
+    # and "nobody rents it" says nothing about what it draws if you buy one.
+    specs = data.get("specs") or {}
+    carbon_all = (data.get("sustainability") or {}).get("gpu_carbon") or {}
+    for gpu_id, tco in (data.get("tco") or {}).items():
+        spec = specs.get(gpu_id) or {}
+        carbon = carbon_all.get(gpu_id) or {}
+        sh = tco.get("self_hosted")
+        if sh and carbon.get("kwh_per_hour"):
+            sh["power_kwh"] = carbon["kwh_per_hour"]
+        if spec.get("msrp_usd"):
+            tco["gpu_price_usd"] = spec["msrp_usd"]
+        if spec.get("fp16_tflops"):
+            tco["perf_fp16_tflops"] = spec["fp16_tflops"]
+        if spec.get("vram_gb"):
+            tco["vram_gb"] = spec["vram_gb"]
 
         # Break-even used to live in a parallel `reservations` dataset that
         # duplicated this maths. It is now a field on the TCO profile.
@@ -1546,6 +1535,23 @@ def refresh_lead_times(data):
     # header said the data was updated this morning.
     for retired in ("data_center_gpu_shipments_k", "amd_gpu_market_share_pct"):
         indicators.pop(retired, None)
+
+    # Same reasoning, two more datasets nothing could keep true:
+    #
+    #   competitive        vendor share of AI accelerator revenue. Hand-set
+    #                      analyst estimates summing to exactly 100%, plotted
+    #                      against an axis labelled "T-4" to "T-0" -- points
+    #                      with no dates attached. Nobody publishes this free.
+    #   supply_risk_score  an invented 0-100 per vendor with no method behind
+    #                      it, and not rendered anywhere.
+    #
+    # The rest of supplychain stays: export_controls is public record with
+    # dates and citations, and the lead times are recomputed each run.
+    data.pop("competitive", None)
+    for vendor in (data.get("supplychain") or {}).get("vendors", {}).values():
+        vendor.pop("supply_risk_score", None)
+    for gone in ("competitive",):
+        (data.get("_meta") or {}).get("sections", {}).pop(gone, None)
 
     gpu_lead = indicators.get("gpu_lead_times") or {}
     specs = data.get("specs") or {}
@@ -1789,93 +1795,6 @@ def build_regional(data):
     return data
 
 
-def compute_volatility(data):
-    """Describe what the price history actually shows, instead of forecasting it.
-
-    A 6-month point forecast off ~12 monthly observations is not defensible.
-    Realized volatility, drawdown and a trend classification are.
-    """
-    historical = data.get("historical") or {}
-    spot = data.get("spot") or {}
-    out = {}
-
-    for gpu_id, series in historical.items():
-        if gpu_id not in spot:
-            continue
-        # Each month is {"avg", "min", "max", "availability"}; track the average.
-        def _avg(v):
-            if isinstance(v, dict):
-                return v.get("avg")
-            return v if isinstance(v, (int, float)) else None
-
-        months = sorted(series)
-        pts = [(m, _avg(series[m])) for m in months]
-        pts = [(m, v) for m, v in pts if isinstance(v, (int, float)) and v > 0]
-        if len(pts) < 4:
-            continue
-
-        values = [v for _, v in pts]
-
-        # Only take returns between genuinely consecutive months -- the early
-        # history is quarterly, and treating a 3-month gap as one step would
-        # overstate monthly volatility.
-        def _months(label):
-            y, m = label.split("-")
-            return int(y) * 12 + int(m)
-
-        rets = []
-        for i in range(1, len(pts)):
-            if _months(pts[i][0]) - _months(pts[i - 1][0]) == 1:
-                rets.append(values[i] / values[i - 1] - 1)
-
-        peak = max(values)
-        current = values[-1]
-
-        def change_over(n):
-            if len(values) <= n:
-                return None
-            return round((current / values[-1 - n] - 1) * 100, 1)
-
-        monthly_vol = None
-        if len(rets) >= 3:
-            mean = sum(rets) / len(rets)
-            monthly_vol = (sum((r - mean) ** 2 for r in rets) / len(rets)) ** 0.5
-
-        # Classify on the compounded 3-month move, not the mean of returns: on a
-        # choppy series +67% then -35% then -28% averages to ~0 while the actual
-        # 3-month change is -23%.
-        trend = change_over(3)
-        if trend is None:
-            trend = change_over(1) or 0.0
-        if trend <= -5:
-            regime, note = "falling", "Prices trending down — favour on-demand and short commitments."
-        elif trend >= 5:
-            regime, note = "tightening", "Prices trending up — supply tightening; consider locking in capacity."
-        else:
-            regime, note = "stable", "Prices flat within noise."
-
-        out[gpu_id] = {
-            "current": round(current, 3),
-            "observations": len(values),
-            "first_month": pts[0][0],
-            "monthly_volatility_pct": round(monthly_vol * 100, 1) if monthly_vol is not None else None,
-            "annualized_volatility_pct": round(monthly_vol * (12 ** 0.5) * 100, 1) if monthly_vol is not None else None,
-            "monthly_observations": len(rets) + 1,
-            "peak": round(peak, 3),
-            "drawdown_from_peak_pct": round((current / peak - 1) * 100, 1),
-            "change_3mo_pct": change_over(3),
-            "change_6mo_pct": change_over(6),
-            "change_12mo_pct": change_over(12),
-            "regime": regime,
-            "note": note,
-        }
-
-    data["volatility"] = out
-    data.pop("forecasts", None)
-    log_ok("Volatility", f"{len(out)} GPUs described from price history")
-    return data
-
-
 # Which pipeline step feeds which section. A section whose step failed this run
 # is serving carried-forward data, and the point of stamping is that the Data
 # tab can say so instead of the staleness being invisible.
@@ -1895,6 +1814,7 @@ _SECTION_SOURCES = {
     "news": ["Google News RSS"],
     "stocks": ["Stock/NVDA", "Stock/AMD"],
     "indicators": ["Stock/NVDA", "Stock/AMD"],
+    "sustainability": ["Sustainability"],
     "summary": ["Summary"],
     "changelog": ["Changelog"],
 }
@@ -2830,7 +2750,7 @@ def main():
     data["last_updated"] = datetime.now(timezone.utc).isoformat()
 
     # ---- 1. GPU Cloud Pricing ----
-    print("[1/11] GPU Cloud Pricing")
+    print("[1/10] GPU Cloud Pricing")
     print("-" * 40)
 
     vastai_prices = None
@@ -2895,15 +2815,11 @@ def main():
     print()
 
     # ---- 2. Recalculate derived data (matrix, historical, spot) ----
-    print("[2/11] Recalculate Historical")
-    print("-" * 40)
-    try:
-        data = update_historical(data)
-    except Exception as exc:
-        log_fail("Historical", str(exc))
-    print()
-
-    print("[3/11] Recalculate Spot")
+    # Historical used to be step 2, appending one month at a time onto a
+    # hand-seeded series -- which is how the 2026-03/2026-04 basis cliff got
+    # there. rebuild_historical (in price_history, step 8) now recomputes every
+    # month from the daily per-provider record instead.
+    print("[2/10] Recalculate Spot")
     print("-" * 40)
     try:
         data = update_spot(data)
@@ -2911,12 +2827,18 @@ def main():
         log_fail("Spot", str(exc))
     print()
 
-    print("[4/11] Recalculate Matrix")
+    print("[3/10] Recalculate Matrix")
     print("-" * 40)
     try:
         data = recalculate_matrix(data)
     except Exception as exc:
         log_fail("Matrix", str(exc))
+
+    # Before TCO: TCO's self-hosted power line is derived from this.
+    try:
+        data = build_gpu_carbon(data, log_ok=log_ok)
+    except Exception as exc:
+        log_fail("Sustainability", str(exc))
 
     try:
         data = refresh_tco(data)
@@ -2935,7 +2857,7 @@ def main():
     print()
 
     # ---- 5. Stock Prices ----
-    print("[5/11] Stock Prices")
+    print("[4/10] Stock Prices")
     print("-" * 40)
 
     stocks = []
@@ -2950,7 +2872,7 @@ def main():
     print()
 
     # ---- 6. News ----
-    print("[6/11] News Headlines")
+    print("[5/10] News Headlines")
     print("-" * 40)
 
     try:
@@ -2961,7 +2883,7 @@ def main():
     print()
 
     # ---- 7. Community Sentiment (Reddit + HuggingFace + GitHub) ----
-    print("[7/11] Reddit Sentiment")
+    print("[6/10] Reddit Sentiment")
     print("-" * 40)
 
     reddit_data = {}
@@ -2971,7 +2893,7 @@ def main():
         log_fail("Reddit Sentiment", str(exc))
     print()
 
-    print("[8/11] HuggingFace + GitHub")
+    print("[7/10] HuggingFace + GitHub")
     print("-" * 40)
 
     hf_data = {}
@@ -2991,7 +2913,7 @@ def main():
     print()
 
     # ---- 9. Derived analytics: regional, volatility, model fit ----
-    print("[9/11] Regional / Volatility / Model Fit")
+    print("[8/10] Regional / Volatility / Model Fit")
     print("-" * 40)
 
     try:
@@ -2999,20 +2921,22 @@ def main():
     except Exception as exc:
         log_fail("Regional", str(exc))
 
-    try:
-        data = compute_volatility(data)
-    except Exception as exc:
-        log_fail("Volatility", str(exc))
-
+    # Price history rebuilds `historical` from the daily per-provider record,
+    # and volatility is computed off `historical` -- so it has to run first.
+    # The other way round, volatility measured the old spliced series.
     try:
         data = build_price_history(data, PROJECT_DIR, log_info=log_info, log_ok=log_ok)
     except Exception as exc:
         log_fail("Price History", str(exc))
 
+    # Volatility is computed inside build_price_history now, from the daily
+    # record rather than four monthly points.
+
     try:
         data = build_model_fit(data, log_info=log_info, log_ok=log_ok)
     except Exception as exc:
         log_fail("Model Fit", str(exc))
+
 
     # Retired: per-provider utilization was unsourceable, and a 6-month point
     # forecast off ~12 monthly observations was not defensible. compute_volatility
@@ -3021,7 +2945,7 @@ def main():
     print()
 
     # ---- 10. Prediction markets (Kalshi + Polymarket) ----
-    print("[10/11] Prediction Markets")
+    print("[9/10] Prediction Markets")
     print("-" * 40)
 
     kalshi_curves, poly_markets = [], []
@@ -3050,7 +2974,7 @@ def main():
     print()
 
     # ---- 11. AI Analysis ----
-    print("[11/11] AI Analysis")
+    print("[10/10] AI Analysis")
     print("-" * 40)
 
     existing_ai = update_ai_analysis(data, existing_ai)

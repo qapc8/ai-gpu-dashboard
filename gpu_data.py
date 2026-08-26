@@ -1864,48 +1864,19 @@ PRICE_FORECASTS = {
 # Feature 4: Competitive Moat Tracker
 # ──────────────────────────────────────────────────────────────────────────────
 
-COMPETITIVE_MOAT = {
-    "NVIDIA": {
-        "market_share_pct": 78,
-        "market_share_trend": [87, 87, 85, 81, 78],
-        "key_products": ["B300", "B200", "GB200", "H200", "H100-SXM"],
-        "strengths": ["CUDA ecosystem lock-in", "NVLink/NVSwitch interconnect", "Dominant software stack", "Training performance leadership"],
-        "weaknesses": ["Premium pricing", "Supply constraints on latest gen", "Growing competitive pressure"],
-        "parity_timeline": None
-    },
-    "AMD": {
-        "market_share_pct": 6,
-        "market_share_trend": [3, 4, 5, 5, 6],
-        "key_products": ["MI355X", "MI325X", "MI300X"],
-        "strengths": ["Price/perf advantage", "Large HBM capacity", "Open ROCm ecosystem", "Rapid market share growth"],
-        "weaknesses": ["ROCm maturity gap", "Limited training adoption", "Smaller ecosystem"],
-        "parity_timeline": "2027-Q2 for inference, 2028+ for training"
-    },
-    "Google_TPU": {
-        "market_share_pct": 11,
-        "market_share_trend": [4, 5, 7, 9, 11],
-        "key_products": ["TPU v7 (Ironwood)", "TPU v6e (Trillium)", "TPU v5p"],
-        "strengths": ["Vertically integrated (GCP only)", "Excellent JAX/TF performance", "Competitive pricing", "Large-scale training proven"],
-        "weaknesses": ["GCP lock-in", "No PyTorch native support", "Limited availability outside Google"],
-        "parity_timeline": "Niche — competes in JAX/TF workloads only"
-    },
-    "AWS_Trainium": {
-        "market_share_pct": 4,
-        "market_share_trend": [1, 2, 3, 3, 4],
-        "key_products": ["Trainium3", "Trainium2", "Inferentia2"],
-        "strengths": ["Aggressive pricing", "AWS ecosystem integration", "Neuron SDK improving", "Cost leadership strategy"],
-        "weaknesses": ["Limited model compatibility", "Early ecosystem", "Performance gaps on complex models"],
-        "parity_timeline": "2028+ for broad adoption"
-    },
-    "Intel": {
-        "market_share_pct": 1,
-        "market_share_trend": [2, 2, 1, 1, 1],
-        "key_products": ["Gaudi 3", "Gaudi 2"],
-        "strengths": ["Competitive Gaudi 3 pricing", "x86 ecosystem familiarity", "Enterprise relationships"],
-        "weaknesses": ["Poor market traction", "Software maturity issues", "Shrinking share", "Strategic uncertainty"],
-        "parity_timeline": "Unlikely to achieve broad parity"
-    }
-}
+# Retired: vendor share of AI accelerator revenue. Hand-set to sum to exactly
+# 100% and plotted against undated "T-4..T-0" points. No free source publishes
+# it, so it could never refresh -- same reason amd_gpu_market_share_pct went.
+# Kept as an empty mapping because server.py, ai_analyzer.py and
+# terminal_dashboard.py all import the name; they now render nothing here
+# rather than failing to import.
+COMPETITIVE_MOAT = {}
+
+
+def get_competitive_landscape() -> dict:
+    """Retired -- see COMPETITIVE_MOAT above."""
+    return COMPETITIVE_MOAT
+
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -2230,11 +2201,6 @@ EXPORT_CONTROL_TRACKER = [
 def get_price_forecasts() -> dict:
     """Get price forecasts for all tracked GPUs."""
     return PRICE_FORECASTS
-
-
-def get_competitive_landscape() -> dict:
-    """Get competitive moat analysis for all vendors."""
-    return COMPETITIVE_MOAT
 
 
 def get_sustainability_summary() -> dict:
