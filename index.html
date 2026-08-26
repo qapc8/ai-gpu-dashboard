@@ -4360,14 +4360,14 @@ function renderEfficiencyTab() {
 // ════════════════════════════════════════════════════════════════
 
 const AI_MAP = {
-  'summary':    {url:'/api/ai/summary',     el:'aiSummaryContent',        status:null},
-  'trends':     {url:'/api/ai/trends',       el:'aiTrendsContent',         status:null},
-  'regional':   {url:'/api/ai/regional',     el:'aiRegionalContent',       status:null},
-  'investment': {url:'/api/ai/investment',    el:'aiInvestmentContent',     status:null},
-  'notes':      {url:'/api/ai/notes',        el:'aiNotesContent',          status:null},
-  'efficiency': {url:'/api/ai/efficiency',    el:'aiEfficiencyContent',     status:null},
-  'forecast':   {url:'/api/ai/forecast',      el:'aiForecastContent',       status:null},
-  'sustainability':{url:'/api/ai/sustainability',el:'aiSustainabilityContent',status:null},
+  'summary':    {el:'aiSummaryContent',        status:null},
+  'trends':     {el:'aiTrendsContent',         status:null},
+  'regional':   {el:'aiRegionalContent',       status:null},
+  'investment': {el:'aiInvestmentContent',     status:null},
+  'notes':      {el:'aiNotesContent',          status:null},
+  'efficiency': {el:'aiEfficiencyContent',     status:null},
+  'forecast':   {el:'aiForecastContent',       status:null},
+  'sustainability':{el:'aiSustainabilityContent',status:null},
 };
 
 let aiLoadedSet = new Set();
@@ -4436,30 +4436,20 @@ async function loadAI(type, bypassCache) {
     return;
   }
 
-  // Live server mode — fetch from API
-  el.innerHTML = '<div class="ai-loading"><div class="ai-spinner"></div>Generating analysis&hellip; This may take 15-30 seconds</div>';
-  setAIStatus(cfg.status, 'loading');
-  aiRunningCount++;
+  // Section absent from ai_analysis.json. The old code asked /api/ai/<type>
+  // here, an endpoint that only ever answered on a local server running the
+  // since-deleted ai_analyzer.py -- so on the published site this produced
+  // "Server unavailable (404)", which describes our plumbing rather than the
+  // reader's problem. These are written by the daily pipeline; if one is
+  // missing, that run did not produce it.
+  el.innerHTML = '<div style="padding:20px;font-size:12px;color:var(--text-2);line-height:1.7;">'
+    + '<strong style="color:var(--text-1);">Not generated on the last run.</strong><br>'
+    + 'These analyses are written by the daily pipeline into ai_analysis.json. '
+    + 'This one is missing, which usually means the language model was unreachable that run. '
+    + 'Every other tab reads measured data and is unaffected.</div>';
+  setAIStatus(cfg.status, 'idle');
   updateGlobalStatus();
-
-  try {
-    const url = bypassCache ? cfg.url + (cfg.url.includes('?') ? '&' : '?') + 'nocache=1' : cfg.url;
-    const r = await fetchJSON(url);
-    if(r.error) {
-      el.innerHTML = '<div style="color:var(--red);padding:20px;font-size:12px;"><strong>Error:</strong> '+_esc(String(r.error))+'</div>';
-      setAIStatus(cfg.status, 'idle');
-    } else {
-      const raw = r.analysis || r.quick_summary || JSON.stringify(r);
-      el.innerHTML = formatAIOutput(raw);
-      setAIStatus(cfg.status, 'ready');
-      aiLoadedSet.add(type);
-    }
-  } catch(e) {
-    el.innerHTML = '<div style="color:var(--red);padding:20px;font-size:12px;"><strong>Failed:</strong> '+_esc(String(e.message))+'</div>';
-    setAIStatus(cfg.status, 'idle');
-  }
-  aiRunningCount = Math.max(0, aiRunningCount - 1);
-  updateGlobalStatus();
+  return;
 }
 
 async function loadAllAI() {
@@ -4499,19 +4489,19 @@ async function loadGpuAI() {
     return;
   }
 
-  // Live server fallback
-  el.innerHTML = `<div class="ai-loading"><div class="ai-spinner"></div>Analyzing ${name}&hellip;</div>`;
-  if(statusEl) { statusEl.className='intel-status intel-status-loading'; statusEl.textContent='RUNNING'; }
+  // No deep dive for this GPU. It used to call /api/ai/gpu here, which only
+  // ever answered on a local server running the since-deleted ai_analyzer.py,
+  // so on the published site this path just failed. The pipeline now writes a
+  // deep dive for every priced GPU, and anything without one has no live
+  // price to write about.
+  el.innerHTML = `<div style="padding:20px;font-size:12px;color:var(--text-2);line-height:1.7;">`
+    + `<strong style="color:var(--text-1);">No deep dive for ${_esc(name)} yet.</strong><br>`
+    + `These are written by the daily pipeline for every GPU with a live price. `
+    + `${_esc(name)} has no provider listing it right now, so there is nothing current to analyse.`
+    + `</div>`;
+  if(statusEl) { statusEl.className='intel-status intel-status-idle'; statusEl.textContent='NO DATA'; }
+  return;
 
-  try {
-    const r = await fetchJSON(`/api/ai/gpu?id=${gpuId}`);
-    if(r.error) el.innerHTML = '<div style="color:var(--red);padding:20px;">Error: '+_esc(String(r.error))+'</div>';
-    else el.innerHTML = formatAIOutput(r.analysis || '');
-    if(statusEl) { statusEl.className='intel-status intel-status-ready'; statusEl.textContent='READY'; }
-  } catch(e) {
-    el.innerHTML = '<div style="color:var(--red);padding:20px;">Failed: '+_esc(String(e.message))+'</div>';
-    if(statusEl) { statusEl.className='intel-status intel-status-idle'; statusEl.textContent='IDLE'; }
-  }
 }
 
 // Auto-load AI for tab-specific panels when tab is visited
@@ -4537,6 +4527,11 @@ document.addEventListener('click', function(e) {
 // browser-initiated LLM calls, so both need /api/chat to exist -- they degrade
 // to "Unable to load AI analysis" where it does not, which is the case on
 // GitHub Pages. It never carries a credential; the proxy holds that.
+// Lived in the chat block; still used by the AI panels' error paths, which
+// would have thrown "_esc is not defined" at the moment they tried to report
+// a failure.
+function _esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
 async function _chatRequest(messages) {
   return fetch('/api/chat', {
     method: 'POST',

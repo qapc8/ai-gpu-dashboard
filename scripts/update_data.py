@@ -2660,9 +2660,26 @@ _AI_SECTIONS = {
 }
 
 
-def _get_gpu_section_key(existing_ai):
-    """Find gpu_* section keys in existing AI analysis."""
-    return [k for k in existing_ai if k.startswith("gpu_")]
+def _gpu_sections_to_build(data, existing_ai):
+    """Which per-GPU deep dives to generate.
+
+    This used to return only the gpu_* keys already present in
+    ai_analysis.json, so it regenerated what existed and never created
+    anything new. Only gpu_H100-SXM was ever seeded, so the GPU Deep Dive
+    panel worked for one of seventeen GPUs and every other selection fell
+    through to a server endpoint that no longer exists.
+
+    Build one for every GPU that has a live price, which is exactly the set a
+    reader can act on.
+    """
+    priced = [m["gpu_id"] for m in (data.get("matrix") or []) if m.get("cheapest_price")]
+    existing = [k.replace("gpu_", "", 1) for k in existing_ai if k.startswith("gpu_")]
+    seen, out = set(), []
+    for gpu_id in priced + existing:
+        if gpu_id not in seen:
+            seen.add(gpu_id)
+            out.append(gpu_id)
+    return out
 
 
 def _build_gpu_section_prompt(gpu_id, snapshot_str):
@@ -2704,9 +2721,8 @@ def update_ai_analysis(data, existing_ai):
             log_fail(f"AI/{section_key}", str(exc))
 
     # Regenerate per-GPU sections (e.g. gpu_H100-SXM)
-    gpu_keys = _get_gpu_section_key(existing_ai)
-    for gk in gpu_keys:
-        gpu_id = gk.replace("gpu_", "", 1)
+    for gpu_id in _gpu_sections_to_build(data, existing_ai):
+        gk = f"gpu_{gpu_id}"
         try:
             log_info(f"Regenerating AI section: {gk}...")
             sys_prompt, usr_prompt = _build_gpu_section_prompt(gpu_id, snapshot_str)
