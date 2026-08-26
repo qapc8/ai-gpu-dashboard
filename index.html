@@ -1084,6 +1084,7 @@ body {
 <script>
 let EMBEDDED_DATA = null;
 let EMBEDDED_AI = null;
+const CACHE_KEY = new Date().toISOString().slice(0, 13).replace(/[-T]/g, '');
 
 async function loadExternalData() {
   const loadingDiv = document.createElement('div');
@@ -1096,8 +1097,14 @@ async function loadExternalData() {
 
   try {
     const [dataResp, aiResp] = await Promise.all([
-      fetch('./data.json').catch(() => fetch('data.json')),
-      fetch('./ai_analysis.json').catch(() => fetch('ai_analysis.json'))
+      // Hourly cache key. The pipeline republishes daily, but GitHub Pages
+      // serves data.json with max-age=600 and a browser will happily hold a
+      // tab open on yesterday's file without ever revalidating -- which would
+      // quietly undo the daily refresh. An hourly bucket bounds how stale a
+      // long-lived tab can get while still letting repeat loads inside the
+      // hour come from cache.
+      fetch('./data.json?v=' + CACHE_KEY).catch(() => fetch('data.json')),
+      fetch('./ai_analysis.json?v=' + CACHE_KEY).catch(() => fetch('ai_analysis.json'))
     ]);
 
     if (!dataResp.ok) throw new Error('Failed to load data.json: ' + dataResp.status);
@@ -1240,6 +1247,17 @@ loadExternalData();
     <div class="card-bd-flush" style="border-top:1px solid var(--border-0);"><table class="dt" id="providerMktTable"></table></div>
   </div>
 
+  <div class="card mb">
+    <div class="card-hd">
+      <span class="card-hd-title">Who Moves Their Prices</span>
+      <span class="card-hd-sub" id="volSub">daily price movement per provider, last 30 days</span>
+    </div>
+    <div class="card-bd">
+      <div class="chart-wrap" style="height:280px;"><canvas id="chartProviderVol"></canvas></div>
+      <div id="volNote" class="dim" style="padding:10px 4px 0;font-size:11px;line-height:1.6;"></div>
+    </div>
+  </div>
+
   <div class="card">
     <div class="card-hd">
       <span class="card-hd-title">Commitment &amp; Spot Discounts</span>
@@ -1289,8 +1307,17 @@ loadExternalData();
   </div>
   <div class="grid g-2 mb">
     <div class="card">
-      <div class="card-hd"><span class="card-hd-title">Market Supply &amp; Shipments</span></div>
-      <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartMarketSupply"></canvas></div></div>
+      <div class="card-hd">
+        <span class="card-hd-title">Supply Lead Times</span>
+        <span class="card-hd-sub" id="supplyAsOf"></span>
+      </div>
+      <div class="card-bd">
+        <div class="chart-wrap" style="height:230px;"><canvas id="chartMarketSupply"></canvas></div>
+        <div style="margin-top:10px;border-top:1px solid var(--border-0);padding-top:8px;">
+          <div class="dim" style="font-size:10px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Current wait by part</div>
+          <div id="leadTimeList" style="max-height:120px;overflow-y:auto;"></div>
+        </div>
+      </div>
     </div>
     <div class="card">
       <div class="card-hd"><span class="card-hd-title">AI Accelerator Share Trend</span></div>
@@ -1774,7 +1801,7 @@ let DATA = {
   indicators:{}, regional:{}, workloads:{},
   tco:{}, inference:{}, spot:{}, news:[],
   volatility:{}, changelog:[],
-  competitive:{}, sustainability:{}, supplychain:{}, modelfit:{}, sentiment:{},
+  competitive:{}, sustainability:{}, supplychain:{}, modelfit:{}, sentiment:{}, price_history:null,
   prediction_markets:null
 };
 
@@ -2408,6 +2435,82 @@ function renderPriceMatrix() {
   });
 
   renderCommitmentRates();
+  renderProviderVolatility();
+}
+
+// The dashboard could always show what a GPU costs across the market. It could
+// not show whether a given provider's own price holds still. Marketplace
+// listings reprice every day; hyperscaler list prices sit unchanged for months,
+// and that difference is worth more to a buyer than a few cents of headline
+// spread.
+function renderProviderVolatility() {
+  const el = document.getElementById('chartProviderVol');
+  const note = document.getElementById('volNote');
+  const sub = document.getElementById('volSub');
+  if (!el) return;
+  const ph = DATA.price_history || {};
+  const provs = (ph.providers || []);
+  if (charts.pvol) { charts.pvol.destroy(); charts.pvol = null; }
+  if (!provs.length) {
+    if (note) note.textContent = 'No price history yet — the series starts at the next refresh.';
+    return;
+  }
+  if (sub) sub.textContent = `${ph.day_count} daily observations since ${ph.first_date}`;
+
+  const measurable = provs.filter(p => p.avg_daily_move_pct != null);
+  const blocked = provs.filter(p => p.avg_daily_move_pct == null);
+
+  charts.pvol = new Chart(el, {
+    type: 'bar',
+    data: {
+      labels: measurable.map(p => p.provider),
+      datasets: [
+        { label: 'Average daily move', data: measurable.map(p => p.avg_daily_move_pct),
+          backgroundColor: measurable.map(p => (p.type === 'marketplace' ? C.amber : C.cyan) + '70'),
+          borderColor: measurable.map(p => p.type === 'marketplace' ? C.amber : C.cyan), borderWidth: 1, borderRadius: 3 },
+        { label: 'Largest single listing', data: measurable.map(p => p.max_daily_move_pct),
+          type: 'line', showLine: false, pointStyle: 'crossRot', pointRadius: 7,
+          borderColor: C.red, backgroundColor: C.red },
+      ],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } },
+        tooltip: { callbacks: {
+          afterBody: items => {
+            const p = measurable[items[0].dataIndex];
+            const bits = [`${p.gpus_tracked} GPUs tracked`, p.type];
+            if (p.avg_change_7d_pct != null) bits.push(`avg 7d change ${p.avg_change_7d_pct > 0 ? '+' : ''}${p.avg_change_7d_pct}%`);
+            if (p.movers_7d) bits.push(`${p.movers_7d} listing${p.movers_7d === 1 ? '' : 's'} moved this week`);
+            return bits;
+          },
+        } },
+      },
+      scales: {
+        y: { title: { display: true, text: '% move, day over day' }, grid: { color: 'rgba(26,34,51,0.4)' },
+             ticks: { callback: v => v + '%' } },
+        x: { grid: { display: false } },
+      },
+    },
+  });
+
+  if (note) {
+    const top = measurable[0];
+    const flat = measurable.filter(p => (p.avg_daily_move_pct || 0) < 0.05).map(p => p.provider);
+    let html = '';
+    if (top && top.avg_daily_move_pct > 0) {
+      html += `<b style="color:var(--text-1)">${top.provider}</b> reprices most: its listings move <b style="color:var(--amber)">±${top.avg_daily_move_pct}%</b> on an average day. `;
+    }
+    if (flat.length) {
+      html += `${flat.join(', ')} did not change a single published price in the window — list pricing at the hyperscalers is set quarterly, not daily. `;
+    }
+    html += 'A cheap marketplace quote is a price for today; a cloud list price is a price you can plan against. ';
+    if (blocked.length) {
+      html += `<br><span style="color:var(--amber)">${blocked.map(p => p.provider).join(', ')}</span> report nothing this window: how we read them changed on 20–21 Aug, so the two ends are not measured the same way. They resume once the window clears that date.`;
+    }
+    note.innerHTML = html;
+  }
 }
 
 // One chart where there were two. The pair before it ("On-Demand vs Reserved"
@@ -3121,75 +3224,71 @@ function renderDecayChart(){
 }
 
 function renderMarketSupplyChart() {
-  const mi=DATA.indicators;
-  const ship=mi.data_center_gpu_shipments_k, amd=mi.amd_gpu_market_share_pct, lt=mi.flagship_lead_time_weeks;
-  if(!ship) return;
-  const qMap={'Q1':'01','Q2':'04','Q3':'07','Q4':'10'};
-  const sLbl=Object.keys(ship).sort();
-  const labels=sLbl.map(q=>q.replace('-',' '));
-  const totalShip=sLbl.map(l=>ship[l]);
+  const mi=DATA.indicators||{};
+  const lt=mi.flagship_lead_time_weeks, per=mi.gpu_lead_times||{};
+  const el=document.getElementById('chartMarketSupply');
+  if(!el||!lt||!Object.keys(lt).length) return;
 
-  // Interpolate AMD share % to each quarter
-  const monthLabels=sLbl.map(q=>{const[y,qn]=q.split('-');return y+'-'+qMap[qn];});
-  const amdPcts=monthLabels.map(m=>{
-    if(!amd) return 0;
-    const keys=Object.keys(amd).sort();
-    let best=null,bestDist=Infinity;
-    keys.forEach(k=>{const d=Math.abs(new Date(k+'-01')-new Date(m+'-01'));if(d<bestDist){bestDist=d;best=k;}});
-    return best?amd[best]:0;
-  });
+  // Was a stacked shipments chart split NVIDIA/AMD. Both of those series were
+  // hand-set -- nobody publishes datacenter GPU unit shipments or vendor unit
+  // share for free -- so they had been frozen at 2026-Q1 and 2026-01 while
+  // sitting under a header that said the data was updated this morning. The
+  // lead-time series that shared the chart is refreshed every run from the
+  // per-GPU table, so the card is built on that instead.
+  const months=Object.keys(lt).sort();
+  const vals=months.map(m=>lt[m]);
+  const sub=document.getElementById('supplyAsOf');
+  const cur=vals[vals.length-1];
+  if(sub){
+    const prev=vals.length>1?vals[vals.length-2]:null;
+    const dir=prev==null?'':cur<prev?` · down from ${prev} wk`:cur>prev?` · up from ${prev} wk`:' · unchanged';
+    sub.textContent=`flagship at ${cur} weeks${dir}`;
+    sub.style.color='var(--text-3)';
+    sub.title='Weeks from order to delivery for the newest flagship part, derived from the per-GPU lead-time table each run.';
+  }
 
-  // Split into NVIDIA vs AMD stacked bars
-  const amdShip=totalShip.map((t,i)=>Math.round(t*amdPcts[i]/100));
-  const nvidiaShip=totalShip.map((t,i)=>t-amdShip[i]);
-
-  // QoQ growth %
-  const qoq=totalShip.map((v,i)=>i===0?null:Math.round((v/totalShip[i-1]-1)*1000)/10);
-
-  // Interpolate lead times to each quarter
-  const ltVals=monthLabels.map(m=>{
-    if(!lt) return null;
-    const keys=Object.keys(lt).sort();
-    let best=null,bestDist=Infinity;
-    keys.forEach(k=>{const d=Math.abs(new Date(k+'-01')-new Date(m+'-01'));if(d<bestDist){bestDist=d;best=k;}});
-    return best?lt[best]:null;
-  });
+  // Colour each point by how constrained supply was: long waits are the
+  // shortage, short waits are the glut.
+  const band=w=>w>=36?C.red:w>=16?C.amber:C.green;
 
   if(charts.sc) charts.sc.destroy();
-  charts.sc = new Chart(document.getElementById('chartMarketSupply'),{type:'bar',
-    data:{labels:labels,datasets:[
-      {label:'NVIDIA',data:nvidiaShip,backgroundColor:C.green+'70',borderColor:C.green,borderWidth:1,yAxisID:'y',order:3,stack:'ship'},
-      {label:'AMD',data:amdShip,backgroundColor:C.red+'70',borderColor:C.red,borderWidth:1,yAxisID:'y',order:3,stack:'ship'},
-      {label:'Lead Time (wks)',data:ltVals,type:'line',borderColor:C.amber,backgroundColor:C.amber+'15',fill:true,tension:0.35,borderWidth:2,pointRadius:3,pointBackgroundColor:C.amber,yAxisID:'y1',order:1}
-    ]},
+  charts.sc=new Chart(el,{
+    type:'line',
+    data:{labels:months,datasets:[{
+      label:'Flagship lead time (weeks)',data:vals,
+      borderColor:C.amber,backgroundColor:C.amber+'18',fill:true,tension:0.3,
+      borderWidth:2,pointRadius:4,
+      pointBackgroundColor:vals.map(band),pointBorderColor:vals.map(band),
+    }]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{
-        legend:{position:'top',labels:{boxWidth:10,font:{size:10}}},
-        tooltip:{
-          callbacks:{
-            afterBody:function(items){
-              var idx=items[0].dataIndex;
-              var pct=amdPcts[idx];
-              var growth=qoq[idx];
-              var lines=[];
-              lines.push('Total: '+totalShip[idx]+'K units');
-              lines.push('AMD share: '+pct+'%');
-              if(growth!==null) lines.push('QoQ growth: '+(growth>0?'+':'')+growth+'%');
-              return lines;
-            }
-          }
-        }
+        legend:{display:false},
+        tooltip:{callbacks:{
+          label:c=>c.parsed.y+' weeks to delivery',
+          afterLabel:c=>c.parsed.y>=36?'severely constrained':c.parsed.y>=16?'constrained':'broadly available',
+        }},
       },
       scales:{
-        y:{stacked:true,beginAtZero:true,title:{display:true,text:'Shipments (K units)',color:'rgba(255,255,255,0.4)',font:{size:10}},grid:{color:'rgba(26,34,51,0.4)'}},
-        y1:{position:'right',title:{display:true,text:'Lead Time (weeks)',color:C.amber,font:{size:10}},grid:{display:false},
-          ticks:{color:C.amber+'99'}},
-        x:{stacked:true,grid:{display:false},ticks:{font:{size:9}}}
-      }
-    }
+        y:{beginAtZero:true,title:{display:true,text:'weeks from order to delivery'},grid:{color:'rgba(26,34,51,0.4)'}},
+        x:{grid:{display:false},ticks:{font:{size:9},maxRotation:45}},
+      },
+    },
   });
-}
 
+  // Current per-GPU waits underneath, since one flagship number hides the
+  // spread between a part you can get this week and one you cannot.
+  const listEl=document.getElementById('leadTimeList');
+  if(listEl){
+    const rows=Object.entries(per).map(([g,v])=>({g,...v}))
+      .filter(r=>r.weeks!=null).sort((a,b)=>b.weeks-a.weeks);
+    listEl.innerHTML=rows.map(r=>{
+      const col=r.weeks>=12?'var(--red)':r.weeks>=6?'var(--amber)':'var(--green)';
+      return `<div style="display:flex;justify-content:space-between;gap:8px;padding:3px 0;font-size:11px;">
+        <span class="gpu-name" title="${escHtml(r.note||'')}">${r.g}</span>
+        <span style="font-family:var(--mono);color:${col};">${r.weeks} wk</span></div>`;
+    }).join('');
+  }
+}
 function renderProvidersTab() { updateProviderView(); }
 
 function updateProviderView() {
@@ -3251,8 +3350,12 @@ function updateProviderView() {
   const renderProvTable = (tableRows, elId, heading) => {
     const best = overallBest;
     let h=`<thead><tr><th colspan="10" style="font-size:10px;letter-spacing:0.5px;text-transform:uppercase;color:var(--text-3);padding-top:10px;">${heading}</th></tr>`;
-    h+=`<tr><th>Provider</th><th>Instance</th><th class="r">On-Demand</th><th class="r">Spot</th><th class="r">1yr Res.</th><th class="r">3yr Res.</th><th class="r">Monthly</th><th class="r">Annual</th><th class="r">vs Best</th><th>Source</th></tr></thead><tbody>`;
-    if(!tableRows.length) { h += '<tr><td colspan="10" class="dim" style="text-align:center;padding:20px;">No providers offer this GPU</td></tr>'; }
+    h+=`<tr><th>Provider</th><th>Instance</th><th class="r">On-Demand</th>`
+      +`<th class="r" title="This provider's own published price for this GPU 7 days ago">7d ago</th>`
+      +`<th class="r" title="Change against that provider's own price a week ago — not against the market average">7d change</th>`
+      +`<th class="r" title="Mean absolute day-over-day move over the last 30 days: how jumpy this listing is, regardless of direction">Daily move</th>`
+      +`<th class="r">Spot</th><th class="r">1yr Res.</th><th class="r">3yr Res.</th><th class="r">Monthly</th><th class="r">vs Best</th><th>Source</th></tr></thead><tbody>`;
+    if(!tableRows.length) { h += '<tr><td colspan="12" class="dim" style="text-align:center;padding:20px;">No providers offer this GPU</td></tr>'; }
     tableRows.forEach(r=>{
       const prem=((r.ondemand-best)/best*100);
       const pc=prem===0?'c-green':'c-red';
@@ -3264,7 +3367,28 @@ function updateProviderView() {
       // A dash is a fact: this provider publishes no rate for that term.
       const rate=(v,cls)=>v?`<td class="r ${cls||''}">$${v.toFixed(2)}</td>`
         :'<td class="r dim" title="This provider does not publish a rate for this term">—</td>';
-      h+=`<tr><td style="color:${PC[r.provider]||C.blue};font-weight:700;"><span title="${fresh.t}" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${fresh.c};margin-right:6px;vertical-align:middle;"></span>${r.provider}</td><td class="dim">${r.instance||'—'}</td><td class="r c-green fw">$${r.ondemand.toFixed(2)}</td>${rate(r.spot,'c-green')}${rate(r.res1)}${rate(r.res3,'c-cyan')}<td class="r">$${r.monthly.toFixed(0)}</td><td class="r">$${(r.monthly*12).toFixed(0)}</td><td class="r ${pc}">${prem===0?'BEST':'+'+prem.toFixed(1)+'%'}</td><td class="dim" style="font-size:10px;">${(r.source||'').replace(/_/g,' ')}</td></tr>`;
+
+      // Week-prior price from this provider's own series. A window spanning one
+      // of our scraper fixes is not a like-for-like comparison, so it says so
+      // rather than reporting a move the market never made.
+      const mv=((DATA.price_history||{}).moves||{})[r.provider]?.[gpuId]||{};
+      let agoCell='<td class="r dim" title="Not enough history for this listing yet">—</td>';
+      let chgCell='<td class="r dim">—</td>';
+      if(mv.corrected_in_window){
+        agoCell=`<td class="r dim" style="font-size:10px;" title="${mv.correction_reason}">n/a</td>`;
+        chgCell=`<td class="r" style="color:var(--amber);font-size:10px;" title="How we read this provider changed on 20–21 Aug, so the two ends of this window were measured differently. ${mv.correction_reason}">measure&nbsp;changed</td>`;
+      } else if(mv.week_ago!=null){
+        const c=mv.change_7d_pct;
+        const col=Math.abs(c)<0.05?'var(--text-3)':c>0?'var(--red)':'var(--green)';
+        agoCell=`<td class="r" style="font-family:var(--mono);color:var(--text-2);" title="published ${mv.week_ago_date}">$${mv.week_ago.toFixed(2)}</td>`;
+        chgCell=`<td class="r" style="font-family:var(--mono);font-weight:600;color:${col};">${Math.abs(c)<0.05?'flat':(c>0?'+':'')+c+'%'}</td>`;
+      }
+      const dm=mv.avg_daily_move_pct;
+      const dmCell=(dm==null||mv.range_30d_spans_correction)
+        ? '<td class="r dim">—</td>'
+        : `<td class="r" style="font-family:var(--mono);color:${dm>=3?'var(--amber)':dm>0?'var(--text-1)':'var(--text-3)'};" title="${mv.observations_30d||0} daily observations${mv.low_30d!=null?` · 30d range $${mv.low_30d.toFixed(2)}–$${mv.high_30d.toFixed(2)}`:''}">${dm>0?'±'+dm+'%':'flat'}</td>`;
+
+      h+=`<tr><td style="color:${PC[r.provider]||C.blue};font-weight:700;"><span title="${fresh.t}" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${fresh.c};margin-right:6px;vertical-align:middle;"></span>${r.provider}</td><td class="dim">${r.instance||'—'}</td><td class="r c-green fw">$${r.ondemand.toFixed(2)}</td>${agoCell}${chgCell}${dmCell}${rate(r.spot,'c-green')}${rate(r.res1)}${rate(r.res3,'c-cyan')}<td class="r">$${r.monthly.toFixed(0)}</td><td class="r ${pc}">${prem===0?'BEST':'+'+prem.toFixed(1)+'%'}</td><td class="dim" style="font-size:10px;">${(r.source||'').replace(/_/g,' ')}</td></tr>`;
     });
     h+='</tbody>';
     document.getElementById(elId).innerHTML=h;
@@ -4969,6 +5093,7 @@ const DATA_SECTIONS = [
   { key:'sustainability', label:'Sustainability Metrics', color:'green',  type:'dict-of-objects' },
   { key:'supplychain',    label:'Supply Chain',           color:'red',    type:'dict-of-objects' },
   { key:'modelfit',       label:'Self-Hosting Fit / VRAM Sizing', color:'purple', type:'dict-of-objects' },
+  { key:'price_history.providers', label:'Provider Price Volatility', color:'orange', type:'array', metaKey:'price_history' },
   { key:'sentiment',     label:'Developer & MLOps Sentiment', color:'pink', type:'dict-of-objects' },
   { key:'prediction_markets.gpus', label:'Prediction Markets', color:'purple', type:'array',
     metaKey:'prediction_markets' },
@@ -5126,6 +5251,25 @@ function renderDataAudit(searchTerm) {
       ? `<span class="da-badge" style="background:var(--bg-2);color:${basisColor[meta.basis]||'var(--text-2)'};" title="${escHtml(meta.detail)}">${meta.basis.toUpperCase()}</span>`
       : '';
 
+    // Freshness: a dataset frozen for weeks used to look identical to one
+    // fetched minutes ago. Every auto-refreshed section now says when it last
+    // came back from its source.
+    const fr = (DATA._meta && DATA._meta.freshness && DATA._meta.freshness[(sec.metaKey || sec.key).split('.')[0]]) || null;
+    let freshBadge = '';
+    if (fr && fr.auto) {
+      const days = fr.refreshed
+        ? Math.floor((Date.now() - new Date(fr.refreshed + 'T00:00:00Z').getTime()) / 86400000)
+        : null;
+      const col = days == null ? 'var(--red)' : days <= 1 ? 'var(--green)' : days <= 3 ? 'var(--amber)' : 'var(--red)';
+      const label = days == null ? 'NEVER' : days === 0 ? 'TODAY' : days === 1 ? '1 DAY AGO' : days + ' DAYS AGO';
+      const tip = fr.sources_total
+        ? `${fr.sources_ok} of ${fr.sources_total} sources returned on the last run`
+        : 'refreshed automatically';
+      freshBadge = `<span class="da-badge" style="background:var(--bg-2);color:${col};" title="${escHtml(tip)}">${label}</span>`;
+    } else if (fr) {
+      freshBadge = '<span class="da-badge" style="background:var(--bg-2);color:var(--text-3);" title="Curated reference data — no fetcher owns it, so it does not claim a refresh">MANUAL</span>';
+    }
+
     html += `<div class="da-section" data-da-idx="${idx}">
       <div class="da-header${isOpen ? ' open' : ''}" onclick="toggleDataSection(this)">
         <div class="da-header-left">
@@ -5133,6 +5277,7 @@ function renderDataAudit(searchTerm) {
           <span class="da-title">${escHtml(sec.label)}</span>
           <span class="da-badge" style="background:var(--${sec.color}-dim);color:var(--${sec.color});">${typeLabel}</span>
           ${basisBadge}
+          ${freshBadge}
         </div>
         <div class="da-meta">
           <span class="da-badge" style="background:var(--bg-2);color:var(--text-2);">${count} entries</span>

@@ -22,6 +22,7 @@ from xml.etree import ElementTree
 from forecast_engine import generate_forecasts
 from inference_market import refresh_inference_market
 from model_fit import build_model_fit
+from price_history import build_price_history
 from prediction_markets import (
     build_prediction_markets,
     fetch_kalshi_gpu_markets,
@@ -1537,6 +1538,15 @@ def refresh_lead_times(data):
     Both derived views are now computed from the per-GPU table.
     """
     indicators = data.get("indicators") or {}
+
+    # Retired here as well as in the seed, so an existing data.json drops them.
+    # No free source publishes datacenter GPU unit shipments or vendor unit
+    # share, so both were hand-set and could not refresh with anything else:
+    # shipments sat at 2026-Q1 and vendor share at 2026-01 while the page
+    # header said the data was updated this morning.
+    for retired in ("data_center_gpu_shipments_k", "amd_gpu_market_share_pct"):
+        indicators.pop(retired, None)
+
     gpu_lead = indicators.get("gpu_lead_times") or {}
     specs = data.get("specs") or {}
     if not gpu_lead or not specs:
@@ -1863,6 +1873,83 @@ def compute_volatility(data):
     data["volatility"] = out
     data.pop("forecasts", None)
     log_ok("Volatility", f"{len(out)} GPUs described from price history")
+    return data
+
+
+# Which pipeline step feeds which section. A section whose step failed this run
+# is serving carried-forward data, and the point of stamping is that the Data
+# tab can say so instead of the staleness being invisible.
+_SECTION_SOURCES = {
+    "providers": ["AWS", "GCP", "Azure", "Lambda", "CoreWeave", "Together", "RunPod", "Vast.ai"],
+    "matrix": ["Matrix"],
+    "spot": ["Spot"],
+    "historical": ["Historical"],
+    "tco": ["TCO"],
+    "inference": ["OpenRouter Rankings", "OpenRouter Endpoints", "Inference Market"],
+    "modelfit": ["Model Fit"],
+    "prediction_markets": ["Kalshi", "Polymarket"],
+    "price_history": ["Price History"],
+    "regional": ["Regional Pricing"],
+    "volatility": ["Volatility"],
+    "sentiment": ["HuggingFace", "GitHub Compat", "Sentiment Merge"],
+    "news": ["Google News RSS"],
+    "stocks": ["Stock/NVDA", "Stock/AMD"],
+    "indicators": ["Stock/NVDA", "Stock/AMD"],
+    "summary": ["Summary"],
+    "changelog": ["Changelog"],
+}
+
+
+def stamp_freshness(data, results):
+    """Record, per section, when it last actually refreshed.
+
+    Sections used to carry no refresh stamp at all, so a dataset frozen since
+    March looked identical to one fetched minutes ago. Every section now says
+    when it last came back from its source and whether that was this run.
+    """
+    now = datetime.now(timezone.utc)
+    today = now.strftime("%Y-%m-%d")
+    succeeded = set(results.get("success") or [])
+
+    # No recorded successes means this was not a real pipeline run (a partial
+    # or standalone invocation), not that every source failed. Marking all 17
+    # sections stale on that basis would be a lie in the opposite direction.
+    if not succeeded:
+        log_info("Freshness: no source results recorded, leaving stamps unchanged")
+        return data
+
+    meta = data.setdefault("_meta", {}).setdefault("sections", {})
+    freshness = data.setdefault("_meta", {}).setdefault("freshness", {})
+
+    for section in list(meta) + list(_SECTION_SOURCES):
+        key = section.split(".")[0]
+        if key not in data:
+            continue
+        entry = freshness.setdefault(key, {})
+        sources = _SECTION_SOURCES.get(key)
+        if sources is None:
+            # Curated reference data (specs, competitive, supplychain,
+            # sustainability). No fetcher owns it, so it keeps whatever
+            # last_reviewed it already had rather than claiming a refresh.
+            entry.setdefault("refreshed", None)
+            entry["auto"] = False
+            continue
+        entry["auto"] = True
+        got = [s for s in sources if s in succeeded]
+        if got:
+            entry["refreshed"] = today
+            entry["sources_ok"] = len(got)
+            entry["sources_total"] = len(sources)
+            entry.pop("stale_runs", None)
+        else:
+            entry["stale_runs"] = entry.get("stale_runs", 0) + 1
+            entry["sources_ok"] = 0
+            entry["sources_total"] = len(sources)
+
+    data["_meta"]["last_run"] = now.isoformat()
+    fresh_n = sum(1 for v in freshness.values() if v.get("refreshed") == today)
+    auto_n = sum(1 for v in freshness.values() if v.get("auto"))
+    log_ok("Freshness", f"{fresh_n}/{auto_n} auto sections refreshed today")
     return data
 
 
@@ -2439,7 +2526,21 @@ def merge_sentiment_into_data(data, reddit, hf, github):
 # ===================================================================
 
 def load_config():
-    """Try to load LLM config from config.py."""
+    """LLM config, from the environment first and config.py second.
+
+    config.py is gitignored, so in CI it does not exist and this returned None
+    -- update_ai_analysis then logged "No LLM config found" and left
+    ai_analysis.json untouched. The AI sections were therefore only ever
+    refreshed by a human running the pipeline locally, which is exactly the
+    kind of silent staleness this dashboard is supposed to avoid. Reading the
+    environment lets the workflow supply the same values as secrets.
+    """
+    api_base = os.environ.get("LLM_API_BASE")
+    api_key = os.environ.get("LLM_API_KEY")
+    model = os.environ.get("LLM_MODEL")
+    if api_base and api_key and model:
+        return {"base": api_base, "key": api_key, "model": model}
+
     try:
         # Use direct file reading to avoid import issues
         config = {}
@@ -2904,6 +3005,11 @@ def main():
         log_fail("Volatility", str(exc))
 
     try:
+        data = build_price_history(data, PROJECT_DIR, log_info=log_info, log_ok=log_ok)
+    except Exception as exc:
+        log_fail("Price History", str(exc))
+
+    try:
         data = build_model_fit(data, log_info=log_info, log_ok=log_ok)
     except Exception as exc:
         log_fail("Model Fit", str(exc))
@@ -2961,6 +3067,11 @@ def main():
         data = build_changelog(data, _snapshot_before)
     except Exception as exc:
         log_fail("Changelog", str(exc))
+
+    try:
+        data = stamp_freshness(data, _results)
+    except Exception as exc:
+        log_fail("Freshness", str(exc))
 
     # ---- Save ----
     print("Saving files...")

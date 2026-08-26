@@ -881,14 +881,14 @@ MARKET_INDICATORS = {
     # at ~80%). Prior series put 2026 below NVIDIA revenue alone.
     "gpu_market_size_bn": {"2023": 56, "2024": 132, "2025": 242, "2026_est": 330, "2027_est": 430},
     "ai_capex_bn": {"2023": 150, "2024": 228, "2025": 410, "2026_est": 725, "2027_est": 1000},
-    "data_center_gpu_shipments_k": {"2023-Q1": 480, "2023-Q2": 520, "2023-Q3": 610, "2023-Q4": 750,
-                                     "2024-Q1": 850, "2024-Q2": 920, "2024-Q3": 1050, "2024-Q4": 1180,
-                                     "2025-Q1": 1320, "2025-Q2": 1450, "2025-Q3": 1580, "2025-Q4": 1700,
-                                     "2026-Q1": 1850},
+    # Retired: data_center_gpu_shipments_k and amd_gpu_market_share_pct.
+    # Nobody publishes datacenter GPU unit shipments or vendor unit share on
+    # a free feed, so both were hand-set and could not refresh with anything
+    # else -- shipments had been stuck at 2026-Q1 and vendor share at 2026-01.
+    # Lead times below are refreshed by refresh_lead_times().
     "flagship_lead_time_weeks": {"2023-01": 48, "2023-03": 48, "2023-06": 40, "2023-09": 36, "2023-12": 28,
                               "2024-03": 16, "2024-06": 10, "2024-09": 8, "2024-11": 52,
                               "2025-01": 48, "2025-03": 44, "2025-06": 40, "2025-09": 36, "2025-12": 36, "2026-01": 36, "2026-02": 36},
-    "amd_gpu_market_share_pct": {"2023-01": 1, "2023-06": 2, "2024-01": 3, "2024-06": 4, "2025-01": 5, "2025-06": 5.5, "2026-01": 6},
     "gpu_lead_times": {
         "B300": {"weeks": 8, "status": "constrained", "note": "Newly launched, supply constrained"},
         "B200": {"weeks": 4, "status": "available", "note": "Shipping, broadly available"},

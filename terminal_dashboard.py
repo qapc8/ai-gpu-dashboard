@@ -296,15 +296,18 @@ def render_regional_dashboard() -> Panel:
 def render_market_indicators() -> Panel:
     mi = MARKET_INDICATORS
 
-    # GPU Shipments sparkline
-    shipments = mi["data_center_gpu_shipments_k"]
-    ship_vals = [shipments[k] for k in sorted(shipments.keys())]
-    ship_spark = sparkline(ship_vals)
+    # Shipment volumes were retired: no free source publishes datacenter GPU
+    # unit shipments, so the series was hand-set and had frozen at 2026-Q1.
+    # This panel also still asked for h100_lead_time_weeks, renamed to
+    # flagship_lead_time_weeks some time ago -- so it was already raising
+    # KeyError before that. Read what exists and skip what does not.
+    shipments = mi.get("data_center_gpu_shipments_k") or {}
+    ship_vals = [shipments[k] for k in sorted(shipments)]
+    ship_spark = sparkline(ship_vals) if ship_vals else ""
 
-    # Lead time sparkline (inverted - lower is better)
-    lead = mi["h100_lead_time_weeks"]
-    lead_vals = [lead[k] for k in sorted(lead.keys())]
-    lead_spark = sparkline(lead_vals)
+    lead = mi.get("flagship_lead_time_weeks") or mi.get("h100_lead_time_weeks") or {}
+    lead_vals = [lead[k] for k in sorted(lead)]
+    lead_spark = sparkline(lead_vals) if lead_vals else ""
 
     text = Text()
     text.append("═══ EQUITY INDICATORS ═══\n", style="bold cyan")
@@ -332,13 +335,15 @@ def render_market_indicators() -> Panel:
     text.append(f"  2023: ${capex['2023']}B  2024: ${capex['2024']}B  ", style="bold")
     text.append(f"2025E: ${capex['2025_est']}B  2026E: ${capex['2026_est']}B  2027E: ${capex['2027_est']}B\n", style="yellow")
 
-    text.append(f"\n═══ DC GPU SHIPMENTS (K units) ═══\n", style="bold cyan")
-    text.append(f"  Trend: {ship_spark}  Latest: {ship_vals[-1]:,}K  ", style="bold green")
-    text.append(f"(+{((ship_vals[-1] - ship_vals[-5]) / ship_vals[-5] * 100):.0f}% YoY)\n", style="green")
+    if len(ship_vals) >= 5:
+        text.append(f"\n═══ DC GPU SHIPMENTS (K units) ═══\n", style="bold cyan")
+        text.append(f"  Trend: {ship_spark}  Latest: {ship_vals[-1]:,}K  ", style="bold green")
+        text.append(f"(+{((ship_vals[-1] - ship_vals[-5]) / ship_vals[-5] * 100):.0f}% YoY)\n", style="green")
 
-    text.append(f"\n═══ H100 LEAD TIME (weeks) ═══\n", style="bold cyan")
-    text.append(f"  Trend: {lead_spark}  Latest: {lead_vals[-1]}wk  ", style="bold green")
-    text.append(f"(from {lead_vals[0]}wk in 2023-Q1)\n", style="green")
+    if lead_vals:
+        text.append(f"\n═══ FLAGSHIP LEAD TIME (weeks) ═══\n", style="bold cyan")
+        text.append(f"  Trend: {lead_spark}  Latest: {lead_vals[-1]}wk  ", style="bold green")
+        text.append(f"(from {lead_vals[0]}wk at the start of the series)\n", style="green")
 
     return Panel(text, title="[bold]MARKET INDICATORS[/]", border_style="cyan", box=box.ROUNDED)
 
