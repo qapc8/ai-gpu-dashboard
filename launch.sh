@@ -1,15 +1,19 @@
 #!/bin/bash
-# AI GPU Market Terminal Dashboard Launcher
+# AI GPU Market Dashboard Launcher
+#
 # Usage:
-#   ./launch.sh terminal   — Launch terminal dashboard
-#   ./launch.sh web        — Launch web dashboard (browser)
-#   ./launch.sh both       — Launch both
+#   ./launch.sh            — Serve the dashboard at http://localhost:8050
+#   ./launch.sh refresh    — Run the data pipeline, then serve
 #   ./launch.sh install    — Install dependencies
+#
+# The terminal and AI-only modes are gone: terminal_dashboard.py and
+# ai_analyzer.py were deleted. Both had already stopped working -- they
+# imported get_utilization_summary, retired when per-provider utilization was
+# dropped for being unsourceable -- so neither had run in some time.
 
 set -e
 cd "$(dirname "$0")"
 
-RED='\033[0;31m'
 GREEN='\033[0;32m'
 CYAN='\033[0;36m'
 BOLD='\033[1m'
@@ -21,44 +25,29 @@ install_deps() {
     echo -e "${GREEN}Done!${NC}"
 }
 
-launch_terminal() {
-    echo -e "${CYAN}${BOLD}Launching Terminal Dashboard...${NC}"
-    python3 terminal_dashboard.py
+refresh_data() {
+    echo -e "${CYAN}${BOLD}Refreshing data (this takes a few minutes)...${NC}"
+    python3 scripts/update_data.py
 }
 
 launch_web() {
-    echo -e "${CYAN}${BOLD}Launching Web Dashboard...${NC}"
+    echo -e "${CYAN}${BOLD}Serving dashboard...${NC}"
     echo -e "${GREEN}Open http://localhost:8050 in your browser${NC}"
     python3 server.py
 }
 
-case "${1:-both}" in
+case "${1:-web}" in
     install)
         install_deps
         ;;
-    terminal|term|t)
-        launch_terminal
-        ;;
-    web|w|browser)
+    refresh|update)
+        refresh_data
         launch_web
         ;;
-    both|all)
-        echo -e "${CYAN}${BOLD}=== AI GPU MARKET TERMINAL ===${NC}"
-        echo ""
-        echo -e "  ${GREEN}1)${NC} Terminal:  python3 terminal_dashboard.py"
-        echo -e "  ${GREEN}2)${NC} Browser:   python3 server.py  →  http://localhost:8050"
-        echo -e "  ${GREEN}3)${NC} AI Only:   python3 ai_analyzer.py"
-        echo ""
-        echo -e "${CYAN}Choose mode [1/2/3]:${NC} "
-        read -r choice
-        case "$choice" in
-            1) launch_terminal ;;
-            2) launch_web ;;
-            3) python3 ai_analyzer.py ;;
-            *) echo "Starting web dashboard..." && launch_web ;;
-        esac
+    web|w|browser|both|all)
+        launch_web
         ;;
     *)
-        echo "Usage: $0 {terminal|web|both|install}"
+        echo "Usage: $0 {web|refresh|install}"
         ;;
 esac

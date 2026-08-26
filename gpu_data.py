@@ -1867,15 +1867,9 @@ PRICE_FORECASTS = {
 # Retired: vendor share of AI accelerator revenue. Hand-set to sum to exactly
 # 100% and plotted against undated "T-4..T-0" points. No free source publishes
 # it, so it could never refresh -- same reason amd_gpu_market_share_pct went.
-# Kept as an empty mapping because server.py, ai_analyzer.py and
-# terminal_dashboard.py all import the name; they now render nothing here
-# rather than failing to import.
-COMPETITIVE_MOAT = {}
-
-
-def get_competitive_landscape() -> dict:
-    """Retired -- see COMPETITIVE_MOAT above."""
-    return COMPETITIVE_MOAT
+# The empty-mapping stub that stood here for server.py, ai_analyzer.py and
+# terminal_dashboard.py is gone too: the latter two were deleted and server.py
+# no longer imports from this module.
 
 
 

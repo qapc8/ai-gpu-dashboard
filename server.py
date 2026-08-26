@@ -1,7 +1,15 @@
 #!/usr/bin/env python3
-"""
-Web server for the AI GPU Dashboard.
-Serves the HTML dashboard and provides API endpoints for live data + AI analysis.
+"""Local server for the AI GPU Dashboard.
+
+Serves index.html and the static data files, and proxies /api/chat so the LLM
+key can stay server-side rather than being shipped to the browser.
+
+It used to serve web_dashboard.html at both / and /index.html -- so running it
+locally showed the superseded dashboard even when you asked for the current one
+-- and carried seventeen /api/* data routes that answered from the gpu_data.py
+seed constants. index.html hardcodes IS_STATIC = true and reads data.json, so
+those routes were unreachable; anything that had reached them would have been
+served hand-seeded prices from before live scraping existed.
 """
 
 import json
@@ -16,15 +24,6 @@ from urllib.error import HTTPError, URLError
 
 sys.path.insert(0, os.path.dirname(__file__))
 
-from gpu_data import (
-    GPU_SPECS, CLOUD_PRICING, HISTORICAL_PRICING, MARKET_INDICATORS,
-    REGIONAL_DATA, WORKLOAD_RECOMMENDATIONS,
-    TCO_COMPONENTS, INFERENCE_BENCHMARKS, SPOT_MARKET, NEWS_FEED,
-    get_cheapest_by_gpu, get_price_comparison_matrix,
-    generate_market_summary, get_regional_summary, get_workload_recommendations,
-    get_price_forecasts,
-    get_competitive_landscape, get_sustainability_summary, get_supply_chain_summary,
-)
 from config import WEB_PORT
 
 
@@ -168,69 +167,14 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         path = parsed.path
 
         if path == "/" or path == "/index.html":
-            self.send_file("web_dashboard.html", "text/html")
-        elif path == "/api/summary":
-            self.send_json(generate_market_summary())
-        elif path == "/api/matrix":
-            self.send_json(get_price_comparison_matrix())
-        elif path == "/api/gpu":
-            params = parse_qs(parsed.query)
-            gpu_id = params.get("id", ["H100-SXM"])[0]
-            providers = get_cheapest_by_gpu(gpu_id)
-            spec = GPU_SPECS.get(gpu_id, {})
-            trends = HISTORICAL_PRICING.get(gpu_id, {})
-            self.send_json({"spec": spec, "providers": providers, "trends": trends})
-        elif path == "/api/regional":
-            self.send_json(get_regional_summary())
-        elif path == "/api/indicators":
-            self.send_json(MARKET_INDICATORS)
-        elif path == "/api/workloads":
-            self.send_json(get_workload_recommendations())
-        elif path == "/api/historical":
-            self.send_json(HISTORICAL_PRICING)
-        elif path == "/api/specs":
-            self.send_json(GPU_SPECS)
-        elif path == "/api/providers":
-            self.send_json(CLOUD_PRICING)
-        elif path.startswith("/api/ai/"):
-            params = parse_qs(parsed.query)
-            use_cache = "nocache" not in params
-            ai_route = path[8:]  # strip "/api/ai/"
-            ai_types = {
-                "summary": "quick_summary", "trends": "market_trends",
-                "regional": "regional_analysis", "investment": "investment_outlook",
-                "notes": "market_notes", "efficiency": "efficiency_optimization",
-                "forecast": "price_forecasts", "sustainability": "sustainability_risk",
-            }
-            if ai_route == "all":
-                self.send_ai_all()
-            elif ai_route == "gpu":
-                gpu_id = params.get("id", ["H100-SXM"])[0]
-                self.send_ai_gpu(gpu_id)
-            elif ai_route in ai_types:
-                self.send_ai_analysis(ai_types[ai_route], use_cache=use_cache)
-            else:
-                super().do_GET()
-        elif path == "/api/tco":
-            self.send_json(TCO_COMPONENTS)
-        elif path == "/api/inference":
-            self.send_json(INFERENCE_BENCHMARKS)
-        elif path == "/api/spot":
-            self.send_json(SPOT_MARKET)
-        elif path == "/api/news":
-            try:
-                from ai_analyzer import generate_daily_news
-                self.send_json(generate_daily_news())
-            except Exception:
-                self.send_json(NEWS_FEED)
-        elif path == "/api/forecasts":
-            self.send_json(get_price_forecasts())
-        elif path == "/api/competitive":
-            self.send_json(get_competitive_landscape())
-        elif path == "/api/sustainability":
-            self.send_json(get_sustainability_summary())
-        elif path == "/api/supplychain":
-            self.send_json(get_supply_chain_summary())
+            self.send_file("index.html", "text/html")
+        # Retired: /api/summary, /matrix, /gpu, /regional, /indicators,
+        # /workloads, /historical, /specs, /providers, /tco, /inference, /spot,
+        # /news, /forecasts, /competitive, /sustainability, /supplychain.
+        # index.html sets IS_STATIC = true and reads data.json directly, so none
+        # of them were reachable -- and each answered from the gpu_data.py seed
+        # constants rather than the pipeline's output, meaning any caller got
+        # hand-seeded prices from before live scraping existed.
         else:
             super().do_GET()
 
@@ -252,45 +196,6 @@ class DashboardHandler(SimpleHTTPRequestHandler):
         self.send_header("Content-Length", len(content))
         self.end_headers()
         self.wfile.write(content)
-
-    def send_ai_analysis(self, analysis_type, use_cache=True):
-        try:
-            from ai_analyzer import (
-                get_quick_summary, analyze_market_trends,
-                analyze_regional_opportunities, analyze_investment_outlook,
-                generate_market_notes, analyze_efficiency_optimization,
-                analyze_price_forecasts, analyze_sustainability_risk,
-            )
-            funcs = {
-                "quick_summary": get_quick_summary,
-                "market_trends": analyze_market_trends,
-                "regional_analysis": analyze_regional_opportunities,
-                "investment_outlook": analyze_investment_outlook,
-                "market_notes": generate_market_notes,
-                "efficiency_optimization": analyze_efficiency_optimization,
-                "price_forecasts": analyze_price_forecasts,
-                "sustainability_risk": analyze_sustainability_risk,
-            }
-            result = funcs[analysis_type](use_cache=use_cache)
-            self.send_json({"analysis": result, "type": analysis_type, "timestamp": datetime.now().isoformat()})
-        except Exception as e:
-            self.send_json({"error": str(e)})
-
-    def send_ai_all(self):
-        try:
-            from ai_analyzer import get_all_analyses
-            result = get_all_analyses(use_cache=True)
-            self.send_json(result)
-        except Exception as e:
-            self.send_json({"error": str(e)})
-
-    def send_ai_gpu(self, gpu_id):
-        try:
-            from ai_analyzer import analyze_specific_gpu
-            result = analyze_specific_gpu(gpu_id)
-            self.send_json({"analysis": result, "gpu_id": gpu_id, "timestamp": datetime.now().isoformat()})
-        except Exception as e:
-            self.send_json({"error": str(e)})
 
     def log_message(self, format, *args):
         pass  # Suppress default logging
