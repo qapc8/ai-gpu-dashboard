@@ -57,12 +57,28 @@ def _num(v, default=0.0):
 # ---------------------------------------------------------------------------
 
 def _extract_embedded_array(html, key):
-    """Pull `key: [...]` out of the escaped JSON in a Next.js RSC payload."""
+    """Pull the ranking rows out of the escaped JSON in a Next.js RSC payload.
+
+    Anchoring on a key name broke: the rows moved from `"rankingData":[...]`
+    into a React Query dehydrated state (`"queries":[{"state":{"data":[...]}}]`)
+    and the section went stale for four runs before the freshness stamp
+    surfaced it. Locate the array by what it contains -- the first object with
+    a `model_permaslug` -- and walk back to its opening bracket, so the next
+    re-nesting does not matter.
+    """
     marker = f'\\"{key}\\":['
     i = html.find(marker)
-    if i < 0:
-        raise RuntimeError(f"OpenRouter rankings: no {key} in page payload")
-    start = html.index("[", i + len(marker) - 1)
+    if i >= 0:
+        start = html.index("[", i + len(marker) - 1)
+    else:
+        probe = html.find('model_permaslug')
+        if probe < 0:
+            raise RuntimeError("OpenRouter rankings: no ranking rows in page payload")
+        # Back up to the '[' that opens the array of row objects.
+        brace = html.rfind("{", 0, probe)
+        start = html.rfind("[", 0, brace)
+        if start < 0:
+            raise RuntimeError("OpenRouter rankings: could not locate the rows array")
     depth, j = 0, start
     while j < len(html):
         ch = html[j]

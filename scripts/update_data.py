@@ -777,7 +777,7 @@ _GPU_NAME_MAP = {
     "A100 80GB": "A100-80GB",
     "A100 40GB": "A100-40GB",
     "A100-80GB SXM": "A100-80GB",
-    "A100 PCIE 80GB": "A100-80GB",
+    "A100 PCIE 80GB": "A100-PCIe",
     "A100 PCIE 40GB": "A100-40GB",
     "A100 SXM 80GB": "A100-80GB",
     "A100 SXM 40GB": "A100-40GB",
@@ -802,11 +802,16 @@ _GPU_NAME_MAP = {
     "MI300X": "MI300X",
     "MI250X": "MI250X",
     "Tesla T4": "T4",
-    "A100 PCIE": "A100-80GB",
+    # A100 PCIe is a separate, cheaper part (300W, PCIe 4.0) from the SXM one
+    # (400W, NVLink 3.0). Both were mapped to A100-80GB, so wherever PCIe was
+    # the cheaper of the two it was published as the SXM price -- RunPod showed
+    # $1.39 when its A100 SXM rate was $1.59.
+    "A100 PCIE": "A100-PCIe",
+    "A100 PCIe": "A100-PCIe",
     "A100 SXM": "A100-80GB",
     "A100-SXM4-80GB": "A100-80GB",
     "A100-SXM4-40GB": "A100-40GB",
-    "A100-PCIE-80GB": "A100-80GB",
+    "A100-PCIE-80GB": "A100-PCIe",
     "A100-PCIE-40GB": "A100-40GB",
     "H100 80GB HBM3": "H100-SXM",
     "H100-SXM5-80GB": "H100-SXM",
@@ -823,7 +828,13 @@ _GPU_NAME_MAP = {
 # otherwise resolve them to a neighbour and publish the wrong card's price:
 #   "H200 NVL" / "H100 NVL" -> cheaper PCIe parts, not the SXM modules
 #   "L40"                   -> would fall through to "L4"
-_GPU_NAME_UNTRACKED = ("NVL", "L40")
+#   "... MIG ..."           -> a Multi-Instance GPU partition, not a GPU
+#
+# The MIG case is the third time a partial SKU has been published as a whole
+# card, and the worst: "B300 MIG 34GB" is 34GB carved out of a 288GB board, and
+# because the cheapest listing wins, its $0.50 was published as the price of a
+# B300 whose real secure rate is $7.89. A fraction of a GPU is not a cheap GPU.
+_GPU_NAME_UNTRACKED = ("NVL", "L40", "MIG")
 
 
 def normalize_gpu_name(name):
