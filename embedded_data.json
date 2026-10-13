@@ -1596,14 +1596,14 @@
       },
       "premium_pct": {
         "A100-80GB": 0.0,
-        "GB200": 0.0,
-        "H100-SXM": 0.0
+        "H100-SXM": 0.0,
+        "GB200": 0.0
       },
       "avg_premium_pct": 0.0,
       "energy_cost_kwh": null,
       "key_hubs": [],
       "source": "azure_retail_api",
-      "last_verified": "2026-10-13T13:14:59.588176+00:00"
+      "last_verified": "2026-10-13T15:48:38.926831+00:00"
     },
     "US West": {
       "arm_region": "westus2",
@@ -1615,14 +1615,14 @@
       },
       "premium_pct": {
         "A100-80GB": 0.0,
-        "GB200": 0.0,
-        "H100-SXM": 0.0
+        "H100-SXM": 0.0,
+        "GB200": 0.0
       },
       "avg_premium_pct": 0.0,
       "energy_cost_kwh": null,
       "key_hubs": [],
       "source": "azure_retail_api",
-      "last_verified": "2026-10-13T13:14:59.588197+00:00"
+      "last_verified": "2026-10-13T15:48:38.926861+00:00"
     },
     "Netherlands": {
       "arm_region": "westeurope",
@@ -1639,7 +1639,7 @@
       "energy_cost_kwh": null,
       "key_hubs": [],
       "source": "azure_retail_api",
-      "last_verified": "2026-10-13T13:14:59.588202+00:00"
+      "last_verified": "2026-10-13T15:48:38.926867+00:00"
     },
     "UK South": {
       "arm_region": "uksouth",
@@ -1651,14 +1651,31 @@
       },
       "premium_pct": {
         "A100-80GB": 43.5,
-        "GB200": 23.7,
-        "H100-SXM": 32.3
+        "H100-SXM": 32.3,
+        "GB200": 23.7
       },
       "avg_premium_pct": 33.2,
       "energy_cost_kwh": null,
       "key_hubs": [],
       "source": "azure_retail_api",
-      "last_verified": "2026-10-13T13:14:59.588208+00:00"
+      "last_verified": "2026-10-13T15:48:38.926872+00:00"
+    },
+    "UAE North": {
+      "arm_region": "uaenorth",
+      "continent": "Middle East",
+      "gpu_pricing": {
+        "H100-SXM": 17.575,
+        "A100-80GB": 6.41
+      },
+      "premium_pct": {
+        "A100-80GB": 62.2,
+        "H100-SXM": 51.3
+      },
+      "avg_premium_pct": 56.8,
+      "energy_cost_kwh": null,
+      "key_hubs": [],
+      "source": "azure_retail_api",
+      "last_verified": "2026-10-13T15:48:38.926878+00:00"
     },
     "Japan East": {
       "arm_region": "japaneast",
@@ -1675,7 +1692,7 @@
       "energy_cost_kwh": null,
       "key_hubs": [],
       "source": "azure_retail_api",
-      "last_verified": "2026-10-13T13:14:59.588213+00:00"
+      "last_verified": "2026-10-13T15:48:38.926883+00:00"
     },
     "Australia East": {
       "arm_region": "australiaeast",
@@ -1687,14 +1704,14 @@
       },
       "premium_pct": {
         "A100-80GB": 64.3,
-        "GB200": 42.7,
-        "H100-SXM": 58.2
+        "H100-SXM": 58.2,
+        "GB200": 42.7
       },
       "avg_premium_pct": 55.1,
       "energy_cost_kwh": null,
       "key_hubs": [],
       "source": "azure_retail_api",
-      "last_verified": "2026-10-13T13:14:59.588219+00:00"
+      "last_verified": "2026-10-13T15:48:38.926888+00:00"
     }
   },
   "tco": {
