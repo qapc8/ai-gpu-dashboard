@@ -1701,6 +1701,7 @@ AZURE_REGIONS = [
     ("northeurope", "Ireland", "Europe"),
     ("westeurope", "Netherlands", "Europe"),
     ("uksouth", "UK South", "Europe"),
+    ("uaenorth", "UAE North", "Middle East"),
     ("japaneast", "Japan East", "Asia Pacific"),
     ("southeastasia", "Singapore", "Asia Pacific"),
     ("australiaeast", "Australia East", "Asia Pacific"),
