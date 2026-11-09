@@ -139,7 +139,51 @@ METHODOLOGY_CHANGES = [
         "gpus": ["B200"],
         "reason": "withdrawn: Google publishes no on-demand rate for a4-highgpu-8g",
     },
+    {
+        "date": "2026-11-09",
+        "providers": ["Vast.ai"],
+        "gpus": None,
+        "reason": ("on-demand changed from the single cheapest offer per name to the "
+                   "25th percentile of >=3 offers, pinned by memory size (40GB A100s "
+                   "had been published as 80GB)"),
+    },
+    {
+        "date": "2026-11-09",
+        "providers": ["Azure"],
+        "gpus": None,
+        "reason": ("on-demand now read from one exact Linux VM size per GPU; it had "
+                   "pooled Windows rows and non-InfiniBand sizes (H100 11.61 -> 12.29) "
+                   "and published the 40GB A100 as the 80GB"),
+    },
+    {
+        "date": "2026-11-09",
+        "providers": ["Lambda"],
+        "gpus": None,
+        "reason": "on-demand now the 8x-cluster rate wherever Lambda sells 8x (H100 had been the 4x rate)",
+    },
+    {
+        "date": "2026-11-09",
+        "providers": ["AWS"],
+        "gpus": ["T4"],
+        "reason": ("now read live from the 4-GPU g4dn.12xlarge, like every other row; it was a "
+                   "frozen fallback for the 1-GPU g4dn.xlarge"),
+    },
+    {
+        "date": "2026-11-09",
+        "kind": "joined",
+        "providers": ["Oracle", "Nebius", "DigitalOcean", "Vultr", "Crusoe"],
+        "gpus": None,
+        "reason": "providers added; kept out of monthly averages until they have 90 days of history",
+    },
 ]
+
+
+def _recent_joins(days=90):
+    """Providers added within `days`: excluded from averages so their arrival
+    cannot read as a price move."""
+    horizon = (datetime.now(timezone.utc) - timedelta(days=days)).strftime("%Y-%m-%d")
+    return {p for c in METHODOLOGY_CHANGES
+            if c.get("kind") == "joined" and c["date"] >= horizon for p in c["providers"]}
 
 
 def _correction_in_window(provider, gpu, since):
@@ -206,7 +250,7 @@ def rebuild_historical(data, history, log_ok=lambda a, b="": None):
     # FluidStack until August -- so averaging "whatever was there" would make a
     # provider joining or leaving look like a price move. Same set throughout
     # means month-to-month change is the market.
-    current = set(data.get("providers") or {})
+    current = set(data.get("providers") or {}) - _recent_joins()
 
     # A change marked `scope: all` rewrote every provider's basis, so months
     # before it cannot be compared with months after. Start the series at the
@@ -305,7 +349,13 @@ def compute_volatility_daily(data, history, log_ok=lambda a, b="": None):
     horizon = (datetime.now(timezone.utc) - timedelta(days=90)).strftime("%Y-%m-%d")
     unstable = {p for c in METHODOLOGY_CHANGES if c["date"] >= horizon and c.get("scope") != "all"
                 for p in c["providers"]}
-    basket = sorted(current - unstable)
+    # Marketplaces stay out permanently: their figure is an order-book
+    # statistic that moves with whichever hosts are listed that hour, and it
+    # was most of the "53.6% annualized volatility" the H100 panel reported on
+    # list prices that had barely moved.
+    marketplaces = {k for k, p in (data.get("providers") or {}).items()
+                    if p.get("type") == "marketplace"}
+    basket = sorted(current - unstable - marketplaces - _recent_joins())
     if not basket:
         return data
 
@@ -455,9 +505,12 @@ def compute_volatility_daily(data, history, log_ok=lambda a, b="": None):
     data["volatility_basket"] = {
         "providers": basket,
         "excluded": sorted(unstable & current),
-        "note": ("Averaged over providers whose basis held for the whole window. "
-                 "Excluded providers changed how we read them within the last 90 "
-                 "days and rejoin automatically once that falls out of the window."),
+        "excluded_marketplaces": sorted(marketplaces),
+        "excluded_new": sorted(_recent_joins() & set(data.get("providers") or {})),
+        "note": ("Averaged over dedicated-cloud providers whose basis held for the "
+                 "whole window. Providers that changed how we read them, or joined, "
+                 "within the last 90 days rejoin automatically once that falls out "
+                 "of the window. Marketplaces (order-book prices) are always excluded."),
     }
 
     meta = data.setdefault("_meta", {}).setdefault("sections", {})

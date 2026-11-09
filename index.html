@@ -10,7 +10,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
 <style>
 :root {
   --bg-0: #000000;
@@ -505,6 +506,17 @@ body {
   color: var(--red);
   font-size: 12px;
 }
+/* AI staleness: every AI block says when it was written; old ones collapse. */
+.ai-gen-line { font-size: 10px; font-family: var(--mono); color: var(--text-3); margin-bottom: 8px; letter-spacing: 0.3px; }
+.ai-gen-line b { color: var(--text-2); font-weight: 600; }
+.ai-stale-banner { display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer;
+  background: var(--amber-dim); border-left: 3px solid var(--amber); color: var(--amber);
+  padding: 8px 12px; border-radius: 4px; font-size: 11.5px; line-height: 1.5; margin-bottom: 8px; user-select: none; }
+.ai-stale-banner .ai-stale-toggle { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; white-space: nowrap; text-decoration: underline; }
+.ai-stale-content[hidden] { display: none; }
+/* Price freshness markers */
+.px-stale { color: var(--amber) !important; opacity: 0.75; }
+.px-fallback { color: var(--amber) !important; font-style: italic; }
 
 /* ─── WORKLOAD MATCHER ─── */
 .wl-grid {
@@ -1070,7 +1082,7 @@ loadExternalData();
 <div class="nav" id="navTabs">
   <div class="nav-item active" data-tab="overview">Overview</div>
   <div class="nav-item" data-tab="pricing">Pricing</div>
-  <div class="nav-item" data-tab="trends">Trends & Forecast</div>
+  <div class="nav-item" data-tab="trends">Trends</div>
   <div class="nav-item" data-tab="markets">Prediction Markets</div>
   <div class="nav-item" data-tab="regional">Regional</div>
   <div class="nav-item" data-tab="inference">Inference</div>
@@ -1122,7 +1134,7 @@ loadExternalData();
     <div class="ai-commentary" id="sentimentAiCommentary" style="padding:0 16px 14px;">
       <div class="ai-commentary-header">
         <span class="ai-commentary-icon">&#9733;</span>
-        <span class="ai-commentary-label">AI Sentiment Analysis</span>
+        <span class="ai-commentary-label">AI commentary (not a forecast) · Sentiment</span>
       </div>
       <div class="ai-commentary-body" id="sentimentAiCommentaryBody">
         <div class="ai-commentary-loading"><span class="ai-commentary-dot"></span> Analyzing community signals...</div>
@@ -1143,8 +1155,8 @@ loadExternalData();
   </div>
   <div class="card mb">
     <div class="card-hd">
-      <span class="card-hd-title">Performance per Dollar (FP16 TFLOPS/$)</span>
-      <span class="card-hd-sub">at each GPU's cheapest listed rate</span>
+      <span class="card-hd-title">Performance per Dollar (FP16 TFLOPS per $, median price)</span>
+      <span class="card-hd-sub">at each GPU's median listed rate across providers</span>
     </div>
     <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="chartFlopsPerDollar"></canvas></div></div>
   </div>
@@ -1202,7 +1214,7 @@ loadExternalData();
       <div class="ai-commentary" id="priceAiCommentary">
         <div class="ai-commentary-header">
           <span class="ai-commentary-icon">&#9733;</span>
-          <span class="ai-commentary-label">AI Price Analysis</span>
+          <span class="ai-commentary-label">AI commentary (not a forecast) · Prices</span>
         </div>
         <div class="ai-commentary-body" id="priceAiCommentaryBody">
           <div class="ai-commentary-loading"><span class="ai-commentary-dot"></span> Analyzing price dynamics...</div>
@@ -1212,7 +1224,7 @@ loadExternalData();
   </div>
   <div class="card mb">
     <div class="card-hd" style="flex-wrap:wrap;gap:8px;">
-      <span class="card-hd-title">Price Decay Since Launch</span>
+      <span class="card-hd-title">Price Change Since Live Tracking Began</span>
       <div id="decayGpuPicker" class="decay-picker"></div>
     </div>
     <div class="card-bd">
@@ -1296,7 +1308,7 @@ loadExternalData();
 <div class="tab-panel" id="tab-regional">
   <div class="kpi-strip mb" id="regionStats"></div>
   <div class="card mb">
-    <div class="card-hd"><span class="card-hd-title">Regional Price Premium</span><span class="card-hd-sub">same Azure SKU, every region — measured, not modelled</span></div>
+    <div class="card-hd"><span class="card-hd-title">Regional Price Premium</span><span class="card-hd-sub" id="regionPremiumSub">same Azure SKU across Azure regions — measured, not modelled</span></div>
     <div class="card-bd"><div class="chart-wrap" style="height:280px;"><canvas id="chartRegionPremium"></canvas></div></div>
   </div>
   <div class="card mb">
@@ -1453,13 +1465,13 @@ loadExternalData();
     <div class="card-bd"><div class="chart-wrap" style="height:320px;" id="tcoWaterfallWrap"><canvas></canvas></div></div>
   </div>
   <div class="card mb">
-    <div class="card-hd"><span class="card-hd-title">TCO Comparison by GPU</span></div>
+    <div class="card-hd"><span class="card-hd-title">TCO Comparison by GPU</span><span class="card-hd-sub">reserved/spot columns: published rate and its discount vs the same providers' on-demand</span></div>
     <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="tcoTable"></table></div>
   </div>
   <div class="card">
     <div class="card-hd">
       <span class="card-hd-title">Commitment Break-Even</span>
-      <span class="card-hd-sub">a reserved term bills every hour — savings depend on how much of it you use</span>
+      <span class="card-hd-sub">a reserved term bills every hour — savings depend on how much of it you use · discounts measured against the same providers' on-demand</span>
     </div>
     <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="commitTable"></table></div>
   </div>
@@ -1530,7 +1542,7 @@ loadExternalData();
 <div class="tab-panel" id="tab-efficiency">
   <div class="kpi-strip mb" id="opsStats"></div>
   <div class="grid g-2 mb">
-    <div class="card"><div class="card-hd"><span class="card-hd-title">Annual Power Cost by GPU</span><span class="card-hd-sub">at $0.08/kWh, PUE 1.3</span></div><div class="card-bd" style="height:320px;"><canvas id="chartPowerCost"></canvas></div></div>
+    <div class="card"><div class="card-hd"><span class="card-hd-title">Annual Power Cost by GPU</span><span class="card-hd-sub" id="powerCostSub">assumed tariff and PUE</span></div><div class="card-bd" style="height:320px;"><canvas id="chartPowerCost"></canvas></div></div>
     <div class="card"><div class="card-hd"><span class="card-hd-title">Carbon Footprint by GPU (Annual)</span></div><div class="card-bd" style="height:320px;"><canvas id="chartCarbonByGpu"></canvas></div></div>
   </div>
   <div class="card mb">
@@ -1603,7 +1615,8 @@ loadExternalData();
     <div class="ai-section">
       <div class="ai-section-hd" style="border-left:3px solid var(--purple);">
         <span class="ai-section-icon" style="color:var(--purple);">&#x1F52E;</span>
-        <span class="ai-section-title">Price Outlook</span>
+        <span class="ai-section-title">Price Commentary</span>
+        <span class="dim" style="font-size:10px;font-family:var(--mono);margin-left:8px;">AI commentary (not a forecast)</span>
       </div>
       <div class="ai-body" id="aiForecastContent">
         <div class="ai-loading"><div class="ai-spinner"></div>Loading...</div>
@@ -1688,8 +1701,68 @@ const CL = Object.values(C);
 const PC = {
   'AWS':C.orange,'GCP':C.blue,'Azure':C.cyan,'Lambda':C.purple,
   'CoreWeave':C.green,'RunPod':C.pink,'Vast.ai':C.amber,
-  'FluidStack':C.teal,'Together':C.indigo
+  'FluidStack':C.teal,'Together':C.indigo,
+  'Oracle':C.red,'Nebius':C.lime,'DigitalOcean':C.sky,'Vultr':C.teal,'Crusoe':C.orange
 };
+// Any provider not in the map (new ones appear as the pipeline adds sources)
+// gets a neutral colour rather than undefined.
+const PROVIDER_FALLBACK_COLOR = '#8a95a6';
+function provColor(name) { return PC[name] || PROVIDER_FALLBACK_COLOR; }
+
+// ── Price freshness ──────────────────────────────────────────────
+// A listing is stale if the pipeline flagged it as carried forward, or if its
+// own last_updated is more than 48h older than the dataset. A hardcoded
+// fallback is a price-list number, not a reading. Neither may win "cheapest",
+// "best value", a ranking, the carousel or the ticker.
+const STALE_AFTER_HOURS = 48;
+function _dataTs() {
+  const t = Date.parse(DATA && DATA.last_updated);
+  return isNaN(t) ? null : t;
+}
+function _isoDate(v) {
+  if (!v) return null;
+  const t = Date.parse(v);
+  return isNaN(t) ? String(v).slice(0, 10) : new Date(t).toISOString().slice(0, 10);
+}
+function priceFreshness(g) {
+  if (!g) return { stale: false, fallback: false, usable: false };
+  const fallback = g.source === 'hardcoded_fallback';
+  let stale = g.stale === true;
+  const ref = _dataTs(), lu = Date.parse(g.last_updated);
+  if (!stale && ref != null && !isNaN(lu) && (ref - lu) / 3600e3 > STALE_AFTER_HOURS) stale = true;
+  return { stale, fallback, usable: !stale && !fallback };
+}
+function isLivePrice(g) {
+  return !!(g && g.price_per_gpu_hr > 0 && priceFreshness(g).usable);
+}
+// Live (non-stale, non-fallback) offers for a GPU, cheapest first.
+function liveOffers(gpuId, type) {
+  const out = [];
+  Object.entries(DATA.providers || {}).forEach(([n, p]) => {
+    const t = p.type || 'cloud';
+    if (type && t !== type) return;
+    const g = p.gpus && p.gpus[gpuId];
+    if (isLivePrice(g)) out.push({ provider: n, name: p.provider_name || n, type: t, price: g.price_per_gpu_hr, g });
+  });
+  return out.sort((a, b) => a.price - b.price);
+}
+// Dot colour + tooltip for a single listing.
+function freshnessInfo(g) {
+  const f = priceFreshness(g);
+  if (f.fallback) return { c: 'var(--amber)', cls: 'px-fallback',
+    t: 'Fallback price, last verified ' + (_isoDate(g.last_verified) || 'unknown') + ' — excluded from cheapest/rankings' };
+  if (f.stale) return { c: 'var(--amber)', cls: 'px-stale',
+    t: 'Stale — carried forward' + (g.stale_since ? ' since ' + g.stale_since : '')
+       + (g.last_updated ? ', last read ' + _isoDate(g.last_updated) : '') + '. Excluded from cheapest/rankings.' };
+  return { c: 'var(--green)', cls: '',
+    t: 'Confirmed live this run' + (g && g.last_verified ? ' (' + _isoDate(g.last_verified) + ')' : '') };
+}
+function signedPct(v, dp) {
+  if (v == null || isNaN(v)) return '—';
+  const n = Number(v);
+  return (n > 0 ? '+' : '') + (dp != null ? n.toFixed(dp) : n) + '%';
+}
+const NO_RATE_CELL_TITLE = 'No provider publishes this rate';
 
 Chart.defaults.color = '#5c6980';
 Chart.defaults.borderColor = 'rgba(26,34,51,0.6)';
@@ -1732,7 +1805,6 @@ async function loadAllData() {
     }
     DATA = EMBEDDED_DATA;
     renderAll();
-    loadAI('summary');
     return;
   }
   const [matrix,specs,providers,historical,indicators,regional,workloads,tco,inference,spot,news,
@@ -1747,7 +1819,6 @@ async function loadAllData() {
   DATA = {matrix,specs,providers,historical,indicators,regional,workloads,tco,inference,spot,news,
           competitive,sustainability,supplychain,modelfit};
   renderAll();
-  loadAI('summary');
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1783,8 +1854,18 @@ function attachChartResizeObserver() {
     });
   };
   observeKnown();
-  // Re-scan periodically — cheap enough, catches lazily created charts
-  setInterval(observeKnown, 1000);
+  // Charts created later (pickers, sliders) register themselves through the
+  // plugin below, so no polling timer is needed.
+}
+if (window.Chart && Chart.register) {
+  Chart.register({
+    id: 'resizeObserverAttach',
+    afterInit(chart) {
+      if (chartResizeObserver && chart && chart.canvas) {
+        try { chartResizeObserver.observe(chart.canvas); } catch (e) {}
+      }
+    },
+  });
 }
 
 // Belt-and-suspenders: also nudge every chart on tab click in case the
@@ -1878,76 +1959,81 @@ function updateTime() {
 // ════════════════════════════════════════════════════════════════
 function renderTicker() {
   const mi = DATA.indicators;
-  const spot = DATA.spot;
   const tb = document.getElementById('tickerBar');
   if (!mi || !mi.nvidia_stock) return;
 
-  const chgBadge = (val, suffix='%') => {
+  const chgBadge = (val, suffix) => {
+    if (val == null || isNaN(val)) return '';
     const cls = val >= 0 ? 'up' : 'down';
-    return `<span class="indicator-change ${cls}">${val > 0 ? '+' : ''}${val}${suffix}</span>`;
+    return `<span class="indicator-change ${cls}">${val > 0 ? '+' : ''}${val}%${suffix ? ' ' + suffix : ''}</span>`;
   };
 
-  const mkTick = (label, price, chg) => {
-    return `<div class="indicator">
+  const mkTick = (label, price, chg, suffix, title) => {
+    return `<div class="indicator"${title ? ` title="${escHtml(title)}"` : ''}>
       <span class="indicator-label">${label}</span>
       <span class="indicator-value">${price}</span>
-      ${chgBadge(chg)}
+      ${chgBadge(chg, suffix)}
     </div>`;
   };
 
-  // GPU best prices from provider data
-  const getBestPrice = (gpuId) => {
-    const provs = DATA.providers;
-    if (!provs) return null;
-    let best = Infinity;
-    Object.values(provs).forEach(p => {
-      const g = p.gpus?.[gpuId];
-      if (g && g.price_per_gpu_hr && g.price_per_gpu_hr < best) best = g.price_per_gpu_hr;
-    });
-    return best === Infinity ? null : best;
+  // Cheapest cloud price per GPU. The pipeline's matrix row carries the
+  // cheapest non-stale cloud rate; fall back to its cheapest_price, then to
+  // live provider listings computed here (stale/fallback excluded).
+  const gpuTick = (gpuId, label) => {
+    const r = (DATA.matrix || []).find(x => x.gpu_id === gpuId) || {};
+    let price = r.cloud_low_price, prov = r.cloud_low_provider, kind = 'cheapest cloud';
+    if (price == null) {
+      const c = liveOffers(gpuId, 'cloud')[0];
+      if (c) { price = c.price; prov = c.provider; }
+    }
+    if (price == null && r.cheapest_price != null) { price = r.cheapest_price; prov = r.cheapest_provider; kind = 'cheapest listed'; }
+    const v = (DATA.volatility || {})[gpuId];
+    const chg = v && v.change_30d_pct != null ? v.change_30d_pct : null;
+    const priceStr = price != null ? '$' + Number(price).toFixed(2) : '--';
+    return mkTick(label + ' <span style="font-size:8px;opacity:0.7;">' + kind + '</span>', priceStr, chg, '30d',
+      `${label}: ${kind} on-demand $/GPU-hr${prov ? ' (' + prov + ')' : ''}${chg != null ? '; 30-day change of the tracked average' : ''}`);
   };
 
-  const h100Best = getBestPrice('H100-SXM');
-  const b200Best = getBestPrice('B200');
-  const b300Best = getBestPrice('B300');
-  const h100Price = h100Best !== null ? '$'+h100Best.toFixed(2) : (spot?.['H100-SXM'] ? '$'+spot['H100-SXM'].on_demand_avg.toFixed(2) : '--');
-  const b200Price = b200Best !== null ? '$'+b200Best.toFixed(2) : (spot?.['B200'] ? '$'+spot['B200'].on_demand_avg.toFixed(2) : '--');
-  const b300Price = b300Best !== null ? '$'+b300Best.toFixed(2) : (spot?.['B300'] ? '$'+spot['B300'].on_demand_avg.toFixed(2) : '--');
-
-  const h100Trend = spot?.['H100-SXM']?.quarterly_trend || [];
-  const b200Trend = spot?.['B200']?.quarterly_trend || [];
-  const b300Trend = spot?.['B300']?.quarterly_trend || [];
-  const h100Chg = h100Trend.length >= 2 ? ((h100Trend.at(-1) - h100Trend[0]) / h100Trend[0] * 100).toFixed(1) : 0;
-  const b200Chg = b200Trend.length >= 2 ? ((b200Trend.at(-1) - b200Trend[0]) / b200Trend[0] * 100).toFixed(1) : 0;
-  const b300Chg = b300Trend.length >= 2 ? ((b300Trend.at(-1) - b300Trend[0]) / b300Trend[0] * 100).toFixed(1) : 0;
-
   tb.innerHTML =
-    mkTick('NVDA', '$'+mi.nvidia_stock.current, mi.nvidia_stock.ytd_change) +
-    mkTick('AMD', '$'+mi.amd_stock.current, mi.amd_stock.ytd_change) +
-    mkTick('B300', b300Price, parseFloat(b300Chg)) +
-    mkTick('H100', h100Price, parseFloat(h100Chg)) +
-    mkTick('B200', b200Price, parseFloat(b200Chg));
+    mkTick('NVDA', '$'+mi.nvidia_stock.current, mi.nvidia_stock.ytd_change, 'YTD') +
+    mkTick('AMD', '$'+mi.amd_stock.current, mi.amd_stock.ytd_change, 'YTD') +
+    gpuTick('B300', 'B300') +
+    gpuTick('H100-SXM', 'H100') +
+    gpuTick('B200', 'B200');
 }
 
 // The headline finding in the whole dataset: the same GPU, rented in the same
 // hour, varies several-fold across providers.
 function renderDispersion() {
   const el=document.getElementById('dispersionTable'); if(!el) return;
-  const pd=DATA.providers||{};
+  // Live listings only: a stale or fallback price can neither be the
+  // cheapest nor the dearest end of a spread. Spread and overpay are measured
+  // from the cheapest *cloud* rate; the marketplace low is shown on its own,
+  // because a percentile of community-hardware offers is a different product.
   const rows=(DATA.matrix||[]).map(r=>{
-    const q=Object.entries(pd).filter(([,p])=>p.gpus?.[r.gpu_id]?.price_per_gpu_hr)
-      .map(([n,p])=>({n,v:p.gpus[r.gpu_id].price_per_gpu_hr})).sort((a,b)=>a.v-b.v);
+    const q=liveOffers(r.gpu_id);
     if(q.length<2) return null;
-    return {gpu:r.gpu_id,lo:q[0],hi:q[q.length-1],n:q.length,x:q[q.length-1].v/q[0].v};
+    const cq=q.filter(o=>o.type==='cloud'), mq=q.filter(o=>o.type==='marketplace');
+    const lo=r.cloud_low_price!=null?{v:r.cloud_low_price,n:r.cloud_low_provider||''}
+           :(cq.length?{v:cq[0].price,n:cq[0].provider}:null);
+    const mk=r.marketplace_low_price!=null?{v:r.marketplace_low_price,n:r.marketplace_low_provider||''}
+           :(mq.length?{v:mq[0].price,n:mq[0].provider}:null);
+    const hi={v:q[q.length-1].price,n:q[q.length-1].provider};
+    const base=lo||mk;
+    if(!base||!(base.v>0)) return null;
+    return {gpu:r.gpu_id,lo,mk,hi,n:q.length,x:hi.v/base.v,baseIsMkt:!lo};
   }).filter(Boolean).sort((a,b)=>b.x-a.x).slice(0,8);
   if(!rows.length){ el.innerHTML=''; return; }
-  let h='<thead><tr><th>GPU</th><th>Cheapest</th><th>Dearest</th><th class="r">Spread</th><th class="r">Overpay</th></tr></thead><tbody>';
+  let h='<thead><tr><th>GPU</th><th>Cheapest cloud</th><th>Marketplace low</th><th>Dearest</th>'
+    +'<th class="r" title="Dearest live listing divided by the cheapest live cloud rate">Spread</th><th class="r">Overpay</th></tr></thead><tbody>';
   rows.forEach(r=>{
     const c=r.x>=4?'var(--red)':r.x>=2?'var(--amber)':'var(--text-2)';
+    const cell=(o,col)=>o?`<span style="color:${col};font-family:var(--mono);">$${o.v.toFixed(2)}</span> <span class="dim">${o.n}</span>`:'<span class="dim">—</span>';
     h+=`<tr><td class="gpu-name">${r.gpu}</td>
-      <td style="font-size:11px;"><span class="c-green fw" style="font-family:var(--mono);">$${r.lo.v.toFixed(2)}</span> <span class="dim">${r.lo.n}</span></td>
-      <td style="font-size:11px;"><span style="color:var(--red);font-family:var(--mono);">$${r.hi.v.toFixed(2)}</span> <span class="dim">${r.hi.n}</span></td>
-      <td class="r" style="font-family:var(--mono);font-weight:700;color:${c};">${r.x.toFixed(1)}x</td>
+      <td style="font-size:11px;">${cell(r.lo,'var(--green)')}</td>
+      <td style="font-size:11px;" title="Marketplace low — community / aggregated hardware">${cell(r.mk,'var(--amber)')}</td>
+      <td style="font-size:11px;">${cell(r.hi,'var(--red)')}</td>
+      <td class="r" style="font-family:var(--mono);font-weight:700;color:${c};"${r.baseIsMkt?' title="No live cloud rate; measured from the marketplace low"':''}>${r.x.toFixed(1)}x</td>
       <td class="r" style="font-family:var(--mono);color:${c};">+${((r.x-1)*100).toFixed(0)}%</td></tr>`;
   });
   el.innerHTML=h+'</tbody>';
@@ -1977,26 +2063,44 @@ function renderChangeFeed() {
   }).join('');
 }
 
-// Commitment economics, moved here from the old standalone `reservations` set.
+// Commitment economics. Every number here is same-basket: a reserved or spot
+// rate is compared only with the on-demand rate of the providers that publish
+// it (spot[g].*_vs_ondemand), never with the all-provider on-demand average,
+// which includes marketplaces that sell no commitment at all.
+function commitTerm(sp, prefix) {
+  const rate = sp ? sp[prefix + '_avg'] : null;
+  const base = sp ? sp[prefix + '_vs_ondemand'] : null;
+  if (rate == null || !(rate > 0)) return null;
+  const pct = sp[prefix + '_savings_pct'] != null ? sp[prefix + '_savings_pct']
+            : (base > 0 ? Math.round((1 - rate / base) * 100) : null);
+  return { rate, base: base > 0 ? base : null, pct, n: sp[prefix + '_providers'] || null,
+           breakeven: base > 0 ? rate / base * 100 : null };
+}
 function renderCommitTable() {
   const el=document.getElementById('commitTable'); if(!el) return;
-  const tco=DATA.tco||{};
-  const rows=Object.entries(tco).filter(([,t])=>t.commitment);
-  if(!rows.length){ el.innerHTML=''; return; }
-  let h='<thead><tr><th>GPU</th><th class="r">On-demand</th><th class="r">Spot</th><th class="r">1yr</th><th class="r">3yr</th>'
-      +'<th class="r">1yr break-even</th><th class="r">3yr break-even</th><th class="r">Saving @60%</th><th class="r">Saving @100%</th></tr></thead><tbody>';
-  rows.sort((a,b)=>b[1].cloud_on_demand_hr-a[1].cloud_on_demand_hr).forEach(([g,t])=>{
-    const c=t.commitment, s60=c.savings_at_utilization['60_pct'], s100=c.savings_at_utilization['100_pct'];
-    const col=v=>v==null?'var(--text-3)':v>0?'var(--green)':'var(--red)';
+  const spot=DATA.spot||{}, tco=DATA.tco||{};
+  const gpus=[...new Set(Object.keys(tco).concat(Object.keys(spot)))].filter(g=>spot[g]);
+  if(!gpus.length){ el.innerHTML=''; return; }
+  const dash=`<td class="r dim" title="${NO_RATE_CELL_TITLE}">—</td>`;
+  const rateCell=(t,col)=>!t?dash
+    :`<td class="r" style="font-family:var(--mono);color:${col};" title="${t.pct!=null?t.pct+'% below':'vs'} $${t.base!=null?t.base.toFixed(2):'?'} on-demand at the same ${t.n||'?'} provider${t.n===1?'':'s'}">$${t.rate.toFixed(2)}${t.pct!=null?`<span class="dim" style="font-size:9px;"> −${t.pct}%</span>`:''}</td>`;
+  const beCell=t=>!t||t.breakeven==null?dash
+    :`<td class="r" style="font-family:var(--mono);" title="Reserved rate ÷ same-provider on-demand: the utilisation above which the term is cheaper">${t.breakeven.toFixed(0)}%</td>`;
+  // Saving at utilisation u: on-demand bills used hours (base x u), a term bills every hour (rate).
+  const savCell=(t,u)=>{
+    if(!t||t.base==null) return dash;
+    const v=Math.round((1-t.rate/(t.base*u))*100);
+    return `<td class="r" style="font-family:var(--mono);color:${v>0?'var(--green)':'var(--red)'};">${v}%</td>`;
+  };
+  let h='<thead><tr><th>GPU</th><th class="r">Spot</th><th class="r">1yr</th><th class="r">3yr</th>'
+      +'<th class="r">1yr break-even</th><th class="r">3yr break-even</th>'
+      +'<th class="r">1yr saving @60%</th><th class="r">3yr saving @60%</th></tr></thead><tbody>';
+  gpus.sort((a,b)=>(spot[b].on_demand_avg||0)-(spot[a].on_demand_avg||0)).forEach(g=>{
+    const sp=spot[g];
+    const s=commitTerm(sp,'spot'), r1=commitTerm(sp,'reserved_1yr'), r3=commitTerm(sp,'reserved_3yr');
     h+=`<tr><td class="gpu-name">${g}</td>
-      <td class="r" style="font-family:var(--mono);">$${t.cloud_on_demand_hr.toFixed(2)}</td>
-      <td class="r" style="font-family:var(--mono);color:var(--green);">${c.spot_rate?'$'+c.spot_rate.toFixed(2):'—'}</td>
-      <td class="r" style="font-family:var(--mono);">$${c.reserved_1yr_rate.toFixed(2)}</td>
-      <td class="r" style="font-family:var(--mono);color:var(--cyan);">$${c.reserved_3yr_rate.toFixed(2)}</td>
-      <td class="r" style="font-family:var(--mono);">${c.breakeven_utilization_1yr_pct}%</td>
-      <td class="r" style="font-family:var(--mono);">${c.breakeven_utilization_3yr_pct}%</td>
-      <td class="r" style="font-family:var(--mono);color:${col(s60.reserved_1yr)};">${s60.reserved_1yr}%</td>
-      <td class="r" style="font-family:var(--mono);color:${col(s100.reserved_1yr)};">${s100.reserved_1yr}%</td></tr>`;
+      ${rateCell(s,'var(--green)')}${rateCell(r1,'var(--text-1)')}${rateCell(r3,'var(--cyan)')}
+      ${beCell(r1)}${beCell(r3)}${savCell(r1,0.6)}${savCell(r3,0.6)}</tr>`;
   });
   el.innerHTML=h+'</tbody>';
 }
@@ -2039,17 +2143,21 @@ function renderOverview() {
 // ── GPU CAROUSEL ──
 let _carouselIdx = 0, _carouselTimer = null;
 function renderGpuCarousel() {
-  const m = DATA.matrix, spot = DATA.spot||{}, hist = DATA.historical||{}, fc = DATA.volatility||{}, specs = DATA.specs||{};
+  const m = DATA.matrix, fc = DATA.volatility||{}, specs = DATA.specs||{};
   // Top 5 by TFLOPS/$, excluding RTX consumer GPUs and GPUs with no cloud provider
   const excluded = new Set(['RTX-4090','RTX-4080','RTX-3090','RTX-5090']);
-  const hasCloud = (gpuId) => Object.values(DATA.providers||{}).some(p => (p.type||'cloud')==='cloud' && p.gpus?.[gpuId]);
-  const filtered = m.filter(r => !excluded.has(r.gpu_id) && hasCloud(r.gpu_id));
-  let top5 = [...filtered].sort((a,b) => b.flops_per_dollar - a.flops_per_dollar).slice(0, 5);
-  // Ensure B200 is in the list
-  if(!top5.find(r=>r.gpu_id==='B200')) {
-    const b200 = filtered.find(r=>r.gpu_id==='B200');
-    if(b200) { top5.pop(); top5.push(b200); }
-  }
+  // Only GPUs with at least one live (non-stale, non-fallback) cloud listing
+  // are eligible. Ranked purely on TFLOPS per $ at the median price -- no
+  // GPU is forced into the list.
+  const hasCloud = (gpuId) => liveOffers(gpuId, 'cloud').length > 0;
+  const tpd = r => {
+    if (r.flops_per_dollar != null) return r.flops_per_dollar;
+    const sp = specs[r.gpu_id] || {};
+    return (sp.fp16_tflops && r.median_price) ? sp.fp16_tflops / r.median_price : null;
+  };
+  const filtered = m.filter(r => !excluded.has(r.gpu_id) && hasCloud(r.gpu_id) && tpd(r) != null);
+  let top5 = [...filtered].sort((a,b) => tpd(b) - tpd(a)).slice(0, 5);
+  if (!top5.length) return;
 
   const track = document.getElementById('carouselTrack');
   const dots = document.getElementById('carouselDots');
@@ -2057,29 +2165,18 @@ function renderGpuCarousel() {
   // Helper: find best price per GPU for cloud vs marketplace
   const pd = DATA.providers||{};
   const bestByType = (gpuId, type) => {
-    let best = null;
-    for(const [prov, p] of Object.entries(pd)) {
-      if((p.type||'cloud') !== type) continue;
-      const g = p.gpus?.[gpuId];
-      if(g && g.price_per_gpu_hr && (!best || g.price_per_gpu_hr < best.price)) {
-        best = { price: g.price_per_gpu_hr, provider: p.provider_name || prov };
-      }
-    }
-    return best;
+    const o = liveOffers(gpuId, type)[0];
+    return o ? { price: o.price, provider: o.name } : null;
   };
 
   track.innerHTML = top5.map((gpu, i) => {
-    const s = spot[gpu.gpu_id]||{};
     const spec = specs[gpu.gpu_id]||{};
-    const f = fc[gpu.gpu_id]||{};
-    const h = hist[gpu.gpu_id]||{};
-    const periods = Object.keys(h).sort();
-    const prev = periods.length>=2 ? h[periods[periods.length-2]]?.avg : null;
-    const cur = periods.length>=1 ? h[periods[periods.length-1]]?.avg : gpu.avg_price;
-    const pctChg = prev ? ((cur-prev)/prev*100).toFixed(1) : null;
-    const pctCls = pctChg && pctChg >= 0 ? 'up' : 'dn';
-    const regime = f.regime || 'stable';
-    const regimeLabel = {falling:'Prices Falling',stable:'Prices Stable',tightening:'Prices Rising'}[regime]||regime;
+    const f = fc[gpu.gpu_id];
+    const pctChg = f && f.change_30d_pct != null ? Number(f.change_30d_pct) : null;
+    const pctCls = pctChg != null && pctChg >= 0 ? 'up' : 'dn';
+    const regimeLabel = f && f.regime
+      ? ({falling:'Falling',stable:'Stable',tightening:'Rising',unmeasurable:'Unmeasurable'}[f.regime] || f.regime)
+      : '—';
 
     const cloudBest = bestByType(gpu.gpu_id, 'cloud');
     const mktBest = bestByType(gpu.gpu_id, 'marketplace');
@@ -2101,12 +2198,12 @@ function renderGpuCarousel() {
             <div class="carousel-provider-name">${mktBest ? mktBest.provider : 'N/A'}</div>
           </div>
         </div>
-        <div class="carousel-provider" style="margin-top:6px;">avg $${gpu.avg_price.toFixed(2)}/hr across ${gpu.num_providers} providers</div>
+        <div class="carousel-provider" style="margin-top:6px;">${gpu.median_price != null ? 'median $'+Number(gpu.median_price).toFixed(2) : (gpu.avg_price != null ? 'avg $'+Number(gpu.avg_price).toFixed(2) : '')}/hr across ${gpu.num_providers} providers</div>
       </div>
       <div class="carousel-slide-right">
         <div class="carousel-stat">
-          <div class="carousel-stat-label">TFLOPS/$</div>
-          <div class="carousel-stat-value">${gpu.flops_per_dollar}</div>
+          <div class="carousel-stat-label" title="FP16 TFLOPS per $ at the median listed price">TFLOPS per $ (median)</div>
+          <div class="carousel-stat-value">${Math.round(tpd(gpu))}</div>
         </div>
         <div class="carousel-stat">
           <div class="carousel-stat-label">VRAM</div>
@@ -2114,10 +2211,10 @@ function renderGpuCarousel() {
         </div>
         <div class="carousel-stat">
           <div class="carousel-stat-label">30d Trend</div>
-          <div class="carousel-stat-value">${pctChg ? `<span class="${pctCls}">${pctChg>0?'+':''}${pctChg}%</span>` : '--'}</div>
+          <div class="carousel-stat-value">${pctChg != null ? `<span class="${pctCls}">${pctChg>0?'+':''}${pctChg}%</span>` : '—'}</div>
         </div>
         <div class="carousel-stat">
-          <div class="carousel-stat-label">Forecast</div>
+          <div class="carousel-stat-label" title="Measured 30-day regime from the daily price record, not a forecast">Trend</div>
           <div class="carousel-stat-value" style="font-size:13px;">${regimeLabel}</div>
         </div>
         <div class="carousel-stat" style="grid-column:span 2;">
@@ -2177,67 +2274,75 @@ function renderPriceMatrix() {
   h += `<th colspan="${cloudProvs.length}" class="pg-cloud-hdr">Cloud Providers</th>`;
   h += '<th rowspan="2" class="pg-divider"></th>';
   h += `<th colspan="${mktProvs.length}" class="pg-mkt-hdr">Marketplaces</th>`;
-  h += '<th rowspan="2" class="r pg-best">Best $/hr</th>';
-  h += '<th rowspan="2" class="r" style="color:var(--amber);" title="Most expensive provider divided by cheapest. The same GPU, the same hour.">Spread</th>';
-  h += '<th colspan="2" style="text-align:center;font-size:10px;color:var(--purple);border-bottom:1px solid var(--purple);padding:2px 6px;">Value at best price</th>';
+  h += '<th rowspan="2" class="r pg-best" title="Cheapest live cloud on-demand rate (stale and fallback prices excluded). The badge is the month-on-month change: red = rising, green = falling.">Cloud low</th>';
+  h += '<th rowspan="2" class="r" style="color:var(--amber);" title="Cheapest live marketplace listing (community / aggregated hardware)">Marketplace low</th>';
+  h += '<th rowspan="2" class="r" style="color:var(--amber);" title="Dearest live listing divided by the cheapest live cloud rate. The same GPU, the same hour.">Spread</th>';
+  h += '<th colspan="2" style="text-align:center;font-size:10px;color:var(--purple);border-bottom:1px solid var(--purple);padding:2px 6px;">Value at median price</th>';
   h += '<th colspan="2" style="text-align:center;font-size:10px;color:var(--cyan);border-bottom:1px solid var(--cyan);padding:2px 6px;">Reserved</th></tr>';
   h += '<tr>';
   cloudLabels.forEach(l => { h += `<th class="pg-prov-th">${l}</th>`; });
   mktLabels.forEach(l => { h += `<th class="pg-prov-th">${l}</th>`; });
-  h += '<th class="pg-prov-th" style="color:var(--purple);">TFLOPS/$</th>';
-  h += '<th class="pg-prov-th" style="color:var(--purple);">GB/$</th>';
+  h += '<th class="pg-prov-th" style="color:var(--purple);" title="FP16 TFLOPS per $ (median price)">TFLOPS per $ (median price)</th>';
+  h += '<th class="pg-prov-th" style="color:var(--purple);" title="GB of VRAM per $ (median price)">GB per $ (median price)</th>';
   h += '<th class="pg-prov-th" style="color:var(--cyan);">1yr</th>';
   h += '<th class="pg-prov-th" style="color:var(--cyan);">3yr</th>';
   h += '</tr></thead><tbody>';
 
   m.forEach(r => {
     const gpuId = r.gpu_id;
-    const allPrices = [];
+    // Stale and fallback listings are still shown (marked amber) but never
+    // count as cheapest/dearest or feed the spread.
     const prices = {};
+    const live = [];
     [...cloudProvs,...mktProvs].forEach(prov => {
       const g = pd[prov]?.gpus?.[gpuId];
-      if (g) {
-        prices[prov] = g.price_per_gpu_hr;
-        allPrices.push(g.price_per_gpu_hr);
+      if (g && g.price_per_gpu_hr != null) {
+        prices[prov] = g;
+        if (isLivePrice(g)) live.push({ prov, v: g.price_per_gpu_hr, type: pd[prov].type || 'cloud' });
       }
     });
-    const minP = allPrices.length ? Math.min(...allPrices) : null;
-    const maxP = allPrices.length > 1 ? Math.max(...allPrices) : null;
+    const liveVals = live.map(x => x.v);
+    const minP = liveVals.length ? Math.min(...liveVals) : null;
+    const maxP = liveVals.length > 1 ? Math.max(...liveVals) : null;
+    const liveCloud = live.filter(x => x.type === 'cloud').map(x => x.v);
+    const liveMkt = live.filter(x => x.type === 'marketplace').map(x => x.v);
+    const cloudLow = r.cloud_low_price != null ? r.cloud_low_price : (liveCloud.length ? Math.min(...liveCloud) : null);
+    const mktLow = r.marketplace_low_price != null ? r.marketplace_low_price : (liveMkt.length ? Math.min(...liveMkt) : null);
 
-    h += `<tr><td class="gpu-name">${r.name}</td><td class="r">${r.vram_gb}GB</td>`;
-    cloudProvs.forEach(prov => {
-      if (prices[prov] != null) {
-        const cls = prices[prov] === minP ? 'pg-cell-best' : (prices[prov] === maxP ? 'pg-cell-worst' : '');
-        const tc = prices[prov] === minP ? ' c-green fw' : '';
-        h += `<td class="r ${cls}${tc}">$${prices[prov].toFixed(2)}</td>`;
-      } else {
-        h += '<td class="pg-cell-na">—</td>';
-      }
-    });
+    const priceCell = prov => {
+      const g = prices[prov];
+      if (!g) return '<td class="pg-cell-na">—</td>';
+      const v = g.price_per_gpu_hr;
+      const fi = freshnessInfo(g);
+      if (fi.cls) return `<td class="r ${fi.cls}" title="${escHtml(fi.t)}">$${v.toFixed(2)}${priceFreshness(g).fallback ? '*' : '†'}</td>`;
+      const cls = v === minP ? 'pg-cell-best' : (v === maxP ? 'pg-cell-worst' : '');
+      const tc = v === minP ? ' c-green fw' : '';
+      const tip = g.price_basis ? ` title="${escHtml(g.price_basis)}"` : '';
+      return `<td class="r ${cls}${tc}"${tip}>$${v.toFixed(2)}</td>`;
+    };
+
+    h += `<tr><td class="gpu-name">${r.name}${r.stale_excluded ? ` <span style="color:var(--amber);font-size:9px;" title="${r.stale_excluded} stale listing${r.stale_excluded===1?'':'s'} excluded from cheapest">†${r.stale_excluded}</span>` : ''}</td><td class="r">${r.vram_gb}GB</td>`;
+    cloudProvs.forEach(prov => { h += priceCell(prov); });
     h += '<td class="pg-divider"></td>';
-    mktProvs.forEach(prov => {
-      if (prices[prov] != null) {
-        const cls = prices[prov] === minP ? 'pg-cell-best' : (prices[prov] === maxP ? 'pg-cell-worst' : '');
-        const tc = prices[prov] === minP ? ' c-green fw' : '';
-        h += `<td class="r ${cls}${tc}">$${prices[prov].toFixed(2)}</td>`;
-      } else {
-        h += '<td class="pg-cell-na">—</td>';
-      }
-    });
-    const mc = r.monthly_change_pct >= 0 ? 'c-green' : 'c-red';
-    const momStr = `${r.monthly_change_pct > 0 ? '+' : ''}${r.monthly_change_pct}%`;
-    h += `<td class="r pg-best c-green fw">$${r.cheapest_price.toFixed(2)} <span class="${mc}" style="font-size:10px;font-weight:400;">${momStr}</span></td>`;
-    // Spread: the single most actionable number here -- how much the identical
-    // GPU varies across providers in the same hour.
-    const spread = (minP && maxP) ? maxP/minP : null;
+    mktProvs.forEach(prov => { h += priceCell(prov); });
+    // Rising prices are bad for a buyer: red. Falling: green. Same as the change feed.
+    const mom = r.monthly_change_pct;
+    const mc = mom == null ? 'dim' : mom > 0 ? 'c-red' : mom < 0 ? 'c-green' : 'dim';
+    const momStr = mom == null ? '' : `${mom > 0 ? '+' : ''}${mom}%`;
+    h += `<td class="r pg-best c-green fw" title="${r.cloud_low_provider ? escHtml(r.cloud_low_provider) : ''}">${cloudLow != null ? '$'+Number(cloudLow).toFixed(2) : '—'} <span class="${mc}" style="font-size:10px;font-weight:400;">${momStr}</span></td>`;
+    h += `<td class="r" style="font-family:var(--mono);color:var(--amber);" title="Marketplace low${r.marketplace_low_provider ? ' — ' + escHtml(r.marketplace_low_provider) : ''}">${mktLow != null ? '$'+Number(mktLow).toFixed(2) : '—'}</td>`;
+    // Spread: dearest live listing against the cheapest live cloud rate.
+    const spreadBase = cloudLow != null ? cloudLow : minP;
+    const spread = (spreadBase && maxP) ? maxP/spreadBase : null;
     const sc = !spread ? 'var(--text-3)' : spread>=4 ? 'var(--red)' : spread>=2 ? 'var(--amber)' : 'var(--text-2)';
     h += `<td class="r" style="font-family:var(--mono);font-weight:700;color:${sc};">${spread?spread.toFixed(1)+'x':'—'}</td>`;
-    // Price-performance at the cheapest live price.
+    // Price-performance at the median listed price (the pipeline computes
+    // flops_per_dollar / vram_per_dollar on median_price).
     const sp0 = DATA.specs[gpuId] || {};
-    const tfd = sp0.fp16_tflops && r.cheapest_price ? sp0.fp16_tflops/r.cheapest_price : null;
-    const gbd = sp0.vram_gb && r.cheapest_price ? sp0.vram_gb/r.cheapest_price : null;
-    h += `<td class="r" style="font-family:var(--mono);color:var(--purple);">${tfd?tfd.toFixed(0):'—'}</td>`;
-    h += `<td class="r" style="font-family:var(--mono);color:var(--purple);">${gbd?gbd.toFixed(0):'—'}</td>`;
+    const tfd = r.flops_per_dollar != null ? r.flops_per_dollar : (sp0.fp16_tflops && r.median_price ? sp0.fp16_tflops/r.median_price : null);
+    const gbd = r.vram_per_dollar != null ? r.vram_per_dollar : (sp0.vram_gb && r.median_price ? sp0.vram_gb/r.median_price : null);
+    h += `<td class="r" style="font-family:var(--mono);color:var(--purple);">${tfd!=null?Number(tfd).toFixed(0):'—'}</td>`;
+    h += `<td class="r" style="font-family:var(--mono);color:var(--purple);">${gbd!=null?Number(gbd).toFixed(0):'—'}</td>`;
     // Committed columns. Blank when no provider publishes a term rate for this
     // GPU — newer parts (B200, B300) have none yet.
     const sp = spot[gpuId] || {};
@@ -2246,7 +2351,7 @@ function renderPriceMatrix() {
     // hover rather than let the two columns be read as comparable.
     const cell = (prefix, cls) => {
       const v = sp[prefix + '_avg'];
-      if (v == null) return '<td class="pg-cell-na" title="No provider publishes a committed rate for this GPU">—</td>';
+      if (v == null) return `<td class="pg-cell-na" title="${NO_RATE_CELL_TITLE}">—</td>`;
       const n = sp[prefix + '_providers'], base = sp[prefix + '_vs_ondemand'], pct = sp[prefix + '_savings_pct'];
       const tip = `${pct}% below on-demand at the ${n} provider${n === 1 ? '' : 's'} publishing this term `
         + `($${v.toFixed(2)} vs $${base != null ? base.toFixed(2) : '?'}). Not comparable to Best $/hr, which spans every provider.`;
@@ -2264,10 +2369,10 @@ function renderPriceMatrix() {
   // ── TFLOPS per Dollar (horizontal bar) ──
   if (charts.fpd) charts.fpd.destroy();
   charts.fpd = new Chart(document.getElementById('chartFlopsPerDollar'),{type:'bar',
-    data:{labels:m.map(r=>r.gpu_id),datasets:[{label:'FP16 TFLOPS/$',data:m.map(r=>r.flops_per_dollar),
+    data:{labels:m.map(r=>r.gpu_id),datasets:[{label:'FP16 TFLOPS per $ (median price)',data:m.map(r=>r.flops_per_dollar??null),
       backgroundColor:m.map((_,i)=>CL[i%CL.length]+'70'),borderColor:m.map((_,i)=>CL[i%CL.length]),borderWidth:1}]},
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-      scales:{x:{title:{display:true,text:'TFLOPS/$'},grid:{color:'rgba(26,34,51,0.4)'}},y:{grid:{display:false}}}}
+      scales:{x:{title:{display:true,text:'TFLOPS per $ (median price)'},grid:{color:'rgba(26,34,51,0.4)'}},y:{grid:{display:false}}}}
   });
 
   renderCommitmentRates();
@@ -2339,11 +2444,12 @@ function renderProviderVolatility() {
       html += `<b style="color:var(--text-1)">${top.provider}</b> reprices most: its listings move <b style="color:var(--amber)">±${top.avg_daily_move_pct}%</b> on an average day. `;
     }
     if (flat.length) {
-      html += `${flat.join(', ')} did not change a single published price in the window — list pricing at the hyperscalers is set quarterly, not daily. `;
+      html += `${flat.join(', ')} did not change a single published price in the window — these are list prices, revised occasionally rather than repriced daily. `;
     }
     html += 'A cheap marketplace quote is a price for today; a cloud list price is a price you can plan against. ';
     if (blocked.length) {
-      html += `<br><span style="color:var(--amber)">${blocked.map(p => p.provider).join(', ')}</span> report nothing this window: how we read them changed on 20–21 Aug, so the two ends are not measured the same way. They resume once the window clears that date.`;
+      const cdate = blocked.map(p => p.correction_date || p.corrected_on || null).filter(Boolean)[0];
+      html += `<br><span style="color:var(--amber)">${blocked.map(p => p.provider).join(', ')}</span> report nothing this window: how we read them changed${cdate ? ' on ' + escHtml(cdate) : ' inside the window'}, so the two ends are not measured the same way. They resume once the window clears that change.`;
     }
     note.innerHTML = html;
   }
@@ -2401,7 +2507,7 @@ function renderCommitmentRates() {
             if (x.parsed.y == null) return x.dataset.label + ': not published';
             const n = s[p + '_providers'];
             return `${x.dataset.label}: ${x.parsed.y}% below on-demand`
-              + ` ($${(s[p + '_avg']).toFixed(2)} vs $${(s[p + '_vs_ondemand']).toFixed(2)}`
+              + ` ($${s[p + '_avg'] != null ? s[p + '_avg'].toFixed(2) : '—'} vs $${s[p + '_vs_ondemand'] != null ? s[p + '_vs_ondemand'].toFixed(2) : '—'}`
               + ` at the same ${n} provider${n === 1 ? '' : 's'})`;
           },
         } },
@@ -2510,6 +2616,19 @@ function pmVenueTag(venue) {
 
 function pmMoney(v, dp = 2) {
   return v == null ? '<span class="dim">—</span>' : '$' + Number(v).toFixed(dp);
+}
+
+// A market whose probability mass piles up in the open-ended bottom (or top)
+// bracket only tells us the price is at least / at most that level.
+function pmBoundPrefix(bound) {
+  return bound === 'floor' ? '≥ ' : bound === 'ceiling' ? '≤ ' : '';
+}
+function pmBoundMoney(v, bound, dp = 2) {
+  if (v == null) return '<span class="dim">—</span>';
+  const pre = pmBoundPrefix(bound);
+  const tip = bound === 'floor' ? ' title="Implied price is a lower bound: the market puts most weight above its top bracket"'
+            : bound === 'ceiling' ? ' title="Implied price is an upper bound: the market puts most weight below its bottom bracket"' : '';
+  return `<span${tip}>${pre}$${Number(v).toFixed(dp)}</span>`;
 }
 
 function pmNearPoly(entry) {
@@ -2660,7 +2779,14 @@ function renderPmCurve(sel, gpus) {
       interaction: { mode: 'index', intersect: false },
       plugins: {
         legend: { position: 'top', labels: { boxWidth: 8, font: { size: 9 }, filter: i => !/pct$/.test(i.text) } },
-        tooltip: { callbacks: { label: x => x.dataset.label + ': ' + (x.parsed.y == null ? '—' : '$' + x.parsed.y.toFixed(2) + '/GPU-hr') } },
+        tooltip: { callbacks: { label: x => {
+          if (x.parsed.y == null) return x.dataset.label + ': —';
+          let bound = null;
+          const mo = months[x.dataIndex];
+          if (x.dataset.label === 'Polymarket implied' && polyByMonth[mo]) bound = polyByMonth[mo].implied_bound;
+          else if (x.dataset.label === 'Kalshi implied' && byMonth[mo]) bound = byMonth[mo].implied_bound;
+          return x.dataset.label + ': ' + pmBoundPrefix(bound) + '$' + x.parsed.y.toFixed(2) + '/GPU-hr';
+        } } },
       },
       scales: {
         y: { title: { display: true, text: '$ / GPU-hour' }, grid: { color: 'rgba(26,34,51,0.4)' } },
@@ -2682,7 +2808,7 @@ function renderPmCurve(sel, gpus) {
   if (cap) {
     const sentences = [];
     if (sel.near_implied != null) {
-      let s = `Market puts ${sel.label} at <strong style="color:var(--text-0)">$${sel.near_implied.toFixed(2)}/GPU-hr</strong> for ${sel.near_horizon}`;
+      let s = `Market puts ${sel.label} at <strong style="color:var(--text-0)">${pmBoundPrefix(sel.near_implied_bound)}$${sel.near_implied.toFixed(2)}/GPU-hr</strong> for ${sel.near_horizon}`;
       if (sel.curve_change_pct != null) {
         const pct = sel.curve_change_pct;
         s += pct === 0
@@ -2747,18 +2873,20 @@ function renderPmVsListed(gpus) {
   gpus.forEach(g => {
     const poly = pmNearPoly(g);
     const near = g.near_implied != null ? g.near_implied : (poly ? poly.implied_price : null);
+    const nearBound = g.near_implied != null ? g.near_implied_bound : (poly ? poly.implied_bound : null);
     const nearLabel = g.near_horizon || (poly ? poly.horizon_label : '');
     let basis = '<span class="dim">—</span>';
     if (near != null && g.listed_cheapest) {
       const pct = (near - g.listed_cheapest) / g.listed_cheapest * 100;
-      basis = `<span style="color:${pct > 2 ? 'var(--red)' : pct < -2 ? 'var(--green)' : 'var(--text-2)'}">${pct > 0 ? '+' : ''}${pct.toFixed(0)}%</span>`;
+      const bp = pmBoundPrefix(nearBound);
+      basis = `<span style="color:${pct > 2 ? 'var(--red)' : pct < -2 ? 'var(--green)' : 'var(--text-2)'}">${bp}${pct > 0 ? '+' : ''}${pct.toFixed(0)}%</span>`;
     }
     h += `<tr>
       <td class="gpu-name">${g.label}</td>
       <td class="r" style="font-family:var(--mono);">${pmMoney(g.listed_cheapest)}</td>
-      <td class="r" style="font-family:var(--mono);">${pmMoney(near)}<div class="dim" style="font-size:9px;">${nearLabel}</div></td>
+      <td class="r" style="font-family:var(--mono);">${pmBoundMoney(near, nearBound)}<div class="dim" style="font-size:9px;">${nearLabel}</div></td>
       <td class="r" style="font-family:var(--mono);">${basis}</td>
-      <td class="r" style="font-family:var(--mono);">${pmMoney(g.far_implied)}<div class="dim" style="font-size:9px;">${g.far_horizon || ''}</div></td>
+      <td class="r" style="font-family:var(--mono);">${pmBoundMoney(g.far_implied, g.far_implied_bound)}<div class="dim" style="font-size:9px;">${g.far_horizon || ''}</div></td>
     </tr>`;
   });
   el.innerHTML = h + '</tbody>';
@@ -2771,12 +2899,12 @@ function renderPmContracts(gpus) {
   gpus.forEach(g => {
     (g.curve || []).forEach(p => rows.push({
       venue: 'kalshi', gpu: g.label, horizon: p.horizon, horizonLabel: p.horizon_label,
-      question: p.question || `${g.label} average hourly price`, implied: p.implied_price,
+      question: p.question || `${g.label} average hourly price`, implied: p.implied_price, bound: p.implied_bound,
       depth: p.open_interest ? p.open_interest.toLocaleString() + ' OI' : '—', url: p.url,
     }));
     (g.markets || []).forEach(m => rows.push({
       venue: 'polymarket', gpu: g.label, horizon: m.horizon, horizonLabel: m.horizon_label,
-      question: m.question, implied: m.implied_price,
+      question: m.question, implied: m.implied_price, bound: m.implied_bound,
       depth: m.volume ? '$' + Math.round(m.volume).toLocaleString() + ' vol' : '—', url: m.url,
     }));
   });
@@ -2789,7 +2917,7 @@ function renderPmContracts(gpus) {
       <td class="gpu-name">${r.gpu}</td>
       <td style="font-family:var(--mono);font-size:10.5px;">${r.horizonLabel || ''}</td>
       <td style="font-size:11px;"><a href="${r.url}" target="_blank" rel="noopener noreferrer" style="color:var(--text-1);text-decoration:none;border-bottom:1px dotted var(--border-1);">${r.question}</a></td>
-      <td class="r" style="font-family:var(--mono);font-weight:600;">${pmMoney(r.implied)}</td>
+      <td class="r" style="font-family:var(--mono);font-weight:600;">${pmBoundMoney(r.implied, r.bound)}</td>
       <td class="r dim" style="font-family:var(--mono);font-size:10px;">${r.depth}</td>
     </tr>`;
   });
@@ -2884,9 +3012,11 @@ function _decayDataCache(){
     if(resFirst>1.5&&resSecond<-1.5) shape='accelerating';
     else if(resFirst<-1.5&&resSecond>1.5) shape='decelerating';
     const finalPct=pts[n-1].y;
-    const totalDecay=Math.round((100-finalPct)*10)/10;
-    const monthlyRate=Math.round((totalDecay/n)*100)/100;
-    out.push({gpu:g,pts:pts,trendPts:trendPts,finalPct:finalPct,totalDecay:totalDecay,monthlyRate:monthlyRate,shape:shape,colorIdx:i,months:n});
+    // Signed change: positive means the price went up since the first
+    // tracked month. n points span n-1 month-to-month steps.
+    const totalChange=Math.round((finalPct-100)*10)/10;
+    const monthlyRate=n>1?Math.round((totalChange/(n-1))*100)/100:0;
+    out.push({gpu:g,pts:pts,trendPts:trendPts,finalPct:finalPct,totalChange:totalChange,monthlyRate:monthlyRate,shape:shape,colorIdx:i,months:n,firstPeriod:periods[0]});
   }
   out.sort(function(a,b){return a.finalPct-b.finalPct;});
   _decayDataCache._c=out;
@@ -2999,7 +3129,7 @@ function renderDecayChart(){
     if(last>maxMonth) maxMonth=last;
   }
   datasets.push({
-    label:'Launch Price (100%)',
+    label:'First tracked month (100%)',
     data:[{x:0,y:100},{x:maxMonth,y:100}],
     borderColor:'rgba(255,255,255,0.2)',
     borderWidth:1,
@@ -3017,9 +3147,9 @@ function renderDecayChart(){
         legend:{display:true,position:'top',labels:{boxWidth:10,font:{size:10},
           filter:function(item){return item.text.indexOf(' trend')===-1;},usePointStyle:true,pointStyle:'circle'}},
         tooltip:{
-          filter:function(item){return item.dataset.label.indexOf(' trend')===-1 && item.dataset.label!=='Launch Price (100%)';},
+          filter:function(item){return item.dataset.label.indexOf(' trend')===-1 && item.dataset.label!=='First tracked month (100%)';},
           callbacks:{
-            title:function(items){return 'Month '+items[0].parsed.x;},
+            title:function(items){return 'Month '+items[0].parsed.x+' of live tracking';},
             label:function(item){
               var prices=item.dataset._prices;
               var idx=item.dataIndex;
@@ -3032,8 +3162,8 @@ function renderDecayChart(){
         }
       },
       scales:{
-        x:{type:'linear',title:{display:true,text:'Months Since Launch',color:'rgba(255,255,255,0.4)',font:{size:10}},ticks:{stepSize:6},grid:{display:false}},
-        y:{title:{display:true,text:'% of Launch Price',color:'rgba(255,255,255,0.4)',font:{size:10}},grid:{color:'rgba(26,34,51,0.35)'},
+        x:{type:'linear',title:{display:true,text:'Months since live tracking began ('+((chosen[0]&&chosen[0].firstPeriod)||'2026-05')+')',color:'rgba(255,255,255,0.4)',font:{size:10}},ticks:{stepSize:1},grid:{display:false}},
+        y:{title:{display:true,text:'% of first tracked month',color:'rgba(255,255,255,0.4)',font:{size:10}},grid:{color:'rgba(26,34,51,0.35)'},
           suggestedMin:0,suggestedMax:115}
       }
     }
@@ -3048,8 +3178,8 @@ function renderDecayChart(){
       var scc=CL[sd.colorIdx%CL.length];
       rows+='<div class="decay-stats" style="margin-bottom:4px;">'
         +'<div class="decay-stat" style="min-width:100px;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+scc+';margin-right:5px;"></span><b style="font-size:12px;">'+sd.gpu+'</b></div>'
-        +'<div class="decay-stat">Decay<b>\u2212'+sd.totalDecay+'%</b></div>'
-        +'<div class="decay-stat">Rate<b>\u2212'+sd.monthlyRate+'%/mo</b></div>'
+        +'<div class="decay-stat">Change<b style="color:'+(sd.totalChange>0?'var(--red)':sd.totalChange<0?'var(--green)':'inherit')+';">'+(sd.totalChange>0?'+':'')+sd.totalChange+'%</b></div>'
+        +'<div class="decay-stat">Rate<b>'+(sd.monthlyRate>0?'+':'')+sd.monthlyRate+'%/mo</b></div>'
         +'<div class="decay-stat">'+sd.months+'mo</div>'
         +'<div class="decay-stat"><span class="decay-tag '+sc+'">'+sd.shape.toUpperCase()+'</span></div>'
         +'</div>';
@@ -3083,30 +3213,43 @@ function renderMarketSupplyChart() {
     sub.title='Weeks from order to delivery for the newest flagship part, derived from the per-GPU lead-time table each run.';
   }
 
-  // Colour each point by how constrained supply was: long waits are the
-  // shortage, short waits are the glut.
-  const band=w=>w>=36?C.red:w>=16?C.amber:C.green;
+  // Same thresholds as the per-part list underneath.
+  const band=w=>w>=12?C.red:w>=6?C.amber:C.green;
+  const bandLabel=w=>w>=12?'constrained':w>=6?'limited':'broadly available';
+  // Points before live tracking (2026-07) were set by hand from press reports.
+  const EDITORIAL_BEFORE='2026-07';
+  // Month index on a linear axis, so a 5-month gap is drawn 5x as wide as a
+  // 1-month gap instead of the category axis spacing every label evenly.
+  const mIdx=m=>{const [y,mo]=m.split('-').map(Number);return y*12+(mo-1);};
+  const mLabel=i=>{const y=Math.floor(i/12),mo=(i%12)+1;return y+'-'+String(mo).padStart(2,'0');};
+  const pts=months.map(m=>({x:mIdx(m),y:lt[m],m}));
 
   if(charts.sc) charts.sc.destroy();
   charts.sc=new Chart(el,{
     type:'line',
-    data:{labels:months,datasets:[{
-      label:'Flagship lead time (weeks)',data:vals,
-      borderColor:C.amber,backgroundColor:C.amber+'18',fill:true,tension:0.3,
+    data:{datasets:[{
+      label:'Flagship lead time (weeks)',data:pts,
+      borderColor:C.amber,backgroundColor:C.amber+'18',fill:true,tension:0,
       borderWidth:2,pointRadius:4,
-      pointBackgroundColor:vals.map(band),pointBorderColor:vals.map(band),
+      // Hollow points = editorial estimate; dashed line through that span.
+      pointBackgroundColor:pts.map(p=>p.m<EDITORIAL_BEFORE?'transparent':band(p.y)),
+      pointBorderColor:pts.map(p=>band(p.y)),
+      segment:{borderDash:ctx=>(pts[ctx.p1DataIndex]&&pts[ctx.p1DataIndex].m<EDITORIAL_BEFORE)?[4,4]:undefined},
     }]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{
         legend:{display:false},
         tooltip:{callbacks:{
+          title:items=>pts[items[0].dataIndex].m,
           label:c=>c.parsed.y+' weeks to delivery',
-          afterLabel:c=>c.parsed.y>=36?'severely constrained':c.parsed.y>=16?'constrained':'broadly available',
+          afterLabel:c=>bandLabel(c.parsed.y)+(pts[c.dataIndex].m<EDITORIAL_BEFORE?' · editorial estimate':''),
         }},
       },
       scales:{
         y:{beginAtZero:true,title:{display:true,text:'weeks from order to delivery'},grid:{color:'rgba(26,34,51,0.4)'}},
-        x:{grid:{display:false},ticks:{font:{size:9},maxRotation:45}},
+        x:{type:'linear',min:pts[0].x,max:pts[pts.length-1].x,grid:{display:false},
+           title:{display:true,text:'hollow / dashed = editorial estimate (before '+EDITORIAL_BEFORE+')',font:{size:9}},
+           ticks:{font:{size:9},maxRotation:45,stepSize:3,callback:v=>Number.isInteger(v)?mLabel(v):''}},
       },
     },
   });
@@ -3143,8 +3286,8 @@ function updateProviderView() {
       rows.push({provider:prov,name:p.provider_name,type:p.type||'cloud',instance:g.instance,
         ondemand:g.price_per_gpu_hr,
         spot:g.spot_hr??null, res1:g.reserved_1yr_hr??null, res3:g.reserved_3yr_hr??null,
-        monthly:g.price_per_gpu_hr*730,regions:g.regions||{},
-        stale:g.stale,source:g.source,lastVerified:g.last_verified});
+        monthly:g.price_per_gpu_hr*730,regions:g.regions||{},g:g,
+        live:isLivePrice(g),source:g.source,lastVerified:g.last_verified});
     }
   }
   rows.sort((a,b)=>a.ondemand-b.ondemand);
@@ -3182,7 +3325,9 @@ function updateProviderView() {
   // Render cloud table
   // "vs Best" must mean best across every provider. Taking it per table made
   // the cheapest cloud and the cheapest marketplace both read BEST.
-  const overallBest = rows[0]?.ondemand || 1;
+  // Stale and fallback listings never count as BEST.
+  const liveRows = rows.filter(r => r.live);
+  const overallBest = liveRows.length ? liveRows[0].ondemand : null;
   const renderProvTable = (tableRows, elId, heading) => {
     const best = overallBest;
     let h=`<thead><tr><th colspan="10" style="font-size:10px;letter-spacing:0.5px;text-transform:uppercase;color:var(--text-3);padding-top:10px;">${heading}</th></tr>`;
@@ -3193,15 +3338,27 @@ function updateProviderView() {
       +`<th class="r">Spot</th><th class="r">1yr Res.</th><th class="r">3yr Res.</th><th class="r">Monthly</th><th class="r">vs Best</th><th>Source</th></tr></thead><tbody>`;
     if(!tableRows.length) { h += '<tr><td colspan="12" class="dim" style="text-align:center;padding:20px;">No providers offer this GPU</td></tr>'; }
     tableRows.forEach(r=>{
-      const prem=((r.ondemand-best)/best*100);
-      const pc=prem===0?'c-green':'c-red';
-      // Freshness: green = confirmed on the latest run, amber = carried forward,
-      // blue = read from a published price list rather than an API.
-      const fresh = r.stale ? {c:'var(--amber)',t:'Carried forward — not confirmed on the latest refresh'}
-                  : r.source==='hardcoded_fallback' ? {c:'var(--blue)',t:'From the provider\'s published price list, verified '+(r.lastVerified||'')}
-                  : {c:'var(--green)',t:'Confirmed live this run'+(r.lastVerified?' ('+r.lastVerified.slice(0,10)+')':'')};
+      const prem=best?((r.ondemand-best)/best*100):null;
+      const isBest=r.live&&prem!=null&&Math.abs(prem)<1e-9;
+      const pc=isBest?'c-green':'c-red';
+      // Freshness: green = confirmed live, amber = stale (carried forward or
+      // >48h older than the dataset) or a hardcoded fallback price.
+      const fresh = freshnessInfo(r.g);
+      // Provider-specific detail (all optional).
+      const g=r.g, notes=[], tips=[];
+      if(g.price_basis) tips.push(g.price_basis);
+      if(g.num_offers!=null) tips.push(g.num_offers+' offers');
+      if(g.low_price!=null) tips.push('low $'+Number(g.low_price).toFixed(2));
+      if(g.median_price!=null) tips.push('median $'+Number(g.median_price).toFixed(2));
+      if(g.cluster_size) notes.push(`<span class="dim" style="font-size:9px;">${g.cluster_size}x cluster rate</span>`);
+      const ref=_dataTs();
+      if(g.effective_from && ref!=null && Date.parse(g.effective_from)>ref)
+        notes.push(`<span style="color:var(--amber);font-size:9px;">List price effective ${escHtml(g.effective_from)} (announced ahead)</span>`);
+      if(fresh.cls) notes.push(`<span style="color:var(--amber);font-size:9px;">${priceFreshness(g).fallback?'Fallback price, last verified '+escHtml(_isoDate(g.last_verified)||'unknown'):'Stale'+(g.stale_since?' since '+escHtml(g.stale_since):'')}</span>`);
+      const priceTip=tips.length?` title="${escHtml(tips.join(' · '))}"`:'';
+      const noteHtml=notes.length?'<div style="line-height:1.3;">'+notes.join(' · ')+'</div>':'';
       // A dash is a fact: this provider publishes no rate for that term.
-      const rate=(v,cls)=>v?`<td class="r ${cls||''}">$${v.toFixed(2)}</td>`
+      const rate=(v,cls)=>v!=null&&v>0?`<td class="r ${cls||''}">$${v.toFixed(2)}</td>`
         :'<td class="r dim" title="This provider does not publish a rate for this term">—</td>';
 
       // Week-prior price from this provider's own series. A window spanning one
@@ -3212,7 +3369,7 @@ function updateProviderView() {
       let chgCell='<td class="r dim">—</td>';
       if(mv.corrected_in_window){
         agoCell=`<td class="r dim" style="font-size:10px;" title="${mv.correction_reason}">n/a</td>`;
-        chgCell=`<td class="r" style="color:var(--amber);font-size:10px;" title="How we read this provider changed on 20–21 Aug, so the two ends of this window were measured differently. ${mv.correction_reason}">measure&nbsp;changed</td>`;
+        chgCell=`<td class="r" style="color:var(--amber);font-size:10px;" title="How we read this provider changed${mv.correction_date?' on '+escHtml(mv.correction_date):' inside this window'}, so the two ends of this window were measured differently. ${escHtml(mv.correction_reason||'')}">measure&nbsp;changed</td>`;
       } else if(mv.week_ago!=null){
         const c=mv.change_7d_pct;
         const col=Math.abs(c)<0.05?'var(--text-3)':c>0?'var(--red)':'var(--green)';
@@ -3224,7 +3381,8 @@ function updateProviderView() {
         ? '<td class="r dim">—</td>'
         : `<td class="r" style="font-family:var(--mono);color:${dm>=3?'var(--amber)':dm>0?'var(--text-1)':'var(--text-3)'};" title="${mv.observations_30d||0} daily observations${mv.low_30d!=null?` · 30d range $${mv.low_30d.toFixed(2)}–$${mv.high_30d.toFixed(2)}`:''}">${dm>0?'±'+dm+'%':'flat'}</td>`;
 
-      h+=`<tr><td style="color:${PC[r.provider]||C.blue};font-weight:700;"><span title="${fresh.t}" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${fresh.c};margin-right:6px;vertical-align:middle;"></span>${r.provider}</td><td class="dim">${r.instance||'—'}</td><td class="r c-green fw">$${r.ondemand.toFixed(2)}</td>${agoCell}${chgCell}${dmCell}${rate(r.spot,'c-green')}${rate(r.res1)}${rate(r.res3,'c-cyan')}<td class="r">$${r.monthly.toFixed(0)}</td><td class="r ${pc}">${prem===0?'BEST':'+'+prem.toFixed(1)+'%'}</td><td class="dim" style="font-size:10px;">${(r.source||'').replace(/_/g,' ')}</td></tr>`;
+      const vsBest=isBest?'BEST':prem==null?'—':(prem>=0?'+':'')+prem.toFixed(1)+'%';
+      h+=`<tr><td style="color:${provColor(r.provider)};font-weight:700;"><span title="${escHtml(fresh.t)}" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${fresh.c};margin-right:6px;vertical-align:middle;"></span>${r.provider}</td><td class="dim">${r.instance?escHtml(r.instance):'—'}${noteHtml}</td><td class="r ${fresh.cls||'c-green fw'}"${priceTip}>$${r.ondemand.toFixed(2)}</td>${agoCell}${chgCell}${dmCell}${rate(r.spot,'c-green')}${rate(r.res1)}${rate(r.res3,'c-cyan')}<td class="r">$${r.monthly.toFixed(0)}</td><td class="r ${fresh.cls?'dim':pc}"${fresh.cls?' title="Stale/fallback prices are not ranked"':''}>${vsBest}</td><td class="dim" style="font-size:10px;">${(r.source||'').replace(/_/g,' ')}</td></tr>`;
     });
     h+='</tbody>';
     document.getElementById(elId).innerHTML=h;
@@ -3255,6 +3413,8 @@ function renderRegionalTab() {
   const regions=Object.keys(reg).sort((a,b)=>reg[a].avg_premium_pct-reg[b].avg_premium_pct);
   const gpus=[...new Set(regions.flatMap(r=>Object.keys(reg[r].gpu_pricing||{})))].sort();
   const dearest=regions[regions.length-1], cheapest=regions[0];
+  const rsub=document.getElementById('regionPremiumSub');
+  if(rsub) rsub.textContent=`same Azure SKU across ${regions.length} Azure regions — measured, not modelled`;
 
   document.getElementById('regionStats').innerHTML=`
     <div class="kpi kpi-green"><div class="kpi-label">Cheapest Region</div><div class="kpi-value">${cheapest}</div><div class="kpi-sub">baseline for every SKU below</div></div>
@@ -3415,39 +3575,53 @@ function calcCost() {
     const g=p.gpus?.[gpuId]; if(!g?.price_per_gpu_hr) return;
     const hr=g.price_per_gpu_hr;
     const onDemand=hr*totalHrs;
-    const spot=p.spot_discount>0?hr*(1-p.spot_discount)*totalHrs:null;
-    // Reserved is only sensible if the job runs long enough to amortise a term.
-    const res1=days>=365&&p.reserved_1yr_discount>0?hr*(1-p.reserved_1yr_discount)*termHrs*numGpus:null;
-    rows.push({name,hr,onDemand,spot,res1,stale:g.stale,src:g.source});
+    // Per-GPU published rates only. RunPod publishes its interruptible rate
+    // as spot_price; everyone else as spot_hr.
+    const spotHr=g.spot_hr!=null?g.spot_hr:(g.spot_price!=null?g.spot_price:null);
+    const spot=spotHr>0?spotHr*totalHrs:null;
+    // A term only makes sense if the job runs at least that long; it then
+    // bills every wall-clock hour of the job.
+    const r1Hr=g.reserved_1yr_hr>0?g.reserved_1yr_hr:null, r3Hr=g.reserved_3yr_hr>0?g.reserved_3yr_hr:null;
+    const res1=r1Hr==null?null:(days>=365?r1Hr*termHrs*numGpus:'short');
+    const res3=r3Hr==null?null:(days>=1095?r3Hr*termHrs*numGpus:'short');
+    const fi=freshnessInfo(g);
+    rows.push({name,hr,onDemand,spot,res1,res3,live:isLivePrice(g),fi});
   });
   if(!rows.length){ el.innerHTML='<span class="dim">No tracked provider lists this GPU.</span>'; return; }
-  rows.sort((a,b)=>a.onDemand-b.onDemand);
-  const best=rows[0], worst=rows[rows.length-1];
+  // Live listings ranked first; stale / fallback listings follow, marked, and
+  // never count as cheapest or dearest.
+  rows.sort((a,b)=>(b.live-a.live)||(a.onDemand-b.onDemand));
+  const liveRows=rows.filter(r=>r.live);
+  const best=liveRows[0]||null, worst=liveRows.length?liveRows[liveRows.length-1]:null;
   const fmt=v=>'$'+v.toLocaleString('en',{maximumFractionDigits:0});
+  const termCell=v=>v==null?`<td class="r dim" title="${NO_RATE_CELL_TITLE}">—</td>`
+    :v==='short'?'<td class="r dim" title="Job is shorter than the commitment term">n/a</td>'
+    :`<td class="r" style="font-family:var(--mono);color:var(--text-2);">${fmt(v)}</td>`;
 
   let h=`<div style="margin-bottom:10px;">
     <div style="color:var(--cyan);font-weight:700;font-size:13px;">${numGpus}x ${DATA.specs[gpuId]?.name||gpuId} · ${days} day${days===1?'':'s'} · ${hrsDay}h/day</div>
     <div class="dim" style="font-size:10px;">${totalHrs.toLocaleString()} GPU-hours total</div>
   </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+  ${best?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
     <div style="background:rgba(52,211,153,0.08);padding:10px;border-radius:var(--radius-sm);">
-      <div class="dim" style="font-size:9px;">CHEAPEST</div>
+      <div class="dim" style="font-size:9px;">CHEAPEST (LIVE)</div>
       <div style="font-size:17px;color:var(--green);font-weight:700;">${fmt(best.onDemand)}</div>
       <div style="font-size:10px;">${best.name} @ $${best.hr.toFixed(2)}/hr</div></div>
     <div style="background:rgba(248,113,113,0.08);padding:10px;border-radius:var(--radius-sm);">
-      <div class="dim" style="font-size:9px;">MOST EXPENSIVE</div>
+      <div class="dim" style="font-size:9px;">MOST EXPENSIVE (LIVE)</div>
       <div style="font-size:17px;color:var(--red);font-weight:700;">${fmt(worst.onDemand)}</div>
       <div style="font-size:10px;">${worst.name} · ${fmt(worst.onDemand-best.onDemand)} more</div></div>
-  </div>
-  <table class="dt"><thead><tr><th>Provider</th><th class="r">$/GPU-hr</th><th class="r">On-demand</th><th class="r">Spot</th><th class="r">vs best</th></tr></thead><tbody>`;
+  </div>`:'<div class="dim" style="font-size:11px;margin-bottom:10px;">No live price for this GPU — every listing is stale or a fallback.</div>'}
+  <table class="dt"><thead><tr><th>Provider</th><th class="r">$/GPU-hr</th><th class="r">On-demand</th><th class="r">Spot</th><th class="r">1yr term</th><th class="r">3yr term</th><th class="r">vs best</th></tr></thead><tbody>`;
   rows.forEach((r,i)=>{
-    const prem=((r.onDemand/best.onDemand-1)*100);
-    h+=`<tr${i===0?' style="background:rgba(52,211,153,0.06);"':''}>
-      <td>${r.name}${r.stale?' <span title="price not confirmed on the latest run" style="color:var(--amber);">•</span>':''}</td>
-      <td class="r" style="font-family:var(--mono);">$${r.hr.toFixed(3)}</td>
-      <td class="r c-green fw" style="font-family:var(--mono);">${fmt(r.onDemand)}</td>
-      <td class="r" style="font-family:var(--mono);color:var(--text-2);">${r.spot?fmt(r.spot):'—'}</td>
-      <td class="r" style="color:${prem<0.5?'var(--green)':prem<50?'var(--amber)':'var(--red)'}">${prem<0.5?'best':'+'+prem.toFixed(0)+'%'}</td></tr>`;
+    const prem=best&&r.live?((r.onDemand/best.onDemand-1)*100):null;
+    h+=`<tr${r===best?' style="background:rgba(52,211,153,0.06);"':''}>
+      <td>${r.name}${r.fi.cls?` <span title="${escHtml(r.fi.t)}" style="color:var(--amber);">•</span>`:''}</td>
+      <td class="r ${r.fi.cls}" style="font-family:var(--mono);"${r.fi.cls?` title="${escHtml(r.fi.t)}"`:''}>$${r.hr.toFixed(3)}</td>
+      <td class="r ${r.fi.cls||'c-green fw'}" style="font-family:var(--mono);">${fmt(r.onDemand)}</td>
+      ${r.spot!=null?`<td class="r" style="font-family:var(--mono);color:var(--text-2);">${fmt(r.spot)}</td>`:`<td class="r dim" title="${NO_RATE_CELL_TITLE}">—</td>`}
+      ${termCell(r.res1)}${termCell(r.res3)}
+      <td class="r" style="color:${prem==null?'var(--text-3)':prem<0.5?'var(--green)':prem<50?'var(--amber)':'var(--red)'}">${prem==null?'not ranked':prem<0.5?'best':'+'+prem.toFixed(0)+'%'}</td></tr>`;
   });
   el.innerHTML=h+'</tbody></table>';
 }
@@ -3555,7 +3729,7 @@ function calcBreakEven() {
   if(mSel && !mSel.options.length && list.length){
     mSel.innerHTML=list.map(m=>`<option value="${m.permaslug}">${m.name}</option>`).join('');
     const priced=(DATA.matrix||[]).slice().sort((a,b)=>a.cheapest_price-b.cheapest_price);
-    gSel.innerHTML=priced.map(r=>`<option value="${r.gpu_id}">${r.gpu_id} — $${r.cheapest_price.toFixed(2)}/hr (${r.cheapest_provider})</option>`).join('');
+    gSel.innerHTML=priced.filter(r=>r.cheapest_price!=null).map(r=>`<option value="${r.gpu_id}">${r.gpu_id} — $${r.cheapest_price.toFixed(2)}/hr (${r.cheapest_provider})</option>`).join('');
     const h100=priced.find(r=>r.gpu_id==='H100-SXM'); if(h100) gSel.value='H100-SXM';
   }
   const model=mSel?.value, gpuId=gSel?.value;
@@ -3564,15 +3738,24 @@ function calcBreakEven() {
   const outShare=Math.min(100,Math.max(0,parseFloat(document.getElementById('beOut').value)||0))/100;
   const row=(DATA.matrix||[]).find(r=>r.gpu_id===gpuId);
   const d=list.find(m=>m.permaslug===model);
-  if(!d||!row){ el.innerHTML='<span class="dim">Select a model and GPU.</span>'; return; }
+  if(!d||!row||row.cheapest_price==null){ el.innerHTML='<span class="dim">Select a model and GPU.</span>'; return; }
 
   // Compare against the cheapest route actually on offer, not OpenRouter's
-  // headline rate — the spread between them is often several fold.
-  const inP=d.in_low ?? d.price_in, outP=d.out_low ?? d.price_out;
-  if(inP==null||outP==null){
-    el.innerHTML=`<div class="dim">${d.name} has no priced route right now, so there is no API cost to beat.</div>`; return;
+  // headline rate. Input and output prices must come from the *same*
+  // endpoint: pairing the cheapest input from one provider with the cheapest
+  // output from another prices a route nobody sells.
+  let inP=null, outP=null, blended=null, routeProv=null;
+  (d.endpoints||[]).forEach(e=>{
+    if(e==null||e.input==null||e.output==null) return;
+    const b=e.input*(1-outShare)+e.output*outShare;
+    if(blended==null||b<blended){ blended=b; inP=e.input; outP=e.output; routeProv=e.provider; }
+  });
+  if(blended==null && d.price_in!=null && d.price_out!=null){
+    inP=d.price_in; outP=d.price_out; blended=inP*(1-outShare)+outP*outShare;
   }
-  const blended=inP*(1-outShare)+outP*outShare;          // $ per 1M tokens
+  if(blended==null){
+    el.innerHTML=`<div class="dim">${escHtml(d.name)} has no priced route right now, so there is no API cost to beat.</div>`; return;
+  }
   // Self-hosting is only an option for open-weight models. For a proprietary
   // one the comparison is hypothetical, so say so rather than implying you
   // could go rent GPUs and serve it.
@@ -3591,7 +3774,7 @@ function calcBreakEven() {
       <div style="background:var(--bg-3);padding:11px;border-radius:var(--radius-sm);">
         <div class="dim" style="font-size:9px;">API BLENDED</div>
         <div style="font-size:16px;color:var(--cyan);">${fmt(blended)}<span style="font-size:10px;"> /M tok</span></div>
-        <div class="dim" style="font-size:9px;">in ${fmt(inP)} · out ${fmt(outP)}</div></div>
+        <div class="dim" style="font-size:9px;">${routeProv?escHtml(routeProv)+' · ':''}in ${fmt(inP)} · out ${fmt(outP)}</div></div>
       <div style="background:var(--bg-3);padding:11px;border-radius:var(--radius-sm);">
         <div class="dim" style="font-size:9px;">SELF-HOST @ 100% DUTY</div>
         <div style="font-size:16px;color:${wins?'var(--green)':'var(--red)'};">${fmt(hostPerM)}<span style="font-size:10px;"> /M tok</span></div>
@@ -3606,11 +3789,11 @@ function calcBreakEven() {
         <div class="dim" style="font-size:9px;">of the rented hours</div></div>
     </div>
     ${closed?`<div style="font-size:11px;background:rgba(251,191,36,0.08);border-left:3px solid var(--amber);padding:10px 12px;border-radius:var(--radius-sm);margin-bottom:10px;color:var(--text-1);">
-      <b>${model}</b> has closed weights — you cannot self-host it. The figures below show what an equivalently-sized open model would have to cost you to match this API price.</div>`:''}
+      <b>${escHtml(d.name)}</b> has closed weights — you cannot self-host it. The figures below show what an equivalently-sized open model would have to cost you to match this API price.</div>`:''}
     <div style="font-size:11px;line-height:1.6;color:var(--text-1);background:var(--bg-3);padding:12px;border-radius:var(--radius-sm);">
       ${utilAtBE>100
-        ? `At <b>${tps.toLocaleString()} tok/s</b>, ${nGpu}x ${gpuId} cannot serve enough tokens in a month to beat ${model}'s API at ${fmt(blended)}/M — you would need <b>${utilAtBE.toFixed(0)}%</b> of a month's capacity. <b>Stay on the API.</b>`
-        : `Renting <b>${nGpu}x ${gpuId}</b> at ${fmt(hourly)}/hr costs <b>${fmt(monthlyHost)}/month</b>. That beats ${model}'s API once you exceed <b>${breakEvenM.toLocaleString('en',{maximumFractionDigits:0})}M tokens/month</b> — about <b>${utilAtBE.toFixed(0)}%</b> duty cycle at ${tps.toLocaleString()} tok/s. Below that, the API is cheaper.`}
+        ? `At <b>${tps.toLocaleString()} tok/s</b>, ${nGpu}x ${gpuId} cannot serve enough tokens in a month to beat ${escHtml(d.name)}'s API at ${fmt(blended)}/M — you would need <b>${utilAtBE.toFixed(0)}%</b> of a month's capacity. <b>Stay on the API.</b>`
+        : `Renting <b>${nGpu}x ${gpuId}</b> at ${fmt(hourly)}/hr costs <b>${fmt(monthlyHost)}/month</b>. That beats ${escHtml(d.name)}'s API once you exceed <b>${breakEvenM.toLocaleString('en',{maximumFractionDigits:0})}M tokens/month</b> — about <b>${utilAtBE.toFixed(0)}%</b> duty cycle at ${tps.toLocaleString()} tok/s. Below that, the API is cheaper.`}
       <div class="dim" style="margin-top:6px;font-size:10px;">Throughput is your input — measure it on your own stack. Excludes engineering time, redundancy and idle capacity.</div>
     </div>`;
 }
@@ -3909,10 +4092,33 @@ document.getElementById('inferCatFilter')?.addEventListener('change', function (
 // TCO state: cached rows for re-rendering sub-charts
 var _tcoRows=null;
 
+// One set of power assumptions for the whole page (TCO defaults and the Ops
+// tab). Read from the data when the pipeline publishes them; otherwise these
+// constants. They are assumptions, not measurements, and are labelled so.
+function powerAssumptions(){
+  var a=(DATA.sustainability&&DATA.sustainability.assumptions)||{};
+  var elec=a.power_cost_kwh!=null?a.power_cost_kwh:(a.electricity_usd_per_kwh!=null?a.electricity_usd_per_kwh:null);
+  var pue=a.pue!=null?a.pue:null;
+  if(elec==null||pue==null){
+    var t=DATA.tco||{};
+    for(var k in t){ var sh=t[k]&&t[k].self_hosted; if(sh){ if(elec==null&&sh.power_cost_kwh!=null) elec=sh.power_cost_kwh; if(pue==null&&sh.pue!=null) pue=sh.pue; break; } }
+  }
+  return {elec:elec!=null?elec:0.08, pue:pue!=null?pue:1.3};
+}
+var _tcoDefaultsApplied=false;
+function _applyTcoDefaults(){
+  if(_tcoDefaultsApplied) return; _tcoDefaultsApplied=true;
+  var pa=powerAssumptions();
+  var e=document.getElementById('tcoElecSlider'), p=document.getElementById('tcoPueSlider');
+  if(e) e.value=pa.elec; if(p) p.value=pa.pue;
+  var el=document.getElementById('tcoElecVal'); if(el) el.textContent='$'+pa.elec.toFixed(2);
+  el=document.getElementById('tcoPueVal'); if(el) el.textContent=pa.pue.toFixed(2);
+}
+
 function _getTcoParams(){
   return {
-    elec: parseFloat((document.getElementById('tcoElecSlider')||{}).value)||0.08,
-    pue: parseFloat((document.getElementById('tcoPueSlider')||{}).value)||1.3,
+    elec: parseFloat((document.getElementById('tcoElecSlider')||{}).value)||powerAssumptions().elec,
+    pue: parseFloat((document.getElementById('tcoPueSlider')||{}).value)||powerAssumptions().pue,
     util: (parseFloat((document.getElementById('tcoUtilSlider')||{}).value)||100)/100,
     life: parseInt((document.getElementById('tcoLifeSlider')||{}).value)||4
   };
@@ -3921,27 +4127,44 @@ function _getTcoParams(){
 function _computeTcoRows(params){
   var tco=DATA.tco; if(!tco) return [];
   var gpus=Object.keys(tco).filter(function(k){return tco[k].gpu_price_usd!==undefined;});
+  var spotD=DATA.spot||{};
   return gpus.map(function(g){
-    var p=tco[g], sh=p.self_hosted;
-    var powerCost=sh.power_kwh*params.elec*params.pue;
-    var depreciation=p.gpu_price_usd/(params.life*8760);
-    var opex=powerCost+sh.networking_hr+sh.storage_hr+sh.colo_rack_hr+sh.ops_staff_hr;
-    // Scale cloud cost by utilization (you pay for idle cloud time), self-hosted fixed costs remain
-    var effectiveCloudOD=p.cloud_on_demand_hr; // cloud cost stays same per used hour
-    var effectiveCloud1yr=p.cloud_reserved_1yr_hr;
-    var effectiveCloud3yr=p.cloud_reserved_3yr_hr;
-    // Self-hosted: fixed costs (depreciation, colo, ops, network, storage) spread over utilized hours
-    var fixedPerHr=(depreciation+sh.colo_rack_hr+sh.ops_staff_hr+sh.networking_hr+sh.storage_hr)/params.util;
-    var variablePerHr=powerCost; // power only consumed when running
+    var p=tco[g], sh=p.self_hosted||{};
+    var num=function(v){return (v==null||isNaN(v))?0:Number(v);};
+    var fixedOpexHr=num(sh.networking_hr)+num(sh.storage_hr)+num(sh.colo_rack_hr)+num(sh.ops_staff_hr); // per wall-clock hour
+    var powerCost=num(sh.power_kwh)*params.elec*params.pue;           // per running hour
+    var depreciation=p.gpu_price_usd/(params.life*8760);               // per wall-clock hour
+    var opex=powerCost+fixedOpexHr;
+    var cloudOD=p.cloud_on_demand_hr!=null?p.cloud_on_demand_hr:null;
+    // Commitment and spot: never compare a reserved level from the clouds
+    // that publish terms against the all-provider on-demand average. Use the
+    // same-basket discount (published rate vs those providers' own
+    // on-demand) and apply it to the on-demand figure shown here.
+    var sp=spotD[g]||{};
+    var disc=function(prefix){
+      var t=commitTerm(sp,prefix);
+      if(!t||t.pct==null||cloudOD==null) return {hr:null,term:t};
+      return {hr:cloudOD*(1-t.pct/100),term:t};
+    };
+    var d1=disc('reserved_1yr'), d3=disc('reserved_3yr'), ds=disc('spot');
+    // Self-hosted per *utilised* hour: wall-clock fixed costs spread over used hours.
+    var fixedPerHr=(depreciation+fixedOpexHr)/params.util;
+    var variablePerHr=powerCost;
     var selfTotal=fixedPerHr+variablePerHr;
     var monthlyHrs=730*params.util;
-    var beMonths=effectiveCloudOD>(variablePerHr+sh.networking_hr+sh.storage_hr+sh.colo_rack_hr+sh.ops_staff_hr)?
-      p.gpu_price_usd/((effectiveCloudOD-(variablePerHr+sh.networking_hr+sh.storage_hr+sh.colo_rack_hr+sh.ops_staff_hr))*monthlyHrs):Infinity;
+    // Break-even, consistent with the timeline chart: cloud bills used hours,
+    // self-hosting pays power on used hours and fixed opex on every
+    // wall-clock hour (730/month).
+    var cloudMonthly=cloudOD!=null?cloudOD*monthlyHrs:null;
+    var selfOpexMonthly=variablePerHr*monthlyHrs+fixedOpexHr*730;
+    var beMonths=(cloudMonthly!=null&&cloudMonthly>selfOpexMonthly)?p.gpu_price_usd/(cloudMonthly-selfOpexMonthly):Infinity;
     var perfDollar=selfTotal>0?p.perf_fp16_tflops/selfTotal:0;
     return {gpu:g,price:p.gpu_price_usd,
-      cloudOD:effectiveCloudOD,cloud1yr:effectiveCloud1yr,cloud3yr:effectiveCloud3yr,
+      cloudOD:cloudOD,cloud1yr:d1.hr,cloud3yr:d3.hr,cloudSpot:ds.hr,
+      term1:d1.term,term3:d3.term,termSpot:ds.term,
       selfTotal:selfTotal,opex:opex,depreciation:depreciation,powerCost:powerCost,
-      fixedPerHr:fixedPerHr,variablePerHr:variablePerHr,
+      fixedPerHr:fixedPerHr,variablePerHr:variablePerHr,fixedOpexHr:fixedOpexHr,
+      selfOpexMonthly:selfOpexMonthly,
       beMonths:beMonths,perfDollar:perfDollar,
       perf:p.perf_fp16_tflops,vram:p.vram_gb,
       sh:sh,monthlyHrs:monthlyHrs,
@@ -3949,10 +4172,10 @@ function _computeTcoRows(params){
       components:{
         power:powerCost,
         depreciation:depreciation/params.util,
-        networking:sh.networking_hr/params.util,
-        storage:sh.storage_hr/params.util,
-        colo:sh.colo_rack_hr/params.util,
-        ops:sh.ops_staff_hr/params.util
+        networking:num(sh.networking_hr)/params.util,
+        storage:num(sh.storage_hr)/params.util,
+        colo:num(sh.colo_rack_hr)/params.util,
+        ops:num(sh.ops_staff_hr)/params.util
       }
     };
   }).sort(function(a,b){return a.selfTotal-b.selfTotal;});
@@ -4008,6 +4231,7 @@ function tcoSliderChanged(){
 
 function renderTcoTab() {
   renderCommitTable();
+  _applyTcoDefaults();
   var tco=DATA.tco; if(!tco||!Object.keys(tco).length) return;
   var params=_getTcoParams();
   var rows=_computeTcoRows(params);
@@ -4015,12 +4239,13 @@ function renderTcoTab() {
   if(!rows.length) return;
 
   // ── KPIs ──
-  var cheapCloud=rows.reduce(function(a,b){return a.cloudOD<b.cloudOD?a:b;});
+  var odRows=rows.filter(function(r){return r.cloudOD!=null;});
+  var cheapCloud=odRows.length?odRows.reduce(function(a,b){return a.cloudOD<b.cloudOD?a:b;}):{cloudOD:null,gpu:'—'};
   var cheapSelf=rows[0];
   var fastBE=rows.filter(function(r){return isFinite(r.beMonths);}).reduce(function(a,b){return a.beMonths<b.beMonths?a:b;},{beMonths:Infinity,gpu:'—'});
   var bestPerf=rows.reduce(function(a,b){return a.perfDollar>b.perfDollar?a:b;});
   document.getElementById('tcoStats').innerHTML=
-    '<div class="kpi kpi-cyan"><div class="kpi-label">Cheapest Cloud $/hr</div><div class="kpi-value">$'+cheapCloud.cloudOD.toFixed(2)+'</div><div class="kpi-sub">'+cheapCloud.gpu+' on-demand</div></div>'+
+    '<div class="kpi kpi-cyan"><div class="kpi-label">Cheapest Cloud $/hr</div><div class="kpi-value">'+(cheapCloud.cloudOD!=null?'$'+cheapCloud.cloudOD.toFixed(2):'\u2014')+'</div><div class="kpi-sub">'+cheapCloud.gpu+' on-demand (all-provider avg)</div></div>'+
     '<div class="kpi kpi-green"><div class="kpi-label">Cheapest Self-Hosted</div><div class="kpi-value">$'+cheapSelf.selfTotal.toFixed(2)+'/hr</div><div class="kpi-sub">'+cheapSelf.gpu+' @ '+Math.round(params.util*100)+'% util</div></div>'+
     '<div class="kpi kpi-amber"><div class="kpi-label">Fastest Break-Even</div><div class="kpi-value">'+(isFinite(fastBE.beMonths)?fastBE.beMonths.toFixed(0)+'mo':'N/A')+'</div><div class="kpi-sub">'+(isFinite(fastBE.beMonths)?fastBE.gpu+' vs cloud OD':'—')+'</div></div>'+
     '<div class="kpi kpi-purple"><div class="kpi-label">Best Perf/$ (TFLOPS/$)</div><div class="kpi-value">'+bestPerf.perfDollar.toFixed(0)+'</div><div class="kpi-sub">'+bestPerf.gpu+' FP16</div></div>';
@@ -4029,13 +4254,16 @@ function renderTcoTab() {
   if(charts.ts) charts.ts.destroy();
   charts.ts=new Chart(document.getElementById('chartTcoStack'),{type:'bar',
     data:{labels:rows.map(function(r){return r.gpu;}),datasets:[
-      {label:'Cloud On-Demand',data:rows.map(function(r){return r.cloudOD;}),backgroundColor:C.red+'80',borderColor:C.red,borderWidth:1},
-      {label:'Cloud 1yr Reserved',data:rows.map(function(r){return r.cloud1yr;}),backgroundColor:C.orange+'80',borderColor:C.orange,borderWidth:1},
-      {label:'Cloud 3yr Reserved',data:rows.map(function(r){return r.cloud3yr;}),backgroundColor:C.amber+'80',borderColor:C.amber,borderWidth:1},
+      {label:'Cloud On-Demand (avg)',data:rows.map(function(r){return r.cloudOD;}),backgroundColor:C.red+'80',borderColor:C.red,borderWidth:1},
+      {label:'1yr term (avg less same-provider discount)',_term:'term1',data:rows.map(function(r){return r.cloud1yr;}),backgroundColor:C.orange+'80',borderColor:C.orange,borderWidth:1},
+      {label:'3yr term (avg less same-provider discount)',_term:'term3',data:rows.map(function(r){return r.cloud3yr;}),backgroundColor:C.amber+'80',borderColor:C.amber,borderWidth:1},
       {label:'Self-Hosted',data:rows.map(function(r){return r.selfTotal;}),backgroundColor:C.green+'80',borderColor:C.green,borderWidth:1},
     ]},
     options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10}}},tooltip:{callbacks:{label:function(ctx){return ctx.dataset.label+': $'+ctx.parsed.y.toFixed(2)+'/hr';}}}},
+      plugins:{legend:{position:'top',labels:{boxWidth:10,font:{size:10}}},tooltip:{callbacks:{label:function(ctx){
+        if(ctx.parsed.y==null) return ctx.dataset.label+': \u2014 ('+NO_RATE_CELL_TITLE+')';
+        var t=ctx.dataset._term?rows[ctx.dataIndex][ctx.dataset._term]:null;
+        return ctx.dataset.label+': $'+ctx.parsed.y.toFixed(2)+'/hr'+(t?' ('+t.pct+'% off; published $'+t.rate.toFixed(2)+' vs $'+(t.base!=null?t.base.toFixed(2):'?')+' at the same providers)':'');}}}},
       scales:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}}}}
   });
 
@@ -4067,22 +4295,29 @@ function renderTcoTab() {
   // ── Scatter chart ──
 
   // ── Table ──
-  var h='<thead><tr><th>GPU</th><th class="r">VRAM</th><th class="r">FP16</th><th class="r">Cloud OD</th><th class="r">1yr Res</th><th class="r">3yr Res</th><th class="r">Self-Host</th><th class="r">Break-Even</th><th class="r">Perf/$</th><th class="r">3yr Savings</th></tr></thead><tbody>';
+  var h='<thead><tr><th>GPU</th><th class="r">VRAM</th><th class="r">FP16</th><th class="r">Cloud OD</th><th class="r">1yr Res</th><th class="r">3yr Res</th><th class="r">Self-Host</th><th class="r">Break-Even</th><th class="r">Perf/$</th><th class="r" title="(cloud on-demand − self-hosted) × utilised hours over 36 months">3yr Savings</th></tr></thead><tbody>';
   rows.forEach(function(r){
-    var costs=[r.cloudOD,r.cloud1yr,r.cloud3yr,r.selfTotal];
-    var minCost=Math.min.apply(null,costs);
-    var fmt=function(v){var s='$'+v.toFixed(2);return v===minCost?'<span class="c-green fw">'+s+'</span>':s;};
-    var savings3yr=((r.cloudOD-r.selfTotal)*730*36);
+    var costs=[r.cloudOD,r.cloud1yr,r.cloud3yr,r.selfTotal].filter(function(v){return v!=null&&isFinite(v);});
+    var minCost=costs.length?Math.min.apply(null,costs):null;
+    var dash='<span class="dim" title="'+NO_RATE_CELL_TITLE+'">\u2014</span>';
+    var fmt=function(v){if(v==null||!isFinite(v)) return dash; var s='$'+v.toFixed(2);return v===minCost?'<span class="c-green fw">'+s+'</span>':s;};
+    var termFmt=function(v,t){
+      if(v==null||!t) return dash;
+      return '<span title="Published $'+t.rate.toFixed(2)+' is '+t.pct+'% below $'+(t.base!=null?t.base.toFixed(2):'?')+' on-demand at the same '+(t.n||'?')+' provider(s); applied to the on-demand average">'+fmt(v)+'<span class="dim" style="font-size:9px;"> \u2212'+t.pct+'%</span></span>';
+    };
+    // Utilised hours only: cloud bills the hours you run, and selfTotal is
+    // already per utilised hour.
+    var savings3yr=r.cloudOD!=null?((r.cloudOD-r.selfTotal)*r.monthlyHrs*36):null;
     h+='<tr><td class="gpu-name">'+r.gpu+'</td>';
     h+='<td class="r">'+r.vram+' GB</td>';
-    h+='<td class="r">'+r.perf.toLocaleString()+'</td>';
+    h+='<td class="r">'+(r.perf!=null?r.perf.toLocaleString():'\u2014')+'</td>';
     h+='<td class="r">'+fmt(r.cloudOD)+'</td>';
-    h+='<td class="r">'+fmt(r.cloud1yr)+'</td>';
-    h+='<td class="r">'+fmt(r.cloud3yr)+'</td>';
+    h+='<td class="r">'+termFmt(r.cloud1yr,r.term1)+'</td>';
+    h+='<td class="r">'+termFmt(r.cloud3yr,r.term3)+'</td>';
     h+='<td class="r">'+fmt(r.selfTotal)+'</td>';
     h+='<td class="r">'+(isFinite(r.beMonths)?r.beMonths.toFixed(0)+' mo':'\u2014')+'</td>';
     h+='<td class="r c-purple fw">'+r.perfDollar.toFixed(0)+'</td>';
-    h+='<td class="r">'+(savings3yr>0?'<span class="c-green fw">$'+Math.round(savings3yr/1000)+'k</span>':'<span class="c-red">\u2212$'+Math.round(Math.abs(savings3yr)/1000)+'k</span>')+'</td></tr>';
+    h+='<td class="r">'+(savings3yr==null?'\u2014':savings3yr>0?'<span class="c-green fw">$'+Math.round(savings3yr/1000)+'k</span>':'<span class="c-red">\u2212$'+Math.round(Math.abs(savings3yr)/1000)+'k</span>')+'</td></tr>';
   });
   h+='</tbody>';
   document.getElementById('tcoTable').innerHTML=h;
@@ -4119,16 +4354,17 @@ function renderTcoBreakEven(){
     var ci2=rows.indexOf(r);
     var col=CL[ci2%CL.length];
     // Cloud on-demand cumulative (dashed)
-    datasets.push({
+    if(r.cloudOD!=null) datasets.push({
       label:r.gpu+' Cloud',
       data:months.map(function(m){return r.cloudOD*r.monthlyHrs*m;}),
       borderColor:col,borderDash:[6,3],borderWidth:1.5,pointRadius:0,tension:0,fill:false
     });
-    // Self-hosted cumulative (solid): upfront GPU cost + opex per month
-    var opexHr=r.selfTotal-r.components.depreciation; // remove depreciation since GPU price is upfront
+    // Self-hosted cumulative (solid): upfront GPU cost + monthly opex, with
+    // power on used hours and fixed opex on every wall-clock hour -- the
+    // same basis as the break-even months in the table.
     datasets.push({
       label:r.gpu+' Self-Host',
-      data:months.map(function(m){return r.price+opexHr*r.monthlyHrs*m;}),
+      data:months.map(function(m){return r.price+r.selfOpexMonthly*m;}),
       borderColor:col,borderWidth:2.5,pointRadius:0,tension:0,fill:false
     });
   });
@@ -4217,19 +4453,21 @@ function renderEfficiencyTab() {
   // all computed from TDP and published grid carbon intensity.
   const provs=sus?.providers?Object.keys(sus.providers):[];
   const greenest=provs.length?provs.reduce((a,b)=>sus.providers[a].avg_sustainability_score>sus.providers[b].avg_sustainability_score?a:b):'—';
-  const avgPue=provs.length?provs.reduce((s,p)=>s+sus.providers[p].avg_pue,0)/provs.length:0;
+  const greenestPue=(greenest!=='—'&&sus.providers[greenest])?sus.providers[greenest].avg_pue:null;
   const cGpus=Object.keys(carbon);
   const dirtiest=cGpus.length?cGpus.reduce((a,b)=>carbon[a].carbon_kg_per_year_us_avg>carbon[b].carbon_kg_per_year_us_avg?a:b):'—';
   // Annual power bill per GPU at the US industrial rate, incl. cooling overhead.
-  const RATE=0.08, PUE=1.3;
+  const PA=powerAssumptions(), RATE=PA.elec, PUE=PA.pue;
+  const pcs=document.getElementById('powerCostSub');
+  if(pcs) pcs.textContent=`assumption: $${RATE.toFixed(2)}/kWh, PUE ${PUE} (same defaults as the TCO tab)`;
   const powerCost=g=>carbon[g]?carbon[g].annual_kwh_full_util*RATE*PUE:0;
   const totalIfNordic=cGpus.length?cGpus.reduce((s,g)=>s+(carbon[g].carbon_kg_per_year_us_avg-carbon[g].carbon_kg_per_year_eu_nordic),0)/cGpus.length:0;
 
   document.getElementById('opsStats').innerHTML=`
-    <div class="kpi kpi-cyan"><div class="kpi-label">Power Cost / GPU-yr</div><div class="kpi-value">$${powerCost(dirtiest).toFixed(0)}</div><div class="kpi-sub">${dirtiest} at $${RATE}/kWh, PUE ${PUE}</div></div>
+    <div class="kpi kpi-cyan"><div class="kpi-label">Power Cost / GPU-yr</div><div class="kpi-value">$${powerCost(dirtiest).toFixed(0)}</div><div class="kpi-sub">${dirtiest} · assumed $${RATE.toFixed(2)}/kWh, PUE ${PUE}</div></div>
     <div class="kpi kpi-amber"><div class="kpi-label">Highest Carbon GPU</div><div class="kpi-value">${dirtiest}</div><div class="kpi-sub">${carbon[dirtiest]?.carbon_kg_per_year_us_avg||'—'} kg CO₂/yr (US grid)</div></div>
     <div class="kpi kpi-green"><div class="kpi-label">Avg Saving in Nordics</div><div class="kpi-value">${totalIfNordic.toFixed(0)} kg</div><div class="kpi-sub">CO₂/GPU/yr vs US grid</div></div>
-    <div class="kpi kpi-purple"><div class="kpi-label">Greenest Provider</div><div class="kpi-value">${greenest}</div><div class="kpi-sub">PUE ${avgPue?avgPue.toFixed(2):'—'} fleet average</div></div>`;
+    <div class="kpi kpi-purple"><div class="kpi-label">Greenest Provider</div><div class="kpi-value">${greenest}</div><div class="kpi-sub">${greenestPue!=null?'PUE '+Number(greenestPue).toFixed(2)+' (this provider\'s average)':'PUE —'}</div></div>`;
 
   // Chart 1: annual power cost per GPU -- the operating number that actually
   // shows up on a bill, computed from TDP x hours x tariff x PUE.
@@ -4322,7 +4560,6 @@ function renderEfficiencyTab() {
 // ════════════════════════════════════════════════════════════════
 
 const AI_MAP = {
-  'summary':    {el:'aiSummaryContent',        status:null},
   'trends':     {el:'aiTrendsContent',         status:null},
   'regional':   {el:'aiRegionalContent',       status:null},
   'investment': {el:'aiInvestmentContent',     status:null},
@@ -4351,16 +4588,81 @@ function updateGlobalStatus() {
     gs.textContent = `${aiRunningCount} RUNNING`;
   } else if(aiLoadedSet.size > 0) {
     gs.className = 'intel-status intel-status-ready';
-    gs.textContent = `${aiLoadedSet.size}/${Object.keys(AI_MAP).length-1} READY`;
+    gs.textContent = `${aiLoadedSet.size}/${Object.keys(AI_MAP).length} READY`;
   } else {
     gs.className = 'intel-status intel-status-idle';
     gs.textContent = 'IDLE';
   }
 }
 
+// ── AI staleness & framing ─────────────────────────────────────
+// Every ai_analysis.json entry carries a timestamp. The text is generated
+// only when LLM credentials are configured for the pipeline, so it can be
+// weeks older than the prices around it. Each block says when it was written,
+// and anything older than AI_STALE_DAYS (vs DATA.last_updated) is collapsed
+// behind an amber banner.
+const AI_STALE_DAYS = 7;
+function aiAgeInfo(entry) {
+  const t = Date.parse(entry && entry.timestamp);
+  if (isNaN(t)) return { date: null, stale: true };
+  const ref = _dataTs() != null ? _dataTs() : Date.now();
+  return { date: new Date(t).toISOString().slice(0, 10), stale: (ref - t) / 864e5 > AI_STALE_DAYS };
+}
+function aiToggleStale(banner) {
+  const content = banner.nextElementSibling;
+  if (!content) return;
+  const open = content.hasAttribute('hidden');
+  if (open) content.removeAttribute('hidden'); else content.setAttribute('hidden', '');
+  const t = banner.querySelector('.ai-stale-toggle');
+  if (t) t.textContent = open ? 'Hide' : 'Show anyway';
+}
+function wrapAiBlock(entry, innerHtml) {
+  const a = aiAgeInfo(entry);
+  const when = a.date || 'unknown date';
+  const gen = `<div class="ai-gen-line">AI commentary (not a forecast) · Generated <b>${when}</b></div>`;
+  if (!a.stale) return gen + innerHtml;
+  return gen
+    + `<div class="ai-stale-banner" role="button" tabindex="0" onclick="aiToggleStale(this)" onkeydown="if(event.key==='Enter')aiToggleStale(this)">`
+    + `<span>Out of date — written ${when}, figures may not match current prices</span><span class="ai-stale-toggle">Show anyway</span></div>`
+    + `<div class="ai-stale-content" hidden>${innerHtml}</div>`;
+}
+// Strip forecast framing from model output: this text is commentary, not a
+// forecast, and its "confidence" is not a measured quantity.
+function deframeAiMarkdown(raw) {
+  return String(raw || '')
+    .replace(/(\d+)[- ]Day Price Forecast/gi, '$1-day price commentary (not a forecast)')
+    .replace(/Price Forecast/gi, 'Price Commentary')
+    .replace(/^\s*[-*]?\s*\**Confidence\**\s*:?\s*\**\s*(High|Medium|Low|Moderate)\b\**.*$/gim, '')
+    .replace(/\**Confidence\**\s*:\s*\**(High|Medium|Low|Moderate)\**/gi, '');
+}
+// Drop any "Confidence" column from rendered tables.
+function _dropConfidenceColumns(html) {
+  if (!/confidence/i.test(html) || typeof document === 'undefined') return html;
+  const box = document.createElement('div');
+  box.innerHTML = html;
+  box.querySelectorAll('table').forEach(tbl => {
+    const head = tbl.querySelector('tr');
+    if (!head) return;
+    const idx = [...head.children].findIndex(c => /^\s*confidence\s*$/i.test(c.textContent));
+    if (idx < 0) return;
+    tbl.querySelectorAll('tr').forEach(tr => { if (tr.children[idx]) tr.children[idx].remove(); });
+  });
+  return box.innerHTML;
+}
+function sanitizeHtml(html) {
+  if (window.DOMPurify && DOMPurify.sanitize) return DOMPurify.sanitize(html);
+  // No sanitizer loaded: never inject untrusted markup.
+  const d = document.createElement('div'); d.textContent = html; return d.innerHTML;
+}
+function renderMarkdownSafe(raw) {
+  const md = deframeAiMarkdown(raw);
+  const html = (window.marked && marked.parse) ? marked.parse(md) : md.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  return _dropConfidenceColumns(sanitizeHtml(html));
+}
+
 // Post-process AI markdown: highlight signal tags and key metrics
 function formatAIOutput(raw) {
-  let html = marked.parse(raw || '');
+  let html = renderMarkdownSafe(raw);
   // Signal tags: [BUY] [SELL] [HOLD] [WATCH] [ALERT] [BULL] [BEAR]
   html = html.replace(/\[BUY\]/gi, '<span class="ai-sig ai-sig-buy">BUY</span>');
   html = html.replace(/\[SELL\]/gi, '<span class="ai-sig ai-sig-sell">SELL</span>');
@@ -4391,7 +4693,7 @@ async function loadAI(type, bypassCache) {
   if(EMBEDDED_AI !== null && EMBEDDED_AI[type]) {
     const cached = EMBEDDED_AI[type];
     const raw = cached.analysis || cached.quick_summary || JSON.stringify(cached);
-    el.innerHTML = formatAIOutput(raw);
+    el.innerHTML = wrapAiBlock(cached, formatAIOutput(raw));
     setAIStatus(cfg.status, 'ready');
     aiLoadedSet.add(type);
     updateGlobalStatus();
@@ -4402,12 +4704,12 @@ async function loadAI(type, bypassCache) {
   // here, an endpoint that only ever answered on a local server running the
   // since-deleted ai_analyzer.py -- so on the published site this produced
   // "Server unavailable (404)", which describes our plumbing rather than the
-  // reader's problem. These are written by the daily pipeline; if one is
-  // missing, that run did not produce it.
+  // reader's problem. These are generated only when LLM credentials are
+  // configured for the pipeline; if one is missing, no run produced it.
   el.innerHTML = '<div style="padding:20px;font-size:12px;color:var(--text-2);line-height:1.7;">'
-    + '<strong style="color:var(--text-1);">Not generated on the last run.</strong><br>'
-    + 'These analyses are written by the daily pipeline into ai_analysis.json. '
-    + 'This one is missing, which usually means the language model was unreachable that run. '
+    + '<strong style="color:var(--text-1);">Not generated.</strong><br>'
+    + 'These analyses are generated into ai_analysis.json when LLM credentials are configured for the pipeline. '
+    + 'This one is missing, which usually means no credentials were configured or the language model was unreachable. '
     + 'Every other tab reads measured data and is unaffected.</div>';
   setAIStatus(cfg.status, 'idle');
   updateGlobalStatus();
@@ -4446,7 +4748,7 @@ async function loadGpuAI() {
   // Use embedded AI data when available
   const embeddedKey = 'gpu_' + gpuId;
   if(EMBEDDED_AI !== null && EMBEDDED_AI[embeddedKey]) {
-    el.innerHTML = formatAIOutput(EMBEDDED_AI[embeddedKey].analysis || '');
+    el.innerHTML = wrapAiBlock(EMBEDDED_AI[embeddedKey], formatAIOutput(EMBEDDED_AI[embeddedKey].analysis || ''));
     if(statusEl) { statusEl.className='intel-status intel-status-ready'; statusEl.textContent='READY'; }
     return;
   }
@@ -4458,8 +4760,8 @@ async function loadGpuAI() {
   // price to write about.
   el.innerHTML = `<div style="padding:20px;font-size:12px;color:var(--text-2);line-height:1.7;">`
     + `<strong style="color:var(--text-1);">No deep dive for ${_esc(name)} yet.</strong><br>`
-    + `These are written by the daily pipeline for every GPU with a live price. `
-    + `${_esc(name)} has no provider listing it right now, so there is nothing current to analyse.`
+    + `These are generated when LLM credentials are configured for the pipeline, for GPUs with a live price. `
+    + `None has been generated for ${_esc(name)}.`
     + `</div>`;
   if(statusEl) { statusEl.className='intel-status intel-status-idle'; statusEl.textContent='NO DATA'; }
   return;
@@ -4503,8 +4805,8 @@ function _esc(s){var d=document.createElement('div');d.textContent=s;return d.in
 // SENTIMENT
 // ════════════════════════════════════════════════════════════════
 
-// Both commentary boxes are written by the daily pipeline into
-// ai_analysis.json, the same as every other AI section. They used to build a
+// Both commentary boxes are generated into ai_analysis.json when LLM
+// credentials are configured for the pipeline, like every other AI section. They used to build a
 // prompt in the browser and call the LLM directly, which required a
 // credential reachable from the page -- on GitHub Pages that was the embedded
 // key, and once it was removed they just showed "Unable to load AI analysis".
@@ -4515,10 +4817,10 @@ function _renderCommentary(elId, key) {
   const entry = EMBEDDED_AI && EMBEDDED_AI[key];
   const raw = entry && (entry.analysis || entry.content || '');
   if(!raw) {
-    el.innerHTML = '<span class="ai-commentary-error">Not generated on the last run.</span>';
+    el.innerHTML = '<span class="ai-commentary-error">Not generated (requires LLM credentials configured for the pipeline).</span>';
     return;
   }
-  el.innerHTML = raw.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+  el.innerHTML = wrapAiBlock(entry, renderMarkdownSafe(raw));
 }
 
 function fetchPriceAiCommentary() {
@@ -4591,8 +4893,8 @@ function renderSentimentPanel() {
       <div class="sent-metrics">
         <span class="sent-metric">Reddit <b>${(s.reddit_sentiment*100).toFixed(0)}%</b> pos</span>
         <span class="sent-metric">GitHub <b>${s.github_compat_score}/100</b>${s.github_repos ? ' <span class="sent-github-repos">('+s.github_repos.toLocaleString()+' repos)</span>' : ''}</span>
-        <span class="sent-metric">HF <b>${(s.hf_models_trained||0).toLocaleString()}</b> models</span>
-        <span class="sent-metric">Mentions <b>${((s.mentions_30d||0)/1000).toFixed(1)}K</b>/30d</span>
+        <span class="sent-metric"${s.hf_models_estimated?' title="Lower bound: the count is capped, so the true number is at least this"':''}>HF <b>${(s.hf_models_trained||0).toLocaleString()}${s.hf_models_estimated?'+':''}</b> models</span>
+        <span class="sent-metric">Mentions <b>${(()=>{const n=s.mentions_30d||0;return n>=1000?(n/1000).toFixed(1)+'K':String(Math.round(n));})()}</b>/30d</span>
       </div>
       <div class="sent-tags">
         ${(s.pros||[]).slice(0,2).map(p => `<span class="sent-pro">+ ${p}</span>`).join('')}
@@ -4634,11 +4936,22 @@ const DATA_SECTIONS = [
   { key:'sentiment',     label:'Developer & MLOps Sentiment', color:'pink', type:'dict-of-objects' },
   { key:'prediction_markets.gpus', label:'Prediction Markets', color:'purple', type:'array',
     metaKey:'prediction_markets' },
+  { key:'ai_analysis', label:'AI Commentary (ai_analysis.json)', color:'purple', type:'dict-of-objects' },
 ];
 
 // Sections may point at a nested key (prediction_markets.gpus) so the audit
 // table lists the rows rather than the wrapper object.
 function dataSectionValue(key) {
+  if (key === 'ai_analysis') {
+    // Lives in its own file; list each entry's type and when it was written.
+    if (!EMBEDDED_AI) return null;
+    const out = {};
+    Object.entries(EMBEDDED_AI).forEach(([k, v]) => {
+      const a = aiAgeInfo(v);
+      out[k] = { type: (v && v.type) || '', timestamp: (v && v.timestamp) || '', out_of_date: a.stale };
+    });
+    return out;
+  }
   return key.split('.').reduce((obj, part) => (obj == null ? obj : obj[part]), DATA);
 }
 
@@ -4801,6 +5114,7 @@ function renderDataAudit(searchTerm) {
       const label = days == null ? 'NEVER' : days === 0 ? 'TODAY' : days === 1 ? '1 DAY AGO' : days + ' DAYS AGO';
       const tip = fr.sources_total
         ? `${fr.sources_ok} of ${fr.sources_total} sources returned on the last run`
+        : fr.stale_runs != null ? `refreshed automatically · ${fr.stale_runs} run(s) since last successful refresh`
         : 'refreshed automatically';
       freshBadge = `<span class="da-badge" style="background:var(--bg-2);color:${col};" title="${escHtml(tip)}">${label}</span>`;
     } else if (fr) {
