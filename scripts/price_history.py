@@ -641,6 +641,8 @@ def build_price_history(data, repo_dir, log_info=lambda m: None, log_ok=lambda a
         "as_of": today,
         "first_date": dates[0] if dates else None,
         "day_count": len(dates),
+        # Committed-rate record, maintained by term_structure.record_term_history.
+        "term_days": block.get("term_days") or {},
     }
 
     meta = data.setdefault("_meta", {}).setdefault("sections", {})

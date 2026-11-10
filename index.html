@@ -1006,6 +1006,21 @@ body {
   .carousel-slide-right { padding-left: 0; }
   .wl-grid { grid-template-columns: 1fr; }
 }
+/* Reserved vs On-demand: every price carries a badge saying what kind it is. */
+.term-badge{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.04em;padding:2px 6px;border-radius:3px;margin-right:4px;white-space:nowrap;}
+.tb-od{background:var(--blue-dim);color:var(--blue);}
+.tb-commit{background:var(--amber-dim);color:var(--amber);}
+.tb-spot{background:rgba(62,207,142,.14);color:var(--green);}
+.tb-cluster{background:rgba(247,38,255,.12);color:#F726FF;}
+.tb-ro{background:rgba(138,149,166,.16);color:#8a95a6;}
+.term-chip{cursor:pointer;font-family:var(--mono);font-size:10.5px;padding:4px 10px;border:1px solid var(--border-0);border-radius:12px;color:var(--text-2);background:transparent;}
+.term-chip.active{border-color:var(--cyan);color:var(--cyan);}
+.term-cell{font-family:var(--mono);font-size:11px;line-height:1.35;}
+.term-cell .d{font-size:9.5px;}
+.term-kpi{border:1px solid var(--border-0);border-radius:6px;padding:10px 12px;}
+.term-kpi .k{font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-2);}
+.term-kpi .v{font-family:var(--mono);font-size:18px;font-weight:700;margin-top:3px;}
+.term-kpi .s{font-size:10px;color:var(--text-2);margin-top:2px;line-height:1.4;}
 </style>
 <script>
 let EMBEDDED_DATA = null;
@@ -1082,6 +1097,7 @@ loadExternalData();
 <div class="nav" id="navTabs">
   <div class="nav-item active" data-tab="overview">Overview</div>
   <div class="nav-item" data-tab="pricing">Pricing</div>
+  <div class="nav-item" data-tab="terms">Reserved vs On-demand</div>
   <div class="nav-item" data-tab="trends">Trends</div>
   <div class="nav-item" data-tab="markets">Prediction Markets</div>
   <div class="nav-item" data-tab="regional">Regional</div>
@@ -1192,6 +1208,58 @@ loadExternalData();
     <div class="card-bd">
       <div class="chart-wrap" style="height:320px;"><canvas id="chartPriceDist"></canvas></div>
       <div id="commitRateNote" class="dim" style="padding:10px 4px 0;font-size:11px;line-height:1.6;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── RESERVED VS ON-DEMAND ── -->
+<div class="tab-panel" id="tab-terms">
+  <div class="card mb">
+    <div class="card-hd">
+      <span class="card-hd-title">How to read these prices</span>
+    </div>
+    <div class="card-bd" style="font-size:11.5px;line-height:1.7;">
+      <div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:8px;">
+        <span><span class="term-badge tb-od">ON-DEMAND</span> pay per hour, no commitment, stop any time</span>
+        <span><span class="term-badge tb-commit">COMMITTED · 1 YR</span> you pay for every hour of the term, used or not</span>
+        <span><span class="term-badge tb-spot">SPOT</span> interruptible, can be reclaimed</span>
+        <span><span class="term-badge tb-cluster">CLUSTER</span> multi-node reservation (16+ GPUs, InfiniBand), a different product</span>
+        <span><span class="term-badge tb-ro">RESERVED ONLY</span> no on-demand plan to compare with</span>
+      </div>
+      <div class="dim">Each discount compares a commitment with the <b>same provider's</b> on-demand rate. Break-even utilisation is the share of hours the GPUs must be busy for the commitment to cost less than paying on demand for the hours actually used. Only top-tier GPUs are shown; providers that quote commitments only through sales (CoreWeave, Nebius, Crusoe, Oracle, RunPod, Vultr) are shown as "—".</div>
+    </div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-hd">
+      <span class="card-hd-title">Top-tier GPUs at a glance</span>
+      <span class="card-hd-sub">median discount vs the same provider's on-demand rate · break-even utilisation in brackets</span>
+    </div>
+    <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="termGlanceTable"></table></div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-hd" style="flex-wrap:wrap;gap:10px;">
+      <span class="card-hd-title" id="termGpuTitle">Price ladder</span>
+      <div id="termGpuChips" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+    </div>
+    <div class="card-bd">
+      <div id="termExplain" style="font-size:12px;line-height:1.75;color:var(--text-1);border-left:3px solid var(--cyan);padding:4px 0 4px 12px;margin-bottom:14px;"></div>
+      <div id="termKpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:14px;"></div>
+      <div class="chart-wrap" style="height:320px;"><canvas id="chartTermLadder"></canvas></div>
+      <div class="dim" style="font-size:10px;padding-top:6px;">Each line is one provider: its on-demand rate on the left, then the rate it charges for each commitment length it publishes. The dashed line is the median dedicated-cloud on-demand rate.</div>
+    </div>
+    <div class="card-bd-flush" style="overflow-x:auto;border-top:1px solid var(--border-0);"><table class="dt" id="termProviderTable"></table></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">
+      <span class="card-hd-title">Spread over time</span>
+      <span class="card-hd-sub" id="termHistSub">monthly median discount, fixed set of providers</span>
+    </div>
+    <div class="card-bd">
+      <div class="chart-wrap" style="height:280px;"><canvas id="chartTermHistory"></canvas></div>
+      <div id="termHistNote" class="dim" style="padding:10px 4px 0;font-size:11px;line-height:1.6;"></div>
     </div>
   </div>
 </div>
@@ -1905,6 +1973,7 @@ function renderAll() {
   renderNewsHeadline();
   renderOverview();
   renderPriceMatrix();
+  renderTermsTab();
   renderTrendsTab();
   renderPredictionMarkets();
   renderProvidersTab();
@@ -2061,6 +2130,243 @@ function renderChangeFeed() {
         ${e.note?`<div style="font-size:9.5px;color:var(--amber);line-height:1.4;margin-top:2px;">${e.note}</div>`:''}
       </div>${badge}</div>`;
   }).join('');
+}
+
+// ════════════════════════════════════════════════════════════════
+// RESERVED VS ON-DEMAND (term_structure, top-tier GPUs)
+// ════════════════════════════════════════════════════════════════
+const TERM_BUCKETS = [
+  ['short', '≤ 1 month'], ['medium', '3–6 months'], ['1yr', '1 year'], ['3yr', '3 years'],
+];
+let termGpu = null;
+
+const _TERM_TXT = { '3d': '3 days', '1w': '1 wk', '2w': '2 wk', '1mo': '1 mo', '3mo': '3 mo', '6mo': '6 mo', '1yr': '1 yr', '2yr': '2 yr', '3yr': '3 yr' };
+function _termLabel(t) { return _TERM_TXT[t] || t || ''; }
+function _fmtUsd(v) { return v == null ? '—' : '$' + Number(v).toFixed(2); }
+function _fmtDisc(d) {
+  if (d == null) return '';
+  const r = Math.round(d);
+  return r >= 0 ? `<span class="d" style="color:var(--green)">−${r}%</span>`
+                : `<span class="d" style="color:var(--red)">+${-r}%</span>`;
+}
+
+function renderTermsTab() {
+  const ts = DATA.term_structure || {};
+  const gpus = Object.keys(ts);
+  const glance = document.getElementById('termGlanceTable');
+  if (!gpus.length) {
+    if (glance) glance.innerHTML = '<tr><td class="dim" style="padding:14px;">No committed-rate data in this refresh.</td></tr>';
+    return;
+  }
+  if (glance) {
+    let h = '<thead><tr><th>GPU</th><th><span class="term-badge tb-od">ON-DEMAND</span> cloud low · median</th>';
+    TERM_BUCKETS.forEach(([, l]) => { h += `<th><span class="term-badge tb-commit">${l.toUpperCase()}</span></th>`; });
+    h += '<th>Cheapest commitment anywhere</th></tr></thead><tbody>';
+    gpus.forEach(g => {
+      const r = ts[g], od = r.on_demand || {};
+      h += `<tr style="cursor:pointer" onclick="selectTermGpu('${g}')"><td class="gpu-name">${escHtml(g)}</td>`;
+      h += `<td class="term-cell">${_fmtUsd(od.low)} · ${_fmtUsd(od.median)}<div class="dim d">${od.providers || 0} clouds</div></td>`;
+      let best = null;
+      TERM_BUCKETS.forEach(([k]) => {
+        const b = (r.buckets || []).find(x => x.key === k) || {};
+        if (b.rate_low != null && (!best || b.rate_low < best.rate)) best = { rate: b.rate_low, who: b.rate_low_provider, label: b.label };
+        if (b.median_discount_pct == null) {
+          const cl = (b.cluster_reservations || []).length;
+          const ro = b.providers && b.rate_low != null;
+          h += `<td class="term-cell dim" title="${cl ? 'Only multi-node cluster reservations' : ro ? 'Reserved-only offer, no on-demand to compare' : 'No provider publishes this term'}">${ro ? _fmtUsd(b.rate_low) + ' <span class="term-badge tb-ro">RO</span>' : cl ? '<span class="term-badge tb-cluster">CLUSTER</span>' : '—'}</td>`;
+          return;
+        }
+        const be = b.breakeven_utilization_pct;
+        h += `<td class="term-cell"><b style="color:${b.median_discount_pct >= 0 ? 'var(--green)' : 'var(--red)'}">${b.median_discount_pct >= 0 ? '−' : '+'}${Math.abs(Math.round(b.median_discount_pct))}%</b>`
+          + `${be != null ? ` <span class="dim">(${be}%)</span>` : ''}<div class="dim d">${b.providers} provider${b.providers === 1 ? '' : 's'} · from ${_fmtUsd(b.rate_low)}</div></td>`;
+      });
+      h += `<td class="term-cell">${best ? `${_fmtUsd(best.rate)} <span class="dim d">${escHtml(best.who)}, ${escHtml(best.label.toLowerCase())}</span>` : '—'}</td></tr>`;
+    });
+    glance.innerHTML = h + '</tbody>';
+  }
+  const chips = document.getElementById('termGpuChips');
+  if (chips) chips.innerHTML = gpus.map(g => `<button class="term-chip" data-g="${g}" onclick="selectTermGpu('${g}')">${escHtml(g)}</button>`).join('');
+  selectTermGpu(termGpu && ts[termGpu] ? termGpu : (ts['H100-SXM'] ? 'H100-SXM' : gpus[0]));
+}
+
+function selectTermGpu(g) {
+  const ts = DATA.term_structure || {};
+  const r = ts[g];
+  if (!r) return;
+  termGpu = g;
+  document.querySelectorAll('#termGpuChips .term-chip').forEach(c => c.classList.toggle('active', c.dataset.g === g));
+  const title = document.getElementById('termGpuTitle');
+  if (title) title.textContent = `Price ladder — ${r.name || g}`;
+  const ex = document.getElementById('termExplain');
+  if (ex) ex.textContent = r.explanation || '';
+
+  // KPI tiles: on-demand, then one per commitment bucket.
+  const od = r.on_demand || {};
+  let k = `<div class="term-kpi"><div class="k"><span class="term-badge tb-od">ON-DEMAND</span></div>`
+    + `<div class="v">${_fmtUsd(od.median)}</div><div class="s">median of ${od.providers || 0} clouds · low ${_fmtUsd(od.low)} (${escHtml(od.low_provider || '—')})`
+    + `${od.marketplace_low != null ? `<br>marketplace from ${_fmtUsd(od.marketplace_low)}` : ''}</div></div>`;
+  (r.buckets || []).forEach(b => {
+    const has = b.median_discount_pct != null;
+    k += `<div class="term-kpi"><div class="k"><span class="term-badge tb-commit">${escHtml(b.label.toUpperCase())}</span></div>`;
+    if (has) {
+      k += `<div class="v" style="color:${b.median_discount_pct >= 0 ? 'var(--green)' : 'var(--red)'}">${b.median_discount_pct >= 0 ? '−' : '+'}${Math.abs(Math.round(b.median_discount_pct))}%</div>`
+        + `<div class="s">${b.providers_with_discount.length} provider${b.providers_with_discount.length === 1 ? '' : 's'}`
+        + `${b.discount_min_pct !== b.discount_max_pct ? ` · range ${Math.round(b.discount_min_pct)}–${Math.round(b.discount_max_pct)}%` : ''}`
+        + `<br>from ${_fmtUsd(b.rate_low)} · break-even ${b.breakeven_utilization_pct}% busy</div>`;
+    } else if (b.rate_low != null) {
+      k += `<div class="v">${_fmtUsd(b.rate_low)}</div><div class="s">${escHtml(b.rate_low_provider)} · reserved only</div>`;
+    } else if ((b.cluster_reservations || []).length) {
+      const c = b.cluster_reservations;
+      k += `<div class="v" style="font-size:14px;">clusters only</div><div class="s">${escHtml(c[0].provider)} from ${_fmtUsd(Math.min(...c.map(x => x.rate)))} (${c[0].min_gpus}+ GPUs)</div>`;
+    } else {
+      k += `<div class="v dim" style="font-size:14px;">not published</div><div class="s">sales quote only</div>`;
+    }
+    k += '</div>';
+  });
+  const kp = document.getElementById('termKpis');
+  if (kp) kp.innerHTML = k;
+
+  _renderTermLadder(r);
+  _renderTermTable(r);
+  _renderTermHistory(r);
+}
+
+function _termProviders(r) {
+  // provider_key -> {name, od, type, buckets:{key:[rows]}, spot}
+  const m = {};
+  (r.on_demand.rows || []).forEach(o => {
+    m[o.provider_key] = { key: o.provider_key, name: o.provider, od: o.rate, type: o.type, buckets: {}, spot: null };
+  });
+  (r.buckets || []).forEach(b => (b.rows || []).forEach(x => {
+    const p = m[x.provider_key] || (m[x.provider_key] = { key: x.provider_key, name: x.provider, od: null, type: 'cloud', buckets: {}, spot: null });
+    (p.buckets[b.key] = p.buckets[b.key] || []).push(x);
+  }));
+  (r.spot || []).forEach(sx => {
+    const p = Object.values(m).find(v => v.name === sx.provider);
+    if (p) p.spot = sx;
+  });
+  return Object.values(m);
+}
+
+function _renderTermLadder(r) {
+  const el = document.getElementById('chartTermLadder');
+  if (!el) return;
+  if (charts.termLadder) charts.termLadder.destroy();
+  const labels = ['On-demand', ...TERM_BUCKETS.map(([, l]) => l)];
+  const provs = _termProviders(r).filter(p => Object.keys(p.buckets).length || p.od != null);
+  const datasets = provs.map(p => {
+    const pts = [p.od];
+    TERM_BUCKETS.forEach(([k]) => {
+      const rows = (p.buckets[k] || []).filter(x => !x.cluster_reservation && !x.stale);
+      const head = rows.find(x => x.headline) || rows[0];
+      pts.push(head ? head.rate : null);
+    });
+    const commits = pts.slice(1).filter(v => v != null).length;
+    const col = provColor(p.key);
+    return {
+      label: p.name + (p.type === 'marketplace' ? ' (marketplace)' : ''), data: pts, spanGaps: true,
+      borderColor: col, backgroundColor: col, borderWidth: commits ? 2 : 1,
+      borderDash: p.type === 'marketplace' ? [3, 3] : [],
+      pointRadius: pts.map((v, i) => v == null ? 0 : (i === 0 ? 3 : 5)),
+      pointStyle: pts.map((v, i) => i === 0 ? 'circle' : 'rectRot'),
+      hidden: !commits && provs.length > 8,
+      _rows: p,
+    };
+  });
+  const odMed = r.on_demand && r.on_demand.median;
+  if (odMed != null) datasets.push({
+    label: 'Median cloud on-demand', data: labels.map(() => odMed), borderColor: '#8a95a6',
+    borderDash: [6, 4], borderWidth: 1, pointRadius: 0, fill: false,
+  });
+  charts.termLadder = new Chart(el, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'right', labels: { boxWidth: 10, font: { size: 10 } } },
+        tooltip: { callbacks: { label: x => {
+          if (x.parsed.y == null) return null;
+          const p = x.dataset._rows;
+          let s = `${x.dataset.label}: $${x.parsed.y.toFixed(2)}/GPU-hr`;
+          if (p && x.dataIndex > 0 && p.od) s += ` (${Math.round((1 - x.parsed.y / p.od) * 100)}% vs its on-demand)`;
+          return s;
+        } } },
+      },
+      scales: {
+        y: { title: { display: true, text: '$ per GPU-hour' }, grid: { color: 'rgba(26,34,51,0.4)' },
+             ticks: { callback: v => '$' + v } },
+        x: { grid: { display: false }, title: { display: true, text: 'commitment length →' } },
+      },
+    },
+  });
+}
+
+function _termCell(rows, od) {
+  if (!rows || !rows.length) return '<td class="term-cell dim" title="Not published — sales quote only, or not offered">—</td>';
+  const sorted = rows.slice().sort((a, b) => (b.headline - a.headline) || a.rate - b.rate);
+  const head = sorted[0];
+  const tip = sorted.map(x => `${x.label || x.product || ''}${x.payment && x.payment !== 'unknown' ? ' · ' + x.payment.replace('_', ' ') : ''}${x.min_gpus ? ' · min ' + x.min_gpus + ' GPUs' : ''}: $${x.rate.toFixed(2)}${x.note ? ' — ' + x.note : ''}${x.stale ? ' (not re-confirmed this refresh)' : ''}`).join('\n');
+  const badge = head.cluster_reservation ? '<span class="term-badge tb-cluster">CLUSTER</span>'
+    : head.reserved_only ? '<span class="term-badge tb-ro">RESERVED ONLY</span>' : '';
+  const term = escHtml(_termLabel(head.term) + (head.term_max ? '–' + _termLabel(head.term_max) : ''));
+  const more = sorted.length > 1 ? `<div class="dim d">+${sorted.length - 1} more option${sorted.length > 2 ? 's' : ''}</div>` : '';
+  return `<td class="term-cell" title="${escHtml(tip)}" style="${head.stale ? 'opacity:.55' : ''}">${badge}<b>${_fmtUsd(head.rate)}</b> ${_fmtDisc(head.discount_pct)}`
+    + `<div class="dim d">${term}${head.payment && head.payment !== 'unknown' ? ' · ' + escHtml(head.payment.replace('_', ' ')) : ''}</div>${more}</td>`;
+}
+
+function _renderTermTable(r) {
+  const t = document.getElementById('termProviderTable');
+  if (!t) return;
+  const provs = _termProviders(r).sort((a, b) => (Object.keys(b.buckets).length - Object.keys(a.buckets).length) || ((a.od ?? 1e9) - (b.od ?? 1e9)));
+  let h = '<thead><tr><th>Provider</th><th><span class="term-badge tb-od">ON-DEMAND</span></th>';
+  TERM_BUCKETS.forEach(([, l]) => { h += `<th><span class="term-badge tb-commit">${l.toUpperCase()}</span></th>`; });
+  h += '<th><span class="term-badge tb-spot">SPOT</span></th></tr></thead><tbody>';
+  provs.forEach(p => {
+    h += `<tr><td><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${provColor(p.key)};margin-right:6px;"></span>${escHtml(p.name)}${p.type === 'marketplace' ? ' <span class="dim d">marketplace</span>' : ''}</td>`;
+    h += `<td class="term-cell">${p.od != null ? '<b>' + _fmtUsd(p.od) + '</b>' : '<span class="dim" title="No on-demand plan">—</span>'}</td>`;
+    TERM_BUCKETS.forEach(([k]) => { h += _termCell(p.buckets[k], p.od); });
+    h += p.spot ? `<td class="term-cell"><b>${_fmtUsd(p.spot.rate)}</b> ${_fmtDisc(p.spot.discount_pct)}<div class="dim d">interruptible</div></td>` : '<td class="term-cell dim">—</td>';
+    h += '</tr>';
+  });
+  t.innerHTML = h + '</tbody>';
+}
+
+function _renderTermHistory(r) {
+  const el = document.getElementById('chartTermHistory');
+  const note = document.getElementById('termHistNote');
+  if (!el) return;
+  if (charts.termHist) charts.termHist.destroy();
+  const hist = r.history || [];
+  const series = [['1yr', '1-year discount', C.amber], ['3yr', '3-year discount', C.cyan],
+                  ['medium', '3–6 month discount', C.purple], ['short', '≤ 1 month discount', C.green]]
+    .filter(([k]) => hist.some(h => h[k + '_discount_pct'] != null));
+  const datasets = series.map(([k, label, col]) => ({
+    label, yAxisID: 'y', data: hist.map(h => h[k + '_discount_pct'] ?? null), spanGaps: true,
+    borderColor: col, backgroundColor: col, borderWidth: 2, pointRadius: 3,
+  }));
+  datasets.push({ label: 'Median on-demand ($, right)', yAxisID: 'y2', data: hist.map(h => h.on_demand_median),
+    borderColor: '#8a95a6', borderDash: [5, 4], borderWidth: 1, pointRadius: 2 });
+  charts.termHist = new Chart(el, {
+    type: 'line',
+    data: { labels: hist.map(h => h.month), datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } } },
+      scales: {
+        y: { position: 'left', title: { display: true, text: '% below same provider on-demand' }, ticks: { callback: v => v + '%' }, grid: { color: 'rgba(26,34,51,0.4)' } },
+        y2: { position: 'right', title: { display: true, text: '$ / GPU-hr' }, grid: { display: false }, ticks: { callback: v => '$' + Number(v).toFixed(2) } },
+        x: { grid: { display: false } },
+      },
+    },
+  });
+  if (note) {
+    const last = hist[hist.length - 1] || {};
+    const baskets = series.map(([k, label]) => last[k + '_providers'] ? `${label}: ${last[k + '_providers'].join(', ')}` : null).filter(Boolean);
+    note.innerHTML = hist.length < 2
+      ? 'Committed rates have only been recorded since this month for this GPU, so there is no trend yet. The series lengthens with every daily refresh.'
+      : `Each line is the median, over a fixed set of providers, of the gap between a provider's committed and on-demand rate. Providers that joined or whose prices we started reading differently inside the window are left out, so a change in who is counted cannot show up as a market move.${baskets.length ? '<br>' + baskets.map(escHtml).join('<br>') : ''}`;
+  }
 }
 
 // Commitment economics. Every number here is same-basket: a reserved or spot
