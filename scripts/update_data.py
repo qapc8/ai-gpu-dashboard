@@ -20,6 +20,13 @@ from datetime import datetime, timedelta, timezone
 from xml.etree import ElementTree
 
 from extra_providers import PROVIDERS as EXTRA_PROVIDERS
+from term_pricing import TERM_PROVIDERS
+from term_structure import (
+    attach_terms,
+    build_term_structure,
+    fetch_aws_savings_plans,
+    record_term_history,
+)
 from inference_market import refresh_inference_market
 from model_fit import build_model_fit
 from price_history import METHODOLOGY_CHANGES, build_price_history
@@ -2034,6 +2041,7 @@ _SECTION_SOURCES = {
     "indicators": ["Stock/NVDA", "Stock/AMD"],
     "sustainability": ["Sustainability"],
     "summary": ["Summary"],
+    "term_structure": ["Term Structure"],
     "changelog": ["Changelog"],
 }
 
@@ -3162,6 +3170,23 @@ def main():
     # hand-seeded series -- which is how the 2026-03/2026-04 basis cliff got
     # there. rebuild_historical (in price_history, step 8) now recomputes every
     # month from the daily per-provider record instead.
+    # ---- 1b. Committed-term prices (top-tier GPUs) ----
+    # Before spot/TCO: attach_terms sets the headline reserved_1yr_hr /
+    # reserved_3yr_hr those read (AWS's now come from its Savings Plans).
+    term_fetched, term_failed = {}, set()
+    for prov_key, fn in [("AWS", fetch_aws_savings_plans), *TERM_PROVIDERS.items()]:
+        try:
+            term_fetched[prov_key] = fn()
+            log_ok(f"Terms/{prov_key}", f"{sum(len(v) for v in term_fetched[prov_key].values())} committed rates")
+        except Exception as exc:
+            term_failed.add(prov_key)
+            log_fail(f"Terms/{prov_key}", str(exc))
+    try:
+        data = attach_terms(data, term_fetched, term_failed, data["last_updated"])
+    except Exception as exc:
+        log_fail("Terms", str(exc))
+    print()
+
     print("[2/10] Recalculate Spot")
     print("-" * 40)
     try:
@@ -3271,6 +3296,12 @@ def main():
         data = build_price_history(data, PROJECT_DIR, log_info=log_info, log_ok=log_ok)
     except Exception as exc:
         log_fail("Price History", str(exc))
+
+    try:
+        data = record_term_history(data, PROJECT_DIR, log_info=log_info)
+        data = build_term_structure(data, log_ok=log_ok)
+    except Exception as exc:
+        log_fail("Term Structure", str(exc))
 
     # Volatility is computed inside build_price_history now, from the daily
     # record rather than four monthly points.
