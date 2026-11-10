@@ -21,6 +21,7 @@ from xml.etree import ElementTree
 
 from extra_providers import PROVIDERS as EXTRA_PROVIDERS
 from term_pricing import TERM_PROVIDERS
+import reserved_market
 from term_structure import (
     attach_terms,
     build_term_structure,
@@ -784,6 +785,11 @@ def fetch_aws_pricing():
     return result
 
 
+# machine type -> every per-GPU rate on GCP's table (on-demand, spot, CUDs,
+# DWS Flex-start / Calendar), filled by fetch_gcp_pricing for reserved_market.
+GCP_ALL_RATES = {}
+
+
 def fetch_gcp_pricing():
     """GCP accelerator-optimized rates, parsed by column.
 
@@ -823,6 +829,8 @@ def fetch_gcp_pricing():
         "spot": "current spot",
         "reserved_1yr": "cuds - 1 year",
         "reserved_3yr": "cuds - 3 year",
+        "dws_flex": "flex-start",
+        "dws_calendar": "calendar",
     }
 
     def cells(row_html):
@@ -865,14 +873,18 @@ def fetch_gcp_pricing():
                 per_gpu = val / gpus
                 if 0.01 <= per_gpu <= 200:
                     rates[key] = round(per_gpu, 4)
+            # Every column, including the DWS modes, for the reserved-market
+            # view -- kept even when on-demand is N/A (a4-highgpu-8g).
+            GCP_ALL_RATES[mt] = dict(rates, gpu=gpu_id, gpus=gpus)
             # No published on-demand rate means no listing. The other columns
             # are different products (Flex-start, Calendar), not a substitute.
             if "on_demand" not in rates:
                 log_info(f"GCP: {mt} has no on-demand rate published, skipping")
                 continue
             prev = result.get(gpu_id)
-            if not prev or rates["on_demand"] < prev["on_demand"]:
-                result[gpu_id] = rates
+            core = {k: v for k, v in rates.items() if not k.startswith("dws_")}
+            if not prev or core["on_demand"] < prev["on_demand"]:
+                result[gpu_id] = core
 
     if not result:
         raise RuntimeError("GCP: no prices parsed from HTML")
@@ -2042,6 +2054,7 @@ _SECTION_SOURCES = {
     "sustainability": ["Sustainability"],
     "summary": ["Summary"],
     "term_structure": ["Term Structure"],
+    "reserved_market": ["Reserved Market"],
     "changelog": ["Changelog"],
 }
 
@@ -3302,6 +3315,28 @@ def main():
         data = build_term_structure(data, log_ok=log_ok)
     except Exception as exc:
         log_fail("Term Structure", str(exc))
+
+    # Reserved market: short-term capacity, discount schedules, regional
+    # prices and market indexes. Runs after term_structure (its takeaways
+    # read it). A failed source keeps its previous section.
+    rm_fetched, rm_failed = {}, set()
+    for key, label, fn in (
+        ("cb", "Capacity Blocks", reserved_market.fetch_aws_capacity_blocks),
+        ("aws_regional", "AWS Regional", reserved_market.fetch_aws_regional_on_demand),
+        ("azure_regional", "Azure Regional Commit", reserved_market.fetch_azure_regional),
+        ("ornn", "Ornn Index", reserved_market.fetch_ornn),
+        ("getdeploying", "GetDeploying", reserved_market.fetch_getdeploying),
+    ):
+        try:
+            rm_fetched[key] = fn()
+            log_ok(label)
+        except Exception as exc:
+            rm_failed.add(key)
+            log_fail(label, str(exc))
+    try:
+        data = reserved_market.build_reserved_market(data, rm_fetched, rm_failed, GCP_ALL_RATES, log_ok=log_ok)
+    except Exception as exc:
+        log_fail("Reserved Market", str(exc))
 
     # Volatility is computed inside build_price_history now, from the daily
     # record rather than four monthly points.
