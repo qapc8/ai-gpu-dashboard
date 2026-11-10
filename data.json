@@ -261,8 +261,8 @@
         "A100-80GB": {
           "price_per_gpu_hr": 3.431,
           "source": "aws_pricing_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
           "reserved_1yr_hr": 2.175,
           "reserved_3yr_hr": 1.465,
           "instance": "p4de.24xlarge"
@@ -270,8 +270,8 @@
         "A100-40GB": {
           "price_per_gpu_hr": 2.745,
           "source": "aws_pricing_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
           "reserved_1yr_hr": 1.74,
           "reserved_3yr_hr": 1.172,
           "instance": "p4d.24xlarge"
@@ -279,15 +279,15 @@
         "B300": {
           "price_per_gpu_hr": 17.802,
           "source": "aws_pricing_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
           "instance": "p6-b300.48xlarge"
         },
         "L4": {
           "price_per_gpu_hr": 1.669,
           "source": "aws_pricing_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
           "reserved_1yr_hr": 1.086,
           "reserved_3yr_hr": 0.766,
           "instance": "g6.48xlarge"
@@ -295,30 +295,30 @@
         "B200": {
           "price_per_gpu_hr": 14.242,
           "source": "aws_pricing_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
           "instance": "p6-b200.48xlarge"
         },
         "H100-SXM": {
           "price_per_gpu_hr": 6.88,
           "source": "aws_pricing_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
           "reserved_3yr_hr": 2.972,
           "instance": "p5.48xlarge"
         },
         "H200": {
           "price_per_gpu_hr": 7.912,
           "source": "aws_pricing_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
           "instance": "p5en.48xlarge"
         },
         "L40S": {
           "price_per_gpu_hr": 3.766,
           "source": "aws_pricing_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
           "reserved_1yr_hr": 2.373,
           "reserved_3yr_hr": 1.627,
           "instance": "g6e.48xlarge"
@@ -326,14 +326,14 @@
         "T4": {
           "price_per_gpu_hr": 0.978,
           "source": "aws_pricing_api",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
           "instance": "g4dn.12xlarge",
           "reserved_1yr_hr": 0.616,
           "reserved_3yr_hr": 0.422,
-          "last_updated": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00"
         }
       },
-      "last_updated": "2026-11-10T08:12:00.849750+00:00"
+      "last_updated": "2026-11-10T08:14:40.772597+00:00"
     },
     "GCP": {
       "provider_name": "Google Cloud Platform",
@@ -342,8 +342,8 @@
         "H100-SXM": {
           "price_per_gpu_hr": 11.061,
           "source": "gcp_scrape",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
           "spot_hr": 6.588,
           "reserved_1yr_hr": 7.673,
           "reserved_3yr_hr": 4.858,
@@ -352,8 +352,8 @@
         "H200": {
           "price_per_gpu_hr": 10.601,
           "source": "gcp_scrape",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
           "spot_hr": 6.359,
           "reserved_1yr_hr": 7.309,
           "reserved_3yr_hr": 4.651,
@@ -362,16 +362,16 @@
         "A100-80GB": {
           "price_per_gpu_hr": 5.069,
           "source": "gcp_scrape",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
           "spot_hr": 3.036,
           "instance": "a2-ultragpu-8g"
         },
         "A100-40GB": {
           "price_per_gpu_hr": 3.673,
           "source": "gcp_scrape",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
           "spot_hr": 2.188,
           "reserved_1yr_hr": 2.314,
           "reserved_3yr_hr": 1.286,
@@ -380,8 +380,8 @@
         "L4": {
           "price_per_gpu_hr": 1.0,
           "source": "gcp_scrape",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
           "spot_hr": 0.599,
           "reserved_1yr_hr": 0.63,
           "reserved_3yr_hr": 0.45,
@@ -395,7 +395,7 @@
           "stale": true
         }
       },
-      "last_updated": "2026-11-10T08:12:00.849750+00:00"
+      "last_updated": "2026-11-10T08:14:40.772597+00:00"
     },
     "Azure": {
       "provider_name": "Microsoft Azure",
@@ -404,8 +404,8 @@
         "H100-SXM": {
           "price_per_gpu_hr": 12.29,
           "source": "azure_retail_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
           "spot_hr": 2.271,
           "reserved_1yr_hr": 7.866,
           "reserved_3yr_hr": 5.395,
@@ -414,8 +414,8 @@
         "GB200": {
           "price_per_gpu_hr": 27.04,
           "source": "azure_retail_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
           "reserved_1yr_hr": 17.306,
           "reserved_3yr_hr": 11.898,
           "instance": "ND128isr_NDR_GB200_v6 (eastus)"
@@ -423,8 +423,8 @@
         "A100-80GB": {
           "price_per_gpu_hr": 4.096,
           "source": "azure_retail_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
           "spot_hr": 1.055,
           "reserved_1yr_hr": 2.622,
           "reserved_3yr_hr": 1.802,
@@ -436,8 +436,8 @@
           "reserved_1yr_hr": 5.815,
           "reserved_3yr_hr": 5.278,
           "source": "azure_retail_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "A100-40GB": {
           "price_per_gpu_hr": 3.4,
@@ -446,8 +446,8 @@
           "reserved_1yr_hr": 2.353,
           "reserved_3yr_hr": 1.36,
           "source": "azure_retail_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "MI300X": {
           "price_per_gpu_hr": 6.0,
@@ -456,11 +456,11 @@
           "reserved_1yr_hr": 3.84,
           "reserved_3yr_hr": 2.634,
           "source": "azure_retail_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         }
       },
-      "last_updated": "2026-11-10T08:12:00.849750+00:00"
+      "last_updated": "2026-11-10T08:14:40.772597+00:00"
     },
     "Lambda": {
       "provider_name": "Lambda Labs",
@@ -469,8 +469,8 @@
         "B200": {
           "price_per_gpu_hr": 7.69,
           "source": "lambda_scrape",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
           "instance": "8x NVIDIA HGX B200",
           "cluster_size": 8,
           "effective_from": "2026-11-16"
@@ -478,8 +478,8 @@
         "GH200": {
           "price_per_gpu_hr": 2.59,
           "source": "lambda_scrape",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
           "instance": "1x NVIDIA GH200",
           "cluster_size": 1,
           "effective_from": "2026-11-16"
@@ -487,8 +487,8 @@
         "H100-SXM": {
           "price_per_gpu_hr": 4.59,
           "source": "lambda_scrape",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
           "instance": "8x NVIDIA HGX H100",
           "cluster_size": 8,
           "effective_from": "2026-11-16"
@@ -496,8 +496,8 @@
         "H100-PCIe": {
           "price_per_gpu_hr": 3.79,
           "source": "lambda_scrape",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
           "instance": "1x NVIDIA H100 PCIe",
           "cluster_size": 1,
           "effective_from": "2026-11-16"
@@ -508,8 +508,8 @@
           "cluster_size": 8,
           "effective_from": "2026-11-16",
           "source": "lambda_scrape",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "A100-40GB": {
           "price_per_gpu_hr": 1.99,
@@ -517,11 +517,11 @@
           "cluster_size": 8,
           "effective_from": "2026-11-16",
           "source": "lambda_scrape",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         }
       },
-      "last_updated": "2026-11-10T08:12:00.849750+00:00"
+      "last_updated": "2026-11-10T08:14:40.772597+00:00"
     },
     "CoreWeave": {
       "provider_name": "CoreWeave",
@@ -530,47 +530,47 @@
         "GB200": {
           "price_per_gpu_hr": 10.5,
           "source": "coreweave_scrape",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "B200": {
           "price_per_gpu_hr": 8.6,
           "source": "coreweave_scrape",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "H200": {
           "price_per_gpu_hr": 6.305,
           "source": "coreweave_scrape",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "H100-SXM": {
           "price_per_gpu_hr": 6.155,
           "source": "coreweave_scrape",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "A100-80GB": {
           "price_per_gpu_hr": 2.7,
           "source": "coreweave_scrape",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "L40S": {
           "price_per_gpu_hr": 2.25,
           "source": "coreweave_scrape",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "GH200": {
           "price_per_gpu_hr": 6.5,
           "source": "coreweave_scrape",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         }
       },
-      "last_updated": "2026-11-10T08:12:00.849750+00:00"
+      "last_updated": "2026-11-10T08:14:40.772597+00:00"
     },
     "RunPod": {
       "provider_name": "RunPod",
@@ -579,225 +579,225 @@
         "MI300X": {
           "price_per_gpu_hr": 2.39,
           "source": "runpod_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
           "memory_gb": 192,
           "tier": "secure",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "A100-80GB": {
           "price_per_gpu_hr": 1.79,
           "source": "runpod_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
           "memory_gb": 80,
           "tier": "secure",
           "community_price": 1.39,
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "B200": {
           "price_per_gpu_hr": 7.99,
           "source": "runpod_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
           "memory_gb": 180,
           "tier": "secure",
           "community_price": 5.98,
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "B300": {
           "price_per_gpu_hr": 8.99,
           "source": "runpod_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
           "memory_gb": 288,
           "tier": "secure",
           "community_price": 6.94,
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "RTX-4090": {
           "price_per_gpu_hr": 0.89,
           "source": "runpod_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
           "memory_gb": 24,
           "tier": "secure",
           "community_price": 0.34,
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "RTX-5090": {
           "price_per_gpu_hr": 1.19,
           "source": "runpod_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
           "memory_gb": 32,
           "tier": "secure",
           "community_price": 0.69,
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "H100-SXM": {
           "price_per_gpu_hr": 3.99,
           "source": "runpod_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
           "memory_gb": 80,
           "tier": "secure",
           "community_price": 2.69,
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "H100-PCIe": {
           "price_per_gpu_hr": 2.89,
           "source": "runpod_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
           "memory_gb": 80,
           "tier": "secure",
           "community_price": 1.99,
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "H200": {
           "price_per_gpu_hr": 5.29,
           "source": "runpod_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
           "memory_gb": 141,
           "tier": "secure",
           "community_price": 3.59,
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "L4": {
           "price_per_gpu_hr": 0.59,
           "source": "runpod_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
           "memory_gb": 24,
           "tier": "secure",
           "community_price": 0.44,
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "L40S": {
           "price_per_gpu_hr": 1.09,
           "source": "runpod_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
           "memory_gb": 48,
           "tier": "secure",
           "community_price": 0.79,
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "A100-40GB": {
           "price_per_gpu_hr": 1,
           "source": "runpod_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
           "tier": "community",
           "community_price": 1,
           "memory_gb": 40,
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "A100-PCIe": {
           "price_per_gpu_hr": 1.79,
           "source": "runpod_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
           "tier": "secure",
           "community_price": 1.19,
           "memory_gb": 80,
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         }
       },
-      "last_updated": "2026-11-10T08:12:00.849750+00:00"
+      "last_updated": "2026-11-10T08:14:40.772597+00:00"
     },
     "Vast.ai": {
       "provider_name": "Vast.ai",
       "type": "marketplace",
       "gpus": {
         "RTX-5090": {
-          "price_per_gpu_hr": 0.5356,
+          "price_per_gpu_hr": 0.5478,
           "source": "vastai_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
           "low_price": 0.4048,
-          "median_price": 0.6244,
+          "median_price": 0.6529,
           "num_offers": 64,
           "price_basis": "25th percentile of 64 cheapest verified on-demand offers",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "L4": {
-          "price_per_gpu_hr": 0.4696,
+          "price_per_gpu_hr": 0.2522,
           "source": "vastai_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
           "low_price": 0.2507,
           "median_price": 0.4726,
-          "num_offers": 7,
-          "price_basis": "25th percentile of 7 cheapest verified on-demand offers",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
-        },
-        "RTX-4090": {
-          "price_per_gpu_hr": 0.4544,
-          "source": "vastai_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "low_price": 0.3489,
-          "median_price": 0.509,
-          "num_offers": 62,
-          "price_basis": "25th percentile of 62 cheapest verified on-demand offers",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
-        },
-        "A100-80GB": {
-          "price_per_gpu_hr": 1.1018,
-          "source": "vastai_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "low_price": 1.0022,
-          "median_price": 1.2156,
-          "num_offers": 4,
-          "price_basis": "25th percentile of 4 cheapest verified on-demand offers",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
-        },
-        "L40S": {
-          "price_per_gpu_hr": 0.7748,
-          "source": "vastai_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "low_price": 0.6681,
-          "median_price": 0.8007,
           "num_offers": 9,
           "price_basis": "25th percentile of 9 cheapest verified on-demand offers",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
+        },
+        "RTX-4090": {
+          "price_per_gpu_hr": 0.4556,
+          "source": "vastai_api",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "low_price": 0.363,
+          "median_price": 0.4815,
+          "num_offers": 63,
+          "price_basis": "25th percentile of 63 cheapest verified on-demand offers",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
+        },
+        "A100-80GB": {
+          "price_per_gpu_hr": 1.1347,
+          "source": "vastai_api",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "low_price": 1.0022,
+          "median_price": 1.2156,
+          "num_offers": 9,
+          "price_basis": "25th percentile of 9 cheapest verified on-demand offers",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
+        },
+        "L40S": {
+          "price_per_gpu_hr": 0.7741,
+          "source": "vastai_api",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "low_price": 0.6681,
+          "median_price": 0.8015,
+          "num_offers": 10,
+          "price_basis": "25th percentile of 10 cheapest verified on-demand offers",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "H100-PCIe": {
           "price_per_gpu_hr": 2.7928,
           "source": "vastai_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
           "low_price": 2.7928,
           "median_price": 2.7966,
           "num_offers": 3,
           "price_basis": "25th percentile of 3 cheapest verified on-demand offers",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "H100-SXM": {
-          "price_per_gpu_hr": 2.562,
+          "price_per_gpu_hr": 2.2022,
           "source": "vastai_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
           "low_price": 2.2022,
-          "median_price": 3.4053,
-          "num_offers": 9,
-          "price_basis": "25th percentile of 9 cheapest verified on-demand offers",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "median_price": 4.0807,
+          "num_offers": 5,
+          "price_basis": "25th percentile of 5 cheapest verified on-demand offers",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "H200": {
-          "price_per_gpu_hr": 4.3443,
+          "price_per_gpu_hr": 5.1985,
           "source": "vastai_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
           "low_price": 4.3432,
-          "median_price": 6.588,
-          "num_offers": 6,
-          "price_basis": "25th percentile of 6 cheapest verified on-demand offers",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "median_price": 5.2643,
+          "num_offers": 8,
+          "price_basis": "25th percentile of 8 cheapest verified on-demand offers",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "B200": {
           "price_per_gpu_hr": 8.7505,
           "source": "vastai_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
           "low_price": 8.7505,
           "median_price": 8.751,
           "num_offers": 3,
           "price_basis": "25th percentile of 3 cheapest verified on-demand offers",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "GB200": {
-          "price_per_gpu_hr": 9.3776,
+          "price_per_gpu_hr": 8.1354,
           "source": "vastai_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
           "low_price": 8.1354,
-          "median_price": 9.3776,
-          "num_offers": 4,
-          "price_basis": "25th percentile of 4 cheapest verified on-demand offers",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "median_price": 8.7526,
+          "num_offers": 3,
+          "price_basis": "25th percentile of 3 cheapest verified on-demand offers",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "A100-40GB": {
           "price_per_gpu_hr": 0.4022,
@@ -806,11 +806,11 @@
           "num_offers": 6,
           "price_basis": "25th percentile of 6 cheapest verified on-demand offers",
           "source": "vastai_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         }
       },
-      "last_updated": "2026-11-10T08:12:00.849750+00:00"
+      "last_updated": "2026-11-10T08:14:40.772597+00:00"
     },
     "Together": {
       "provider_name": "Together AI",
@@ -819,23 +819,23 @@
         "B200": {
           "price_per_gpu_hr": 8.19,
           "source": "together_scrape",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00"
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00"
         },
         "H200": {
           "price_per_gpu_hr": 5.99,
           "source": "together_scrape",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00"
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00"
         },
         "H100-SXM": {
           "price_per_gpu_hr": 3.99,
           "source": "together_scrape",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00"
+          "last_verified": "2026-11-10T08:14:40.772597+00:00",
+          "last_updated": "2026-11-10T08:14:40.772597+00:00"
         }
       },
-      "last_updated": "2026-11-10T08:12:00.849750+00:00"
+      "last_updated": "2026-11-10T08:14:40.772597+00:00"
     },
     "Oracle": {
       "provider_name": "Oracle Cloud (OCI)",
@@ -846,67 +846,67 @@
           "instance": "BM.GPU.L40S.4",
           "gpus_per_instance": 4,
           "source": "oci_price_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "MI300X": {
           "price_per_gpu_hr": 6.0,
           "instance": "BM.GPU.MI300X.8",
           "gpus_per_instance": 8,
           "source": "oci_price_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "H200": {
           "price_per_gpu_hr": 10.0,
           "instance": "BM.GPU.H200.8",
           "gpus_per_instance": 8,
           "source": "oci_price_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "B200": {
           "price_per_gpu_hr": 14.0,
           "instance": "BM.GPU.B200.8",
           "gpus_per_instance": 8,
           "source": "oci_price_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "GB200": {
           "price_per_gpu_hr": 16.0,
           "instance": "BM.GPU.GB200.4",
           "gpus_per_instance": 4,
           "source": "oci_price_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "B300": {
           "price_per_gpu_hr": 15.0,
           "instance": "BM.GPU.B300.8",
           "gpus_per_instance": 8,
           "source": "oci_price_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "A100-80GB": {
           "price_per_gpu_hr": 4.0,
           "instance": "BM.GPU.A100-v2.8",
           "gpus_per_instance": 8,
           "source": "oci_price_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "H100-SXM": {
           "price_per_gpu_hr": 10.0,
           "instance": "BM.GPU.H100.8",
           "gpus_per_instance": 8,
           "source": "oci_price_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         }
       },
-      "last_updated": "2026-11-10T08:12:00.849750+00:00"
+      "last_updated": "2026-11-10T08:14:40.772597+00:00"
     },
     "Nebius": {
       "provider_name": "Nebius",
@@ -917,43 +917,43 @@
           "instance": "NVIDIA HGX B300 (8-GPU)",
           "gpus_per_instance": 8,
           "source": "nebius_pricing_page",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "B200": {
           "price_per_gpu_hr": 8.5,
           "instance": "NVIDIA HGX B200 (8-GPU)",
           "gpus_per_instance": 8,
           "source": "nebius_pricing_page",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "H200": {
           "price_per_gpu_hr": 5.4,
           "instance": "NVIDIA HGX H200 (8-GPU)",
           "gpus_per_instance": 8,
           "source": "nebius_pricing_page",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "H100-SXM": {
           "price_per_gpu_hr": 4.5,
           "instance": "NVIDIA HGX H100 (8-GPU)",
           "gpus_per_instance": 8,
           "source": "nebius_pricing_page",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "L40S": {
           "price_per_gpu_hr": 1.55,
           "instance": "NVIDIA L40S with Intel CPU [from]",
           "gpus_per_instance": 1,
           "source": "nebius_pricing_page",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         }
       },
-      "last_updated": "2026-11-10T08:12:00.849750+00:00"
+      "last_updated": "2026-11-10T08:14:40.772597+00:00"
     },
     "DigitalOcean": {
       "provider_name": "DigitalOcean",
@@ -965,8 +965,8 @@
           "gpus_per_instance": 8,
           "reserved_1yr_hr": 2.88,
           "source": "digitalocean_pricing_page",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "MI300X": {
           "price_per_gpu_hr": 2.59,
@@ -974,8 +974,8 @@
           "gpus_per_instance": 8,
           "reserved_1yr_hr": 1.91,
           "source": "digitalocean_pricing_page",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "H200": {
           "price_per_gpu_hr": 4.47,
@@ -983,8 +983,8 @@
           "gpus_per_instance": 8,
           "reserved_1yr_hr": 3.4,
           "source": "digitalocean_pricing_page",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "H100-SXM": {
           "price_per_gpu_hr": 4.41,
@@ -992,19 +992,19 @@
           "gpus_per_instance": 8,
           "reserved_1yr_hr": 3.26,
           "source": "digitalocean_pricing_page",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "L40S": {
           "price_per_gpu_hr": 1.57,
           "instance": "GPU Droplet NVIDIA L40S (1-GPU)",
           "gpus_per_instance": 1,
           "source": "digitalocean_pricing_page",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         }
       },
-      "last_updated": "2026-11-10T08:12:00.849750+00:00"
+      "last_updated": "2026-11-10T08:14:40.772597+00:00"
     },
     "Vultr": {
       "provider_name": "Vultr",
@@ -1015,11 +1015,11 @@
           "instance": "vcg-l40s-64c-750g-192vram",
           "gpus_per_instance": 4,
           "source": "vultr_plans_api",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         }
       },
-      "last_updated": "2026-11-10T08:12:00.849750+00:00"
+      "last_updated": "2026-11-10T08:14:40.772597+00:00"
     },
     "Crusoe": {
       "provider_name": "Crusoe",
@@ -1030,59 +1030,59 @@
           "instance": "NVIDIA B300 288GB HGX (8-GPU)",
           "gpus_per_instance": 8,
           "source": "crusoe_pricing_page",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "H200": {
           "price_per_gpu_hr": 4.29,
           "instance": "NVIDIA H200 141GB HGX (8-GPU)",
           "gpus_per_instance": 8,
           "source": "crusoe_pricing_page",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "H100-SXM": {
           "price_per_gpu_hr": 3.9,
           "instance": "NVIDIA H100 80GB HGX (8-GPU)",
           "gpus_per_instance": 8,
           "source": "crusoe_pricing_page",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "A100-80GB": {
           "price_per_gpu_hr": 2.3,
           "instance": "NVIDIA A100 80GB SXM (8-GPU)",
           "gpus_per_instance": 8,
           "source": "crusoe_pricing_page",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "A100-PCIe": {
           "price_per_gpu_hr": 2.0,
           "instance": "NVIDIA A100 80GB PCIe (per GPU)",
           "gpus_per_instance": 1,
           "source": "crusoe_pricing_page",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "L40S": {
           "price_per_gpu_hr": 1.5,
           "instance": "NVIDIA L40S 48GB (per GPU)",
           "gpus_per_instance": 1,
           "source": "crusoe_pricing_page",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         },
         "MI300X": {
           "price_per_gpu_hr": 3.45,
           "instance": "AMD MI300X 192GB (8-GPU)",
           "gpus_per_instance": 8,
           "source": "crusoe_pricing_page",
-          "last_updated": "2026-11-10T08:12:00.849750+00:00",
-          "last_verified": "2026-11-10T08:12:00.849750+00:00"
+          "last_updated": "2026-11-10T08:14:40.772597+00:00",
+          "last_verified": "2026-11-10T08:14:40.772597+00:00"
         }
       },
-      "last_updated": "2026-11-10T08:12:00.849750+00:00"
+      "last_updated": "2026-11-10T08:14:40.772597+00:00"
     }
   },
   "historical": {
@@ -1237,7 +1237,7 @@
         "providers": 8
       },
       "2026-11": {
-        "avg": 6.95,
+        "avg": 6.97,
         "min": 3.96,
         "max": 10.6,
         "observations": 62,
@@ -1290,7 +1290,7 @@
         "providers": 8
       },
       "2026-11": {
-        "avg": 6.38,
+        "avg": 6.37,
         "min": 1.79,
         "max": 12.29,
         "observations": 80,
@@ -1502,7 +1502,7 @@
         "providers": 8
       },
       "2026-11": {
-        "avg": 0.94,
+        "avg": 0.93,
         "min": 0.21,
         "max": 1.67,
         "observations": 40,
@@ -1661,7 +1661,7 @@
         "providers": 8
       },
       "2026-11": {
-        "avg": 16.1,
+        "avg": 16.06,
         "min": 8.13,
         "max": 27.04,
         "observations": 27,
@@ -1957,7 +1957,7 @@
       "52w_low": 164.27,
       "ytd_pct": -5.39,
       "52w_range": "$164.27-$243.37",
-      "last_updated": "2026-11-10T08:12:02.824152+00:00"
+      "last_updated": "2026-11-10T08:14:41.885123+00:00"
     },
     "amd_stock": {
       "ticker": "AMD",
@@ -1969,7 +1969,7 @@
       "52w_low": 188.22,
       "ytd_pct": 127.58,
       "52w_range": "$188.22-$658.52",
-      "last_updated": "2026-11-10T08:12:02.961722+00:00"
+      "last_updated": "2026-11-10T08:14:41.946889+00:00"
     },
     "gpu_market_size_bn": {
       "2023": 56,
@@ -2085,15 +2085,15 @@
         "GB200": 27.04
       },
       "premium_pct": {
-        "GB200": 0.0,
         "A100-80GB": 0.0,
+        "GB200": 0.0,
         "H100-SXM": 0.0
       },
       "avg_premium_pct": 0.0,
       "energy_cost_kwh": null,
       "key_hubs": [],
       "source": "azure_retail_api",
-      "last_verified": "2026-11-10T08:12:53.255169+00:00"
+      "last_verified": "2026-11-10T08:15:07.392507+00:00"
     },
     "US West": {
       "arm_region": "westus2",
@@ -2104,15 +2104,15 @@
         "GB200": 27.04
       },
       "premium_pct": {
-        "GB200": 0.0,
         "A100-80GB": 0.0,
+        "GB200": 0.0,
         "H100-SXM": 0.0
       },
       "avg_premium_pct": 0.0,
       "energy_cost_kwh": null,
       "key_hubs": [],
       "source": "azure_retail_api",
-      "last_verified": "2026-11-10T08:12:53.255187+00:00"
+      "last_verified": "2026-11-10T08:15:07.392519+00:00"
     },
     "Netherlands": {
       "arm_region": "westeurope",
@@ -2129,7 +2129,7 @@
       "energy_cost_kwh": null,
       "key_hubs": [],
       "source": "azure_retail_api",
-      "last_verified": "2026-11-10T08:12:53.255194+00:00"
+      "last_verified": "2026-11-10T08:15:07.392524+00:00"
     },
     "UK South": {
       "arm_region": "uksouth",
@@ -2140,30 +2140,32 @@
         "GB200": 33.8
       },
       "premium_pct": {
-        "GB200": 25.0,
         "A100-80GB": 25.0,
+        "GB200": 25.0,
         "H100-SXM": 25.0
       },
       "avg_premium_pct": 25.0,
       "energy_cost_kwh": null,
       "key_hubs": [],
       "source": "azure_retail_api",
-      "last_verified": "2026-11-10T08:12:53.255198+00:00"
+      "last_verified": "2026-11-10T08:15:07.392528+00:00"
     },
     "UAE North": {
       "arm_region": "uaenorth",
       "continent": "Middle East",
       "gpu_pricing": {
+        "H100-SXM": 17.575,
         "A100-80GB": 5.858
       },
       "premium_pct": {
-        "A100-80GB": 43.0
+        "A100-80GB": 43.0,
+        "H100-SXM": 43.0
       },
       "avg_premium_pct": 43.0,
       "energy_cost_kwh": null,
       "key_hubs": [],
       "source": "azure_retail_api",
-      "last_verified": "2026-11-10T08:12:53.255203+00:00"
+      "last_verified": "2026-11-10T08:15:07.392532+00:00"
     },
     "Japan East": {
       "arm_region": "japaneast",
@@ -2180,7 +2182,7 @@
       "energy_cost_kwh": null,
       "key_hubs": [],
       "source": "azure_retail_api",
-      "last_verified": "2026-11-10T08:12:53.255208+00:00"
+      "last_verified": "2026-11-10T08:15:07.392536+00:00"
     },
     "Australia East": {
       "arm_region": "australiaeast",
@@ -2191,22 +2193,22 @@
         "GB200": 39.21
       },
       "premium_pct": {
-        "GB200": 45.0,
         "A100-80GB": 45.0,
+        "GB200": 45.0,
         "H100-SXM": 45.0
       },
       "avg_premium_pct": 45.0,
       "energy_cost_kwh": null,
       "key_hubs": [],
       "source": "azure_retail_api",
-      "last_verified": "2026-11-10T08:12:53.255213+00:00"
+      "last_verified": "2026-11-10T08:15:07.392540+00:00"
     }
   },
   "tco": {
     "H100-SXM": {
       "gpu_price_usd": 30000,
       "useful_life_years": 4,
-      "cloud_on_demand_hr": 6.19,
+      "cloud_on_demand_hr": 6.16,
       "cloud_reserved_1yr_hr": 6.27,
       "cloud_reserved_3yr_hr": 4.41,
       "cloud_spot_hr": 4.43,
@@ -2299,7 +2301,7 @@
     "H200": {
       "gpu_price_usd": 35000,
       "useful_life_years": 4,
-      "cloud_on_demand_hr": 6.84,
+      "cloud_on_demand_hr": 6.91,
       "cloud_reserved_1yr_hr": 5.51,
       "cloud_reserved_3yr_hr": 4.96,
       "cloud_spot_hr": 6.36,
@@ -2349,7 +2351,7 @@
     "GB200": {
       "gpu_price_usd": 35000,
       "useful_life_years": 4,
-      "cloud_on_demand_hr": 15.73,
+      "cloud_on_demand_hr": 15.42,
       "cloud_reserved_1yr_hr": 17.31,
       "cloud_reserved_3yr_hr": 11.9,
       "cloud_spot_hr": null,
@@ -2610,7 +2612,7 @@
   },
   "inference": {
     "as_of": "2026-11-09",
-    "updated": "2026-11-10T08:12:02.622357+00:00",
+    "updated": "2026-11-10T08:14:41.803659+00:00",
     "models": [
       {
         "rank": 1,
@@ -2641,7 +2643,7 @@
             "input": 0.112,
             "output": 0.336,
             "context_k": 1049,
-            "uptime_1d": 5.3
+            "uptime_1d": 4.9
           },
           {
             "provider": "Morph",
@@ -2665,7 +2667,7 @@
             "input": 0.12,
             "output": 0.48,
             "context_k": 1049,
-            "uptime_1d": 98.0
+            "uptime_1d": 98.1
           },
           {
             "provider": "Relace",
@@ -2982,7 +2984,7 @@
             "input": 0.112,
             "output": 0.336,
             "context_k": 1049,
-            "uptime_1d": 5.3
+            "uptime_1d": 4.9
           },
           {
             "provider": "Morph",
@@ -3006,7 +3008,7 @@
             "input": 0.12,
             "output": 0.48,
             "context_k": 1049,
-            "uptime_1d": 98.0
+            "uptime_1d": 98.1
           },
           {
             "provider": "Relace",
@@ -3510,7 +3512,7 @@
             "input": 0.12,
             "output": 0.4,
             "context_k": 1049,
-            "uptime_1d": 97.6
+            "uptime_1d": 97.7
           },
           {
             "provider": "NextBit",
@@ -3739,7 +3741,7 @@
             "input": 1.0,
             "output": 2.7,
             "context_k": 262,
-            "uptime_1d": 76.8
+            "uptime_1d": 76.3
           },
           {
             "provider": "StepFun",
@@ -4121,7 +4123,7 @@
             "input": 0.15,
             "output": 0.6,
             "context_k": 1049,
-            "uptime_1d": 100
+            "uptime_1d": 99.9
           },
           {
             "provider": "Minimax",
@@ -4129,7 +4131,7 @@
             "input": 0.15,
             "output": 0.6,
             "context_k": 1049,
-            "uptime_1d": 93.0
+            "uptime_1d": 93.3
           }
         ],
         "out_low": 0.45,
@@ -4219,7 +4221,7 @@
           {
             "provider": "Wafer",
             "quantization": "mxfp4",
-            "input": 0.153,
+            "input": 0.162,
             "output": 10.0,
             "context_k": 1049,
             "uptime_1d": 100
@@ -4365,7 +4367,7 @@
         "out_high": 20.0,
         "out_median": 10.0,
         "spread_x": 2.4,
-        "in_low": 0.153,
+        "in_low": 0.162,
         "cheapest_provider": "Phala",
         "dearest_provider": "Moonshot AI",
         "quantizations": [
@@ -4420,7 +4422,7 @@
             "input": 2.0,
             "output": 10.0,
             "context_k": 1050,
-            "uptime_1d": 88.7
+            "uptime_1d": 88.3
           },
           {
             "provider": "OpenAI",
@@ -4605,7 +4607,7 @@
             "input": 0.6,
             "output": 2.5,
             "context_k": 1044,
-            "uptime_1d": 98.5
+            "uptime_1d": 98.6
           },
           {
             "provider": "Phala",
@@ -4645,7 +4647,7 @@
             "input": 0.98,
             "output": 3.08,
             "context_k": 1049,
-            "uptime_1d": 91.2
+            "uptime_1d": 91.7
           },
           {
             "provider": "River",
@@ -4837,7 +4839,7 @@
             "input": 1.68,
             "output": 5.28,
             "context_k": 1049,
-            "uptime_1d": 97.0
+            "uptime_1d": 97.1
           },
           {
             "provider": "Parasail",
@@ -4962,7 +4964,7 @@
             "input": 0.105,
             "output": 0.21,
             "context_k": 1049,
-            "uptime_1d": 50.2
+            "uptime_1d": 50.3
           },
           {
             "provider": "SiliconFlow",
@@ -4978,7 +4980,7 @@
             "input": 0.14,
             "output": 0.28,
             "context_k": 1049,
-            "uptime_1d": 72.7
+            "uptime_1d": 72.4
           },
           {
             "provider": "AtlasCloud",
@@ -5414,7 +5416,7 @@
             "input": 0.14,
             "output": 0.28,
             "context_k": 1049,
-            "uptime_1d": 91.8
+            "uptime_1d": 91.9
           },
           {
             "provider": "Xiaomi",
@@ -5438,7 +5440,7 @@
             "input": 0.175,
             "output": 0.35,
             "context_k": 1000,
-            "uptime_1d": 90.6
+            "uptime_1d": 90.7
           }
         ],
         "out_low": 0.224,
@@ -5804,7 +5806,7 @@
         "name": "River",
         "models": 4,
         "median_output": 0.48,
-        "median_uptime_1d": 97.8,
+        "median_uptime_1d": 97.9,
         "cheapest_wins": 0
       },
       {
@@ -5902,7 +5904,7 @@
         "name": "Featherless",
         "models": 1,
         "median_output": 2.7,
-        "median_uptime_1d": 76.8,
+        "median_uptime_1d": 76.3,
         "cheapest_wins": 1
       },
       {
@@ -5923,7 +5925,7 @@
         "name": "Minimax",
         "models": 1,
         "median_output": 0.6,
-        "median_uptime_1d": 93.0,
+        "median_uptime_1d": 93.3,
         "cheapest_wins": 0
       },
       {
@@ -7737,14 +7739,14 @@
     },
     "H200": {
       "on_demand_low": 4.29,
-      "on_demand_avg": 6.84,
+      "on_demand_avg": 6.91,
       "on_demand_high": 10.6,
       "num_providers": 11,
       "quarterly_trend": [
         5.12,
         5.26,
         6.49,
-        6.84
+        6.91
       ],
       "trend_quarter": "2026Q4",
       "reserved_1yr_low": 3.4,
@@ -7767,15 +7769,15 @@
       "spot_providers": 1
     },
     "H100-SXM": {
-      "on_demand_low": 2.56,
-      "on_demand_avg": 6.19,
+      "on_demand_low": 2.2,
+      "on_demand_avg": 6.16,
       "on_demand_high": 12.29,
       "num_providers": 12,
       "quarterly_trend": [
         5.4,
         5.73,
         6.15,
-        6.19
+        6.16
       ],
       "trend_quarter": "2026Q4",
       "reserved_1yr_low": 3.26,
@@ -7798,7 +7800,7 @@
       "spot_providers": 2
     },
     "A100-80GB": {
-      "on_demand_low": 1.1,
+      "on_demand_low": 1.13,
       "on_demand_avg": 3.08,
       "on_demand_high": 5.07,
       "num_providers": 9,
@@ -7860,7 +7862,7 @@
       "spot_providers": 1
     },
     "RTX-4090": {
-      "on_demand_low": 0.45,
+      "on_demand_low": 0.46,
       "on_demand_avg": 0.67,
       "on_demand_high": 0.89,
       "num_providers": 2,
@@ -7929,15 +7931,15 @@
       "spot_providers": 2
     },
     "L4": {
-      "on_demand_low": 0.47,
-      "on_demand_avg": 0.93,
+      "on_demand_low": 0.25,
+      "on_demand_avg": 0.88,
       "on_demand_high": 1.67,
       "num_providers": 4,
       "quarterly_trend": [
         0.86,
         0.86,
         0.87,
-        0.93
+        0.88
       ],
       "trend_quarter": "2026Q4",
       "reserved_1yr_low": 0.63,
@@ -7998,15 +8000,15 @@
       "trend_quarter": "2026Q4"
     },
     "GB200": {
-      "on_demand_low": 9.38,
-      "on_demand_avg": 15.73,
+      "on_demand_low": 8.14,
+      "on_demand_avg": 15.42,
       "on_demand_high": 27.04,
       "num_providers": 4,
       "quarterly_trend": [
         19.51,
         19.51,
         18.77,
-        15.73
+        15.42
       ],
       "trend_quarter": "2026Q4",
       "reserved_1yr_low": 17.31,
@@ -8023,15 +8025,15 @@
       "reserved_3yr_providers": 1
     },
     "RTX-5090": {
-      "on_demand_low": 0.54,
-      "on_demand_avg": 0.86,
+      "on_demand_low": 0.55,
+      "on_demand_avg": 0.87,
       "on_demand_high": 1.19,
       "num_providers": 2,
       "quarterly_trend": [
         0.56,
         0.51,
         0.73,
-        0.86
+        0.87
       ],
       "trend_quarter": "2026Q4"
     },
@@ -8279,10 +8281,6 @@
       "github_repos": 172,
       "score_history": [
         {
-          "date": "2026-11-03",
-          "score": 59
-        },
-        {
           "date": "2026-11-04",
           "score": 59
         },
@@ -8309,9 +8307,13 @@
         {
           "date": "2026-11-10",
           "score": 59
+        },
+        {
+          "date": "2026-11-10",
+          "score": 59
         }
       ],
-      "last_updated": "2026-11-10T08:12:25.704620+00:00",
+      "last_updated": "2026-11-10T08:15:04.971647+00:00",
       "hot_topics": [
         {
           "title": "Fine-tuned Qwen3 SLMs (0.6-8B) beat frontier LLMs on narrow tasks",
@@ -8354,10 +8356,6 @@
       "github_repos": 13,
       "score_history": [
         {
-          "date": "2026-11-03",
-          "score": 39
-        },
-        {
           "date": "2026-11-04",
           "score": 39
         },
@@ -8384,9 +8382,13 @@
         {
           "date": "2026-11-10",
           "score": 39
+        },
+        {
+          "date": "2026-11-10",
+          "score": 39
         }
       ],
-      "last_updated": "2026-11-10T08:12:25.704620+00:00",
+      "last_updated": "2026-11-10T08:15:04.971647+00:00",
       "hot_topics": [
         {
           "title": "Genuinely curious what doors the M5 Ultra will open",
@@ -8426,10 +8428,6 @@
       "github_repos": 35,
       "score_history": [
         {
-          "date": "2026-11-03",
-          "score": 50
-        },
-        {
           "date": "2026-11-04",
           "score": 50
         },
@@ -8456,9 +8454,13 @@
         {
           "date": "2026-11-10",
           "score": 50
+        },
+        {
+          "date": "2026-11-10",
+          "score": 50
         }
       ],
-      "last_updated": "2026-11-10T08:12:25.704620+00:00",
+      "last_updated": "2026-11-10T08:15:04.971647+00:00",
       "hot_topics": [
         {
           "title": "55 \u2192 282 tok/s: How I got Qwen3.5-397B running at speed on 4x RTX PRO 6000 Blackwell",
@@ -8500,10 +8502,6 @@
       "github_repos": 52,
       "score_history": [
         {
-          "date": "2026-11-03",
-          "score": 50
-        },
-        {
           "date": "2026-11-04",
           "score": 50
         },
@@ -8530,9 +8528,13 @@
         {
           "date": "2026-11-10",
           "score": 51
+        },
+        {
+          "date": "2026-11-10",
+          "score": 51
         }
       ],
-      "last_updated": "2026-11-10T08:12:25.704620+00:00",
+      "last_updated": "2026-11-10T08:15:04.971647+00:00",
       "hot_topics": [
         {
           "title": "My company just handed me a 2x H200 (282GB VRAM) rig. Help me pick the \"Intelligence\" ceiling.",
@@ -8573,10 +8575,6 @@
       "github_repos": 241,
       "score_history": [
         {
-          "date": "2026-11-03",
-          "score": 54
-        },
-        {
           "date": "2026-11-04",
           "score": 54
         },
@@ -8603,9 +8601,13 @@
         {
           "date": "2026-11-10",
           "score": 54
+        },
+        {
+          "date": "2026-11-10",
+          "score": 54
         }
       ],
-      "last_updated": "2026-11-10T08:12:25.704620+00:00",
+      "last_updated": "2026-11-10T08:15:04.971647+00:00",
       "hot_topics": [
         {
           "title": "FlashAttention-4: 1613 TFLOPs/s, 2.7x faster than Triton, written in Python. What it means for infer",
@@ -8646,10 +8648,6 @@
       "github_repos": 60,
       "score_history": [
         {
-          "date": "2026-11-03",
-          "score": 33
-        },
-        {
           "date": "2026-11-04",
           "score": 33
         },
@@ -8676,9 +8674,13 @@
         {
           "date": "2026-11-10",
           "score": 33
+        },
+        {
+          "date": "2026-11-10",
+          "score": 33
         }
       ],
-      "last_updated": "2026-11-10T08:12:25.704620+00:00",
+      "last_updated": "2026-11-10T08:15:04.971647+00:00",
       "hot_topics": []
     },
     "L40S": {
@@ -8702,10 +8704,6 @@
       "top_use_case": "Inference serving & fine-tuning small models",
       "github_repos": 20,
       "score_history": [
-        {
-          "date": "2026-11-03",
-          "score": 44
-        },
         {
           "date": "2026-11-04",
           "score": 44
@@ -8733,9 +8731,13 @@
         {
           "date": "2026-11-10",
           "score": 45
+        },
+        {
+          "date": "2026-11-10",
+          "score": 45
         }
       ],
-      "last_updated": "2026-11-10T08:12:25.704620+00:00",
+      "last_updated": "2026-11-10T08:15:04.971647+00:00",
       "hot_topics": [
         {
           "title": "Genuinely curious what doors the M5 Ultra will open",
@@ -8776,10 +8778,6 @@
       "github_repos": 66,
       "score_history": [
         {
-          "date": "2026-11-03",
-          "score": 51
-        },
-        {
           "date": "2026-11-04",
           "score": 51
         },
@@ -8806,9 +8804,13 @@
         {
           "date": "2026-11-10",
           "score": 51
+        },
+        {
+          "date": "2026-11-10",
+          "score": 51
         }
       ],
-      "last_updated": "2026-11-10T08:12:25.704620+00:00",
+      "last_updated": "2026-11-10T08:15:04.971647+00:00",
       "hot_topics": [
         {
           "title": "Genuinely curious what doors the M5 Ultra will open",
@@ -8849,7 +8851,7 @@
     "most_competitive_market": {
       "gpu": "NVIDIA H100 SXM 80GB",
       "num_providers": 12,
-      "price_spread_pct": 379.7
+      "price_spread_pct": 458.1
     },
     "market_indicators": {
       "nvidia_stock": {
@@ -8862,7 +8864,7 @@
         "52w_low": 164.27,
         "ytd_pct": -5.39,
         "52w_range": "$164.27-$243.37",
-        "last_updated": "2026-11-10T08:12:02.824152+00:00"
+        "last_updated": "2026-11-10T08:14:41.885123+00:00"
       },
       "amd_stock": {
         "ticker": "AMD",
@@ -8874,7 +8876,7 @@
         "52w_low": 188.22,
         "ytd_pct": 127.58,
         "52w_range": "$188.22-$658.52",
-        "last_updated": "2026-11-10T08:12:02.961722+00:00"
+        "last_updated": "2026-11-10T08:14:41.946889+00:00"
       },
       "gpu_market_size_bn": {
         "2023": 56,
@@ -8997,7 +8999,7 @@
         "num_providers": 5,
         "stale_excluded": 0,
         "price_spread_pct": 151.0,
-        "monthly_change_pct": 15.1,
+        "monthly_change_pct": 25.1,
         "flops_per_dollar": 379.0,
         "vram_per_dollar": 55.7,
         "value_basis": "median price across providers"
@@ -9084,21 +9086,21 @@
         "vram_gb": 24,
         "arch": "Ada Lovelace",
         "tier": "consumer",
-        "cheapest_price": 0.4544,
+        "cheapest_price": 0.4556,
         "cheapest_provider": "Vast.ai",
         "cheapest_provider_type": "marketplace",
         "cloud_low_price": null,
         "cloud_low_provider": null,
-        "marketplace_low_price": 0.4544,
+        "marketplace_low_price": 0.4556,
         "marketplace_low_provider": "Vast.ai",
         "most_expensive": 0.89,
         "avg_price": 0.67,
-        "median_price": 0.672,
+        "median_price": 0.673,
         "num_providers": 2,
         "stale_excluded": 0,
-        "price_spread_pct": 95.9,
+        "price_spread_pct": 95.3,
         "monthly_change_pct": -10.8,
-        "flops_per_dollar": 245.8,
+        "flops_per_dollar": 245.5,
         "vram_per_dollar": 35.7,
         "value_basis": "median price across providers"
       },
@@ -9109,22 +9111,22 @@
         "vram_gb": 32,
         "arch": "Blackwell",
         "tier": "consumer",
-        "cheapest_price": 0.5356,
+        "cheapest_price": 0.5478,
         "cheapest_provider": "Vast.ai",
         "cheapest_provider_type": "marketplace",
         "cloud_low_price": null,
         "cloud_low_provider": null,
-        "marketplace_low_price": 0.5356,
+        "marketplace_low_price": 0.5478,
         "marketplace_low_provider": "Vast.ai",
         "most_expensive": 1.19,
-        "avg_price": 0.86,
-        "median_price": 0.863,
+        "avg_price": 0.87,
+        "median_price": 0.869,
         "num_providers": 2,
         "stale_excluded": 0,
-        "price_spread_pct": 122.2,
-        "monthly_change_pct": 6.9,
-        "flops_per_dollar": 242.8,
-        "vram_per_dollar": 37.1,
+        "price_spread_pct": 117.2,
+        "monthly_change_pct": 5.7,
+        "flops_per_dollar": 241.1,
+        "vram_per_dollar": 36.8,
         "value_basis": "median price across providers"
       },
       {
@@ -9147,7 +9149,7 @@
         "num_providers": 5,
         "stale_excluded": 0,
         "price_spread_pct": 98.7,
-        "monthly_change_pct": -1.5,
+        "monthly_change_pct": -0.7,
         "flops_per_dollar": 236.8,
         "vram_per_dollar": 30.3,
         "value_basis": "median price across providers"
@@ -9159,20 +9161,20 @@
         "vram_gb": 80,
         "arch": "Hopper",
         "tier": "flagship",
-        "cheapest_price": 2.562,
+        "cheapest_price": 2.2022,
         "cheapest_provider": "Vast.ai",
         "cheapest_provider_type": "marketplace",
         "cloud_low_price": 3.9,
         "cloud_low_provider": "Crusoe",
-        "marketplace_low_price": 2.562,
+        "marketplace_low_price": 2.2022,
         "marketplace_low_provider": "Vast.ai",
         "most_expensive": 12.29,
-        "avg_price": 6.19,
+        "avg_price": 6.16,
         "median_price": 4.545,
         "num_providers": 12,
         "stale_excluded": 0,
-        "price_spread_pct": 379.7,
-        "monthly_change_pct": 2.1,
+        "price_spread_pct": 458.1,
+        "monthly_change_pct": 2.2,
         "flops_per_dollar": 217.7,
         "vram_per_dollar": 17.6,
         "value_basis": "median price across providers"
@@ -9197,7 +9199,7 @@
         "num_providers": 2,
         "stale_excluded": 0,
         "price_spread_pct": 151.0,
-        "monthly_change_pct": 1.4,
+        "monthly_change_pct": 1.8,
         "flops_per_dollar": 217.7,
         "vram_per_dollar": 21.1,
         "value_basis": "median price across providers"
@@ -9209,20 +9211,20 @@
         "vram_gb": 186,
         "arch": "Blackwell",
         "tier": "ultra",
-        "cheapest_price": 9.3776,
+        "cheapest_price": 8.1354,
         "cheapest_provider": "Vast.ai",
         "cheapest_provider_type": "marketplace",
         "cloud_low_price": 10.5,
         "cloud_low_provider": "CoreWeave",
-        "marketplace_low_price": 9.3776,
+        "marketplace_low_price": 8.1354,
         "marketplace_low_provider": "Vast.ai",
         "most_expensive": 27.04,
-        "avg_price": 15.73,
+        "avg_price": 15.42,
         "median_price": 13.25,
         "num_providers": 4,
         "stale_excluded": 0,
-        "price_spread_pct": 188.3,
-        "monthly_change_pct": -13.9,
+        "price_spread_pct": 232.4,
+        "monthly_change_pct": -14.2,
         "flops_per_dollar": 188.7,
         "vram_per_dollar": 14.0,
         "value_basis": "median price across providers"
@@ -9239,15 +9241,15 @@
         "cheapest_provider_type": "cloud",
         "cloud_low_price": 4.29,
         "cloud_low_provider": "Crusoe",
-        "marketplace_low_price": 4.3443,
+        "marketplace_low_price": 5.1985,
         "marketplace_low_provider": "Vast.ai",
         "most_expensive": 10.601,
-        "avg_price": 6.84,
+        "avg_price": 6.91,
         "median_price": 5.99,
         "num_providers": 11,
         "stale_excluded": 0,
         "price_spread_pct": 147.1,
-        "monthly_change_pct": 2.4,
+        "monthly_change_pct": 3.0,
         "flops_per_dollar": 165.2,
         "vram_per_dollar": 23.5,
         "value_basis": "median price across providers"
@@ -9272,7 +9274,7 @@
         "num_providers": 2,
         "stale_excluded": 0,
         "price_spread_pct": 11.7,
-        "monthly_change_pct": 6.2,
+        "monthly_change_pct": 8.9,
         "flops_per_dollar": 164.6,
         "vram_per_dollar": 42.2,
         "value_basis": "median price across providers"
@@ -9284,19 +9286,19 @@
         "vram_gb": 24,
         "arch": "Ada Lovelace",
         "tier": "inference",
-        "cheapest_price": 0.4696,
+        "cheapest_price": 0.2522,
         "cheapest_provider": "Vast.ai",
         "cheapest_provider_type": "marketplace",
         "cloud_low_price": 1.0,
         "cloud_low_provider": "Google Cloud Platform",
-        "marketplace_low_price": 0.4696,
+        "marketplace_low_price": 0.2522,
         "marketplace_low_provider": "Vast.ai",
         "most_expensive": 1.669,
-        "avg_price": 0.93,
+        "avg_price": 0.88,
         "median_price": 0.795,
         "num_providers": 4,
         "stale_excluded": 0,
-        "price_spread_pct": 255.4,
+        "price_spread_pct": 561.8,
         "monthly_change_pct": 4.4,
         "flops_per_dollar": 152.2,
         "vram_per_dollar": 30.2,
@@ -9322,7 +9324,7 @@
         "num_providers": 6,
         "stale_excluded": 0,
         "price_spread_pct": 813.2,
-        "monthly_change_pct": -2.0,
+        "monthly_change_pct": -3.2,
         "flops_per_dollar": 131.8,
         "vram_per_dollar": 16.9,
         "value_basis": "median price across providers"
@@ -9334,19 +9336,19 @@
         "vram_gb": 48,
         "arch": "Ada Lovelace",
         "tier": "mid",
-        "cheapest_price": 0.7748,
+        "cheapest_price": 0.7741,
         "cheapest_provider": "Vast.ai",
         "cheapest_provider_type": "marketplace",
         "cloud_low_price": 1.5,
         "cloud_low_provider": "Crusoe",
-        "marketplace_low_price": 0.7748,
+        "marketplace_low_price": 0.7741,
         "marketplace_low_provider": "Vast.ai",
         "most_expensive": 3.766,
         "avg_price": 1.96,
         "median_price": 1.57,
         "num_providers": 9,
         "stale_excluded": 0,
-        "price_spread_pct": 386.1,
+        "price_spread_pct": 386.5,
         "monthly_change_pct": 0.0,
         "flops_per_dollar": 115.3,
         "vram_per_dollar": 30.6,
@@ -9359,20 +9361,20 @@
         "vram_gb": 80,
         "arch": "Ampere",
         "tier": "high",
-        "cheapest_price": 1.1018,
+        "cheapest_price": 1.1347,
         "cheapest_provider": "Vast.ai",
         "cheapest_provider_type": "marketplace",
         "cloud_low_price": 2.3,
         "cloud_low_provider": "Crusoe",
-        "marketplace_low_price": 1.1018,
+        "marketplace_low_price": 1.1347,
         "marketplace_low_provider": "Vast.ai",
         "most_expensive": 5.069,
         "avg_price": 3.08,
         "median_price": 3.19,
         "num_providers": 9,
         "stale_excluded": 0,
-        "price_spread_pct": 360.1,
-        "monthly_change_pct": 2.4,
+        "price_spread_pct": 346.7,
+        "monthly_change_pct": 2.7,
         "flops_per_dollar": 97.8,
         "vram_per_dollar": 25.1,
         "value_basis": "median price across providers"
@@ -9397,7 +9399,7 @@
         "num_providers": 1,
         "stale_excluded": 1,
         "price_spread_pct": 0.0,
-        "monthly_change_pct": 5.9,
+        "monthly_change_pct": 11.8,
         "flops_per_dollar": 66.5,
         "vram_per_dollar": 16.4,
         "value_basis": "median price across providers"
@@ -9426,10 +9428,6 @@
         "github_repos": 172,
         "score_history": [
           {
-            "date": "2026-11-03",
-            "score": 59
-          },
-          {
             "date": "2026-11-04",
             "score": 59
           },
@@ -9456,9 +9454,13 @@
           {
             "date": "2026-11-10",
             "score": 59
+          },
+          {
+            "date": "2026-11-10",
+            "score": 59
           }
         ],
-        "last_updated": "2026-11-10T08:12:25.704620+00:00",
+        "last_updated": "2026-11-10T08:15:04.971647+00:00",
         "hot_topics": [
           {
             "title": "Fine-tuned Qwen3 SLMs (0.6-8B) beat frontier LLMs on narrow tasks",
@@ -9501,10 +9503,6 @@
         "github_repos": 13,
         "score_history": [
           {
-            "date": "2026-11-03",
-            "score": 39
-          },
-          {
             "date": "2026-11-04",
             "score": 39
           },
@@ -9531,9 +9529,13 @@
           {
             "date": "2026-11-10",
             "score": 39
+          },
+          {
+            "date": "2026-11-10",
+            "score": 39
           }
         ],
-        "last_updated": "2026-11-10T08:12:25.704620+00:00",
+        "last_updated": "2026-11-10T08:15:04.971647+00:00",
         "hot_topics": [
           {
             "title": "Genuinely curious what doors the M5 Ultra will open",
@@ -9573,10 +9575,6 @@
         "github_repos": 35,
         "score_history": [
           {
-            "date": "2026-11-03",
-            "score": 50
-          },
-          {
             "date": "2026-11-04",
             "score": 50
           },
@@ -9603,9 +9601,13 @@
           {
             "date": "2026-11-10",
             "score": 50
+          },
+          {
+            "date": "2026-11-10",
+            "score": 50
           }
         ],
-        "last_updated": "2026-11-10T08:12:25.704620+00:00",
+        "last_updated": "2026-11-10T08:15:04.971647+00:00",
         "hot_topics": [
           {
             "title": "55 \u2192 282 tok/s: How I got Qwen3.5-397B running at speed on 4x RTX PRO 6000 Blackwell",
@@ -9647,10 +9649,6 @@
         "github_repos": 52,
         "score_history": [
           {
-            "date": "2026-11-03",
-            "score": 50
-          },
-          {
             "date": "2026-11-04",
             "score": 50
           },
@@ -9677,9 +9675,13 @@
           {
             "date": "2026-11-10",
             "score": 51
+          },
+          {
+            "date": "2026-11-10",
+            "score": 51
           }
         ],
-        "last_updated": "2026-11-10T08:12:25.704620+00:00",
+        "last_updated": "2026-11-10T08:15:04.971647+00:00",
         "hot_topics": [
           {
             "title": "My company just handed me a 2x H200 (282GB VRAM) rig. Help me pick the \"Intelligence\" ceiling.",
@@ -9720,10 +9722,6 @@
         "github_repos": 241,
         "score_history": [
           {
-            "date": "2026-11-03",
-            "score": 54
-          },
-          {
             "date": "2026-11-04",
             "score": 54
           },
@@ -9750,9 +9748,13 @@
           {
             "date": "2026-11-10",
             "score": 54
+          },
+          {
+            "date": "2026-11-10",
+            "score": 54
           }
         ],
-        "last_updated": "2026-11-10T08:12:25.704620+00:00",
+        "last_updated": "2026-11-10T08:15:04.971647+00:00",
         "hot_topics": [
           {
             "title": "FlashAttention-4: 1613 TFLOPs/s, 2.7x faster than Triton, written in Python. What it means for infer",
@@ -9793,10 +9795,6 @@
         "github_repos": 60,
         "score_history": [
           {
-            "date": "2026-11-03",
-            "score": 33
-          },
-          {
             "date": "2026-11-04",
             "score": 33
           },
@@ -9823,9 +9821,13 @@
           {
             "date": "2026-11-10",
             "score": 33
+          },
+          {
+            "date": "2026-11-10",
+            "score": 33
           }
         ],
-        "last_updated": "2026-11-10T08:12:25.704620+00:00",
+        "last_updated": "2026-11-10T08:15:04.971647+00:00",
         "hot_topics": []
       },
       "L40S": {
@@ -9849,10 +9851,6 @@
         "top_use_case": "Inference serving & fine-tuning small models",
         "github_repos": 20,
         "score_history": [
-          {
-            "date": "2026-11-03",
-            "score": 44
-          },
           {
             "date": "2026-11-04",
             "score": 44
@@ -9880,9 +9878,13 @@
           {
             "date": "2026-11-10",
             "score": 45
+          },
+          {
+            "date": "2026-11-10",
+            "score": 45
           }
         ],
-        "last_updated": "2026-11-10T08:12:25.704620+00:00",
+        "last_updated": "2026-11-10T08:15:04.971647+00:00",
         "hot_topics": [
           {
             "title": "Genuinely curious what doors the M5 Ultra will open",
@@ -9923,10 +9925,6 @@
         "github_repos": 66,
         "score_history": [
           {
-            "date": "2026-11-03",
-            "score": 51
-          },
-          {
             "date": "2026-11-04",
             "score": 51
           },
@@ -9953,9 +9951,13 @@
           {
             "date": "2026-11-10",
             "score": 51
+          },
+          {
+            "date": "2026-11-10",
+            "score": 51
           }
         ],
-        "last_updated": "2026-11-10T08:12:25.704620+00:00",
+        "last_updated": "2026-11-10T08:15:04.971647+00:00",
         "hot_topics": [
           {
             "title": "Genuinely curious what doors the M5 Ultra will open",
@@ -9997,7 +9999,7 @@
       "num_providers": 5,
       "stale_excluded": 0,
       "price_spread_pct": 151.0,
-      "monthly_change_pct": 15.1,
+      "monthly_change_pct": 25.1,
       "flops_per_dollar": 379.0,
       "vram_per_dollar": 55.7,
       "value_basis": "median price across providers"
@@ -10084,21 +10086,21 @@
       "vram_gb": 24,
       "arch": "Ada Lovelace",
       "tier": "consumer",
-      "cheapest_price": 0.4544,
+      "cheapest_price": 0.4556,
       "cheapest_provider": "Vast.ai",
       "cheapest_provider_type": "marketplace",
       "cloud_low_price": null,
       "cloud_low_provider": null,
-      "marketplace_low_price": 0.4544,
+      "marketplace_low_price": 0.4556,
       "marketplace_low_provider": "Vast.ai",
       "most_expensive": 0.89,
       "avg_price": 0.67,
-      "median_price": 0.672,
+      "median_price": 0.673,
       "num_providers": 2,
       "stale_excluded": 0,
-      "price_spread_pct": 95.9,
+      "price_spread_pct": 95.3,
       "monthly_change_pct": -10.8,
-      "flops_per_dollar": 245.8,
+      "flops_per_dollar": 245.5,
       "vram_per_dollar": 35.7,
       "value_basis": "median price across providers"
     },
@@ -10109,22 +10111,22 @@
       "vram_gb": 32,
       "arch": "Blackwell",
       "tier": "consumer",
-      "cheapest_price": 0.5356,
+      "cheapest_price": 0.5478,
       "cheapest_provider": "Vast.ai",
       "cheapest_provider_type": "marketplace",
       "cloud_low_price": null,
       "cloud_low_provider": null,
-      "marketplace_low_price": 0.5356,
+      "marketplace_low_price": 0.5478,
       "marketplace_low_provider": "Vast.ai",
       "most_expensive": 1.19,
-      "avg_price": 0.86,
-      "median_price": 0.863,
+      "avg_price": 0.87,
+      "median_price": 0.869,
       "num_providers": 2,
       "stale_excluded": 0,
-      "price_spread_pct": 122.2,
-      "monthly_change_pct": 6.9,
-      "flops_per_dollar": 242.8,
-      "vram_per_dollar": 37.1,
+      "price_spread_pct": 117.2,
+      "monthly_change_pct": 5.7,
+      "flops_per_dollar": 241.1,
+      "vram_per_dollar": 36.8,
       "value_basis": "median price across providers"
     },
     {
@@ -10147,7 +10149,7 @@
       "num_providers": 5,
       "stale_excluded": 0,
       "price_spread_pct": 98.7,
-      "monthly_change_pct": -1.5,
+      "monthly_change_pct": -0.7,
       "flops_per_dollar": 236.8,
       "vram_per_dollar": 30.3,
       "value_basis": "median price across providers"
@@ -10159,20 +10161,20 @@
       "vram_gb": 80,
       "arch": "Hopper",
       "tier": "flagship",
-      "cheapest_price": 2.562,
+      "cheapest_price": 2.2022,
       "cheapest_provider": "Vast.ai",
       "cheapest_provider_type": "marketplace",
       "cloud_low_price": 3.9,
       "cloud_low_provider": "Crusoe",
-      "marketplace_low_price": 2.562,
+      "marketplace_low_price": 2.2022,
       "marketplace_low_provider": "Vast.ai",
       "most_expensive": 12.29,
-      "avg_price": 6.19,
+      "avg_price": 6.16,
       "median_price": 4.545,
       "num_providers": 12,
       "stale_excluded": 0,
-      "price_spread_pct": 379.7,
-      "monthly_change_pct": 2.1,
+      "price_spread_pct": 458.1,
+      "monthly_change_pct": 2.2,
       "flops_per_dollar": 217.7,
       "vram_per_dollar": 17.6,
       "value_basis": "median price across providers"
@@ -10197,7 +10199,7 @@
       "num_providers": 2,
       "stale_excluded": 0,
       "price_spread_pct": 151.0,
-      "monthly_change_pct": 1.4,
+      "monthly_change_pct": 1.8,
       "flops_per_dollar": 217.7,
       "vram_per_dollar": 21.1,
       "value_basis": "median price across providers"
@@ -10209,20 +10211,20 @@
       "vram_gb": 186,
       "arch": "Blackwell",
       "tier": "ultra",
-      "cheapest_price": 9.3776,
+      "cheapest_price": 8.1354,
       "cheapest_provider": "Vast.ai",
       "cheapest_provider_type": "marketplace",
       "cloud_low_price": 10.5,
       "cloud_low_provider": "CoreWeave",
-      "marketplace_low_price": 9.3776,
+      "marketplace_low_price": 8.1354,
       "marketplace_low_provider": "Vast.ai",
       "most_expensive": 27.04,
-      "avg_price": 15.73,
+      "avg_price": 15.42,
       "median_price": 13.25,
       "num_providers": 4,
       "stale_excluded": 0,
-      "price_spread_pct": 188.3,
-      "monthly_change_pct": -13.9,
+      "price_spread_pct": 232.4,
+      "monthly_change_pct": -14.2,
       "flops_per_dollar": 188.7,
       "vram_per_dollar": 14.0,
       "value_basis": "median price across providers"
@@ -10239,15 +10241,15 @@
       "cheapest_provider_type": "cloud",
       "cloud_low_price": 4.29,
       "cloud_low_provider": "Crusoe",
-      "marketplace_low_price": 4.3443,
+      "marketplace_low_price": 5.1985,
       "marketplace_low_provider": "Vast.ai",
       "most_expensive": 10.601,
-      "avg_price": 6.84,
+      "avg_price": 6.91,
       "median_price": 5.99,
       "num_providers": 11,
       "stale_excluded": 0,
       "price_spread_pct": 147.1,
-      "monthly_change_pct": 2.4,
+      "monthly_change_pct": 3.0,
       "flops_per_dollar": 165.2,
       "vram_per_dollar": 23.5,
       "value_basis": "median price across providers"
@@ -10272,7 +10274,7 @@
       "num_providers": 2,
       "stale_excluded": 0,
       "price_spread_pct": 11.7,
-      "monthly_change_pct": 6.2,
+      "monthly_change_pct": 8.9,
       "flops_per_dollar": 164.6,
       "vram_per_dollar": 42.2,
       "value_basis": "median price across providers"
@@ -10284,19 +10286,19 @@
       "vram_gb": 24,
       "arch": "Ada Lovelace",
       "tier": "inference",
-      "cheapest_price": 0.4696,
+      "cheapest_price": 0.2522,
       "cheapest_provider": "Vast.ai",
       "cheapest_provider_type": "marketplace",
       "cloud_low_price": 1.0,
       "cloud_low_provider": "Google Cloud Platform",
-      "marketplace_low_price": 0.4696,
+      "marketplace_low_price": 0.2522,
       "marketplace_low_provider": "Vast.ai",
       "most_expensive": 1.669,
-      "avg_price": 0.93,
+      "avg_price": 0.88,
       "median_price": 0.795,
       "num_providers": 4,
       "stale_excluded": 0,
-      "price_spread_pct": 255.4,
+      "price_spread_pct": 561.8,
       "monthly_change_pct": 4.4,
       "flops_per_dollar": 152.2,
       "vram_per_dollar": 30.2,
@@ -10322,7 +10324,7 @@
       "num_providers": 6,
       "stale_excluded": 0,
       "price_spread_pct": 813.2,
-      "monthly_change_pct": -2.0,
+      "monthly_change_pct": -3.2,
       "flops_per_dollar": 131.8,
       "vram_per_dollar": 16.9,
       "value_basis": "median price across providers"
@@ -10334,19 +10336,19 @@
       "vram_gb": 48,
       "arch": "Ada Lovelace",
       "tier": "mid",
-      "cheapest_price": 0.7748,
+      "cheapest_price": 0.7741,
       "cheapest_provider": "Vast.ai",
       "cheapest_provider_type": "marketplace",
       "cloud_low_price": 1.5,
       "cloud_low_provider": "Crusoe",
-      "marketplace_low_price": 0.7748,
+      "marketplace_low_price": 0.7741,
       "marketplace_low_provider": "Vast.ai",
       "most_expensive": 3.766,
       "avg_price": 1.96,
       "median_price": 1.57,
       "num_providers": 9,
       "stale_excluded": 0,
-      "price_spread_pct": 386.1,
+      "price_spread_pct": 386.5,
       "monthly_change_pct": 0.0,
       "flops_per_dollar": 115.3,
       "vram_per_dollar": 30.6,
@@ -10359,20 +10361,20 @@
       "vram_gb": 80,
       "arch": "Ampere",
       "tier": "high",
-      "cheapest_price": 1.1018,
+      "cheapest_price": 1.1347,
       "cheapest_provider": "Vast.ai",
       "cheapest_provider_type": "marketplace",
       "cloud_low_price": 2.3,
       "cloud_low_provider": "Crusoe",
-      "marketplace_low_price": 1.1018,
+      "marketplace_low_price": 1.1347,
       "marketplace_low_provider": "Vast.ai",
       "most_expensive": 5.069,
       "avg_price": 3.08,
       "median_price": 3.19,
       "num_providers": 9,
       "stale_excluded": 0,
-      "price_spread_pct": 360.1,
-      "monthly_change_pct": 2.4,
+      "price_spread_pct": 346.7,
+      "monthly_change_pct": 2.7,
       "flops_per_dollar": 97.8,
       "vram_per_dollar": 25.1,
       "value_basis": "median price across providers"
@@ -10397,7 +10399,7 @@
       "num_providers": 1,
       "stale_excluded": 1,
       "price_spread_pct": 0.0,
-      "monthly_change_pct": 5.9,
+      "monthly_change_pct": 11.8,
       "flops_per_dollar": 66.5,
       "vram_per_dollar": 16.4,
       "value_basis": "median price across providers"
@@ -11552,7 +11554,7 @@
                   "vram_total_gb": 1488,
                   "headroom_pct": 42.6,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 75.021
+                  "usd_per_hr": 65.083
                 }
               ],
               "cheapest_usd_per_hr": 15.2,
@@ -11608,7 +11610,7 @@
                   "vram_total_gb": 1488,
                   "headroom_pct": 42.5,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 75.021
+                  "usd_per_hr": 65.083
                 }
               ],
               "cheapest_usd_per_hr": 15.2,
@@ -11664,7 +11666,7 @@
                   "vram_total_gb": 1488,
                   "headroom_pct": 42.0,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 75.021
+                  "usd_per_hr": 65.083
                 }
               ],
               "cheapest_usd_per_hr": 15.2,
@@ -11694,7 +11696,7 @@
                   "vram_total_gb": 640,
                   "headroom_pct": 33.3,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 8.814
+                  "usd_per_hr": 9.078
                 },
                 {
                   "gpu": "MI300X",
@@ -11721,12 +11723,12 @@
                   "usd_per_hr": 17.16
                 },
                 {
-                  "gpu": "B300",
-                  "gpus_needed": 2,
-                  "vram_total_gb": 576,
-                  "headroom_pct": 25.9,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 17.92
+                  "gpu": "H100-SXM",
+                  "gpus_needed": 8,
+                  "vram_total_gb": 640,
+                  "headroom_pct": 33.3,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 17.618
                 }
               ],
               "cheapest_usd_per_hr": 7.6,
@@ -11750,7 +11752,7 @@
                   "vram_total_gb": 640,
                   "headroom_pct": 33.0,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 8.814
+                  "usd_per_hr": 9.078
                 },
                 {
                   "gpu": "MI300X",
@@ -11777,12 +11779,12 @@
                   "usd_per_hr": 17.16
                 },
                 {
-                  "gpu": "B300",
-                  "gpus_needed": 2,
-                  "vram_total_gb": 576,
-                  "headroom_pct": 25.5,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 17.92
+                  "gpu": "H100-SXM",
+                  "gpus_needed": 8,
+                  "vram_total_gb": 640,
+                  "headroom_pct": 33.0,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 17.618
                 }
               ],
               "cheapest_usd_per_hr": 7.6,
@@ -11806,7 +11808,7 @@
                   "vram_total_gb": 640,
                   "headroom_pct": 31.8,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 8.814
+                  "usd_per_hr": 9.078
                 },
                 {
                   "gpu": "MI300X",
@@ -11833,12 +11835,12 @@
                   "usd_per_hr": 17.16
                 },
                 {
-                  "gpu": "B300",
-                  "gpus_needed": 2,
-                  "vram_total_gb": 576,
-                  "headroom_pct": 24.2,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 17.92
+                  "gpu": "H100-SXM",
+                  "gpus_needed": 8,
+                  "vram_total_gb": 640,
+                  "headroom_pct": 31.8,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 17.618
                 }
               ],
               "cheapest_usd_per_hr": 7.6,
@@ -11901,20 +11903,20 @@
                   "usd_per_hr": 61.52
                 },
                 {
+                  "gpu": "GB200",
+                  "gpus_needed": 8,
+                  "vram_total_gb": 1488,
+                  "headroom_pct": 6.9,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 65.083
+                },
+                {
                   "gpu": "B300",
                   "gpus_needed": 8,
                   "vram_total_gb": 2304,
                   "headroom_pct": 39.9,
                   "cheapest_provider": "Crusoe",
                   "usd_per_hr": 71.68
-                },
-                {
-                  "gpu": "GB200",
-                  "gpus_needed": 8,
-                  "vram_total_gb": 1488,
-                  "headroom_pct": 6.9,
-                  "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 75.021
                 }
               ],
               "cheapest_usd_per_hr": 19.12,
@@ -12027,20 +12029,20 @@
                   "usd_per_hr": 30.76
                 },
                 {
+                  "gpu": "GB200",
+                  "gpus_needed": 4,
+                  "vram_total_gb": 744,
+                  "headroom_pct": 4.6,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 32.542
+                },
+                {
                   "gpu": "H200",
                   "gpus_needed": 8,
                   "vram_total_gb": 1128,
                   "headroom_pct": 37.1,
                   "cheapest_provider": "Crusoe",
                   "usd_per_hr": 34.32
-                },
-                {
-                  "gpu": "B300",
-                  "gpus_needed": 4,
-                  "vram_total_gb": 1152,
-                  "headroom_pct": 38.4,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 35.84
                 }
               ],
               "cheapest_usd_per_hr": 9.56,
@@ -12096,7 +12098,7 @@
                   "vram_total_gb": 1488,
                   "headroom_pct": 45.3,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 75.021
+                  "usd_per_hr": 65.083
                 }
               ],
               "cheapest_usd_per_hr": 15.2,
@@ -12131,20 +12133,20 @@
                   "usd_per_hr": 61.52
                 },
                 {
+                  "gpu": "GB200",
+                  "gpus_needed": 8,
+                  "vram_total_gb": 1488,
+                  "headroom_pct": 17.5,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 65.083
+                },
+                {
                   "gpu": "B300",
                   "gpus_needed": 8,
                   "vram_total_gb": 2304,
                   "headroom_pct": 46.7,
                   "cheapest_provider": "Crusoe",
                   "usd_per_hr": 71.68
-                },
-                {
-                  "gpu": "GB200",
-                  "gpus_needed": 8,
-                  "vram_total_gb": 1488,
-                  "headroom_pct": 17.5,
-                  "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 75.021
                 }
               ],
               "cheapest_usd_per_hr": 19.12,
@@ -12174,7 +12176,7 @@
                   "vram_total_gb": 384,
                   "headroom_pct": 3.1,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 6.198
+                  "usd_per_hr": 6.193
                 },
                 {
                   "gpu": "MI325X",
@@ -12190,7 +12192,7 @@
                   "vram_total_gb": 640,
                   "headroom_pct": 41.8,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 8.814
+                  "usd_per_hr": 9.078
                 },
                 {
                   "gpu": "GH200",
@@ -12230,7 +12232,7 @@
                   "vram_total_gb": 640,
                   "headroom_pct": 25.7,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 8.814
+                  "usd_per_hr": 9.078
                 },
                 {
                   "gpu": "MI300X",
@@ -12257,12 +12259,12 @@
                   "usd_per_hr": 17.16
                 },
                 {
-                  "gpu": "B300",
-                  "gpus_needed": 2,
-                  "vram_total_gb": 576,
-                  "headroom_pct": 17.4,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 17.92
+                  "gpu": "H100-SXM",
+                  "gpus_needed": 8,
+                  "vram_total_gb": 640,
+                  "headroom_pct": 25.7,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 17.618
                 }
               ],
               "cheapest_usd_per_hr": 7.6,
@@ -12318,7 +12320,7 @@
                   "vram_total_gb": 1488,
                   "headroom_pct": 40.2,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 75.021
+                  "usd_per_hr": 65.083
                 }
               ],
               "cheapest_usd_per_hr": 15.2,
@@ -12369,7 +12371,7 @@
                   "vram_total_gb": 640,
                   "headroom_pct": 22.8,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 8.814
+                  "usd_per_hr": 9.078
                 },
                 {
                   "gpu": "MI300X",
@@ -12396,12 +12398,12 @@
                   "usd_per_hr": 17.16
                 },
                 {
-                  "gpu": "B300",
-                  "gpus_needed": 2,
-                  "vram_total_gb": 576,
-                  "headroom_pct": 14.3,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 17.92
+                  "gpu": "H100-SXM",
+                  "gpus_needed": 8,
+                  "vram_total_gb": 640,
+                  "headroom_pct": 22.8,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 17.618
                 }
               ],
               "cheapest_usd_per_hr": 7.6,
@@ -12425,7 +12427,7 @@
                   "vram_total_gb": 640,
                   "headroom_pct": 22.4,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 8.814
+                  "usd_per_hr": 9.078
                 },
                 {
                   "gpu": "MI300X",
@@ -12452,12 +12454,12 @@
                   "usd_per_hr": 17.16
                 },
                 {
-                  "gpu": "B300",
-                  "gpus_needed": 2,
-                  "vram_total_gb": 576,
-                  "headroom_pct": 13.8,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 17.92
+                  "gpu": "H100-SXM",
+                  "gpus_needed": 8,
+                  "vram_total_gb": 640,
+                  "headroom_pct": 22.4,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 17.618
                 }
               ],
               "cheapest_usd_per_hr": 7.6,
@@ -12481,7 +12483,7 @@
                   "vram_total_gb": 640,
                   "headroom_pct": 20.7,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 8.814
+                  "usd_per_hr": 9.078
                 },
                 {
                   "gpu": "MI300X",
@@ -12508,12 +12510,12 @@
                   "usd_per_hr": 17.16
                 },
                 {
-                  "gpu": "B300",
-                  "gpus_needed": 2,
-                  "vram_total_gb": 576,
-                  "headroom_pct": 11.8,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 17.92
+                  "gpu": "H100-SXM",
+                  "gpus_needed": 8,
+                  "vram_total_gb": 640,
+                  "headroom_pct": 20.7,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 17.618
                 }
               ],
               "cheapest_usd_per_hr": 7.6,
@@ -12543,7 +12545,7 @@
                   "vram_total_gb": 256,
                   "headroom_pct": 3.4,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 4.285
+                  "usd_per_hr": 4.382
                 },
                 {
                   "gpu": "MI300X",
@@ -12562,20 +12564,20 @@
                   "usd_per_hr": 8.58
                 },
                 {
+                  "gpu": "H100-SXM",
+                  "gpus_needed": 4,
+                  "vram_total_gb": 320,
+                  "headroom_pct": 22.7,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 8.809
+                },
+                {
                   "gpu": "B300",
                   "gpus_needed": 1,
                   "vram_total_gb": 288,
                   "headroom_pct": 14.1,
                   "cheapest_provider": "Crusoe",
                   "usd_per_hr": 8.96
-                },
-                {
-                  "gpu": "H100-SXM",
-                  "gpus_needed": 4,
-                  "vram_total_gb": 320,
-                  "headroom_pct": 22.7,
-                  "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 10.248
                 }
               ],
               "cheapest_usd_per_hr": 3.8,
@@ -12599,7 +12601,7 @@
                   "vram_total_gb": 256,
                   "headroom_pct": 2.3,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 4.285
+                  "usd_per_hr": 4.382
                 },
                 {
                   "gpu": "MI300X",
@@ -12618,20 +12620,20 @@
                   "usd_per_hr": 8.58
                 },
                 {
+                  "gpu": "H100-SXM",
+                  "gpus_needed": 4,
+                  "vram_total_gb": 320,
+                  "headroom_pct": 21.8,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 8.809
+                },
+                {
                   "gpu": "B300",
                   "gpus_needed": 1,
                   "vram_total_gb": 288,
                   "headroom_pct": 13.1,
                   "cheapest_provider": "Crusoe",
                   "usd_per_hr": 8.96
-                },
-                {
-                  "gpu": "H100-SXM",
-                  "gpus_needed": 4,
-                  "vram_total_gb": 320,
-                  "headroom_pct": 21.8,
-                  "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 10.248
                 }
               ],
               "cheapest_usd_per_hr": 3.8,
@@ -12666,20 +12668,20 @@
                   "usd_per_hr": 8.58
                 },
                 {
+                  "gpu": "H100-SXM",
+                  "gpus_needed": 4,
+                  "vram_total_gb": 320,
+                  "headroom_pct": 18.3,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 8.809
+                },
+                {
                   "gpu": "B300",
                   "gpus_needed": 1,
                   "vram_total_gb": 288,
                   "headroom_pct": 9.2,
                   "cheapest_provider": "Crusoe",
                   "usd_per_hr": 8.96
-                },
-                {
-                  "gpu": "H100-SXM",
-                  "gpus_needed": 4,
-                  "vram_total_gb": 320,
-                  "headroom_pct": 18.3,
-                  "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 10.248
                 },
                 {
                   "gpu": "GH200",
@@ -12712,12 +12714,20 @@
                   "usd_per_hr": 1.609
                 },
                 {
+                  "gpu": "L4",
+                  "gpus_needed": 8,
+                  "vram_total_gb": 192,
+                  "headroom_pct": 35.3,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 2.018
+                },
+                {
                   "gpu": "RTX-5090",
                   "gpus_needed": 4,
                   "vram_total_gb": 128,
                   "headroom_pct": 3.0,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 2.142
+                  "usd_per_hr": 2.191
                 },
                 {
                   "gpu": "A100-80GB",
@@ -12725,7 +12735,7 @@
                   "vram_total_gb": 160,
                   "headroom_pct": 22.4,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 2.204
+                  "usd_per_hr": 2.269
                 },
                 {
                   "gpu": "MI300X",
@@ -12741,15 +12751,7 @@
                   "vram_total_gb": 192,
                   "headroom_pct": 35.3,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.099
-                },
-                {
-                  "gpu": "A100-PCIe",
-                  "gpus_needed": 2,
-                  "vram_total_gb": 160,
-                  "headroom_pct": 22.4,
-                  "cheapest_provider": "RunPod",
-                  "usd_per_hr": 3.58
+                  "usd_per_hr": 3.096
                 }
               ],
               "cheapest_usd_per_hr": 1.609,
@@ -12768,12 +12770,20 @@
                   "usd_per_hr": 1.609
                 },
                 {
+                  "gpu": "L4",
+                  "gpus_needed": 8,
+                  "vram_total_gb": 192,
+                  "headroom_pct": 33.9,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 2.018
+                },
+                {
                   "gpu": "RTX-5090",
                   "gpus_needed": 4,
                   "vram_total_gb": 128,
                   "headroom_pct": 0.8,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 2.142
+                  "usd_per_hr": 2.191
                 },
                 {
                   "gpu": "A100-80GB",
@@ -12781,7 +12791,7 @@
                   "vram_total_gb": 160,
                   "headroom_pct": 20.7,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 2.204
+                  "usd_per_hr": 2.269
                 },
                 {
                   "gpu": "MI300X",
@@ -12797,15 +12807,7 @@
                   "vram_total_gb": 192,
                   "headroom_pct": 33.9,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.099
-                },
-                {
-                  "gpu": "A100-PCIe",
-                  "gpus_needed": 2,
-                  "vram_total_gb": 160,
-                  "headroom_pct": 20.7,
-                  "cheapest_provider": "RunPod",
-                  "usd_per_hr": 3.58
+                  "usd_per_hr": 3.096
                 }
               ],
               "cheapest_usd_per_hr": 1.609,
@@ -12824,12 +12826,20 @@
                   "usd_per_hr": 1.609
                 },
                 {
+                  "gpu": "L4",
+                  "gpus_needed": 8,
+                  "vram_total_gb": 192,
+                  "headroom_pct": 28.0,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 2.018
+                },
+                {
                   "gpu": "A100-80GB",
                   "gpus_needed": 2,
                   "vram_total_gb": 160,
                   "headroom_pct": 13.6,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 2.204
+                  "usd_per_hr": 2.269
                 },
                 {
                   "gpu": "MI300X",
@@ -12845,7 +12855,7 @@
                   "vram_total_gb": 192,
                   "headroom_pct": 28.0,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.099
+                  "usd_per_hr": 3.096
                 },
                 {
                   "gpu": "A100-PCIe",
@@ -12854,14 +12864,6 @@
                   "headroom_pct": 13.6,
                   "cheapest_provider": "RunPod",
                   "usd_per_hr": 3.58
-                },
-                {
-                  "gpu": "RTX-4090",
-                  "gpus_needed": 8,
-                  "vram_total_gb": 192,
-                  "headroom_pct": 28.0,
-                  "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.635
                 }
               ],
               "cheapest_usd_per_hr": 1.609,
@@ -12888,7 +12890,7 @@
       "tokens_per_day": 4394134763662,
       "demand_rank": 10,
       "api_out_per_m": 8.2,
-      "api_in_per_m": 0.153,
+      "api_in_per_m": 0.162,
       "api_provider": "Phala",
       "precisions": {
         "fp16": {
@@ -13162,7 +13164,7 @@
                   "vram_total_gb": 1488,
                   "headroom_pct": 41.5,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 75.021
+                  "usd_per_hr": 65.083
                 }
               ],
               "cheapest_usd_per_hr": 15.2,
@@ -13218,7 +13220,7 @@
                   "vram_total_gb": 1488,
                   "headroom_pct": 35.6,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 75.021
+                  "usd_per_hr": 65.083
                 }
               ],
               "cheapest_usd_per_hr": 15.2,
@@ -13253,20 +13255,20 @@
                   "usd_per_hr": 61.52
                 },
                 {
+                  "gpu": "GB200",
+                  "gpus_needed": 8,
+                  "vram_total_gb": 1488,
+                  "headroom_pct": 12.0,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 65.083
+                },
+                {
                   "gpu": "B300",
                   "gpus_needed": 8,
                   "vram_total_gb": 2304,
                   "headroom_pct": 43.1,
                   "cheapest_provider": "Crusoe",
                   "usd_per_hr": 71.68
-                },
-                {
-                  "gpu": "GB200",
-                  "gpus_needed": 8,
-                  "vram_total_gb": 1488,
-                  "headroom_pct": 12.0,
-                  "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 75.021
                 }
               ],
               "cheapest_usd_per_hr": 19.12,
@@ -13296,7 +13298,7 @@
                   "vram_total_gb": 640,
                   "headroom_pct": 29.7,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 8.814
+                  "usd_per_hr": 9.078
                 },
                 {
                   "gpu": "MI300X",
@@ -13323,12 +13325,12 @@
                   "usd_per_hr": 17.16
                 },
                 {
-                  "gpu": "B300",
-                  "gpus_needed": 2,
-                  "vram_total_gb": 576,
-                  "headroom_pct": 21.8,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 17.92
+                  "gpu": "H100-SXM",
+                  "gpus_needed": 8,
+                  "vram_total_gb": 640,
+                  "headroom_pct": 29.7,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 17.618
                 }
               ],
               "cheapest_usd_per_hr": 7.6,
@@ -13344,7 +13346,7 @@
                   "vram_total_gb": 640,
                   "headroom_pct": 15.9,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 8.814
+                  "usd_per_hr": 9.078
                 },
                 {
                   "gpu": "MI300X",
@@ -13379,16 +13381,16 @@
                   "usd_per_hr": 17.16
                 },
                 {
-                  "gpu": "B300",
-                  "gpus_needed": 2,
-                  "vram_total_gb": 576,
-                  "headroom_pct": 6.6,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 17.92
+                  "gpu": "H100-SXM",
+                  "gpus_needed": 8,
+                  "vram_total_gb": 640,
+                  "headroom_pct": 15.9,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 17.618
                 }
               ],
-              "cheapest_usd_per_hr": 8.814,
-              "breakeven_tok_s": 1749
+              "cheapest_usd_per_hr": 9.078,
+              "breakeven_tok_s": 1801
             },
             "131072": {
               "kv_cache_gib": 468.0,
@@ -13440,7 +13442,7 @@
                   "vram_total_gb": 1488,
                   "headroom_pct": 40.3,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 75.021
+                  "usd_per_hr": 65.083
                 }
               ],
               "cheapest_usd_per_hr": 15.2,
@@ -13511,20 +13513,20 @@
                   "usd_per_hr": 30.76
                 },
                 {
+                  "gpu": "GB200",
+                  "gpus_needed": 4,
+                  "vram_total_gb": 744,
+                  "headroom_pct": 12.5,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 32.542
+                },
+                {
                   "gpu": "H200",
                   "gpus_needed": 8,
                   "vram_total_gb": 1128,
                   "headroom_pct": 42.3,
                   "cheapest_provider": "Crusoe",
                   "usd_per_hr": 34.32
-                },
-                {
-                  "gpu": "B300",
-                  "gpus_needed": 4,
-                  "vram_total_gb": 1152,
-                  "headroom_pct": 43.5,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 35.84
                 }
               ],
               "cheapest_usd_per_hr": 9.56,
@@ -13567,20 +13569,20 @@
                   "usd_per_hr": 30.76
                 },
                 {
+                  "gpu": "GB200",
+                  "gpus_needed": 4,
+                  "vram_total_gb": 744,
+                  "headroom_pct": 12.2,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 32.542
+                },
+                {
                   "gpu": "H200",
                   "gpus_needed": 8,
                   "vram_total_gb": 1128,
                   "headroom_pct": 42.1,
                   "cheapest_provider": "Crusoe",
                   "usd_per_hr": 34.32
-                },
-                {
-                  "gpu": "B300",
-                  "gpus_needed": 4,
-                  "vram_total_gb": 1152,
-                  "headroom_pct": 43.3,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 35.84
                 }
               ],
               "cheapest_usd_per_hr": 9.56,
@@ -13623,20 +13625,20 @@
                   "usd_per_hr": 30.76
                 },
                 {
+                  "gpu": "GB200",
+                  "gpus_needed": 4,
+                  "vram_total_gb": 744,
+                  "headroom_pct": 11.1,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 32.542
+                },
+                {
                   "gpu": "H200",
                   "gpus_needed": 8,
                   "vram_total_gb": 1128,
                   "headroom_pct": 41.4,
                   "cheapest_provider": "Crusoe",
                   "usd_per_hr": 34.32
-                },
-                {
-                  "gpu": "B300",
-                  "gpus_needed": 4,
-                  "vram_total_gb": 1152,
-                  "headroom_pct": 42.6,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 35.84
                 }
               ],
               "cheapest_usd_per_hr": 9.56,
@@ -13685,20 +13687,20 @@
                   "usd_per_hr": 15.38
                 },
                 {
+                  "gpu": "GB200",
+                  "gpus_needed": 2,
+                  "vram_total_gb": 372,
+                  "headroom_pct": 12.4,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 16.271
+                },
+                {
                   "gpu": "H200",
                   "gpus_needed": 4,
                   "vram_total_gb": 564,
                   "headroom_pct": 42.2,
                   "cheapest_provider": "Crusoe",
                   "usd_per_hr": 17.16
-                },
-                {
-                  "gpu": "B300",
-                  "gpus_needed": 2,
-                  "vram_total_gb": 576,
-                  "headroom_pct": 43.4,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 17.92
                 }
               ],
               "cheapest_usd_per_hr": 4.78,
@@ -13741,20 +13743,20 @@
                   "usd_per_hr": 15.38
                 },
                 {
+                  "gpu": "GB200",
+                  "gpus_needed": 2,
+                  "vram_total_gb": 372,
+                  "headroom_pct": 11.9,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 16.271
+                },
+                {
                   "gpu": "H200",
                   "gpus_needed": 4,
                   "vram_total_gb": 564,
                   "headroom_pct": 41.9,
                   "cheapest_provider": "Crusoe",
                   "usd_per_hr": 17.16
-                },
-                {
-                  "gpu": "B300",
-                  "gpus_needed": 2,
-                  "vram_total_gb": 576,
-                  "headroom_pct": 43.1,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 17.92
                 }
               ],
               "cheapest_usd_per_hr": 4.78,
@@ -13797,20 +13799,20 @@
                   "usd_per_hr": 15.38
                 },
                 {
+                  "gpu": "GB200",
+                  "gpus_needed": 2,
+                  "vram_total_gb": 372,
+                  "headroom_pct": 9.7,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 16.271
+                },
+                {
                   "gpu": "H200",
                   "gpus_needed": 4,
                   "vram_total_gb": 564,
                   "headroom_pct": 40.4,
                   "cheapest_provider": "Crusoe",
                   "usd_per_hr": 17.16
-                },
-                {
-                  "gpu": "B300",
-                  "gpus_needed": 2,
-                  "vram_total_gb": 576,
-                  "headroom_pct": 41.7,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 17.92
                 }
               ],
               "cheapest_usd_per_hr": 4.78,
@@ -13827,6 +13829,14 @@
               "total_vram_gib": 163.25,
               "options": [
                 {
+                  "gpu": "L4",
+                  "gpus_needed": 8,
+                  "vram_total_gb": 192,
+                  "headroom_pct": 15.0,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 2.018
+                },
+                {
                   "gpu": "MI300X",
                   "gpus_needed": 1,
                   "vram_total_gb": 192,
@@ -13840,7 +13850,7 @@
                   "vram_total_gb": 192,
                   "headroom_pct": 15.0,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.099
+                  "usd_per_hr": 3.096
                 },
                 {
                   "gpu": "A100-40GB",
@@ -13856,15 +13866,7 @@
                   "vram_total_gb": 192,
                   "headroom_pct": 15.0,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.635
-                },
-                {
-                  "gpu": "L4",
-                  "gpus_needed": 8,
-                  "vram_total_gb": 192,
-                  "headroom_pct": 15.0,
-                  "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.757
+                  "usd_per_hr": 3.645
                 },
                 {
                   "gpu": "MI325X",
@@ -13875,13 +13877,21 @@
                   "usd_per_hr": 3.8
                 }
               ],
-              "cheapest_usd_per_hr": 2.39,
-              "breakeven_tok_s": 4019
+              "cheapest_usd_per_hr": 2.018,
+              "breakeven_tok_s": 3393
             },
             "32768": {
               "kv_cache_gib": 2.69,
               "total_vram_gib": 165.27,
               "options": [
+                {
+                  "gpu": "L4",
+                  "gpus_needed": 8,
+                  "vram_total_gb": 192,
+                  "headroom_pct": 13.9,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 2.018
+                },
                 {
                   "gpu": "MI300X",
                   "gpus_needed": 1,
@@ -13896,7 +13906,7 @@
                   "vram_total_gb": 192,
                   "headroom_pct": 13.9,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.099
+                  "usd_per_hr": 3.096
                 },
                 {
                   "gpu": "A100-40GB",
@@ -13912,15 +13922,7 @@
                   "vram_total_gb": 192,
                   "headroom_pct": 13.9,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.635
-                },
-                {
-                  "gpu": "L4",
-                  "gpus_needed": 8,
-                  "vram_total_gb": 192,
-                  "headroom_pct": 13.9,
-                  "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.757
+                  "usd_per_hr": 3.645
                 },
                 {
                   "gpu": "MI325X",
@@ -13931,13 +13933,21 @@
                   "usd_per_hr": 3.8
                 }
               ],
-              "cheapest_usd_per_hr": 2.39,
-              "breakeven_tok_s": 4019
+              "cheapest_usd_per_hr": 2.018,
+              "breakeven_tok_s": 3393
             },
             "131072": {
               "kv_cache_gib": 10.75,
               "total_vram_gib": 173.33,
               "options": [
+                {
+                  "gpu": "L4",
+                  "gpus_needed": 8,
+                  "vram_total_gb": 192,
+                  "headroom_pct": 9.7,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 2.018
+                },
                 {
                   "gpu": "MI300X",
                   "gpus_needed": 1,
@@ -13952,7 +13962,7 @@
                   "vram_total_gb": 192,
                   "headroom_pct": 9.7,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.099
+                  "usd_per_hr": 3.096
                 },
                 {
                   "gpu": "A100-40GB",
@@ -13968,15 +13978,7 @@
                   "vram_total_gb": 192,
                   "headroom_pct": 9.7,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.635
-                },
-                {
-                  "gpu": "L4",
-                  "gpus_needed": 8,
-                  "vram_total_gb": 192,
-                  "headroom_pct": 9.7,
-                  "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.757
+                  "usd_per_hr": 3.645
                 },
                 {
                   "gpu": "MI325X",
@@ -13987,8 +13989,8 @@
                   "usd_per_hr": 3.8
                 }
               ],
-              "cheapest_usd_per_hr": 2.39,
-              "breakeven_tok_s": 4019
+              "cheapest_usd_per_hr": 2.018,
+              "breakeven_tok_s": 3393
             }
           }
         }
@@ -14055,20 +14057,20 @@
                   "usd_per_hr": 30.76
                 },
                 {
+                  "gpu": "GB200",
+                  "gpus_needed": 4,
+                  "vram_total_gb": 744,
+                  "headroom_pct": 6.5,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 32.542
+                },
+                {
                   "gpu": "H200",
                   "gpus_needed": 8,
                   "vram_total_gb": 1128,
                   "headroom_pct": 38.3,
                   "cheapest_provider": "Crusoe",
                   "usd_per_hr": 34.32
-                },
-                {
-                  "gpu": "B300",
-                  "gpus_needed": 4,
-                  "vram_total_gb": 1152,
-                  "headroom_pct": 39.6,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 35.84
                 }
               ],
               "cheapest_usd_per_hr": 9.56,
@@ -14111,20 +14113,20 @@
                   "usd_per_hr": 30.76
                 },
                 {
+                  "gpu": "GB200",
+                  "gpus_needed": 4,
+                  "vram_total_gb": 744,
+                  "headroom_pct": 6.0,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 32.542
+                },
+                {
                   "gpu": "H200",
                   "gpus_needed": 8,
                   "vram_total_gb": 1128,
                   "headroom_pct": 38.0,
                   "cheapest_provider": "Crusoe",
                   "usd_per_hr": 34.32
-                },
-                {
-                  "gpu": "B300",
-                  "gpus_needed": 4,
-                  "vram_total_gb": 1152,
-                  "headroom_pct": 39.3,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 35.84
                 }
               ],
               "cheapest_usd_per_hr": 9.56,
@@ -14167,20 +14169,20 @@
                   "usd_per_hr": 30.76
                 },
                 {
+                  "gpu": "GB200",
+                  "gpus_needed": 4,
+                  "vram_total_gb": 744,
+                  "headroom_pct": 4.2,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 32.542
+                },
+                {
                   "gpu": "H200",
                   "gpus_needed": 8,
                   "vram_total_gb": 1128,
                   "headroom_pct": 36.8,
                   "cheapest_provider": "Crusoe",
                   "usd_per_hr": 34.32
-                },
-                {
-                  "gpu": "B300",
-                  "gpus_needed": 4,
-                  "vram_total_gb": 1152,
-                  "headroom_pct": 38.1,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 35.84
                 }
               ],
               "cheapest_usd_per_hr": 9.56,
@@ -14229,20 +14231,20 @@
                   "usd_per_hr": 15.38
                 },
                 {
+                  "gpu": "GB200",
+                  "gpus_needed": 2,
+                  "vram_total_gb": 372,
+                  "headroom_pct": 6.3,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 16.271
+                },
+                {
                   "gpu": "H200",
                   "gpus_needed": 4,
                   "vram_total_gb": 564,
                   "headroom_pct": 38.2,
                   "cheapest_provider": "Crusoe",
                   "usd_per_hr": 17.16
-                },
-                {
-                  "gpu": "B300",
-                  "gpus_needed": 2,
-                  "vram_total_gb": 576,
-                  "headroom_pct": 39.5,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 17.92
                 }
               ],
               "cheapest_usd_per_hr": 4.78,
@@ -14285,20 +14287,20 @@
                   "usd_per_hr": 15.38
                 },
                 {
+                  "gpu": "GB200",
+                  "gpus_needed": 2,
+                  "vram_total_gb": 372,
+                  "headroom_pct": 5.4,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 16.271
+                },
+                {
                   "gpu": "H200",
                   "gpus_needed": 4,
                   "vram_total_gb": 564,
                   "headroom_pct": 37.6,
                   "cheapest_provider": "Crusoe",
                   "usd_per_hr": 17.16
-                },
-                {
-                  "gpu": "B300",
-                  "gpus_needed": 2,
-                  "vram_total_gb": 576,
-                  "headroom_pct": 38.9,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 17.92
                 }
               ],
               "cheapest_usd_per_hr": 4.78,
@@ -14341,20 +14343,20 @@
                   "usd_per_hr": 15.38
                 },
                 {
+                  "gpu": "GB200",
+                  "gpus_needed": 2,
+                  "vram_total_gb": 372,
+                  "headroom_pct": 1.8,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 16.271
+                },
+                {
                   "gpu": "H200",
                   "gpus_needed": 4,
                   "vram_total_gb": 564,
                   "headroom_pct": 35.2,
                   "cheapest_provider": "Crusoe",
                   "usd_per_hr": 17.16
-                },
-                {
-                  "gpu": "B300",
-                  "gpus_needed": 2,
-                  "vram_total_gb": 576,
-                  "headroom_pct": 36.6,
-                  "cheapest_provider": "Crusoe",
-                  "usd_per_hr": 17.92
                 }
               ],
               "cheapest_usd_per_hr": 4.78,
@@ -14371,6 +14373,14 @@
               "total_vram_gib": 174.77,
               "options": [
                 {
+                  "gpu": "L4",
+                  "gpus_needed": 8,
+                  "vram_total_gb": 192,
+                  "headroom_pct": 9.0,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 2.018
+                },
+                {
                   "gpu": "MI300X",
                   "gpus_needed": 1,
                   "vram_total_gb": 192,
@@ -14384,7 +14394,7 @@
                   "vram_total_gb": 192,
                   "headroom_pct": 9.0,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.099
+                  "usd_per_hr": 3.096
                 },
                 {
                   "gpu": "A100-40GB",
@@ -14400,15 +14410,7 @@
                   "vram_total_gb": 192,
                   "headroom_pct": 9.0,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.635
-                },
-                {
-                  "gpu": "L4",
-                  "gpus_needed": 8,
-                  "vram_total_gb": 192,
-                  "headroom_pct": 9.0,
-                  "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.757
+                  "usd_per_hr": 3.645
                 },
                 {
                   "gpu": "MI325X",
@@ -14419,13 +14421,21 @@
                   "usd_per_hr": 3.8
                 }
               ],
-              "cheapest_usd_per_hr": 2.39,
-              "breakeven_tok_s": 2964
+              "cheapest_usd_per_hr": 2.018,
+              "breakeven_tok_s": 2502
             },
             "32768": {
               "kv_cache_gib": 4.5,
               "total_vram_gib": 178.15,
               "options": [
+                {
+                  "gpu": "L4",
+                  "gpus_needed": 8,
+                  "vram_total_gb": 192,
+                  "headroom_pct": 7.2,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 2.018
+                },
                 {
                   "gpu": "MI300X",
                   "gpus_needed": 1,
@@ -14440,7 +14450,7 @@
                   "vram_total_gb": 192,
                   "headroom_pct": 7.2,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.099
+                  "usd_per_hr": 3.096
                 },
                 {
                   "gpu": "A100-40GB",
@@ -14456,15 +14466,7 @@
                   "vram_total_gb": 192,
                   "headroom_pct": 7.2,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.635
-                },
-                {
-                  "gpu": "L4",
-                  "gpus_needed": 8,
-                  "vram_total_gb": 192,
-                  "headroom_pct": 7.2,
-                  "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.757
+                  "usd_per_hr": 3.645
                 },
                 {
                   "gpu": "MI325X",
@@ -14475,13 +14477,21 @@
                   "usd_per_hr": 3.8
                 }
               ],
-              "cheapest_usd_per_hr": 2.39,
-              "breakeven_tok_s": 2964
+              "cheapest_usd_per_hr": 2.018,
+              "breakeven_tok_s": 2502
             },
             "131072": {
               "kv_cache_gib": 18.0,
               "total_vram_gib": 191.65,
               "options": [
+                {
+                  "gpu": "L4",
+                  "gpus_needed": 8,
+                  "vram_total_gb": 192,
+                  "headroom_pct": 0.2,
+                  "cheapest_provider": "Vast.ai",
+                  "usd_per_hr": 2.018
+                },
                 {
                   "gpu": "MI300X",
                   "gpus_needed": 1,
@@ -14496,7 +14506,7 @@
                   "vram_total_gb": 192,
                   "headroom_pct": 0.2,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.099
+                  "usd_per_hr": 3.096
                 },
                 {
                   "gpu": "A100-40GB",
@@ -14512,15 +14522,7 @@
                   "vram_total_gb": 192,
                   "headroom_pct": 0.2,
                   "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.635
-                },
-                {
-                  "gpu": "L4",
-                  "gpus_needed": 8,
-                  "vram_total_gb": 192,
-                  "headroom_pct": 0.2,
-                  "cheapest_provider": "Vast.ai",
-                  "usd_per_hr": 3.757
+                  "usd_per_hr": 3.645
                 },
                 {
                   "gpu": "MI325X",
@@ -14531,8 +14533,8 @@
                   "usd_per_hr": 3.8
                 }
               ],
-              "cheapest_usd_per_hr": 2.39,
-              "breakeven_tok_s": 2964
+              "cheapest_usd_per_hr": 2.018,
+              "breakeven_tok_s": 2502
             }
           }
         }
@@ -14540,7 +14542,7 @@
       "active_share_pct": 3.1
     }
   },
-  "last_updated": "2026-11-10T08:11:39.414365+00:00",
+  "last_updated": "2026-11-10T08:14:25.070090+00:00",
   "stocks": {
     "NVDA": {
       "ticker": "NVDA",
@@ -14549,7 +14551,7 @@
       "52_week_high": 243.37,
       "52_week_low": 164.27,
       "ytd_change_pct": -5.39,
-      "last_updated": "2026-11-10T08:12:02.824152+00:00"
+      "last_updated": "2026-11-10T08:14:41.885123+00:00"
     },
     "AMD": {
       "ticker": "AMD",
@@ -14558,7 +14560,7 @@
       "52_week_high": 658.52,
       "52_week_low": 188.22,
       "ytd_change_pct": 127.58,
-      "last_updated": "2026-11-10T08:12:02.961722+00:00"
+      "last_updated": "2026-11-10T08:14:41.946889+00:00"
     }
   },
   "_meta": {
@@ -14655,7 +14657,7 @@
         "detail": "Language-model commentary over the snapshot of this data. Not a forecast. Each block carries its generation date; blocks older than 7 days are flagged on the page."
       }
     },
-    "last_run": "2026-11-10T08:13:26.249865+00:00",
+    "last_run": "2026-11-10T08:40:09.054183+00:00",
     "freshness": {
       "specs": {
         "refreshed": null,
@@ -14779,9 +14781,8 @@
       },
       "ai_analysis": {
         "auto": true,
-        "refreshed": "2026-08-31",
-        "oldest_section": "2026-08-31",
-        "stale_runs": 1
+        "refreshed": "2026-11-10",
+        "oldest_section": "2026-11-10"
       }
     }
   },
@@ -14895,68 +14896,36 @@
       "type": "price",
       "provider": "Vast.ai",
       "gpu": "L4",
-      "from": 0.9385,
-      "to": 0.4696,
-      "change_pct": -50.0
-    },
-    {
-      "date": "2026-11-10",
-      "type": "price",
-      "provider": "Vast.ai",
-      "gpu": "B200",
-      "from": 6.2521,
-      "to": 8.7505,
-      "change_pct": 40.0
-    },
-    {
-      "date": "2026-11-10",
-      "type": "price",
-      "provider": "Vast.ai",
-      "gpu": "H100-SXM",
-      "from": 3.962,
-      "to": 2.562,
-      "change_pct": -35.3
-    },
-    {
-      "date": "2026-11-10",
-      "type": "price",
-      "provider": "Vast.ai",
-      "gpu": "A100-40GB",
-      "from": 0.5356,
-      "to": 0.4022,
-      "change_pct": -24.9
+      "from": 0.4696,
+      "to": 0.2522,
+      "change_pct": -46.3
     },
     {
       "date": "2026-11-10",
       "type": "price",
       "provider": "Vast.ai",
       "gpu": "H200",
-      "from": 4.5603,
-      "to": 4.3443,
-      "change_pct": -4.7
+      "from": 4.3443,
+      "to": 5.1985,
+      "change_pct": 19.7
     },
     {
       "date": "2026-11-10",
       "type": "price",
       "provider": "Vast.ai",
-      "gpu": "L40S",
-      "from": 0.8011,
-      "to": 0.7748,
-      "change_pct": -3.3
+      "gpu": "H100-SXM",
+      "from": 2.562,
+      "to": 2.2022,
+      "change_pct": -14.0
     },
     {
       "date": "2026-11-10",
-      "type": "delisted",
+      "type": "price",
       "provider": "Vast.ai",
-      "gpu": "T4",
-      "from": 0.1359
-    },
-    {
-      "date": "2026-11-10",
-      "type": "delisted",
-      "provider": "Vast.ai",
-      "gpu": "A100-PCIe",
-      "from": 0.8678
+      "gpu": "GB200",
+      "from": 9.3776,
+      "to": 8.1354,
+      "change_pct": -13.2
     },
     {
       "date": "2026-11-09",
@@ -35252,16 +35221,16 @@
           "A100-PCIe": 1.79
         },
         "Vast.ai": {
-          "RTX-5090": 0.5356,
-          "L4": 0.4696,
-          "RTX-4090": 0.4544,
-          "A100-80GB": 1.1018,
-          "L40S": 0.7748,
+          "RTX-5090": 0.5478,
+          "L4": 0.2522,
+          "RTX-4090": 0.4556,
+          "A100-80GB": 1.1347,
+          "L40S": 0.7741,
           "H100-PCIe": 2.7928,
-          "H100-SXM": 2.562,
-          "H200": 4.3443,
+          "H100-SXM": 2.2022,
+          "H200": 5.1985,
           "B200": 8.7505,
-          "GB200": 9.3776,
+          "GB200": 8.1354,
           "A100-40GB": 0.4022
         },
         "Together": {
@@ -35967,82 +35936,82 @@
       },
       "Vast.ai": {
         "RTX-5090": {
-          "current": 0.5356,
+          "current": 0.5478,
           "observations": 200,
           "first_observed": "2026-04-22",
           "week_ago": 0.8689,
           "week_ago_date": "2026-11-03",
-          "change_7d_pct": -38.4,
+          "change_7d_pct": -37.0,
           "corrected_in_window": true,
           "correction_reason": "on-demand changed from the single cheapest offer per name to the 25th percentile of >=3 offers, pinned by memory size (40GB A100s had been published as 80GB)",
           "low_30d": 0.4415,
           "high_30d": 1.0726,
           "range_30d_pct": 142.9,
-          "avg_daily_move_pct": 23.24,
+          "avg_daily_move_pct": 23.32,
           "observations_30d": 31,
           "range_30d_spans_correction": true
         },
         "L4": {
-          "current": 0.4696,
+          "current": 0.2522,
           "observations": 200,
           "first_observed": "2026-04-22",
           "week_ago": 0.4296,
           "week_ago_date": "2026-11-03",
-          "change_7d_pct": 9.3,
+          "change_7d_pct": -41.3,
           "corrected_in_window": true,
           "correction_reason": "on-demand changed from the single cheapest offer per name to the 25th percentile of >=3 offers, pinned by memory size (40GB A100s had been published as 80GB)",
           "low_30d": 0.2122,
           "high_30d": 0.9385,
           "range_30d_pct": 342.3,
-          "avg_daily_move_pct": 24.03,
+          "avg_daily_move_pct": 24.8,
           "observations_30d": 31,
           "range_30d_spans_correction": true
         },
         "RTX-4090": {
-          "current": 0.4544,
+          "current": 0.4556,
           "observations": 200,
           "first_observed": "2026-04-22",
           "week_ago": 0.3954,
           "week_ago_date": "2026-11-03",
-          "change_7d_pct": 14.9,
+          "change_7d_pct": 15.2,
           "corrected_in_window": true,
           "correction_reason": "on-demand changed from the single cheapest offer per name to the 25th percentile of >=3 offers, pinned by memory size (40GB A100s had been published as 80GB)",
           "low_30d": 0.383,
           "high_30d": 1.0563,
           "range_30d_pct": 175.8,
-          "avg_daily_move_pct": 37.01,
+          "avg_daily_move_pct": 37.02,
           "observations_30d": 31,
           "range_30d_spans_correction": true
         },
         "A100-80GB": {
-          "current": 1.1018,
+          "current": 1.1347,
           "observations": 200,
           "first_observed": "2026-04-22",
           "week_ago": 1.0544,
           "week_ago_date": "2026-11-03",
-          "change_7d_pct": 4.5,
+          "change_7d_pct": 7.6,
           "corrected_in_window": true,
           "correction_reason": "on-demand changed from the single cheapest offer per name to the 25th percentile of >=3 offers, pinned by memory size (40GB A100s had been published as 80GB)",
           "low_30d": 0.3756,
           "high_30d": 1.1858,
           "range_30d_pct": 215.7,
-          "avg_daily_move_pct": 30.58,
+          "avg_daily_move_pct": 30.49,
           "observations_30d": 31,
           "range_30d_spans_correction": true
         },
         "L40S": {
-          "current": 0.7748,
+          "current": 0.7741,
           "observations": 200,
           "first_observed": "2026-04-22",
           "week_ago": 0.5348,
           "week_ago_date": "2026-11-03",
-          "change_7d_pct": 44.9,
+          "change_7d_pct": 44.7,
           "corrected_in_window": true,
           "correction_reason": "on-demand changed from the single cheapest offer per name to the 25th percentile of >=3 offers, pinned by memory size (40GB A100s had been published as 80GB)",
           "low_30d": 0.5344,
           "high_30d": 0.8422,
           "range_30d_pct": 57.6,
-          "avg_daily_move_pct": 15.2,
+          "avg_daily_move_pct": 15.21,
           "observations_30d": 31,
           "range_30d_spans_correction": true
         },
@@ -36063,34 +36032,34 @@
           "range_30d_spans_correction": true
         },
         "H100-SXM": {
-          "current": 2.562,
+          "current": 2.2022,
           "observations": 200,
           "first_observed": "2026-04-22",
           "week_ago": 1.7878,
           "week_ago_date": "2026-11-03",
-          "change_7d_pct": 43.3,
+          "change_7d_pct": 23.2,
           "corrected_in_window": true,
           "correction_reason": "on-demand changed from the single cheapest offer per name to the 25th percentile of >=3 offers, pinned by memory size (40GB A100s had been published as 80GB)",
           "low_30d": 1.7378,
           "high_30d": 4.9539,
           "range_30d_pct": 185.1,
-          "avg_daily_move_pct": 30.55,
+          "avg_daily_move_pct": 30.86,
           "observations_30d": 31,
           "range_30d_spans_correction": true
         },
         "H200": {
-          "current": 4.3443,
+          "current": 5.1985,
           "observations": 200,
           "first_observed": "2026-04-22",
           "week_ago": 5.5269,
           "week_ago_date": "2026-11-03",
-          "change_7d_pct": -21.4,
+          "change_7d_pct": -5.9,
           "corrected_in_window": true,
           "correction_reason": "on-demand changed from the single cheapest offer per name to the 25th percentile of >=3 offers, pinned by memory size (40GB A100s had been published as 80GB)",
           "low_30d": 3.6848,
           "high_30d": 5.5269,
           "range_30d_pct": 50.0,
-          "avg_daily_move_pct": 12.41,
+          "avg_daily_move_pct": 12.72,
           "observations_30d": 31,
           "range_30d_spans_correction": true
         },
@@ -36111,13 +36080,13 @@
           "range_30d_spans_correction": true
         },
         "GB200": {
-          "current": 9.3776,
+          "current": 8.1354,
           "observations": 7,
           "first_observed": "2026-11-04",
           "low_30d": 8.1302,
           "high_30d": 9.3776,
           "range_30d_pct": 15.3,
-          "avg_daily_move_pct": 2.56,
+          "avg_daily_move_pct": 4.76,
           "observations_30d": 7,
           "range_30d_spans_correction": true
         },
@@ -36629,7 +36598,7 @@
     "note": "Averaged over dedicated-cloud providers whose basis held for the whole window. Providers that changed how we read them, or joined, within the last 90 days rejoin automatically once that falls out of the window. Marketplaces (order-book prices) are always excluded."
   },
   "prediction_markets": {
-    "last_updated": "2026-11-10T08:12:56.996842+00:00",
+    "last_updated": "2026-11-10T08:15:13.439580+00:00",
     "settlement_source": {
       "name": "Ornn GPU compute index",
       "url": "https://dashboard.ornnai.com/compute"
@@ -36654,7 +36623,185 @@
       {
         "gpu": "B200",
         "label": "B200",
-        "curve": [],
+        "curve": [
+          {
+            "horizon": "2026-12",
+            "horizon_label": "Dec 2026",
+            "implied_price": 10.643,
+            "p10": 6.469,
+            "p90": null,
+            "strikes": 24,
+            "open_interest": 6845,
+            "volume": 26596,
+            "buckets": [
+              {
+                "label": "under $0.5",
+                "low": null,
+                "high": 0.5,
+                "prob": 0.025
+              },
+              {
+                "label": "$6-$6.5",
+                "low": 6.0,
+                "high": 6.5,
+                "prob": 0.08
+              },
+              {
+                "label": "$6.5-$7",
+                "low": 6.5,
+                "high": 7.0,
+                "prob": 0.015
+              },
+              {
+                "label": "$7-$7.5",
+                "low": 7.0,
+                "high": 7.5,
+                "prob": 0.02
+              },
+              {
+                "label": "$8-$8.5",
+                "low": 8.0,
+                "high": 8.5,
+                "prob": 0.025
+              },
+              {
+                "label": "$8.5-$9",
+                "low": 8.5,
+                "high": 9.0,
+                "prob": 0.04
+              },
+              {
+                "label": "$9-$9.5",
+                "low": 9.0,
+                "high": 9.5,
+                "prob": 0.055
+              },
+              {
+                "label": "$9.5-$10",
+                "low": 9.5,
+                "high": 10.0,
+                "prob": 0.095
+              },
+              {
+                "label": "$10-$10.5",
+                "low": 10.0,
+                "high": 10.5,
+                "prob": 0.125
+              },
+              {
+                "label": "$10.5-$11",
+                "low": 10.5,
+                "high": 11.0,
+                "prob": 0.07
+              },
+              {
+                "label": "$11-$11.5",
+                "low": 11.0,
+                "high": 11.5,
+                "prob": 0.06
+              },
+              {
+                "label": "$11.5-$12",
+                "low": 11.5,
+                "high": 12.0,
+                "prob": 0.04
+              },
+              {
+                "label": "over $12",
+                "low": 12.0,
+                "high": null,
+                "prob": 0.35
+              }
+            ],
+            "event_ticker": "KXB200MS-26DEC",
+            "url": "https://kalshi.com/markets/kxb200ms",
+            "question": "NVIDIA B200 \u00b7 Average hourly price in December"
+          },
+          {
+            "horizon": "2027-03",
+            "horizon_label": "Mar 2027",
+            "implied_price": 3.468,
+            "p10": 3.047,
+            "p90": null,
+            "strikes": 19,
+            "open_interest": 4326,
+            "volume": 19859,
+            "buckets": [
+              {
+                "label": "under $3",
+                "low": null,
+                "high": 3.0,
+                "prob": 0.055
+              },
+              {
+                "label": "$3-$3.5",
+                "low": 3.0,
+                "high": 3.5,
+                "prob": 0.475
+              },
+              {
+                "label": "$4-$4.5",
+                "low": 4.0,
+                "high": 4.5,
+                "prob": 0.005
+              },
+              {
+                "label": "over $12",
+                "low": 12.0,
+                "high": null,
+                "prob": 0.465
+              }
+            ],
+            "event_ticker": "KXB200MS-27MAR",
+            "url": "https://kalshi.com/markets/kxb200ms",
+            "question": "NVIDIA B200 \u00b7 Average hourly price in March 2027"
+          },
+          {
+            "horizon": "2027-05",
+            "horizon_label": "May 2027",
+            "implied_price": 3.25,
+            "p10": null,
+            "p90": 5.912,
+            "strikes": 9,
+            "open_interest": 4832,
+            "volume": 15123,
+            "buckets": [
+              {
+                "label": "under $3",
+                "low": null,
+                "high": 3.0,
+                "prob": 0.5
+              },
+              {
+                "label": "$4.5-$5",
+                "low": 4.5,
+                "high": 5.0,
+                "prob": 0.005
+              },
+              {
+                "label": "$5-$5.5",
+                "low": 5.0,
+                "high": 5.5,
+                "prob": 0.16
+              },
+              {
+                "label": "$5.5-$6",
+                "low": 5.5,
+                "high": 6.0,
+                "prob": 0.285
+              },
+              {
+                "label": "over $7",
+                "low": 7.0,
+                "high": null,
+                "prob": 0.05
+              }
+            ],
+            "event_ticker": "KXB200MS-27MAY",
+            "url": "https://kalshi.com/markets/kxb200ms",
+            "question": "NVIDIA B200 \u00b7 Average hourly price in May 2027"
+          }
+        ],
         "markets": [
           {
             "gpu": "B200",
@@ -36666,7 +36813,7 @@
             "implied_price": 9.0,
             "implied_bound": "floor",
             "volume": 22621,
-            "liquidity": 15020,
+            "liquidity": 14931,
             "url": "https://polymarket.com/event/gpu-rental-prices-b200-end-of-november",
             "buckets": [
               {
@@ -36694,21 +36841,21 @@
                 "label": "$8.00-$8.50",
                 "low": 8.0,
                 "high": 8.5,
-                "prob": 0.0167,
+                "prob": 0.0166,
                 "volume": 1830
               },
               {
                 "label": "$8.50-$9.00",
                 "low": 8.5,
                 "high": 9.0,
-                "prob": 0.0799,
+                "prob": 0.0813,
                 "volume": 1453
               },
               {
                 "label": "$9.00+",
                 "low": 9.0,
                 "high": null,
-                "prob": 0.8676,
+                "prob": 0.8664,
                 "volume": 10859
               }
             ]
@@ -36723,7 +36870,7 @@
             "implied_price": 7.0,
             "implied_bound": "floor",
             "volume": 126297,
-            "liquidity": 25190,
+            "liquidity": 25169,
             "url": "https://polymarket.com/event/gpu-rental-prices-b200-end-of-2026-20260709165336437",
             "buckets": [
               {
@@ -36751,7 +36898,7 @@
                 "label": "$4.00-$4.50",
                 "low": 4.0,
                 "high": 4.5,
-                "prob": 0.0136,
+                "prob": 0.0137,
                 "volume": 6532
               },
               {
@@ -36765,7 +36912,7 @@
                 "label": "$5.00-$5.50",
                 "low": 5.0,
                 "high": 5.5,
-                "prob": 0.0268,
+                "prob": 0.0254,
                 "volume": 11529
               },
               {
@@ -36786,14 +36933,14 @@
                 "label": "$6.50-$7.00",
                 "low": 6.5,
                 "high": 7.0,
-                "prob": 0.0555,
+                "prob": 0.0556,
                 "volume": 9408
               },
               {
                 "label": "$7.00+",
                 "low": 7.0,
                 "high": null,
-                "prob": 0.8423,
+                "prob": 0.8435,
                 "volume": 40391
               }
             ]
@@ -36808,7 +36955,7 @@
             "implied_price": 10.0,
             "implied_bound": "floor",
             "volume": 10939,
-            "liquidity": 10036,
+            "liquidity": 10055,
             "url": "https://polymarket.com/event/gpu-rental-prices-b200-end-of-2026-higher-strikes",
             "buckets": [
               {
@@ -36856,15 +37003,17 @@
             ]
           }
         ],
+        "kalshi_series": "KXB200MS",
+        "kalshi_url": "https://kalshi.com/markets/kxb200ms",
         "listed_cheapest": 7.69,
         "listed_average": 9.745,
-        "near_implied": 9.0,
-        "near_implied_bound": "floor",
-        "near_horizon": "01 Dec 2026",
-        "far_implied": 10.0,
-        "far_implied_bound": "floor",
-        "far_horizon": "01 Jan 2027",
-        "curve_change_pct": null
+        "near_implied": 10.643,
+        "near_implied_bound": null,
+        "near_horizon": "Dec 2026",
+        "far_implied": 3.25,
+        "far_implied_bound": null,
+        "far_horizon": "May 2027",
+        "curve_change_pct": -69.5
       },
       {
         "gpu": "H200",
@@ -37314,14 +37463,14 @@
             "implied_price": 6.5,
             "implied_bound": "floor",
             "volume": 34864,
-            "liquidity": 27318,
+            "liquidity": 22908,
             "url": "https://polymarket.com/event/gpu-rental-prices-h200-end-of-november",
             "buckets": [
               {
                 "label": "<$4.50",
                 "low": null,
                 "high": 4.5,
-                "prob": 0.0332,
+                "prob": 0.0334,
                 "volume": 1648
               },
               {
@@ -37335,28 +37484,28 @@
                 "label": "$5.00-$5.50",
                 "low": 5.0,
                 "high": 5.5,
-                "prob": 0.038,
+                "prob": 0.0381,
                 "volume": 4753
               },
               {
                 "label": "$5.50-$6.00",
                 "low": 5.5,
                 "high": 6.0,
-                "prob": 0.0461,
+                "prob": 0.0462,
                 "volume": 7502
               },
               {
                 "label": "$6.00-$6.50",
                 "low": 6.0,
                 "high": 6.5,
-                "prob": 0.1387,
+                "prob": 0.1358,
                 "volume": 5726
               },
               {
                 "label": "$6.50+",
                 "low": 6.5,
                 "high": null,
-                "prob": 0.6268,
+                "prob": 0.6292,
                 "volume": 11646
               }
             ]
@@ -37371,7 +37520,7 @@
             "implied_price": 6.919,
             "implied_bound": null,
             "volume": 58964,
-            "liquidity": 23483,
+            "liquidity": 23985,
             "url": "https://polymarket.com/event/gpu-rental-prices-h200-end-of-2026-20260709164949059",
             "buckets": [
               {
@@ -37470,7 +37619,7 @@
             "implied_price": 6.5,
             "implied_bound": "floor",
             "volume": 3002,
-            "liquidity": 10159,
+            "liquidity": 10139,
             "url": "https://polymarket.com/event/gpu-rental-prices-h200-end-of-december-2026",
             "buckets": [
               {
@@ -37521,7 +37670,7 @@
         "kalshi_series": "KXH200MS",
         "kalshi_url": "https://kalshi.com/markets/kxh200ms",
         "listed_cheapest": 4.29,
-        "listed_average": 6.837,
+        "listed_average": 6.914,
         "near_implied": 6.981,
         "near_implied_bound": null,
         "near_horizon": "Nov 2026",
@@ -37537,9 +37686,9 @@
           {
             "horizon": "2026-11",
             "horizon_label": "Nov 2026",
-            "implied_price": 3.422,
+            "implied_price": 3.44,
             "p10": 3.056,
-            "p90": 3.705,
+            "p90": 3.708,
             "strikes": 9,
             "open_interest": 4621,
             "volume": 10724,
@@ -37572,13 +37721,13 @@
                 "label": "$3.25-$3.5",
                 "low": 3.25,
                 "high": 3.5,
-                "prob": 0.255
+                "prob": 0.23
               },
               {
                 "label": "$3.5-$3.75",
                 "low": 3.5,
                 "high": 3.75,
-                "prob": 0.39
+                "prob": 0.415
               },
               {
                 "label": "$3.75-$4",
@@ -37843,21 +37992,21 @@
             "implied_price": 3.25,
             "implied_bound": "floor",
             "volume": 22894,
-            "liquidity": 12629,
+            "liquidity": 12372,
             "url": "https://polymarket.com/event/gpu-rental-prices-h100-end-of-november",
             "buckets": [
               {
                 "label": "<$2.25",
                 "low": null,
                 "high": 2.25,
-                "prob": 0.0401,
+                "prob": 0.0402,
                 "volume": 3433
               },
               {
                 "label": "$2.25-$2.50",
                 "low": 2.25,
                 "high": 2.5,
-                "prob": 0.0461,
+                "prob": 0.0456,
                 "volume": 1468
               },
               {
@@ -37871,21 +38020,21 @@
                 "label": "$2.75-$3.00",
                 "low": 2.75,
                 "high": 3.0,
-                "prob": 0.1688,
+                "prob": 0.1689,
                 "volume": 5839
               },
               {
                 "label": "$3.00-$3.25",
                 "low": 3.0,
                 "high": 3.25,
-                "prob": 0.1656,
+                "prob": 0.1657,
                 "volume": 2836
               },
               {
                 "label": "$3.25+",
                 "low": 3.25,
                 "high": null,
-                "prob": 0.5383,
+                "prob": 0.5386,
                 "volume": 7596
               }
             ]
@@ -37897,59 +38046,59 @@
             "horizon": "2027-01",
             "horizon_label": "01 Jan 2027",
             "end_date": "2027-01-01T04:59:00Z",
-            "implied_price": 3.41,
+            "implied_price": 3.427,
             "implied_bound": null,
             "volume": 83734,
-            "liquidity": 15251,
+            "liquidity": 15084,
             "url": "https://polymarket.com/event/gpu-rental-prices-h100-end-of-2026-20260709164334623",
             "buckets": [
               {
                 "label": "<$1.50",
                 "low": null,
                 "high": 1.5,
-                "prob": 0.0493,
+                "prob": 0.0362,
                 "volume": 2506
               },
               {
                 "label": "$1.50-$2.00",
                 "low": 1.5,
                 "high": 2.0,
-                "prob": 0.0474,
+                "prob": 0.0481,
                 "volume": 13528
               },
               {
                 "label": "$2.00-$2.50",
                 "low": 2.0,
                 "high": 2.5,
-                "prob": 0.0455,
+                "prob": 0.0457,
                 "volume": 19556
               },
               {
                 "label": "$2.50-$3.00",
                 "low": 2.5,
                 "high": 3.0,
-                "prob": 0.1836,
+                "prob": 0.1862,
                 "volume": 22479
               },
               {
                 "label": "$3.00-$3.50",
                 "low": 3.0,
                 "high": 3.5,
-                "prob": 0.2122,
+                "prob": 0.2152,
                 "volume": 13104
               },
               {
                 "label": "$3.50-$4.00",
                 "low": 3.5,
                 "high": 4.0,
-                "prob": 0.2258,
+                "prob": 0.229,
                 "volume": 4850
               },
               {
                 "label": "$4.00+",
                 "low": 4.0,
                 "high": null,
-                "prob": 0.2362,
+                "prob": 0.2395,
                 "volume": 7712
               }
             ]
@@ -37964,49 +38113,49 @@
             "implied_price": 3.25,
             "implied_bound": "floor",
             "volume": 7961,
-            "liquidity": 14116,
+            "liquidity": 14189,
             "url": "https://polymarket.com/event/gpu-rental-prices-h100-end-of-december-2026",
             "buckets": [
               {
                 "label": "<$2.25",
                 "low": null,
                 "high": 2.25,
-                "prob": 0.0591,
+                "prob": 0.059,
                 "volume": 488
               },
               {
                 "label": "$2.25-$2.50",
                 "low": 2.25,
                 "high": 2.5,
-                "prob": 0.0561,
+                "prob": 0.0546,
                 "volume": 306
               },
               {
                 "label": "$2.50-$2.75",
                 "low": 2.5,
                 "high": 2.75,
-                "prob": 0.0569,
+                "prob": 0.0568,
                 "volume": 520
               },
               {
                 "label": "$2.75-$3.00",
                 "low": 2.75,
                 "high": 3.0,
-                "prob": 0.1489,
+                "prob": 0.1528,
                 "volume": 592
               },
               {
                 "label": "$3.00-$3.25",
                 "low": 3.0,
                 "high": 3.25,
-                "prob": 0.1314,
+                "prob": 0.131,
                 "volume": 728
               },
               {
                 "label": "$3.25+",
                 "low": 3.25,
                 "high": null,
-                "prob": 0.5475,
+                "prob": 0.5459,
                 "volume": 5328
               }
             ]
@@ -38014,15 +38163,15 @@
         ],
         "kalshi_series": "KXH100MS",
         "kalshi_url": "https://kalshi.com/markets/kxh100ms",
-        "listed_cheapest": 2.562,
-        "listed_average": 6.194,
-        "near_implied": 3.422,
+        "listed_cheapest": 2.202,
+        "listed_average": 6.164,
+        "near_implied": 3.44,
         "near_implied_bound": null,
         "near_horizon": "Nov 2026",
         "far_implied": 2.125,
         "far_implied_bound": null,
         "far_horizon": "May 2027",
-        "curve_change_pct": -37.9
+        "curve_change_pct": -38.2
       },
       {
         "gpu": "A100-80GB",
@@ -38039,14 +38188,14 @@
             "implied_price": 1.011,
             "implied_bound": null,
             "volume": 39557,
-            "liquidity": 16508,
+            "liquidity": 16530,
             "url": "https://polymarket.com/event/gpu-rental-prices-a100-end-of-november",
             "buckets": [
               {
                 "label": "<$0.50",
                 "low": null,
                 "high": 0.5,
-                "prob": 0.0159,
+                "prob": 0.016,
                 "volume": 1301
               },
               {
@@ -38060,14 +38209,14 @@
                 "label": "$0.75-$1.00",
                 "low": 0.75,
                 "high": 1.0,
-                "prob": 0.4251,
+                "prob": 0.4255,
                 "volume": 21110
               },
               {
                 "label": "$1.00-$1.25",
                 "low": 1.0,
                 "high": 1.25,
-                "prob": 0.4106,
+                "prob": 0.411,
                 "volume": 8835
               },
               {
@@ -38081,7 +38230,7 @@
                 "label": "$1.50+",
                 "low": 1.5,
                 "high": null,
-                "prob": 0.0435,
+                "prob": 0.0426,
                 "volume": 1840
               }
             ]
@@ -38096,56 +38245,56 @@
             "implied_price": 1.09,
             "implied_bound": null,
             "volume": 13073,
-            "liquidity": 9700,
+            "liquidity": 9831,
             "url": "https://polymarket.com/event/gpu-rental-prices-a100-end-of-december-2026",
             "buckets": [
               {
                 "label": "<$0.50",
                 "low": null,
                 "high": 0.5,
-                "prob": 0.0199,
+                "prob": 0.0198,
                 "volume": 674
               },
               {
                 "label": "$0.50-$0.75",
                 "low": 0.5,
                 "high": 0.75,
-                "prob": 0.01,
+                "prob": 0.0099,
                 "volume": 2709
               },
               {
                 "label": "$0.75-$1.00",
                 "low": 0.75,
                 "high": 1.0,
-                "prob": 0.2848,
+                "prob": 0.2834,
                 "volume": 1976
               },
               {
                 "label": "$1.00-$1.25",
                 "low": 1.0,
                 "high": 1.25,
-                "prob": 0.5173,
+                "prob": 0.5196,
                 "volume": 3628
               },
               {
                 "label": "$1.25-$1.50",
                 "low": 1.25,
                 "high": 1.5,
-                "prob": 0.0683,
+                "prob": 0.068,
                 "volume": 1173
               },
               {
                 "label": "$1.50+",
                 "low": 1.5,
                 "high": null,
-                "prob": 0.0997,
+                "prob": 0.0992,
                 "volume": 2913
               }
             ]
           }
         ],
-        "listed_cheapest": 1.102,
-        "listed_average": 3.075,
+        "listed_cheapest": 1.135,
+        "listed_average": 3.079,
         "near_implied": 1.011,
         "near_implied_bound": null,
         "near_horizon": "01 Dec 2026",
@@ -38166,63 +38315,63 @@
             "horizon": "2026-12",
             "horizon_label": "01 Dec 2026",
             "end_date": "2026-12-01T04:59:00Z",
-            "implied_price": 0.686,
+            "implied_price": 0.685,
             "implied_bound": null,
             "volume": 25683,
-            "liquidity": 16400,
+            "liquidity": 16497,
             "url": "https://polymarket.com/event/gpu-rental-prices-rtx-5090-end-of-november",
             "buckets": [
               {
                 "label": "<$0.55",
                 "low": null,
                 "high": 0.55,
-                "prob": 0.1035,
+                "prob": 0.1018,
                 "volume": 5008
               },
               {
                 "label": "$0.55-$0.60",
                 "low": 0.55,
                 "high": 0.6,
-                "prob": 0.0138,
+                "prob": 0.0252,
                 "volume": 1704
               },
               {
                 "label": "$0.60-$0.65",
                 "low": 0.6,
                 "high": 0.65,
-                "prob": 0.137,
+                "prob": 0.1348,
                 "volume": 1812
               },
               {
                 "label": "$0.65-$0.70",
                 "low": 0.65,
                 "high": 0.7,
-                "prob": 0.3401,
+                "prob": 0.3393,
                 "volume": 10440
               },
               {
                 "label": "$0.70-$0.75",
                 "low": 0.7,
                 "high": 0.75,
-                "prob": 0.1641,
+                "prob": 0.1614,
                 "volume": 1492
               },
               {
                 "label": "$0.75+",
                 "low": 0.75,
                 "high": null,
-                "prob": 0.2415,
+                "prob": 0.2375,
                 "volume": 5227
               }
             ]
           }
         ],
-        "listed_cheapest": 0.536,
-        "listed_average": 0.863,
-        "near_implied": 0.686,
+        "listed_cheapest": 0.548,
+        "listed_average": 0.869,
+        "near_implied": 0.685,
         "near_implied_bound": null,
         "near_horizon": "01 Dec 2026",
-        "far_implied": 0.686,
+        "far_implied": 0.685,
         "far_implied_bound": null,
         "far_horizon": "01 Dec 2026",
         "curve_change_pct": null
