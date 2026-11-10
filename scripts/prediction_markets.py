@@ -298,10 +298,35 @@ def _poly_median(brackets):
         if cumulative + prob >= 0.5:
             low, high = b["low"], b["high"]
             if low is None or high is None:
-                # Open-ended tail: report the edge rather than inventing a width.
+                # Open-ended tail: the median is somewhere beyond the edge. The
+                # caller must show this as a bound (">= $9.00"), not a point --
+                # see _poly_median_bound.
                 return round(high if low is None else low, 3)
             frac = (0.5 - cumulative) / prob if prob else 0.5
             return round(low + frac * (high - low), 3)
+        cumulative += prob
+    return None
+
+
+def _poly_median_bound(brackets):
+    """'floor' / 'ceiling' when the implied median falls in an open-ended
+    bracket (so _poly_median returned only its edge), else None."""
+    total = sum(b["prob"] for b in brackets)
+    if total <= 0:
+        return None
+    ordered = sorted(
+        brackets,
+        key=lambda b: (b["low"] if b["low"] is not None else (b["high"] or 0) - 1),
+    )
+    cumulative = 0.0
+    for b in ordered:
+        prob = b["prob"] / total
+        if cumulative + prob >= 0.5:
+            if b["high"] is None:
+                return "floor"
+            if b["low"] is None:
+                return "ceiling"
+            return None
         cumulative += prob
     return None
 
@@ -375,6 +400,7 @@ def fetch_polymarket_gpu_markets():
             "horizon_label": _poly_horizon_label(end),
             "end_date": end,
             "implied_price": _poly_median(brackets),
+            "implied_bound": _poly_median_bound(brackets),
             "volume": round(_num(ev.get("volume")) or 0.0),
             "liquidity": round(_num(ev.get("liquidity")) or 0.0),
             "url": f"https://polymarket.com/event/{ev.get('slug')}",
@@ -446,17 +472,23 @@ def build_prediction_markets(data, kalshi_curves, polymarket_markets):
         points = entry["curve"]
         if not points:
             points = [
-                {"implied_price": m["implied_price"], "horizon_label": m["horizon_label"]}
+                {"implied_price": m["implied_price"], "horizon_label": m["horizon_label"],
+                 "implied_bound": m.get("implied_bound")}
                 for m in sorted(entry["markets"], key=lambda m: m.get("end_date") or "")
                 if m.get("implied_price") is not None
             ]
         near = points[0] if points else None
         entry["near_implied"] = near["implied_price"] if near else None
+        entry["near_implied_bound"] = near.get("implied_bound") if near else None
         entry["near_horizon"] = near["horizon_label"] if near else None
         far = points[-1] if points else None
         entry["far_implied"] = far["implied_price"] if far else None
+        entry["far_implied_bound"] = far.get("implied_bound") if far else None
         entry["far_horizon"] = far["horizon_label"] if far else None
-        if near and far and near is not far and near["implied_price"]:
+        # A % change between two bounds (or a bound and a point) is not a
+        # change anybody priced.
+        if (near and far and near is not far and near["implied_price"]
+                and not near.get("implied_bound") and not far.get("implied_bound")):
             entry["curve_change_pct"] = round(
                 (far["implied_price"] - near["implied_price"]) / near["implied_price"] * 100, 1
             )

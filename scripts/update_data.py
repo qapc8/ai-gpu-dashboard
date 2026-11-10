@@ -16,13 +16,13 @@ import os
 import sys
 import time
 import urllib.parse
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from xml.etree import ElementTree
 
-from forecast_engine import generate_forecasts
+from extra_providers import PROVIDERS as EXTRA_PROVIDERS
 from inference_market import refresh_inference_market
 from model_fit import build_model_fit
-from price_history import build_price_history
+from price_history import METHODOLOGY_CHANGES, build_price_history
 from sustainability import build_gpu_carbon
 from prediction_markets import (
     build_prediction_markets,
@@ -36,9 +36,7 @@ from prediction_markets import (
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.dirname(SCRIPT_DIR)
 DATA_JSON = os.path.join(PROJECT_DIR, "data.json")
-EMBEDDED_DATA_JSON = os.path.join(PROJECT_DIR, "embedded_data.json")
 AI_ANALYSIS_JSON = os.path.join(PROJECT_DIR, "ai_analysis.json")
-EMBEDDED_AI_JSON = os.path.join(PROJECT_DIR, "embedded_ai.json")
 CONFIG_PY = os.path.join(PROJECT_DIR, "config.py")
 
 # ---------------------------------------------------------------------------
@@ -138,16 +136,25 @@ def http_post(url, json_body, headers=None, timeout=30):
 # ===================================================================
 
 def fetch_vastai_pricing():
-    """Fetch on-demand GPU pricing from Vast.ai API.
+    """Fetch on-demand GPU pricing from Vast.ai, one query per tracked model.
 
-    The endpoint caps a response at ~64 offers no matter what `limit` says, so a
-    single price-ascending query returns nothing but the cheapest consumer cards
-    -- every datacenter GPU fell off the end and the section quietly served
-    carried-forward prices. Query the cheap tail and the datacenter tier
-    separately (the VRAM filter keeps the latter in its own 64-offer budget) and
-    merge on the cheapest offer per model.
+    Vast's search endpoint returns at most ~64 offers per query whatever
+    `limit` says. The previous version ran three price-ascending queries across
+    the whole catalogue and kept the single cheapest offer per `gpu_name`, which
+    went wrong three ways:
+
+    * the datacenter tier was crowded out of the 64-offer budget, so B200/B300
+      were missing for days and their last price was silently carried forward;
+    * `gpu_name` does not encode memory -- "A100 SXM4" and "A100 PCIE" cover
+      both 40GB and 80GB cards -- so a 40GB offer was published as the 80GB
+      price ($0.38 "A100 80GB", which then won best FLOPS/$ site-wide);
+    * one offer is not a market price; a single mispriced host set the number.
+
+    Now each tracked model is queried on its own, pinned by exact name *and* a
+    per-GPU memory window, and we publish the 25th percentile of the returned
+    offers only when there are at least VAST_MIN_OFFERS of them.
     """
-    log_info("Fetching Vast.ai pricing...")
+    log_info("Fetching Vast.ai pricing (per-model)...")
     url = "https://cloud.vast.ai/api/v0/bundles/"
     base = {
         "verified": {"eq": True},
@@ -156,37 +163,84 @@ def fetch_vastai_pricing():
         "num_gpus": {"gte": 1},
         "type": "on-demand",
     }
-    # (extra filters, ordering) -- one pass per price tier
-    passes = [
-        ({}, [["dph_total", "asc"]]),                             # consumer / cheap
-        ({"gpu_ram": {"gte": 20000}}, [["dph_total", "asc"]]),    # datacenter, cheapest first
-        ({"gpu_ram": {"gte": 60000}}, [["dph_total", "asc"]]),    # big-VRAM (B200/B300/H200)
-    ]
-
     gpu_prices = {}
     total_offers = 0
-    for extra, order in passes:
-        query = json.dumps({**base, **extra, "order": order, "limit": 3000})
-        status, body = http_get(url, params={"q": query}, timeout=60)
+    failures = 0
+    for vast_name, internal, lo_gb, hi_gb in _VAST_MODELS:
+        query = {
+            **base,
+            "gpu_name": {"eq": vast_name},
+            "gpu_ram": {"gte": lo_gb * 1000, "lte": hi_gb * 1024},
+            "order": [["dph_total", "asc"]],
+            "limit": 64,
+        }
+        try:
+            status, body = http_get(url, params={"q": json.dumps(query)}, timeout=60)
+        except Exception:
+            failures += 1
+            continue
         if status != 200:
-            raise RuntimeError(f"Vast.ai returned HTTP {status}")
+            failures += 1
+            continue
         data = json.loads(body)
         offers = data if isinstance(data, list) else data.get("offers", [])
-        total_offers += len(offers)
-
+        per_gpu = []
         for offer in offers:
-            gpu_name = offer.get("gpu_name", "")
-            price_hr = offer.get("dph_total")  # dollars per hour total
-            num_gpus = offer.get("num_gpus", 1)
-            if not gpu_name or not price_hr or num_gpus < 1:
+            price_hr = offer.get("dph_total")
+            num_gpus = offer.get("num_gpus") or 0
+            ram_gb = (offer.get("gpu_ram") or 0) / 1024
+            if not price_hr or num_gpus < 1 or not (lo_gb <= ram_gb <= hi_gb):
                 continue
-            per_gpu = round(price_hr / num_gpus, 4)
-            entry = gpu_prices.setdefault(gpu_name, {"min_price": per_gpu, "num_offers": 0})
-            entry["min_price"] = min(entry["min_price"], per_gpu)
-            entry["num_offers"] += 1
+            per_gpu.append(price_hr / num_gpus)
+        total_offers += len(per_gpu)
+        entry = gpu_prices.setdefault(internal, {"prices": []})
+        entry["prices"].extend(per_gpu)
 
-    log_ok("Vast.ai", f"{len(gpu_prices)} GPU models, {total_offers} offers across {len(passes)} passes")
-    return gpu_prices
+    if failures == len(_VAST_MODELS):
+        raise RuntimeError("Vast.ai: every per-model query failed")
+
+    result = {}
+    for internal, entry in gpu_prices.items():
+        prices = sorted(entry["prices"])
+        n = len(prices)
+        if n < VAST_MIN_OFFERS:
+            # Queried successfully but too thin to call a market price.
+            result[internal] = {"min_price": None, "num_offers": n}
+            continue
+        p25 = prices[max(0, int(round(0.25 * (n - 1))))]
+        result[internal] = {
+            "min_price": round(p25, 4),
+            "low_price": round(prices[0], 4),
+            "median_price": round(prices[n // 2], 4),
+            "num_offers": n,
+        }
+    log_ok("Vast.ai", f"{sum(1 for v in result.values() if v['min_price'])} GPU models priced, "
+                      f"{total_offers} offers")
+    return result
+
+
+# (Vast gpu_name, internal id, min GB, max GB per GPU). Exact-name match plus a
+# memory window: the name alone does not distinguish 40GB from 80GB A100s, and
+# substring matching mapped "GH200 SXM" onto H200 and "RTX 5090D" onto RTX 5090.
+_VAST_MODELS = (
+    ("RTX 4090", "RTX-4090", 23, 25),
+    ("RTX 5090", "RTX-5090", 31, 33),
+    ("L4", "L4", 22, 25),
+    ("Tesla T4", "T4", 15, 17),
+    ("L40S", "L40S", 44, 49),
+    ("A100 SXM4", "A100-80GB", 78, 82),
+    ("A100 SXM4", "A100-40GB", 38, 42),
+    ("A100 PCIE", "A100-PCIe", 78, 82),
+    ("H100 SXM", "H100-SXM", 78, 82),
+    ("H100 PCIE", "H100-PCIe", 78, 82),
+    ("H200", "H200", 138, 145),
+    ("GH200 SXM", "GH200", 90, 100),
+    ("B200", "B200", 175, 195),
+    ("B300", "B300", 260, 300),
+    ("GB200", "GB200", 180, 195),
+    ("MI300X", "MI300X", 185, 195),
+)
+VAST_MIN_OFFERS = 3
 
 
 def fetch_runpod_pricing():
@@ -249,6 +303,13 @@ def fetch_runpod_pricing():
         spot = secure_spot if (tier == "secure" and secure_spot) else None
         if not spot:
             spot = lowest.get("minimumBidPrice") or community_spot
+        # A Community or bid rate below ~35% of the Secure rate is a stale or
+        # placeholder listing, not a bookable price (the API has reported a
+        # $0.50 Community MI300X beside a $2.39 Secure one). Drop it.
+        if on_demand and community and community < 0.35 * on_demand:
+            community = None
+        if on_demand and spot and spot < 0.35 * on_demand:
+            spot = None
         result[name] = {
             "on_demand_price": on_demand,
             "tier": tier,
@@ -291,139 +352,179 @@ def _extract_prices_from_html(html, patterns):
 
 
 def fetch_azure_pricing():
-    """Azure Retail Prices API — free, unauthenticated.
+    """Azure Retail Prices API, one exact VM size per GPU.
 
-    Docs: https://learn.microsoft.com/rest/api/cost-management/retail-prices/azure-retail-prices
-    Returns {gpu_id: per_gpu_hr_price}.
+    The previous version matched skuName prefixes ("ND96" + "H100") in eastus
+    and took the median of every row that matched. That pooled Linux with
+    Windows rows and the InfiniBand ND96isr size with the non-IB ND96is/isf
+    sizes, giving $11.61/GPU-hr for H100 -- a price Azure lists nowhere (Linux
+    ND96isr_H100_v5 is $98.32/8 = $12.29). The same prefix match published the
+    Windows price of the *40GB* ND96asr_A100_v4 as the A100 80GB rate, and H200
+    / MI300X were missing because eastus does not offer them.
 
-    Each query targets a specific SKU prefix with a known GPU count, avoiding
-    the "single-GPU SKU divided by 8" trap.
+    Now: an exact armSkuName per GPU, Linux pay-as-you-go rows only, and the
+    first region in _AZURE_REGIONS that offers the size.
     """
     log_info("Fetching Azure Retail Prices API...")
-    # (skuName substring, required substring 2 for 8-GPU, internal GPU id, GPUs per VM)
-    # ND96 family = 8 GPU NVLink trainers; NC* = inference (1-4 GPU)
-    sku_queries = [
-        ("ND96", "H100", "H100-SXM", 8),
-        ("ND96", "H200", "H200", 8),
-        ("ND96", "B200", "B200", 8),
-        ("ND", "B300", "B300", 8),
-        ("ND", "GB200", "GB200", 4),
-        ("ND96", "A100", "A100-80GB", 8),
-        ("NC24", "A100", "A100-80GB", 1),  # may overwrite with cheaper per-GPU
-        ("NC6s_v3", None, "V100", 1),
-        ("NV36", "A10", "A10", 1),
-    ]
     base = "https://prices.azure.com/api/retail/prices"
     result = {}
-    for prefix, must_contain, gpu_id, gpus_per_vm in sku_queries:
-        # No priceType filter: 'Consumption' would exclude the Reservation rows
-        # we need for the committed rates. They are separated below by
-        # reservationTerm.
-        filt = (
-            f"serviceName eq 'Virtual Machines' and armRegionName eq 'eastus' "
-            f"and startswith(skuName, '{prefix}')"
-        )
-        try:
-            # The retail API throttles bursts; a single 429 used to silently
-            # drop that GPU for the run (a refresh once published Azure with
-            # one SKU instead of three). Retry before giving up on a query.
+    for arm_sku, gpu_id, gpus_per_vm in _AZURE_SKUS:
+        for region in _AZURE_REGIONS:
+            filt = f"armSkuName eq '{arm_sku}' and armRegionName eq '{region}'"
             body = None
             for attempt in range(3):
-                status, body = http_get(
-                    base, params={"$filter": filt, "currencyCode": "USD"}, timeout=25
-                )
+                try:
+                    status, body = http_get(
+                        base, params={"$filter": filt, "currencyCode": "USD"}, timeout=25
+                    )
+                except Exception:
+                    status, body = None, None
                 if status == 200:
                     break
                 body = None
                 time.sleep(1.5 * (attempt + 1))
             if body is None:
                 continue
-            items = json.loads(body).get("Items", [])
-            # Azure prices each SKU three ways in one response: pay-as-you-go
-            # (no reservationTerm), Spot / Low Priority (flagged in meterName),
-            # and reservations (reservationTerm "1 Year" / "3 Years", where the
-            # value is the *whole-term* total despite unitOfMeasure saying
-            # "1 Hour"). Split them out instead of taking one median across the
-            # lot, which is how a reserved total could land in an on-demand row.
+            try:
+                items = json.loads(body).get("Items", [])
+            except json.JSONDecodeError:
+                continue
             on_demand, spot, res = [], [], {1: [], 3: []}
-            on_demand_sku = None
             for it in items:
-                sku = it.get("skuName", "")
+                product = it.get("productName") or ""
                 meter = (it.get("meterName") or "").lower()
-                if must_contain and must_contain not in sku:
+                if "windows" in product.lower() or "dedicated host" in product.lower():
                     continue
                 up = it.get("retailPrice") or it.get("unitPrice")
                 if not up or up <= 0:
                     continue
                 up = float(up)
-                price_type = (it.get("priceType") or "").strip()
                 term = (it.get("reservationTerm") or "").strip()
                 if term:
+                    # Reservation rows carry the whole-term total.
                     years = {"1 Year": 1, "3 Years": 3}.get(term)
                     if years:
                         res[years].append(up / (years * 8760) / gpus_per_vm)
                     continue
-                # Everything below is a pay-as-you-go rate. DevTest and other
-                # price types are not comparable to published on-demand.
-                if price_type and price_type != "Consumption":
+                if (it.get("type") or it.get("priceType") or "") != "Consumption":
                     continue
                 if "low priority" in meter:
                     continue
                 if "spot" in meter:
                     spot.append(up / gpus_per_vm)
                     continue
-                if (it.get("unitOfMeasure") or "").lower() not in ("1 hour", "1hour"):
-                    continue
                 on_demand.append(up / gpus_per_vm)
-                on_demand_sku = on_demand_sku or sku
-
             if not on_demand:
-                continue
-            on_demand.sort()
-            rates = {"on_demand": round(on_demand[len(on_demand) // 2], 4)}
-            if on_demand_sku:
-                rates["instance"] = on_demand_sku
-            # A "spot" meter that is not below on-demand is a mislabelled row,
-            # not a bargain. Drop it rather than publish a 0% discount.
-            cheap_spot = [s for s in spot if s < rates["on_demand"]]
+                continue  # size not offered here; try the next region
+            rates = {
+                "on_demand": round(min(on_demand), 4),
+                "instance": f"{arm_sku.replace('Standard_', '')} ({region})",
+            }
+            cheap_spot = [s for s in spot if s < rates["on_demand"] * 0.95]
             if cheap_spot:
                 rates["spot"] = round(min(cheap_spot), 4)
             for years, key in ((1, "reserved_1yr"), (3, "reserved_3yr")):
                 if res[years]:
                     rates[key] = round(min(res[years]), 4)
-            prev = result.get(gpu_id)
-            if not prev or rates["on_demand"] < prev["on_demand"]:
-                result[gpu_id] = rates
-        except Exception:
-            continue
+            result[gpu_id] = rates
+            break
     if not result:
         raise RuntimeError("Azure API returned no parseable pricing")
     log_ok("Azure", f"{len(result)} GPU types")
     return result
 
 
+# (armSkuName, internal GPU id, GPUs per VM). Exact sizes, so a near-namesake
+# (non-InfiniBand, 40GB, Windows) can never stand in for the one we mean.
+_AZURE_SKUS = (
+    ("Standard_ND96isr_H100_v5", "H100-SXM", 8),
+    ("Standard_ND96isr_H200_v5", "H200", 8),
+    ("Standard_ND128isr_NDR_GB200_v6", "GB200", 4),
+    ("Standard_ND96amsr_A100_v4", "A100-80GB", 8),
+    ("Standard_ND96asr_v4", "A100-40GB", 8),
+    ("Standard_ND96isr_MI300X_v5", "MI300X", 8),
+)
+# Regions tried in order; the first that lists a size wins. eastus first for
+# continuity with the published history, then the regions that carry H200 and
+# MI300X.
+_AZURE_REGIONS = ("eastus", "eastus2", "westus3")
+
+
 def fetch_lambda_pricing():
-    """Scrape Lambda Labs on-demand GPU prices from the pricing page."""
-    log_info("Fetching Lambda Labs pricing...")
+    """Lambda on-demand prices, read from the structured pricing table.
+
+    The page has one tab per cluster size (8x / 4x / 2x / 1x) and Lambda
+    charges a different per-GPU rate for each. The old regex took the first
+    dollar amount after each GPU name, so which size it got depended on page
+    order: H100 SXM came out as the 4x rate ($4.69) while B200 was the 8x rate
+    and GH200 / H100 PCIe the 1x rate. Now each tab is parsed with its size and
+    every GPU is published at the largest size Lambda sells it in (8x where
+    offered -- the size the other clouds in the grid are quoted at), with
+    `cluster_size` recorded alongside.
+
+    Lambda also posts price changes ahead of time ("These prices take effect
+    November 16, 2026"); the effective date is recorded so the page can say so.
+    """
+    log_info("Fetching Lambda pricing...")
     url = "https://lambda.ai/service/gpu-cloud"
     status, body = http_get(url, headers={"User-Agent": "Mozilla/5.0 (pricing-bot)"}, timeout=20)
     if status != 200:
         raise RuntimeError(f"Lambda returned HTTP {status}")
-    # Each entry matches the GPU-name row followed by a "$X.XX / GPU / hour" or "$X.XX" token.
-    # Pattern captures the first dollar price occurring within 400 chars after the GPU name.
-    patterns = [
-        ("B200", r"B200[^$]{0,400}?\$(\d+\.\d{2})"),
-        ("GH200", r"GH200[^$]{0,400}?\$(\d+\.\d{2})"),
-        ("H100-SXM", r"H100\s*SXM[^$]{0,400}?\$(\d+\.\d{2})"),
-        ("H100-PCIe", r"H100\s*PCIe[^$]{0,400}?\$(\d+\.\d{2})"),
-        ("A100-80GB", r"A100\s*(?:SXM\s*)?\(?80\s*GB\)?[^$]{0,400}?\$(\d+\.\d{2})"),
-        ("A100-40GB", r"A100\s*(?:SXM|PCIe)?\s*\(?40\s*GB\)?[^$]{0,400}?\$(\d+\.\d{2})"),
-    ]
-    result = _extract_prices_from_html(body, patterns)
+
+    sizes = [int(m) for m in _re.findall(r'role="tab"[^>]*>\s*(\d+)x\s*</button>', body)]
+    panels = _re.split(r'<div role="tabpanel"', body)[1:]
+    if not sizes or len(panels) < len(sizes):
+        raise RuntimeError("Lambda: pricing tabs not found -- page layout changed")
+
+    effective = None
+    m = _re.search(r"take effect\s+([A-Z][a-z]+ \d{1,2}, \d{4})", body)
+    if m:
+        try:
+            effective = datetime.strptime(m.group(1), "%B %d, %Y").strftime("%Y-%m-%d")
+        except ValueError:
+            effective = None
+
+    result = {}
+    for size, panel in zip(sizes, panels):
+        for row in _re.finditer(
+            r'data-plan="([^"]+)".*?data-label="VRAM/GPU">\s*(\d+)\s*GB.*?'
+            r'data-label="PRICE/GPU/HR\*?">\s*\$(\d+\.\d{2})',
+            panel, _re.S,
+        ):
+            plan, vram, price = row.group(1), int(row.group(2)), float(row.group(3))
+            gpu_id = _lambda_gpu_id(plan, vram)
+            if not gpu_id:
+                continue
+            prev = result.get(gpu_id)
+            if prev is None or size > prev["cluster_size"]:
+                result[gpu_id] = {
+                    "on_demand": price,
+                    "instance": f"{size}x {_html.unescape(plan)}",
+                    "cluster_size": size,
+                    "effective_from": effective,
+                }
     if not result:
-        raise RuntimeError("Lambda: no prices parsed from HTML")
-    log_ok("Lambda", f"{len(result)} GPU types")
+        raise RuntimeError("Lambda: no prices parsed from pricing table")
+    log_ok("Lambda", f"{len(result)} GPU types" + (f" (effective {effective})" if effective else ""))
     return result
+
+
+def _lambda_gpu_id(plan, vram_gb):
+    p = plan.upper()
+    if "GH200" in p:
+        return "GH200"
+    if "B200" in p:
+        return "B200"
+    if "B300" in p:
+        return "B300"
+    if "H100" in p:
+        return "H100-PCIe" if "PCIE" in p else "H100-SXM"
+    if "A100" in p:
+        if vram_gb >= 80:
+            return "A100-PCIe" if "PCIE" in p else "A100-80GB"
+        # 40GB PCIe has no spec entry of its own; only the SXM part maps.
+        return None if "PCIE" in p else "A100-40GB"
+    return None
 
 
 def fetch_coreweave_pricing():
@@ -589,6 +690,10 @@ def fetch_aws_pricing():
         "g5.48xlarge": ("A10G", 8),
         "g6.48xlarge": ("L4", 8),
         "g6e.48xlarge": ("L40S", 8),
+        # T4 was only ever a hardcoded fallback here (g4dn.xlarge, frozen since
+        # 2026-07-28). The 4-GPU g4dn.12xlarge is the multi-GPU size, matching
+        # how every other row is quoted.
+        "g4dn.12xlarge": ("T4", 4),
     }
 
     # Map sku -> instance_type for products with Linux/Shared tenancy/No pre-install
@@ -913,23 +1018,26 @@ def get_hardcoded_fallback_prices():
         # for H200 / B200 / B300 / MI300X / MI325X / L40S in this region, so
         # they are deliberately absent rather than guessed.
         "Azure": {
-            "last_verified": VERIFIED_ON,
+            "last_verified": "2026-11-09",
             "source": "hardcoded_fallback",
             "gpus": {
-                "GB200": {"price_per_gpu_hr": 28.512},     # ND128isrNDRGB200v6 $114.048/4
-                "H100-SXM": {"price_per_gpu_hr": 11.613},  # ND96is*H100v5 median /8
-                "A100-80GB": {"price_per_gpu_hr": 3.952},  # ND96amsA100v4
+                "GB200": {"price_per_gpu_hr": 27.040},     # ND128isr_NDR_GB200_v6 $108.16/4 (Linux)
+                "H100-SXM": {"price_per_gpu_hr": 12.290},  # ND96isr_H100_v5 $98.32/8 (Linux)
+                "A100-80GB": {"price_per_gpu_hr": 4.096},  # ND96amsr_A100_v4 $32.77/8 (Linux)
+                "H200": {"price_per_gpu_hr": 10.600},      # ND96isr_H200_v5 $84.80/8, eastus2
+                "MI300X": {"price_per_gpu_hr": 6.000},     # ND96isr_MI300X_v5 $48.00/8, eastus2
             },
         },
-        # Lambda Labs public on-demand rates.
+        # Lambda public on-demand list, largest cluster size sold (8x where offered).
         "Lambda": {
-            "last_verified": VERIFIED_ON,
+            "last_verified": "2026-11-09",
             "source": "hardcoded_fallback",
             "gpus": {
-                "B200": {"price_per_gpu_hr": 6.690},
-                "H100-SXM": {"price_per_gpu_hr": 3.990},
-                "H100-PCIe": {"price_per_gpu_hr": 3.290},
-                "GH200": {"price_per_gpu_hr": 2.290},
+                "B200": {"price_per_gpu_hr": 7.690},       # 8x
+                "H100-SXM": {"price_per_gpu_hr": 4.590},   # 8x
+                "A100-80GB": {"price_per_gpu_hr": 3.190},  # 8x
+                "H100-PCIe": {"price_per_gpu_hr": 3.790},  # 1x only
+                "GH200": {"price_per_gpu_hr": 2.590},      # 1x only
             },
         },
         # CoreWeave public on-demand rates.
@@ -1016,6 +1124,11 @@ def _apply_scraped_prices(providers, provider_key, prices, source_tag, tracked_s
         entry["price_per_gpu_hr"] = round(float(rates["on_demand"]), 3)
         if rates.get("instance"):
             entry["instance"] = rates["instance"]
+        for extra in ("cluster_size", "effective_from", "gpus_per_instance"):
+            if rates.get(extra) is not None:
+                entry[extra] = rates[extra]
+            else:
+                entry.pop(extra, None)
         for src_key, out_key in _RATE_KEYS:
             val = rates.get(src_key)
             if val is not None:
@@ -1027,6 +1140,7 @@ def _apply_scraped_prices(providers, provider_key, prices, source_tag, tracked_s
         entry["last_updated"] = now
         entry["last_verified"] = now
         entry.pop("stale", None)
+        entry.pop("stale_since", None)
     prov["last_updated"] = now
 
 
@@ -1040,8 +1154,13 @@ def merge_live_pricing_into_data(
     together_prices=None,
     aws_prices=None,
     gcp_prices=None,
+    extra_prices=None,
 ):
-    """Merge live pricing data into the providers section of data.json."""
+    """Merge live pricing data into the providers section of data.json.
+
+    `extra_prices` maps provider key -> (provider_name, source_tag, prices)
+    for the fetchers in extra_providers.py.
+    """
     now = datetime.now(timezone.utc).isoformat()
     providers = data.get("providers", {})
 
@@ -1054,7 +1173,9 @@ def merge_live_pricing_into_data(
     # set they were being published as the cheapest listed H100 ($2.10) and
     # H200 ($2.30) on the dashboard -- a price nobody could actually book, in
     # the one column readers trust most. No public rate, no listing.
-    for retired in ("Oracle", "FluidStack"):
+    # Oracle was retired here when its figures were hand-copied constants; it
+    # is back as a live source (OCI's public price-list API, extra_providers).
+    for retired in ("FluidStack",):
         providers.pop(retired, None)
 
     # -- Vast.ai --
@@ -1069,16 +1190,32 @@ def merge_live_pricing_into_data(
             vast_prov = providers["Vast.ai"]
         vast_gpus = vast_prov.setdefault("gpus", {})
         tracked = set(data.get("specs", {}).keys())
-        for ext_name, info in vastai_prices.items():
-            internal = normalize_gpu_name(ext_name)
-            if not internal or internal not in tracked:
+        withdrawn = []
+        for internal, info in vastai_prices.items():
+            if internal not in tracked:
                 continue
-            if internal not in vast_gpus:
-                vast_gpus[internal] = {}
-            gpu_entry = vast_gpus[internal]
+            if not info.get("min_price"):
+                # The query worked but returned too few offers to call a price.
+                # Withdraw rather than carry last week's number forward.
+                if vast_gpus.pop(internal, None) is not None:
+                    withdrawn.append(f"{internal} ({info.get('num_offers', 0)} offers)")
+                continue
+            gpu_entry = vast_gpus.setdefault(internal, {})
             gpu_entry["price_per_gpu_hr"] = info["min_price"]
+            gpu_entry["low_price"] = info.get("low_price")
+            gpu_entry["median_price"] = info.get("median_price")
+            gpu_entry["num_offers"] = info["num_offers"]
+            gpu_entry["price_basis"] = (
+                f"25th percentile of {info['num_offers']} cheapest verified "
+                f"on-demand offers"
+            )
             gpu_entry["source"] = "vastai_api"
             gpu_entry["last_updated"] = now
+            gpu_entry["last_verified"] = now
+            gpu_entry.pop("stale", None)
+            gpu_entry.pop("stale_since", None)
+        if withdrawn:
+            log_info(f"Vast.ai: too few offers, withdrawn {', '.join(withdrawn)}")
         vast_prov["last_updated"] = now
 
     # -- RunPod --
@@ -1115,12 +1252,19 @@ def merge_live_pricing_into_data(
             gpu_entry["price_per_gpu_hr"] = info["on_demand_price"]
             gpu_entry["source"] = "runpod_api"
             gpu_entry["last_updated"] = now
+            gpu_entry["last_verified"] = now
+            gpu_entry.pop("stale", None)
+            gpu_entry.pop("stale_since", None)
             if info.get("tier"):
                 gpu_entry["tier"] = info["tier"]
             if info.get("community_price") is not None:
                 gpu_entry["community_price"] = info["community_price"]
+            else:
+                gpu_entry.pop("community_price", None)
             if info.get("spot_price") is not None:
                 gpu_entry["spot_price"] = info["spot_price"]
+            else:
+                gpu_entry.pop("spot_price", None)
             if info.get("memory_gb"):
                 gpu_entry["memory_gb"] = info["memory_gb"]
         rp_prov["last_updated"] = now
@@ -1133,13 +1277,19 @@ def merge_live_pricing_into_data(
     _apply_scraped_prices(providers, "Together", together_prices, "together_scrape", tracked, now)
     _apply_scraped_prices(providers, "AWS", aws_prices, "aws_pricing_api", tracked, now)
     _apply_scraped_prices(providers, "GCP", gcp_prices, "gcp_scrape", tracked, now)
+    for prov_key, (prov_name, source_tag, prices) in (extra_prices or {}).items():
+        if not prices:
+            continue
+        _apply_scraped_prices(providers, prov_key, prices, source_tag, tracked, now)
+        providers[prov_key]["provider_name"] = prov_name
+        providers[prov_key]["type"] = "cloud"
 
     # -- Hardcoded fallbacks for providers without free APIs --
     # Only fill in GPUs that no live source has already populated this run.
     live_sources = {
         "vastai_api", "runpod_api", "azure_retail_api", "lambda_scrape",
         "coreweave_scrape", "together_scrape", "aws_pricing_api", "gcp_scrape",
-    }
+    } | {tag for _fn, _name, tag in EXTRA_PROVIDERS.values()}
     fallbacks = get_hardcoded_fallback_prices()
     for provider_key, fb_data in fallbacks.items():
         if provider_key not in providers:
@@ -1161,9 +1311,7 @@ def merge_live_pricing_into_data(
             # single failed fetch silently understated a whole provider. Keep the
             # last real price and mark it stale instead.
             if existing_entry.get("source") in live_sources and existing_entry.get("price_per_gpu_hr"):
-                if existing_entry.get("last_updated") != now:
-                    existing_entry["stale"] = True
-                continue
+                continue  # staleness is decided once, below, for every provider
             existing_entry["price_per_gpu_hr"] = gpu_info["price_per_gpu_hr"]
             existing_entry["source"] = "hardcoded_fallback"
             existing_entry["last_verified"] = fb_data["last_verified"]
@@ -1183,6 +1331,8 @@ def merge_live_pricing_into_data(
             existing_gpus.pop(gpu_id, None)
         if orphaned:
             log_info(f"{provider_key}: withdrawn from fallback table, removed {', '.join(sorted(orphaned))}")
+
+    _mark_stale_prices(providers, live_sources, now)
 
     # Every provider carries a last_updated so the Data tab can report its
     # freshness. Fallback-only providers (e.g. FluidStack) had none at all.
@@ -1225,23 +1375,94 @@ def merge_live_pricing_into_data(
 # 1b. RECALCULATE MATRIX, HISTORICAL, SPOT from provider prices
 # ===================================================================
 
+# A live price not re-confirmed this run is carried forward and flagged; past
+# STALE_DROP_DAYS it is withdrawn. A fallback constant is flagged once its
+# verification is older than FALLBACK_STALE_DAYS. Flagged prices stay visible
+# in the provider table (with the flag) but are excluded from every derived
+# figure -- matrix, spot, TCO, rankings.
+STALE_DROP_DAYS = 14
+FALLBACK_STALE_DAYS = 30
+
+
+def _mark_stale_prices(providers, live_sources, now):
+    now_dt = datetime.fromisoformat(now)
+    dropped = []
+    for prov_key, prov in providers.items():
+        gpus = prov.get("gpus") or {}
+        for gpu_id in list(gpus):
+            entry = gpus[gpu_id]
+            src = entry.get("source")
+            if src in live_sources:
+                seen = entry.get("last_updated")
+                if seen == now:
+                    entry.pop("stale", None)
+                    entry.pop("stale_since", None)
+                    continue
+                try:
+                    age = (now_dt - datetime.fromisoformat(seen)).days if seen else 999
+                except ValueError:
+                    age = 999
+                if age > STALE_DROP_DAYS:
+                    gpus.pop(gpu_id)
+                    dropped.append(f"{prov_key}/{gpu_id}")
+                    continue
+                entry["stale"] = True
+                entry["stale_since"] = (seen or "")[:10] or None
+            elif src == "hardcoded_fallback":
+                verified = entry.get("last_verified") or ""
+                try:
+                    v_dt = datetime.fromisoformat(verified[:10]).replace(tzinfo=timezone.utc)
+                    age = (now_dt - v_dt).days
+                except ValueError:
+                    age = 999
+                if age > FALLBACK_STALE_DAYS:
+                    entry["stale"] = True
+                    entry["stale_since"] = verified[:10] or None
+                else:
+                    entry.pop("stale", None)
+                    entry.pop("stale_since", None)
+    if dropped:
+        log_info(f"Withdrawn after {STALE_DROP_DAYS} days unconfirmed: {', '.join(sorted(dropped))}")
+
+
+def _usable(entry):
+    """A price that may feed derived figures: present, positive, not flagged."""
+    price = entry.get("price_per_gpu_hr")
+    return bool(price and price > 0 and not entry.get("stale"))
+
+
 def recalculate_matrix(data):
-    """Rebuild the matrix array from current providers + specs data."""
+    """Rebuild the matrix array from current providers + specs data.
+
+    Value metrics (TFLOPS/$, VRAM/$) used to divide by the single cheapest
+    listing anywhere, usually one marketplace offer -- so one mislabelled Vast
+    host ($0.38 "A100 80GB") became the site-wide best value. They are now
+    computed on the median across providers, and the cheapest dedicated-cloud
+    and cheapest marketplace prices are reported separately. Stale and
+    out-of-date fallback prices are excluded.
+    """
     providers = data.get("providers", {})
     specs = data.get("specs", {})
-    now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
-    # Collect all prices per GPU across providers
     gpu_prices = {}  # gpu_id -> [{price, provider, type}]
+    stale_counts = {}
     for prov_key, prov in providers.items():
         prov_type = prov.get("type", "cloud")
         prov_name = prov.get("provider_name", prov_key)
         for gpu_id, gpu_info in (prov.get("gpus") or {}).items():
-            price = gpu_info.get("price_per_gpu_hr")
-            if price is not None and price > 0:
-                gpu_prices.setdefault(gpu_id, []).append({
-                    "price": price, "provider": prov_name, "type": prov_type
-                })
+            if not gpu_info.get("price_per_gpu_hr"):
+                continue
+            if not _usable(gpu_info):
+                stale_counts[gpu_id] = stale_counts.get(gpu_id, 0) + 1
+                continue
+            gpu_prices.setdefault(gpu_id, []).append({
+                "price": gpu_info["price_per_gpu_hr"], "provider": prov_name, "type": prov_type,
+            })
+
+    def _median(vals):
+        vals = sorted(vals)
+        n = len(vals)
+        return vals[n // 2] if n % 2 else (vals[n // 2 - 1] + vals[n // 2]) / 2
 
     matrix = []
     for gpu_id, price_list in gpu_prices.items():
@@ -1250,13 +1471,16 @@ def recalculate_matrix(data):
         cheapest = prices_sorted[0]
         most_expensive = prices_sorted[-1]
         avg_price = round(sum(p["price"] for p in prices_sorted) / len(prices_sorted), 2)
+        median_price = round(_median([p["price"] for p in prices_sorted]), 3)
+        cloud = [p for p in prices_sorted if p["type"] != "marketplace"]
+        market = [p for p in prices_sorted if p["type"] == "marketplace"]
         spread = round((most_expensive["price"] - cheapest["price"]) / cheapest["price"] * 100, 1) if cheapest["price"] > 0 else 0
 
-        # Compute FLOPS/$ using FP16 TFLOPS
         fp16 = spec.get("fp16_tflops", 0)
-        flops_per_dollar = round(fp16 / cheapest["price"], 1) if cheapest["price"] > 0 and fp16 else 0
+        vram = spec.get("vram_gb", 0)
+        flops_per_dollar = round(fp16 / median_price, 1) if median_price > 0 and fp16 else 0
+        vram_per_dollar = round(vram / median_price, 1) if median_price > 0 and vram else 0
 
-        # MoM change from historical
         hist = data.get("historical", {}).get(gpu_id, {})
         periods = sorted(hist.keys())
         monthly_change = 0
@@ -1276,16 +1500,22 @@ def recalculate_matrix(data):
             "cheapest_price": cheapest["price"],
             "cheapest_provider": cheapest["provider"],
             "cheapest_provider_type": cheapest["type"],
+            "cloud_low_price": cloud[0]["price"] if cloud else None,
+            "cloud_low_provider": cloud[0]["provider"] if cloud else None,
+            "marketplace_low_price": market[0]["price"] if market else None,
+            "marketplace_low_provider": market[0]["provider"] if market else None,
             "most_expensive": most_expensive["price"],
             "avg_price": avg_price,
+            "median_price": median_price,
             "num_providers": len(prices_sorted),
+            "stale_excluded": stale_counts.get(gpu_id, 0),
             "price_spread_pct": spread,
             "monthly_change_pct": monthly_change,
             "flops_per_dollar": flops_per_dollar,
-            "vram_per_dollar": round(spec.get("vram_gb", 0) / cheapest["price"], 1) if cheapest["price"] > 0 and spec.get("vram_gb") else 0,
+            "vram_per_dollar": vram_per_dollar,
+            "value_basis": "median price across providers",
         })
 
-    # Sort by flops_per_dollar descending
     matrix.sort(key=lambda x: x["flops_per_dollar"], reverse=True)
     data["matrix"] = matrix
     log_ok("Matrix", f"{len(matrix)} GPUs recalculated from {len(providers)} providers")
@@ -1309,7 +1539,7 @@ def update_spot(data):
     for prov_key, prov in providers.items():
         for gpu_id, gpu_info in (prov.get("gpus") or {}).items():
             price = gpu_info.get("price_per_gpu_hr")
-            if price is not None and price > 0:
+            if _usable(gpu_info):
                 gpu_prices.setdefault(gpu_id, []).append({
                     "price": price,
                     "spot": gpu_info.get("spot_hr"),
@@ -1413,82 +1643,64 @@ def update_spot(data):
     return data
 
 
-def _cheapest_provider_for(providers, gpu_id):
-    """(price, provider_name) for the cheapest live listing of a GPU, or None."""
-    best = None
-    for name, prov in (providers or {}).items():
-        info = (prov.get("gpus") or {}).get(gpu_id) or {}
-        price = info.get("price_per_gpu_hr")
-        if price and price > 0 and (best is None or price < best[0]):
-            best = (round(price, 4), name)
-    return best
-
-
-def _avg_spot_rate(providers, gpu_id):
-    """Average published spot rate for a GPU, or None if nobody publishes one.
-
-    This used to apply a per-provider spot_discount constant to the on-demand
-    price, which produced a spot rate for every GPU at every provider whether
-    or not one existed. Only Azure and GCP publish interruptible rates through
-    an API; AWS spot needs a signed EC2 call and is not in the public bulk
-    pricing file, so AWS contributes nothing here.
-    """
-    rates = [
-        info["spot_hr"]
-        for prov in (providers or {}).values()
-        for gid, info in (prov.get("gpus") or {}).items()
-        if gid == gpu_id and info.get("spot_hr")
-    ]
-    return round(sum(rates) / len(rates), 2) if rates else None
-
-
 def refresh_tco(data):
-    """Point the TCO and reservation models at live cloud prices.
+    """Point the TCO profiles at live cloud prices and rebuild commitment maths.
 
-    Both carried their own frozen cloud rates, so the same GPU was quoted at
-    three different on-demand prices depending on the tab -- H100-SXM was
-    $2.49/hr in TCO and $2.18/hr in reservations while Pricing showed a $5.73
-    average. TCO's cloud-vs-self-hosted breakeven is computed from those rates,
-    so a stale number there changes the conclusion, not just the display.
+    Two bugs lived here. The commitment block sat in a second loop that read
+    res1 / res3 / od / spot_rate left over from the *last* GPU of the first
+    loop, so every profile's break-even came from another GPU's prices. And it
+    divided the committed average (three hyperscalers) by the all-provider
+    on-demand average (marketplaces included), which put H100's 1-year
+    break-even at 121% utilisation and its saving at -203%. Each rate is now
+    compared with on-demand over the same providers (spot.*_vs_ondemand), and
+    a GPU nobody publishes a committed rate for gets none -- not a modelled one.
     """
     spot = data.get("spot") or {}
-    providers = data.get("providers") or {}
-    if not spot:
-        return data
-
-    synced = 0
-    for gpu_id, s in spot.items():
-        od = s.get("on_demand_avg")
-        res1 = s.get("reserved_1yr_avg")
-        res3 = s.get("reserved_3yr_avg")
-        spot_rate = _avg_spot_rate(providers, gpu_id)
-        if od is None:
-            continue
-
-        tco = (data.get("tco") or {}).get(gpu_id)
-        if tco:
-            tco["cloud_on_demand_hr"] = od
-            if res1 is not None:
-                tco["cloud_reserved_1yr_hr"] = res1
-            if res3 is not None:
-                tco["cloud_reserved_3yr_hr"] = res3
-            if spot_rate is not None:
-                tco["cloud_spot_hr"] = spot_rate
-
-            synced += 1
-
-    # The self-hosted side held its own copies of power draw, purchase price,
-    # FLOPS and VRAM -- the same fact in three places (specs, gpu_carbon, here)
-    # and free to disagree. GB200 did: 2.2 kWh/hr here and in gpu_carbon from
-    # the 2700W superchip, against specs' 1200W per GPU.
-    #
-    # This runs over every TCO profile rather than only those with a cloud
-    # price. Nesting it in the loop above missed MI325X, which no provider
-    # currently lists, so it kept a stale 0.83 kWh against the derived 0.82 --
-    # and "nobody rents it" says nothing about what it draws if you buy one.
     specs = data.get("specs") or {}
     carbon_all = (data.get("sustainability") or {}).get("gpu_carbon") or {}
+    synced = 0
     for gpu_id, tco in (data.get("tco") or {}).items():
+        s = spot.get(gpu_id) or {}
+        od = s.get("on_demand_avg")
+        tco["cloud_on_demand_hr"] = od
+        res1, res3, sp = s.get("reserved_1yr_avg"), s.get("reserved_3yr_avg"), s.get("spot_avg")
+        tco["cloud_reserved_1yr_hr"] = res1
+        tco["cloud_reserved_3yr_hr"] = res3
+        tco["cloud_spot_hr"] = sp
+
+        def _commit(rate, base):
+            if not rate or not base:
+                return None
+            return {
+                "rate": rate,
+                "on_demand_same_providers": base,
+                "breakeven_utilization_pct": round(rate / base * 100),
+                "savings_at_utilization": {
+                    f"{int(u * 100)}_pct": round((1 - (rate / u) / base) * 100)
+                    for u in (0.4, 0.6, 0.8, 1.0)
+                },
+            }
+
+        c1 = _commit(res1, s.get("reserved_1yr_vs_ondemand"))
+        c3 = _commit(res3, s.get("reserved_3yr_vs_ondemand"))
+        if c1 or c3 or sp:
+            tco["commitment_basis"] = "published"
+            tco["commitment"] = {
+                "spot_rate": sp,
+                "spot_savings_pct": s.get("spot_savings_pct"),
+                "reserved_1yr": c1,
+                "reserved_3yr": c3,
+                # Kept for older readers of the flat fields.
+                "reserved_1yr_rate": res1,
+                "reserved_3yr_rate": res3,
+                "breakeven_utilization_1yr_pct": c1["breakeven_utilization_pct"] if c1 else None,
+                "breakeven_utilization_3yr_pct": c3["breakeven_utilization_pct"] if c3 else None,
+            }
+        else:
+            tco["commitment_basis"] = "none"
+            tco["commitment"] = None
+
+        # Self-hosted side reads the single source of truth for each fact.
         spec = specs.get(gpu_id) or {}
         carbon = carbon_all.get(gpu_id) or {}
         sh = tco.get("self_hosted")
@@ -1500,27 +1712,6 @@ def refresh_tco(data):
             tco["perf_fp16_tflops"] = spec["fp16_tflops"]
         if spec.get("vram_gb"):
             tco["vram_gb"] = spec["vram_gb"]
-
-        # Break-even used to live in a parallel `reservations` dataset that
-        # duplicated this maths. It is now a field on the TCO profile.
-        if tco and res1 is not None and res3 is not None:
-            tco["commitment"] = {
-                "spot_rate": spot_rate,
-                "reserved_1yr_rate": res1,
-                "reserved_3yr_rate": res3,
-                # A commitment is billed for every hour of the term, so at
-                # utilisation u its effective per-used-hour cost is rate / u.
-                # Break-even is where that equals the on-demand rate.
-                "breakeven_utilization_1yr_pct": round(res1 / od * 100),
-                "breakeven_utilization_3yr_pct": round(res3 / od * 100),
-                "savings_at_utilization": {
-                    f"{int(u*100)}_pct": {
-                        "spot": round((1 - spot_rate / od) * 100) if spot_rate else None,
-                        "reserved_1yr": round((1 - (res1 / u) / od) * 100),
-                        "reserved_3yr": round((1 - (res3 / u) / od) * 100),
-                    } for u in (0.4, 0.6, 0.8, 1.0)
-                },
-            }
         synced += 1
 
     data.pop("reservations", None)
@@ -1578,7 +1769,9 @@ def refresh_lead_times(data):
         ]
         if not candidates:
             return None
-        return max(candidates, key=lambda g: specs[g].get("release_year") or 0)
+        # Ties on release year go to the larger-memory part (B300 over B200).
+        return max(candidates, key=lambda g: (specs[g].get("release_year") or 0,
+                                              specs[g].get("vram_gb") or 0))
 
     flagship = newest_flagship()
     if flagship:
@@ -1633,8 +1826,12 @@ def refresh_summary(data):
             summary["best_flops_per_dollar"] = {
                 "gpu": best_flops.get("name"),
                 "value": round(best_flops["flops_per_dollar"], 1),
-                "at_price": best_flops.get("cheapest_price"),
-                "provider": best_flops.get("cheapest_provider"),
+                # The value metric is on the median price, so quote that -- not
+                # the single cheapest listing, which is how one mislabelled
+                # marketplace offer became the headline.
+                "at_price": best_flops.get("median_price"),
+                "price_basis": f"median of {best_flops.get('num_providers')} providers",
+                "provider": None,
             }
 
         best_vram = max(
@@ -1646,20 +1843,29 @@ def refresh_summary(data):
             summary["best_vram_per_dollar"] = {
                 "gpu": best_vram.get("name"),
                 "value": round(best_vram["vram_per_dollar"], 1),
-                "at_price": best_vram.get("cheapest_price"),
-                "provider": best_vram.get("cheapest_provider"),
+                # The value metric is on the median price, so quote that -- not
+                # the single cheapest listing, which is how one mislabelled
+                # marketplace offer became the headline.
+                "at_price": best_vram.get("median_price"),
+                "price_basis": f"median of {best_vram.get('num_providers')} providers",
+                "provider": None,
             }
 
-        biggest_drop = min(
-            (r for r in matrix if r.get("monthly_change_pct") is not None),
-            key=lambda r: r["monthly_change_pct"],
-            default=None,
-        )
-        if biggest_drop:
+        # 30-day change on the fixed-basket volatility series. monthly_change_pct
+        # compares a part-month with a full month over whichever providers were
+        # listed in each, so a provider joining could read as a "price drop".
+        vol = data.get("volatility") or {}
+        names = {r["gpu_id"]: r.get("name") for r in matrix}
+        moves = [(g, v["change_30d_pct"]) for g, v in vol.items()
+                 if v.get("change_30d_pct") is not None and g in names]
+        moves = [m for m in moves if m[1] < 0]
+        if moves:
+            g, chg = min(moves, key=lambda m: m[1])
             summary["biggest_price_drop"] = {
-                "gpu": biggest_drop.get("name"),
-                "change_pct": round(biggest_drop["monthly_change_pct"], 1),
+                "gpu": names[g], "change_pct": round(chg, 1), "basis": "30-day change, fixed provider basket",
             }
+        else:
+            summary.pop("biggest_price_drop", None)
 
         competitive = max(
             (r for r in matrix if r.get("num_providers")),
@@ -1675,10 +1881,9 @@ def refresh_summary(data):
 
     # Keep the summary's copy of the market indicators in step with the live
     # ones rather than letting it sit at whatever it was seeded with.
-    mi = summary.setdefault("market_indicators", {})
-    for key, value in indicators.items():
-        if isinstance(value, dict):
-            mi[key] = value
+    # Rebuilt, not merged: merging kept series the pipeline had retired
+    # (shipment counts, AMD share) alive in the summary indefinitely.
+    summary["market_indicators"] = {k: v for k, v in indicators.items() if isinstance(v, dict)}
 
     if data.get("sentiment"):
         summary["market_sentiment"] = data["sentiment"]
@@ -1707,12 +1912,12 @@ AZURE_REGIONS = [
     ("australiaeast", "Australia East", "Asia Pacific"),
 ]
 
-# (skuName prefix, required substring, internal GPU id, GPUs per VM)
-_AZURE_REGION_SKUS = [
-    ("ND96", "H100", "H100-SXM", 8),
-    ("ND96", "A100", "A100-80GB", 8),
-    ("ND", "GB200", "GB200", 4),
-]
+# (exact armSkuName, internal GPU id, GPUs per VM)
+_AZURE_REGION_SKUS = (
+    ("Standard_ND96isr_H100_v5", "H100-SXM", 8),
+    ("Standard_ND96amsr_A100_v4", "A100-80GB", 8),
+    ("Standard_ND128isr_NDR_GB200_v6", "GB200", 4),
+)
 
 
 def fetch_regional_pricing():
@@ -1723,10 +1928,13 @@ def fetch_regional_pricing():
 
     for arm, label, continent in AZURE_REGIONS:
         prices = {}
-        for prefix, must, gpu_id, per_vm in _AZURE_REGION_SKUS:
+        for arm_sku, gpu_id, per_vm in _AZURE_REGION_SKUS:
+            # Exact VM size, Linux pay-as-you-go only. The prefix match this
+            # replaced pooled Windows rows and neighbouring sizes into one
+            # median -- the same fault that put Azure H100 at $11.61.
             filt = (
-                f"serviceName eq 'Virtual Machines' and armRegionName eq '{arm}' "
-                f"and priceType eq 'Consumption' and startswith(skuName, '{prefix}')"
+                f"armSkuName eq '{arm_sku}' and armRegionName eq '{arm}' "
+                f"and priceType eq 'Consumption'"
             )
             try:
                 status, body = http_get(
@@ -1736,20 +1944,17 @@ def fetch_regional_pricing():
                     continue
                 found = []
                 for it in json.loads(body).get("Items", []):
-                    sku = it.get("skuName", "")
                     meter = (it.get("meterName") or "").lower()
+                    product = (it.get("productName") or "").lower()
                     if "spot" in meter or "low priority" in meter:
                         continue
-                    if must and must not in sku:
+                    if "windows" in product or "dedicated host" in product:
                         continue
-                    if (it.get("unitOfMeasure") or "").lower() not in ("1 hour", "1hour"):
-                        continue
-                    up = it.get("unitPrice") or it.get("retailPrice")
+                    up = it.get("retailPrice") or it.get("unitPrice")
                     if up and up > 0:
                         found.append(float(up) / per_vm)
                 if found:
-                    found.sort()
-                    prices[gpu_id] = round(found[len(found) // 2], 3)
+                    prices[gpu_id] = round(min(found), 3)
             except Exception:
                 continue
         if prices:
@@ -1811,7 +2016,8 @@ def build_regional(data):
 # is serving carried-forward data, and the point of stamping is that the Data
 # tab can say so instead of the staleness being invisible.
 _SECTION_SOURCES = {
-    "providers": ["AWS", "GCP", "Azure", "Lambda", "CoreWeave", "Together", "RunPod", "Vast.ai"],
+    "providers": ["AWS", "GCP", "Azure", "Lambda", "CoreWeave", "Together", "RunPod", "Vast.ai",
+                  "Oracle", "Nebius", "DigitalOcean", "Vultr", "Crusoe"],
     "matrix": ["Matrix"],
     "spot": ["Spot"],
     "historical": ["Historical"],
@@ -1891,6 +2097,7 @@ def build_changelog(data, previous):
         return data
 
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    prev_run = (previous.get("last_updated") or "")[:10]
     events = []
 
     old_p, new_p = previous.get("providers") or {}, data.get("providers") or {}
@@ -1910,7 +2117,15 @@ def build_changelog(data, previous):
                     # A >100% week-on-week move in list pricing is almost always a
                     # scraper artefact, not the market. Flag rather than silently
                     # publish it as a price signal.
-                    if abs(delta) > 100:
+                    # A move on a day we changed how this provider is read is
+                    # our change, not the market's. Say so on the event.
+                    change = next((c for c in METHODOLOGY_CHANGES
+                                   if prev_run < c["date"] <= stamp and prov in c["providers"]
+                                   and (not c.get("gpus") or gpu_id in c["gpus"])), None)
+                    if change:
+                        ev["methodology_change"] = True
+                        ev["note"] = "Measurement change, not a market move: " + change["reason"]
+                    elif abs(delta) > 100:
                         ev["needs_review"] = True
                     events.append(ev)
             elif not old_price:
@@ -1921,7 +2136,8 @@ def build_changelog(data, previous):
                 events.append({"date": stamp, "type": "delisted", "provider": prov,
                                "gpu": gpu_id, "from": old_gpus[gpu_id].get("price_per_gpu_hr")})
 
-    events.sort(key=lambda e: -abs(e.get("change_pct") or 0))
+    # Market moves first; re-measurements after them.
+    events.sort(key=lambda e: (bool(e.get("methodology_change")), -abs(e.get("change_pct") or 0)))
     log = [e for e in (data.get("changelog") or []) if e.get("date") != stamp]
     data["changelog"] = (events + log)[:200]
     log_ok("Changelog", f"{len(events)} changes recorded for {stamp}")
@@ -2050,7 +2266,9 @@ def merge_stocks_into_data(data, stocks):
 def fetch_news_rss():
     """Fetch GPU/AI news headlines from Google News RSS."""
     log_info("Fetching news from Google News RSS...")
-    query = "nvidia gpu ai datacenter"
+    # "when:30d" asks Google News for recent items only; the default ranking is
+    # by relevance and surfaced months-old stories.
+    query = "nvidia gpu ai datacenter when:30d"
     url = "https://news.google.com/rss/search"
     params = {"q": query, "hl": "en-US", "gl": "US", "ceid": "US:en"}
     full_url = url + "?" + urllib.parse.urlencode(params)
@@ -2139,10 +2357,25 @@ def _guess_sentiment(headline):
 
 
 def merge_news_into_data(data, articles):
-    """Replace news in data with fresh articles."""
-    if articles:
-        data["news"] = articles
+    """Replace news with fresh articles from the last NEWS_MAX_AGE_DAYS, newest first.
+
+    Google News RSS returns "relevant" results, not recent ones: the feed that
+    filled the panel on 2026-11-08 had ten of its twenty items older than two
+    months (one from February) under a "latest news" heading.
+    """
+    if not articles:
+        return data
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=NEWS_MAX_AGE_DAYS)).strftime("%Y-%m-%d")
+    recent = [a for a in articles if (a.get("date") or "") >= cutoff]
+    recent.sort(key=lambda a: a.get("date") or "", reverse=True)
+    if recent:
+        data["news"] = recent
+    else:
+        log_info(f"News: no articles newer than {cutoff}; keeping previous list")
     return data
+
+
+NEWS_MAX_AGE_DAYS = 45
 
 
 # ===================================================================
@@ -2499,7 +2732,7 @@ def _build_market_snapshot(data):
         gpus = prov.get("gpus", {})
         for gpu_id, gpu_info in gpus.items():
             price = gpu_info.get("price_per_gpu_hr")
-            if price is not None:
+            if price is not None and _usable(gpu_info):
                 if gpu_id not in price_summary:
                     price_summary[gpu_id] = []
                 price_summary[gpu_id].append({"provider": prov_name, "price": price})
@@ -2644,20 +2877,22 @@ _AI_SECTIONS = {
         "user": "Generate GPU efficiency optimization advice from this data:\n\n{snapshot}",
     },
     "forecast": {
-        "type": "price_forecasts",
+        # Kept under the "forecast" key for the page, but it no longer asks the
+        # model to invent targets with "Confidence: High". The only forward
+        # prices this dashboard has are the traded prediction-market quotes.
+        "type": "price_outlook",
         "system": (
-            "You are a GPU market forecaster. Provide a price outlook covering: "
-            "90-day forecast table (GPU, current price, target range, change %, confidence), "
-            "12-month outlook table, factors driving prices up and down, "
-            "and when to act (buy now / wait). Use markdown tables. Be specific with numbers. "
-            "Where the data includes a prediction_markets block, those are traded forward prices "
-            "from Kalshi and Polymarket: anchor your targets to that curve, cite it as the source, "
-            "and say explicitly when your view departs from it and why. Do not present a number as "
-            "a forecast when the market already quotes one. Note that the market settles on the "
-            "Ornn neocloud index, a different basket from the provider list prices, so compare "
-            "directions of travel rather than levels."
+            "You are a GPU market analyst writing a short price outlook. Do NOT invent price "
+            "targets, confidence levels or forecast tables. Structure: (1) what the "
+            "prediction_markets block says -- traded implied prices from Kalshi and Polymarket, "
+            "quoting them as given (an implied price marked as a floor or ceiling is a bound, "
+            "write it as '>= $X' or '<= $X'); note they settle on the Ornn neocloud index, a "
+            "different basket from the provider list prices, so compare direction not level; "
+            "(2) recent realised moves from the volatility block (30d/90d change); (3) factors "
+            "that could push prices up or down, stated qualitatively. If there is no market "
+            "quote for a GPU, say there is none. Use the prices in the snapshot only."
         ),
-        "user": "Generate GPU price forecasts from this data:\n\n{snapshot}",
+        "user": "Write the outlook from this data:\n\n{snapshot}",
     },
     "sustainability": {
         "type": "sustainability_risk",
@@ -2737,6 +2972,40 @@ def _build_gpu_section_prompt(gpu_id, snapshot_str):
     return system, user
 
 
+def stamp_ai_freshness(data, ai):
+    """Record how old the AI commentary is, alongside the other sections.
+
+    ai_analysis.json lives in its own file, so stamp_freshness never saw it:
+    every section stayed dated 2026-08-31 for ten weeks while the Data tab
+    showed all-green and the text quoted prices that no longer existed.
+    """
+    stamps = sorted(
+        v.get("timestamp") for v in (ai or {}).values()
+        if isinstance(v, dict) and v.get("timestamp")
+    )
+    fresh = data.setdefault("_meta", {}).setdefault("freshness", {})
+    entry = fresh.setdefault("ai_analysis", {})
+    entry["auto"] = True
+    if not stamps:
+        entry["refreshed"] = None
+        return
+    newest, oldest = stamps[-1][:10], stamps[0][:10]
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    if entry.get("refreshed") == newest and newest != today:
+        entry["stale_runs"] = entry.get("stale_runs", 0) + 1
+    elif newest == today:
+        entry.pop("stale_runs", None)
+    entry["refreshed"] = newest
+    entry["oldest_section"] = oldest
+    sections = data["_meta"].setdefault("sections", {})
+    sections.setdefault("ai_analysis", {
+        "basis": "modeled",
+        "detail": ("Language-model commentary over the snapshot of this data. Not a "
+                   "forecast. Each block carries its generation date; blocks older "
+                   "than 7 days are flagged on the page."),
+    })
+
+
 def update_ai_analysis(data, existing_ai):
     """Update ai_analysis.json, regenerating ALL sections via LLM."""
     now = datetime.now(timezone.utc).isoformat()
@@ -2744,6 +3013,10 @@ def update_ai_analysis(data, existing_ai):
 
     if not config:
         log_info("No LLM config found -- keeping existing ai_analysis.json unchanged")
+        if os.environ.get("GITHUB_ACTIONS"):
+            # Surface it on the run page; it went unnoticed for ten weeks.
+            print("::warning::AI analysis not refreshed: LLM_API_BASE / LLM_API_KEY / "
+                  "LLM_MODEL secrets are not set")
         return existing_ai
 
     snapshot = _build_market_snapshot(data)
@@ -2795,14 +3068,14 @@ def main():
     print()
 
     # Load existing data as template
-    data = load_existing(DATA_JSON, EMBEDDED_DATA_JSON)
+    data = load_existing(DATA_JSON)
     if not data:
         log_info("No existing data.json or embedded_data.json found. Starting fresh.")
         data = {}
 
     _snapshot_before = json.loads(json.dumps(data)) if data else None
 
-    existing_ai = load_existing(AI_ANALYSIS_JSON, EMBEDDED_AI_JSON)
+    existing_ai = load_existing(AI_ANALYSIS_JSON)
     if not existing_ai:
         existing_ai = {}
 
@@ -2861,6 +3134,15 @@ def main():
     except Exception as exc:
         log_fail("GCP", str(exc))
 
+    extra_prices = {}
+    for prov_key, (fetch_fn, prov_name, source_tag) in EXTRA_PROVIDERS.items():
+        try:
+            prices = fetch_fn()
+            log_ok(prov_key, f"{len(prices)} GPU types")
+            extra_prices[prov_key] = (prov_name, source_tag, prices)
+        except Exception as exc:
+            log_fail(prov_key, str(exc))
+
     data = merge_live_pricing_into_data(
         data,
         vastai_prices,
@@ -2871,6 +3153,7 @@ def main():
         together_prices=together_prices,
         aws_prices=aws_prices,
         gcp_prices=gcp_prices,
+        extra_prices=extra_prices,
     )
     print()
 
@@ -3038,6 +3321,7 @@ def main():
     print("-" * 40)
 
     existing_ai = update_ai_analysis(data, existing_ai)
+    stamp_ai_freshness(data, existing_ai)
     print()
 
     # ---- Rebuild the summary block last, from everything above ----

@@ -118,6 +118,10 @@ def _cheapest_gpu_rate(providers, gpu_id):
     for pk, prov in (providers or {}).items():
         info = (prov.get("gpus") or {}).get(gpu_id) or {}
         price = info.get("price_per_gpu_hr")
+        # Carried-forward or out-of-date fallback prices are not bookable
+        # quotes; sizing a deployment on them repeats the staleness.
+        if info.get("stale"):
+            continue
         if price and price > 0 and (best is None or price < best[0]):
             best = (price, prov.get("provider_name", pk))
     return best

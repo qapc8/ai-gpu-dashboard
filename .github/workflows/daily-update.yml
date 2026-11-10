@@ -48,53 +48,32 @@ jobs:
         run: pip install requests feedparser
 
       - name: Run full data update
+        id: update
+        # A failed fetcher must not discard the sources that did succeed (that
+        # is how the 2026-07-27 weekly update got thrown away), so the step is
+        # allowed to fail and the sanity check below decides what publishes.
+        continue-on-error: true
         env:
           REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
           REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
-          # config.py is gitignored, so without these the AI sections silently
-          # kept whatever they last said. Absent secrets are still handled:
-          # update_ai_analysis logs it and leaves ai_analysis.json alone.
+          # Without these the AI commentary is not regenerated; the updater
+          # prints a ::warning:: and the page flags the text as out of date.
           LLM_API_BASE: ${{ secrets.LLM_API_BASE }}
           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
           LLM_MODEL: ${{ secrets.LLM_MODEL }}
         run: python -u scripts/update_data.py
 
-      - name: Copy to embedded files
-        # Run even when a fetcher failed: the updater still writes every source
-        # that did succeed, and discarding the whole refresh over one dead
-        # scraper is how the 2026-07-27 weekly update got thrown away.
-        if: always()
-        run: |
-          cp data.json embedded_data.json
-          cp ai_analysis.json embedded_ai.json
-
-      - name: Check the file is servable
-        # A truncated or half-written data.json takes the whole dashboard down,
-        # since every tab reads it. Better to fail here than to publish it.
-        if: always()
-        run: |
-          python - <<'PY'
-          import json, sys
-          d = json.load(open("data.json"))
-          missing = [k for k in ("providers", "matrix", "specs", "inference") if not d.get(k)]
-          if missing:
-              sys.exit(f"data.json is missing required sections: {missing}")
-          pairs = sum(len(p.get("gpus") or {}) for p in d["providers"].values())
-          if pairs < 20:
-              sys.exit(f"only {pairs} provider/GPU prices -- refusing to publish")
-          fresh = d.get("_meta", {}).get("freshness", {})
-          stale = sorted(k for k, v in fresh.items() if v.get("auto") and v.get("stale_runs", 0) >= 3)
-          print(f"OK: {pairs} provider/GPU prices, {len(d['matrix'])} GPUs")
-          if stale:
-              print(f"::warning::sections stale for 3+ runs: {', '.join(stale)}")
-          PY
+      - name: Sanity-check before publishing
+        # Hard errors (missing sections, too few prices, implausible values)
+        # stop the publish. Previously this step and the commit both ran with
+        # `if: always()`, so a failed check still pushed the file it rejected.
+        run: python -u scripts/sanity_check.py data.json
 
       - name: Commit and push if changed
-        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data.json ai_analysis.json embedded_data.json embedded_ai.json
+          git add data.json ai_analysis.json
           if ! git diff --quiet --cached; then
             git commit -m "chore: daily data refresh [automated]"
             # A concurrent push (a manual run, or a human commit) would reject
