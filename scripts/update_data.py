@@ -2384,6 +2384,7 @@ def merge_news_into_data(data, articles):
 
 
 NEWS_MAX_AGE_DAYS = 45
+PM_STALE_HOURS = 36
 
 
 # ===================================================================
@@ -3323,17 +3324,28 @@ def main():
     print("-" * 40)
 
     kalshi_curves, poly_markets = [], []
+    # The fetchers swallow per-request network errors and return an empty
+    # list, so "0 results" usually means the venue was unreachable, not that
+    # every GPU market closed overnight. Logging that as OK and dropping the
+    # section is how a run from a network that blocks both venues published a
+    # dashboard with no prediction markets at all (2026-11-10).
     try:
         log_info("Fetching Kalshi GPU compute ladders...")
         kalshi_curves = fetch_kalshi_gpu_markets()
-        log_ok("Kalshi", f"{len(kalshi_curves)} GPU curves")
+        if kalshi_curves:
+            log_ok("Kalshi", f"{len(kalshi_curves)} GPU curves")
+        else:
+            log_fail("Kalshi", "no GPU curves returned (venue unreachable or no open markets)")
     except Exception as exc:
         log_fail("Kalshi", str(exc))
 
     try:
         log_info("Fetching Polymarket GPU rental brackets...")
         poly_markets = fetch_polymarket_gpu_markets()
-        log_ok("Polymarket", f"{len(poly_markets)} open markets")
+        if poly_markets:
+            log_ok("Polymarket", f"{len(poly_markets)} open markets")
+        else:
+            log_fail("Polymarket", "no open GPU markets returned (venue unreachable or none listed)")
     except Exception as exc:
         log_fail("Polymarket", str(exc))
 
@@ -3343,8 +3355,20 @@ def main():
         except Exception as exc:
             log_fail("Prediction Markets", str(exc))
     else:
-        # Never serve a stale order book as if it were live.
-        data.pop("prediction_markets", None)
+        # Keep the last quotes for a short while, flagged, rather than blanking
+        # the tab over one unreachable run; past PM_STALE_HOURS they go, because
+        # a stale order book must not pass for a live one.
+        prev = data.get("prediction_markets") or {}
+        try:
+            age_h = (datetime.now(timezone.utc)
+                     - datetime.fromisoformat(prev.get("last_updated"))).total_seconds() / 3600
+        except (TypeError, ValueError):
+            age_h = None
+        if prev and age_h is not None and age_h <= PM_STALE_HOURS:
+            prev["stale"] = True
+            log_info(f"Prediction markets: keeping quotes from {prev['last_updated'][:16]} (flagged stale)")
+        else:
+            data.pop("prediction_markets", None)
     print()
 
     # ---- 11. AI Analysis ----
