@@ -3190,6 +3190,21 @@ function renderPredictionMarkets() {
   if (unavailable) unavailable.style.display = has ? 'none' : 'block';
   if (content) content.style.display = has ? 'block' : 'none';
   if (!has) return;
+  // Quotes carried over from an earlier refresh because the venues were
+  // unreachable this time: say so above everything else on the tab.
+  let staleBanner = document.getElementById('pmStaleBanner');
+  if (pm.stale) {
+    if (!staleBanner && content) {
+      staleBanner = document.createElement('div');
+      staleBanner.id = 'pmStaleBanner';
+      staleBanner.style.cssText = 'margin:0 0 12px;padding:8px 12px;border:1px solid var(--amber);border-radius:6px;color:var(--amber);font-size:11px;';
+      content.prepend(staleBanner);
+    }
+    if (staleBanner) staleBanner.textContent = 'Not refreshed on the latest run — these quotes are from '
+      + new Date(pm.last_updated).toISOString().replace('T', ' ').slice(0, 16) + ' UTC.';
+  } else if (staleBanner) {
+    staleBanner.remove();
+  }
 
   if (!pmSelectedGpu || !gpus.some(g => g.gpu === pmSelectedGpu)) {
     pmSelectedGpu = (gpus.find(g => (g.curve || []).length) || gpus[0]).gpu;

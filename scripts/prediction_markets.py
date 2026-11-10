@@ -497,6 +497,7 @@ def build_prediction_markets(data, kalshi_curves, polymarket_markets):
 
     data["prediction_markets"] = {
         "last_updated": now,
+        "stale": False,
         "settlement_source": SETTLEMENT_SOURCE,
         "venues": [
             {
