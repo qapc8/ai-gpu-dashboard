@@ -1063,7 +1063,8 @@ body {
 .mi-ev-list { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 10.5px; color: var(--text-2); }
 .mi-ev-list span b { color: var(--text-1); font-weight: 600; }
 .dt td .sub { display: block; font-size: 10px; color: var(--text-3); }
-.dt td .mi-empty, .dt td.mi-wrap { white-space: normal; }
+.dt td .mi-empty { white-space: normal; }
+.dt td.mi-wrap { white-space: normal; min-width: 220px; max-width: 520px; line-height: 1.45; }
 .dt td { vertical-align: top; }
 @media (max-width: 700px) {
   .main { padding: 14px 12px; }
@@ -5364,7 +5365,7 @@ function miEmpty(what){return `<div class="mi-empty"><b>Not collected yet.</b> $
 function miTableHTML(cols,rows,emptyMsg){
   if(!rows||!rows.length)return `<tbody><tr><td class="dim" style="padding:18px 16px;">${miEsc(emptyMsg||'Nothing to show.')}</td></tr></tbody>`;
   return '<thead><tr>'+cols.map(c=>`<th${c.r?' class="r"':''}>${c.h}</th>`).join('')+'</tr></thead><tbody>'+
-    rows.map(r=>'<tr>'+cols.map(c=>`<td${c.r?' class="r"':''}>${c.f(r)}</td>`).join('')+'</tr>').join('')+'</tbody>';
+    rows.map(r=>'<tr>'+cols.map(c=>`<td${c.r?' class="r"':c.w?' class="mi-wrap"':''}>${c.f(r)}</td>`).join('')+'</tr>').join('')+'</tbody>';
 }
 function miSetTable(id,cols,rows,emptyMsg){const el=document.getElementById(id);if(el)el.innerHTML=miTableHTML(cols,rows,emptyMsg);}
 function miEmptyTable(id,msg){miSet(id,`<tbody><tr><td style="white-space:normal;padding:0;">${miEmpty(msg)}</td></tr></tbody>`);}
@@ -5380,7 +5381,7 @@ function miNoChart(canvasId,msg){
 }
 function miSrcList(sec){
   const s=(sec&&sec.sources)||{};
-  const parts=Object.entries(s).map(([k,v])=>`${v&&v.url?miLink(v.url,k):miEsc(k)}${v&&v.ok===false?' <span class="c-amber" title="'+miEsc(v.note||'not refreshed this run')+'">(stale)</span>':''}`);
+  const parts=Object.entries(s).map(([k,v])=>`${v&&v.url?miLink(v.url,k):miEsc(k)}${v&&v.ok===false?' <span class="dim" title="'+miEsc(v.note||'not refreshed this run')+'" style="cursor:help;text-decoration:underline dotted;">(unavailable)</span>':''}`);
   return parts.length?'Sources: '+parts.join(' · '):'';
 }
 function miCurated(r){return (r&&(r.curated||r.fetched===false))?'<span class="curated-tag" title="Curated reference value with a cited source, not fetched automatically">CITED</span>':'';}
@@ -5445,7 +5446,7 @@ function renderUpcoming(){
   miSetTable('miUpcoming',[
     {h:'Date',f:miEvRow},
     {h:'Type',f:e=>`<span class="ev-tag ev-${miEsc(e.type)}">${miEsc((e.type||'').replace('_',' '))}</span>`},
-    {h:'Event',f:e=>e.url?miLink(e.url,e.title):miEsc(e.title)},
+    {w:1,h:'Event',f:e=>e.url?miLink(e.url,e.title):miEsc(e.title)},
   ],items,'No upcoming events in the calendar.');
 }
 
@@ -5459,7 +5460,7 @@ function renderAnomalies(){
     {h:'Provider',f:x=>miEsc(x.provider)},
     {h:'GPU',f:x=>`<span class="gpu-name">${miEsc(x.gpu)}</span>`},
     {h:'Price',r:1,f:x=>miUsd(x.price)+'/hr'},
-    {h:'Detail',f:x=>x.kind==='unchanged'?`${x.days} days at this price`:`${Math.round(x.ratio*100)}% of ${miUsd(x.median)} median`},
+    {w:1,h:'Detail',f:x=>x.kind==='unchanged'?`${x.days} days at this price`:`${Math.round(x.ratio*100)}% of ${miUsd(x.median)} median`},
   ],an.items,'No anomalies flagged.');
   miSet('miAnomaliesRule',miEsc(an.rule||''));
 }
@@ -5493,6 +5494,9 @@ function renderAvailability(){
 function renderAvailChart(){
   const av=DATA.availability, g=document.getElementById('miAvailGpu')?.value;
   const h=(av&&av.history&&av.history[g])||[];
+  const card=document.getElementById('miChartAvail')?.closest('.card-bd');
+  if(card){let n=card.querySelector('.mi-hist-note');if(!n){n=document.createElement('div');n.className='mi-note mi-hist-note';n.style.marginTop='10px';card.appendChild(n);}
+    n.innerHTML=h.length<7?`History started ${miDate(h[0]&&h[0].date)} and grows by one point per daily run, so the trend becomes readable after about a week.`:'Marketplace counts are lower bounds: the Vast.ai search samples, so day-to-day moves of 10–25% are noise.';}
   if(!h.length){if(charts.miAvail){charts.miAvail.destroy();delete charts.miAvail;}return;}
   miChart('miAvail','miChartAvail',{type:'line',data:{labels:h.map(p=>p.date),datasets:[
     {label:'Rentable marketplace GPUs',data:h.map(p=>p.rentable_gpus),borderColor:C.cyan,backgroundColor:C.cyan+'18',fill:true,tension:.3,pointRadius:h.length>40?0:3,yAxisID:'y'},
@@ -5510,7 +5514,7 @@ function renderSupplySignals(){
   if(sel){const ex=sel.value;sel.innerHTML=Object.entries(series).map(([k,v])=>`<option value="${miEsc(k)}"${k===ex?' selected':''}>${miEsc(v.label||k)}</option>`).join('');}
   renderSupplyChart();
   miSetTable('miSupplyEst',[
-    {h:'Metric',f:r=>miEsc(r.metric)+miCurated({curated:true})},
+    {w:1,h:'Metric',f:r=>miEsc(r.metric)+miCurated({curated:true})},
     {h:'Value',r:1,f:r=>{const n=v=>typeof v==='number'?v.toLocaleString('en-US'):miEsc(v);return `<b>${n(r.value)}${r.value_high!=null?'–'+n(r.value_high):''}</b> <span class="dim">${miEsc(r.unit||'')}</span>`+(r.note?`<span class="sub">${miEsc(r.note)}</span>`:'');}},
     {h:'Period',f:r=>miEsc(r.period||'')},
     {h:'Source',f:r=>miLink(r.url,r.source)+`<span class="sub">${miDate(r.as_of)}</span>`},
@@ -5548,7 +5552,7 @@ function renderCapex(){
     {h:'Latest quarter',r:1,f:r=>{const q=(r.quarters||[]).slice(-1)[0];return q?miUsd(q.capex_usd_bn,1)+'bn'+`<span class="sub">${miEsc(q.period)}</span>`:'—';}},
     {h:'Trailing 12m',r:1,f:r=>r.ttm_bn!=null?miUsd(r.ttm_bn,1)+'bn':'—'},
     {h:'YoY',r:1,f:r=>miPct(r.yoy_pct,0)},
-    {h:'Guidance',f:r=>r.guidance?`${miEsc(r.guidance.text)} <span class="sub">${miLink(r.guidance.url,r.guidance.source)} · ${miDate(r.guidance.as_of)}</span>`:'<span class="dim">—</span>'},
+    {w:1,h:'Guidance',f:r=>r.guidance?`${miEsc(r.guidance.text)} <span class="sub">${miLink(r.guidance.url,r.guidance.source)} · ${miDate(r.guidance.as_of)}</span>`:'<span class="dim">—</span>'},
   ],rows);
   const f=cx.financing||{}, oas=f.hy_oas;
   if(oas&&(oas.points||[]).length){
@@ -5561,7 +5565,7 @@ function renderCapex(){
     {h:'Date',f:r=>`<span class="ev-date">${miDate(r.date)}</span>`},
     {h:'Borrower',f:r=>`<span class="gpu-name">${miEsc(r.company)}</span>`},
     {h:'Amount',r:1,f:r=>r.amount_usd_bn!=null?miUsd(r.amount_usd_bn,1)+'bn':'—'},
-    {h:'Type',f:r=>miEsc(r.type||'')+(r.collateral?`<span class="sub">${miEsc(r.collateral)}</span>`:'')},
+    {w:1,h:'Type',f:r=>miEsc(r.type||'')+(r.collateral?`<span class="sub">${miEsc(r.collateral)}</span>`:'')},
     {h:'Source',f:r=>miLink(r.url,r.source)},
   ],(f.deals||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')),'No financing deals recorded.');
 }
@@ -5586,14 +5590,14 @@ function renderPower(){
   miSet('miPowerNote',miSrcList(pw));
   miSetTable('miQueues',[
     {h:'Grid',f:r=>`<span class="gpu-name">${miEsc(r.iso)}</span>`},
-    {h:'Measure',f:r=>miEsc(r.metric)},
+    {w:1,h:'Measure',f:r=>miEsc(r.metric)},
     {h:'GW',r:1,f:r=>miNum(r.value_gw,1)},
     {h:'Source',f:r=>miLink(r.url,r.source)+`<span class="sub">${miDate(r.as_of)}</span>`},
   ],pw.queues||[],'No queue data.');
   const so={energized:0,construction:1,announced:2};
   miSetTable('miProjects',[
     {h:'Project',f:r=>`<span class="gpu-name">${miEsc(r.name)}</span><span class="sub">${miEsc(r.company||'')}</span>`},
-    {h:'Location',f:r=>miEsc(r.location||'')},
+    {w:1,h:'Location',f:r=>miEsc(r.location||'')},
     {h:'Planned MW',r:1,f:r=>miNum(r.mw,0)},
     {h:'Online MW',r:1,f:r=>r.mw_online!=null?miNum(r.mw_online,0):'—'},
     {h:'Status',f:r=>`<span class="st-tag st-${miEsc(r.status)}">${miEsc((r.status||'').toUpperCase())}</span>`},
@@ -5609,21 +5613,21 @@ function renderChina(){
   miSetTable('miRules',[
     {h:'Date',f:r=>`<span class="ev-date">${miDate(r.date)}</span>`},
     {h:'Type',f:r=>`<span class="ev-tag ev-policy">${miEsc((r.type||'').replace('_',' '))}</span>`},
-    {h:'Document',f:r=>miLink(r.url,r.title)+(r.abstract?`<span class="sub" title="${miEsc(r.abstract)}">${miEsc(r.abstract.slice(0,140))}${r.abstract.length>140?'…':''}</span>`:'')},
+    {w:1,h:'Document',f:r=>miLink(r.url,r.title)+(r.abstract?`<span class="sub" title="${miEsc(r.abstract)}">${miEsc(r.abstract.slice(0,140))}${r.abstract.length>140?'…':''}</span>`:'')},
   ],(ce.rules||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')),'No rules found.');
   miSetTable('miChinaStatus',[
     {h:'Topic',f:r=>`<span class="gpu-name">${miEsc(r.topic)}</span>`},
-    {h:'Status',f:r=>miEsc(r.status)},
+    {w:1,h:'Status',f:r=>miEsc(r.status)},
     {h:'Source',f:r=>miLink(r.url,r.source)+`<span class="sub">${miDate(r.as_of)}</span>`},
   ],ce.status||[],'No status entries.');
   miSetTable('miChinaPrices',[
-    {h:'Item',f:r=>`<span class="gpu-name">${miEsc(r.item)}</span>`+(r.note?`<span class="sub">${miEsc(r.note)}</span>`:'')},
+    {w:1,h:'Item',f:r=>`<span class="gpu-name">${miEsc(r.item)}</span>`+(r.note?`<span class="sub">${miEsc(r.note)}</span>`:'')},
     {h:'Price',r:1,f:r=>(r.usd!=null?miUsd(r.usd,0):'')+(r.currency&&r.currency!=='USD'?`<span class="sub">${miEsc(r.currency)} ${miNum(r.price,0)}</span>`:'')+(r.unit?`<span class="sub">${miEsc(r.unit)}</span>`:'')},
     {h:'Source',f:r=>miLink(r.url,r.source)+`<span class="sub">${miDate(r.as_of)}</span>`},
   ],ce.china_prices||[],'No price reports recorded.');
   miSetTable('miChinaDomestic',[
-    {h:'Item',f:r=>`<span class="gpu-name">${miEsc(r.item)}</span>`},
-    {h:'Measure',f:r=>miEsc(r.metric)},
+    {w:1,h:'Item',f:r=>`<span class="gpu-name">${miEsc(r.item)}</span>`},
+    {w:1,h:'Measure',f:r=>miEsc(r.metric)},
     {h:'Value',r:1,f:r=>`<b>${miEsc(r.value)}</b>`},
     {h:'Source',f:r=>miLink(r.url,r.source)+`<span class="sub">${miDate(r.as_of)}</span>`},
   ],ce.domestic_supply||[],'No reports recorded.');
@@ -5669,7 +5673,7 @@ function renderEvents(){
   miSetTable('miEvents',[
     {h:'Date',f:miEvRow},
     {h:'Type',f:e=>`<span class="ev-tag ev-${miEsc(e.type)}">${miEsc((e.type||'').replace('_',' '))}</span>`},
-    {h:'Event',f:e=>`${e.url?miLink(e.url,e.title):miEsc(e.title)}${(e.tickers||[]).length?`<span class="sub">${e.tickers.map(miEsc).join(' · ')}</span>`:''}`},
+    {w:1,h:'Event',f:e=>`${e.url?miLink(e.url,e.title):miEsc(e.title)}${(e.tickers||[]).length?`<span class="sub">${e.tickers.map(miEsc).join(' · ')}</span>`:''}`},
     {h:'Impact',f:e=>`<span class="${e.impact==='high'?'c-red':e.impact==='medium'?'c-amber':'dim'}" style="font-family:var(--mono);font-size:10px;font-weight:700;">${miEsc((e.impact||'').toUpperCase())}</span>`},
     {h:'Source',f:e=>miEsc(e.source||'')},
   ],items,'No events match this filter.');
@@ -5687,8 +5691,8 @@ function renderBenchmarks(){
     {h:'GPU',f:r=>miEsc(r.gpu_id)},
     {h:'Theirs',r:1,f:r=>miUsd(r.theirs_hr)+'/hr'+`<span class="sub">${miDate(r.their_as_of)}${r.stale?' · <span class="c-amber">old</span>':''}</span>`},
     {h:'Ours',r:1,f:r=>miUsd(r.ours_hr)+'/hr'+(r.ours_basis?`<span class="sub">${miEsc(r.ours_basis)}</span>`:'')},
-    {h:'Difference',r:1,f:r=>miPct(r.diff_pct,0)},
-    {h:'Method',f:r=>{const i=idx[r.name+'|'+r.gpu_id]||{};return `<span class="sub" style="display:inline">${miEsc(i.method_note||'')}</span> ${miLink(i.url,'link')}`;}},
+    {h:'Difference',r:1,f:r=>r.diff_pct==null?'—':`<span style="color:var(--text-1)">${r.diff_pct>0?'+':''}${Math.round(r.diff_pct)}%</span><span class="sub">${r.diff_pct>0?'ours higher':'ours lower'}</span>`},
+    {w:1,h:'Method',f:r=>{const i=idx[r.name+'|'+r.gpu_id]||{};return `<span class="sub" style="display:inline">${miEsc(i.method_note||'')}</span> ${miLink(i.url,'link')}`;}},
   ],b.comparison||[],'No comparable indices.');
   miSet('miBenchNote','A large difference usually means a different basket (which providers, which contract length), not that either side is wrong. Read the method before acting on it.<br>'+miSrcList(b));
 }
