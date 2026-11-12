@@ -37,6 +37,11 @@ DIGITALOCEAN_URL = "https://www.digitalocean.com/pricing/gpu-droplets"
 VULTR_METAL_URL = "https://api.vultr.com/v2/plans-metal?per_page=500"
 VULTR_VCG_URL = "https://api.vultr.com/v2/plans?type=vcg&per_page=500"
 CRUSOE_URL = "https://crusoe.ai/cloud/pricing"
+HYPERBOLIC_URL = "https://www.hyperbolic.ai/marketplace"
+# Paperspace is part of DigitalOcean; its price list lives in DO's docs, which
+# serve a Markdown rendering of every page (append index.html.md).
+PAPERSPACE_URL = "https://docs.digitalocean.com/products/paperspace/pricing/index.html.md"
+HOTAISLE_URL = "https://hotaisle.xyz/pricing/"
 
 
 # --------------------------------------------------------------------------
@@ -482,6 +487,153 @@ def fetch_crusoe_pricing() -> dict:
 
 
 # --------------------------------------------------------------------------
+# Hyperbolic -- marketplace page: "GPU Type | Starting From (per GPU hour)"
+# --------------------------------------------------------------------------
+
+def fetch_hyperbolic_pricing() -> dict:
+    toks = _html_tokens(_get(HYPERBOLIC_URL))
+    try:
+        start = next(i for i, t in enumerate(toks)
+                     if t.lower().startswith("starting from") and "per gpu hour" in t.lower())
+    except StopIteration:
+        raise RuntimeError("Hyperbolic: 'Starting From (per GPU hour)' table not found")
+    if toks[start - 1].lower() != "gpu type":
+        raise RuntimeError(f"Hyperbolic: unexpected table header {toks[start - 1:start + 1]}")
+    out = {}
+    i = start + 1
+    # Rows are (name, "$3.19 / HR") pairs until the first non-price cell.
+    while i + 1 < len(toks):
+        name, cell = toks[i], toks[i + 1]
+        pm = re.match(r"^\$\s*([0-9]+(?:\.[0-9]+)?)\s*/\s*HR$", cell, re.I)
+        if not pm:
+            break
+        gid = map_gpu_name(name)
+        if gid:
+            # On-demand GPUs are rented per GPU (1..8); the table quotes the
+            # lowest current per-GPU rate, refreshed weekly by Hyperbolic.
+            out[gid] = {"on_demand": float(pm.group(1)),
+                        "instance": f"{name} on-demand [from]",
+                        "gpus_per_instance": 1}
+        i += 2
+    return _finish("Hyperbolic", out)
+
+
+# --------------------------------------------------------------------------
+# Paperspace (DigitalOcean) -- Markdown price tables in DO's docs
+# --------------------------------------------------------------------------
+
+# Paperspace machine-type names -> gpu_id. "A100" is the 40GB part (the
+# 80GB card is listed separately as "A100-80G"); Paperspace H100s are HGX
+# (SXM) boards.
+_PAPERSPACE_TYPES = {
+    "A100": "A100-40GB",
+    "A100-80G": "A100-80GB",
+    "H100": "H100-SXM",
+}
+
+
+def _md_table(md, heading):
+    """Rows (list of cell lists) of the first Markdown table after `heading`."""
+    i = md.find(heading)
+    if i < 0:
+        return None
+    rows = []
+    started = False
+    for line in md[i:].splitlines()[1:]:
+        line = line.strip()
+        if line.startswith("|"):
+            started = True
+            cells = [c.strip() for c in line.strip("|").split("|")]
+            if set("".join(cells)) <= set("-: "):
+                continue  # separator row
+            rows.append(cells)
+        elif started:
+            break
+    return rows
+
+
+def fetch_paperspace_pricing() -> dict:
+    md = _get(PAPERSPACE_URL)
+    single = _md_table(md, "### GPU Machines")
+    multi = _md_table(md, "### Multi-GPU Machines")
+    if not single or [c.lower() for c in single[0][:2]] != ["gpu machine", "hourly price"]:
+        raise RuntimeError("Paperspace: GPU Machines table not found or header changed")
+
+    def price(cell):
+        m = re.match(r"^\$\s*([0-9]+(?:\.[0-9]+)?)\s*/\s*hr$", cell.strip(), re.I)
+        return float(m.group(1)) if m else None
+
+    # Multi-GPU rows: "A100-80G ×8" -> (name, count, instance price)
+    multis = {}
+    for row in (multi or [])[1:]:
+        m = re.match(r"^(.+?)\s*[×x]\s*(\d+)$", row[0].strip())
+        p = price(row[1]) if len(row) > 1 else None
+        if m and p:
+            multis[m.group(1).strip()] = (int(m.group(2)), p)
+
+    out = {}
+    for row in single[1:]:
+        if len(row) < 2:
+            continue
+        gid = _PAPERSPACE_TYPES.get(row[0].strip())
+        p = price(row[1])
+        if not gid or p is None:
+            continue
+        e = {"on_demand": p, "instance": f"Paperspace {row[0].strip()}",
+             "gpus_per_instance": 1}
+        if row[0].strip() in multis:
+            n, total = multis[row[0].strip()]
+            # DO documents multi-GPU price = n x single-GPU rate; only adopt
+            # the larger shape when the published numbers agree.
+            if abs(total / n - p) <= 0.01:
+                e = {"on_demand": p, "instance": f"Paperspace {row[0].strip()} x{n}",
+                     "gpus_per_instance": n}
+        out[gid] = e
+    return _finish("Paperspace", out)
+
+
+# --------------------------------------------------------------------------
+# Hot Aisle -- AMD MI300X cloud; static pricing cards
+# --------------------------------------------------------------------------
+
+def fetch_hotaisle_pricing() -> dict:
+    toks = _html_tokens(_get(HOTAISLE_URL))
+    out = {}
+    # Card layout: <tier> | <"1x" / "2x & 4x" / "8x"> | <GPU> | "$2.99/GPU/hr"
+    for i in range(2, len(toks)):
+        pm = re.match(r"^\$\s*([0-9]+(?:\.[0-9]+)?)\s*/\s*GPU\s*/\s*hr$", toks[i], re.I)
+        if not pm:
+            continue
+        counts_tok, gpu_tok = toks[i - 2], toks[i - 1]
+        if not re.fullmatch(r"[\dx&,\s]+", counts_tok, re.I):
+            continue  # summary banner, not a card
+        counts = [int(c) for c in re.findall(r"(\d+)\s*x", counts_tok, re.I)]
+        gid = map_gpu_name(gpu_tok)
+        if not gid or not counts:
+            continue
+        n = max(counts)
+        kind = "bare metal" if n == 8 else "VM"
+        cand = {"on_demand": float(pm.group(1)),
+                "instance": f"{n}x {gpu_tok} {kind}", "gpus_per_instance": n}
+        if _prefer(cand, out.get(gid)):
+            out[gid] = cand
+    return _finish("Hot Aisle", out)
+
+
+# --------------------------------------------------------------------------
+# Considered and deliberately NOT fetched (no honest public price source as of
+# 2026-11-12):
+#   SF Compute   -- prices only via its order book, which requires a bearer
+#                   token (api.sfcompute.com/preview/v2/orderbook -> 401);
+#                   /pricing redirects to login.
+#   Fluidstack   -- no public price list (pricing URLs 404; sales-led).
+#   TensorWave   -- product pages show "Starting at $X /GPU HR" beside
+#                   "Book a call"; no on-demand/term is stated, so it cannot
+#                   be published as an on-demand rate.
+#   Voltage Park -- every tier on /pricing says "Contact for pricing".
+
+
+# --------------------------------------------------------------------------
 
 PROVIDERS = {  # provider key -> (fetch fn, provider_name, source_tag)
     "Oracle": (fetch_oci_pricing, "Oracle Cloud (OCI)", "oci_price_api"),
@@ -489,6 +641,9 @@ PROVIDERS = {  # provider key -> (fetch fn, provider_name, source_tag)
     "DigitalOcean": (fetch_digitalocean_pricing, "DigitalOcean", "digitalocean_pricing_page"),
     "Vultr": (fetch_vultr_pricing, "Vultr", "vultr_plans_api"),
     "Crusoe": (fetch_crusoe_pricing, "Crusoe", "crusoe_pricing_page"),
+    "Hyperbolic": (fetch_hyperbolic_pricing, "Hyperbolic", "hyperbolic_marketplace_page"),
+    "Paperspace": (fetch_paperspace_pricing, "Paperspace (DigitalOcean)", "paperspace_do_docs"),
+    "Hot Aisle": (fetch_hotaisle_pricing, "Hot Aisle", "hotaisle_pricing_page"),
 }
 
 

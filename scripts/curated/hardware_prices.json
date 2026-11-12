@@ -1,0 +1,70 @@
+{
+  "_note": "Curated, cited reference purchase prices. Each entry was checked against its source page on 2026-11-12. These are NOT live market medians: they are published list prices or price ranges quoted in a dated report. Add entries only with a source, url and as_of you have verified yourself. low_usd/high_usd hold a published range; value_usd holds a single published figure.",
+  "entries": [
+    {
+      "gpu_id": "RTX-5090",
+      "form": "card",
+      "condition": "new",
+      "value_usd": 1999,
+      "low_usd": null,
+      "high_usd": null,
+      "basis": "NVIDIA launch list price (Founders Edition MSRP)",
+      "quote": "the GeForce RTX 5090 GPU ... will be available on Jan. 30 at $1,999",
+      "source": "NVIDIA Newsroom",
+      "as_of": "2025-01-06",
+      "url": "https://nvidianews.nvidia.com/news/nvidia-blackwell-geforce-rtx-50-series-opens-new-world-of-ai-computer-graphics"
+    },
+    {
+      "gpu_id": "H100",
+      "form": "card",
+      "condition": "new",
+      "value_usd": null,
+      "low_usd": 25000,
+      "high_usd": 40000,
+      "basis": "retail price range reported by Hashrate Index (Luxor); H100 variant not specified",
+      "quote": "The NVIDIA H100's retail price held remarkably steady at $25,000–$40,000 from mid-2024 into early 2026.",
+      "source": "Hashrate Index (Luxor)",
+      "as_of": "2026-04-08",
+      "url": "https://hashrateindex.com/blog/used-gpu-market-pricing-deprecation-secondary-ai/"
+    },
+    {
+      "gpu_id": "H100",
+      "form": "server_8x",
+      "condition": "used",
+      "value_usd": null,
+      "low_usd": 150000,
+      "high_usd": 180000,
+      "basis": "used 8-GPU H100 server price range reported by Hashrate Index (Luxor)",
+      "quote": "At the server level—the typical B2B purchase unit—a used H100 server (8-GPU) trades at roughly $150,000–$180,000.",
+      "source": "Hashrate Index (Luxor)",
+      "as_of": "2026-04-08",
+      "url": "https://hashrateindex.com/blog/used-gpu-market-pricing-deprecation-secondary-ai/"
+    },
+    {
+      "gpu_id": "A100-40GB",
+      "form": "card",
+      "condition": "used",
+      "value_usd": 7800,
+      "low_usd": null,
+      "high_usd": null,
+      "basis": "visible commercial listing ask, refurbished unit (single figure, not a median)",
+      "quote": "Visible commercial listings run from roughly $7,800 for A100 40GB refurbished units to about $18,900 for an A100 80GB PCIe card.",
+      "source": "Hashrate Index (Luxor)",
+      "as_of": "2026-04-08",
+      "url": "https://hashrateindex.com/blog/used-gpu-market-pricing-deprecation-secondary-ai/"
+    },
+    {
+      "gpu_id": "A100-80GB",
+      "form": "card",
+      "condition": "used",
+      "value_usd": 18900,
+      "low_usd": null,
+      "high_usd": null,
+      "basis": "visible commercial listing ask for an A100 80GB PCIe card (single figure, not a median; condition not stated beyond secondary-market listing)",
+      "quote": "Visible commercial listings run from roughly $7,800 for A100 40GB refurbished units to about $18,900 for an A100 80GB PCIe card.",
+      "source": "Hashrate Index (Luxor)",
+      "as_of": "2026-04-08",
+      "url": "https://hashrateindex.com/blog/used-gpu-market-pricing-deprecation-secondary-ai/"
+    }
+  ]
+}

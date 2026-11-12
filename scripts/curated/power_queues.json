@@ -1,0 +1,55 @@
+{
+  "_note": "Grid interconnection queue / large-load request figures. Each entry verified against the cited page on 2026-11-12. value_gw is the figure as published; metrics are NOT comparable across rows (generator queues vs load requests vs forecast load).",
+  "entries": [
+    {
+      "iso": "US (all ISOs + utilities)",
+      "metric": "Generation + storage capacity actively seeking interconnection",
+      "value_gw": 2061,
+      "as_of": "2025-12-31",
+      "published": "2026-07-01",
+      "note": "LBNL Queued Up 2026 edition: down 10% from 2024; storage 749 GW, solar 773 GW, gas 253 GW, wind 220 GW.",
+      "source": "LBNL Queued Up 2026 Edition (reported by APPA)",
+      "url": "https://www.publicpower.org/periodical/article/backlog-power-plants-seeking-transmission-grid-connection-eased-somewhat-2025-lbnl"
+    },
+    {
+      "iso": "ERCOT",
+      "metric": "Large-load interconnection requests (~90% data centers)",
+      "value_gw": 474,
+      "as_of": "2026-08-31",
+      "published": "2026-08-31",
+      "note": "ERCOT figure cited in August 2026 (approx. 474 GW, roughly 90% data centers); up from >438 GW reported in June 2026.",
+      "source": "ERCOT, via Data Center Frontier",
+      "url": "https://www.datacenterfrontier.com/energy/article/55401760/ercot-puts-texas-ai-megawatts-to-the-test"
+    },
+    {
+      "iso": "ERCOT",
+      "metric": "Large-load interconnection requests (~77% data centers)",
+      "value_gw": 226,
+      "as_of": "2025-11-30",
+      "published": "2025-12-03",
+      "note": "ERCOT filing: about 226 GW of large-load customers in queue as of November 2025. Kept as the year-earlier comparison point.",
+      "source": "ERCOT, via Latitude Media",
+      "url": "https://www.latitudemedia.com/news/ercots-large-load-queue-has-nearly-quadrupled-in-a-single-year/"
+    },
+    {
+      "iso": "PJM",
+      "metric": "Data-center load in PJM 2026 load forecast used for 2028/29 capacity auction",
+      "value_gw": 21.47,
+      "as_of": "2026-10-30",
+      "published": "2026-10-30",
+      "note": "5.034 GW existing data-center load + 16.436 GW forecast increase. IMM: 'There would have been no shortfall but for the forecast data center load.'",
+      "source": "Monitoring Analytics (PJM IMM), Analysis of the 2028/2029 RPM BRA Part A",
+      "url": "https://www.monitoringanalytics.com/reports/Reports/2026/IMM_Analysis_of_the_20282029_RPM_Base_Residual_Auction_Part_A_20261030.pdf"
+    },
+    {
+      "iso": "PJM (Dominion, N. Virginia)",
+      "metric": "Contracted data-center capacity (ESAs + construction / engineering LOAs)",
+      "value_gw": 53.8,
+      "as_of": "2026-07-31",
+      "published": "2026-08-09",
+      "note": "Dominion Energy Q2 2026 results (reported July 31, 2026): ~53.8 GW contracted, up 5.3 GW since December 2025.",
+      "source": "Dominion Energy Q2 2026, via MarketScale (Reuters)",
+      "url": "https://www.marketscale.com/industries/energy/dominions-538-gw-data-center-backlog-and-a-668b-merger-make-it-the-utility-to-watch-in-2026"
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "_about": "Major GPU-backed / AI-datacenter debt financings. Each entry hand-verified against the cited page; amounts are as announced or as first reported (see type).",
+  "verified_on": "2026-11-12",
+  "deals": [
+    {
+      "date": "2023-08-03",
+      "company": "CoreWeave",
+      "amount_usd_bn": 2.3,
+      "type": "private credit debt facility (led by Magnetar Capital and Blackstone)",
+      "collateral": "Nvidia GPUs (H100)",
+      "source": "Reuters (via The Star)",
+      "url": "https://thestar.com.my/tech/tech-news/2023/08/03/coreweave-raises-23-billion-in-debt-collateralized-by-nvidia-chips"
+    },
+    {
+      "date": "2024-04-04",
+      "company": "Lambda",
+      "amount_usd_bn": 0.5,
+      "type": "special-purpose GPU financing vehicle (asset-based, led by Macquarie)",
+      "collateral": "Nvidia GPUs and their cash flows",
+      "source": "Lambda press release (Business Wire)",
+      "url": "https://www.businesswire.com/news/home/20240402148086/en/Lambda-Announces-$500M-GPU-Backed-Facility-to-Expand-Cloud-for-AI"
+    },
+    {
+      "date": "2024-05-17",
+      "company": "CoreWeave",
+      "amount_usd_bn": 7.5,
+      "type": "private credit debt facility (DDTL 2.0; led by Blackstone, co-led by Magnetar)",
+      "collateral": "not disclosed in release",
+      "source": "Blackstone press release",
+      "url": "https://www.blackstone.com/news/press/coreweave-secures-7-5-billion-debt-financing-facility-led-by-blackstone-and-magnetar/"
+    },
+    {
+      "date": "2025-05-27",
+      "company": "CoreWeave",
+      "amount_usd_bn": 2.0,
+      "type": "senior unsecured notes, 9.25% due 2030",
+      "collateral": "unsecured (guaranteed by CoreWeave Cash Management LLC)",
+      "source": "CoreWeave Investor Relations",
+      "url": "https://investors.coreweave.com/news/news-details/2025/CoreWeave-Announces-Closing-of-2000-million-of-Senior-Notes-Offering/default.aspx"
+    },
+    {
+      "date": "2025-06-11",
+      "company": "Crusoe",
+      "amount_usd_bn": 0.75,
+      "type": "credit facility (Brookfield Asset Management)",
+      "collateral": "not disclosed",
+      "source": "Crusoe newsroom",
+      "url": "https://crusoe.ai/newsroom/crusoe-secures-usd750-million-credit-facility-from-brookfield-to-accelerate/"
+    },
+    {
+      "date": "2025-07-31",
+      "company": "CoreWeave",
+      "amount_usd_bn": 2.6,
+      "type": "delayed-draw term loan (DDTL 3.0; Morgan Stanley, MUFG), SOFR+4%",
+      "collateral": "substantially all assets of CoreWeave Compute Acquisition Co. VII (GPU infrastructure for OpenAI contract)",
+      "source": "CoreWeave Investor Relations",
+      "url": "https://investors.coreweave.com/news/news-details/2025/CoreWeave-Closes-2-6-Billion-Secured-Debt-Financing-Facility-Strengthening-Market-Position-as-AI-Cloud-Leader/default.aspx"
+    },
+    {
+      "date": "2025-09-04",
+      "company": "Vantage Data Centers (Oracle/OpenAI sites, TX + WI)",
+      "amount_usd_bn": 38.0,
+      "type": "project debt: senior secured construction loans (JPMorgan, MUFG lead; ~$23.25B TX, ~$14.75B WI) - initially reported",
+      "collateral": "data center projects (senior secured)",
+      "source": "Bloomberg",
+      "url": "https://www.bloomberg.com/news/articles/2025-09-04/banks-ready-38-billion-of-debt-for-data-centers-tied-to-oracle"
+    },
+    {
+      "date": "2025-10-07",
+      "company": "xAI",
+      "amount_usd_bn": 12.5,
+      "type": "SPV debt (planned debt portion of ~$20B raise; SPV buys Nvidia GPUs and leases to xAI for Colossus 2) - reported, final split not disclosed",
+      "collateral": "Nvidia GPUs",
+      "source": "Bloomberg",
+      "url": "https://www.bloomberg.com/news/articles/2025-10-07/musk-s-xai-nears-20-billion-capital-raise-tied-to-nvidia-chips"
+    },
+    {
+      "date": "2025-10-16",
+      "company": "Meta (Hyperion JV with Blue Owl / Beignet Investor SPV)",
+      "amount_usd_bn": 27.0,
+      "type": "SPV debt: private bond offering arranged by Morgan Stanley (over $27B), mostly to Pimco",
+      "collateral": "Hyperion data center JV (Meta lease/guarantee support); A+ by S&P",
+      "source": "Bloomberg",
+      "url": "https://www.bloomberg.com/news/articles/2025-10-16/blue-owl-seals-largest-private-capital-deal-for-meta-s-ai-growth"
+    },
+    {
+      "date": "2025-10-16",
+      "company": "TeraWulf / Fluidstack (Google backstop)",
+      "amount_usd_bn": 3.2,
+      "type": "senior secured notes, 7.75% due 2030 (WULF Compute)",
+      "collateral": "substantially all assets of WULF Compute, Fluidstack lockbox account, Google-pledged warrants; Google backstops $3.2B of Fluidstack lease obligations",
+      "source": "TeraWulf press release",
+      "url": "https://investors.terawulf.com/news-events/press-releases/detail/119/terawulf-inc-announces-pricing-of-3-2-billion-of-senior/"
+    },
+    {
+      "date": "2026-03-31",
+      "company": "CoreWeave",
+      "amount_usd_bn": 8.5,
+      "type": "delayed-draw term loan (DDTL 4.0; non-recourse, investment grade A3/A(low), anchored by Blackstone)",
+      "collateral": "substantially all assets of CoreWeave Compute Acquisition Co. VIII (HPC/GPU infrastructure and customer contract)",
+      "source": "CoreWeave Investor Relations",
+      "url": "https://investors.coreweave.com/news/news-details/2026/CoreWeave-Closes-Landmark-8-5-Billion-Financing-Facility-Achieving-First-Investment-Grade-Rated-GPU-backed-Financing/default.aspx"
+    },
+    {
+      "date": "2026-05-07",
+      "company": "Lambda",
+      "amount_usd_bn": 1.0,
+      "type": "syndicated senior secured credit facility (J.P. Morgan lead; upsized from $275M)",
+      "collateral": "not disclosed",
+      "source": "Lambda blog",
+      "url": "https://lambda.com/blog/lambda-closes-1-billion-senior-secured-credit-facility"
+    },
+    {
+      "date": "2026-05-18",
+      "company": "CoreWeave",
+      "amount_usd_bn": 3.1,
+      "type": "delayed-draw term loan (DDTL 5.0; publicly syndicated, SOFR+4.50%)",
+      "collateral": "GPU/HPC infrastructure",
+      "source": "CoreWeave Investor Relations",
+      "url": "https://investors.coreweave.com/news/news-details/2026/CoreWeave-Closes-3-1-Billion-Loan-Facility-Expanding-Access-to-Public-Markets-for-GPU-Backed-Financing/default.aspx"
+    },
+    {
+      "date": "2026-07-17",
+      "company": "Nebius",
+      "amount_usd_bn": 0.775,
+      "type": "senior secured facility (first secured debt; MUFG; SOFR+2.50%)",
+      "collateral": "deployed GPU infrastructure and contracted cash flows from an investment-grade customer",
+      "source": "Nebius newsroom",
+      "url": "https://nebius.com/newsroom/nebius-raises-775-million-in-first-secured-debt-financing-to-accelerate-global-buildout"
+    },
+    {
+      "date": "2026-08-10",
+      "company": "CoreWeave",
+      "amount_usd_bn": 2.6,
+      "type": "delayed-draw term loan (DDTL 5.5; JPMorgan, MUFG; Ba2/BB+)",
+      "collateral": "HPC/GPU infrastructure and customer contracts",
+      "source": "CoreWeave Investor Relations",
+      "url": "https://investors.coreweave.com/news/news-details/2026/CoreWeave-Closes-2-6-Billion-Loan-Facility-Expanding-Financing-Flexibility-for-AI-Infrastructure/default.aspx"
+    },
+    {
+      "date": "2026-10-01",
+      "company": "Lambda",
+      "amount_usd_bn": 1.008,
+      "type": "investment-grade delayed-draw term loan, 6.78% fixed, due 2033 (J.P. Morgan)",
+      "collateral": "funded GPU servers, related infrastructure and contracted cash flows",
+      "source": "Lambda blog",
+      "url": "https://lambda.ai/blog/lambda-closes-1-billion-senior-secured-fixed-rate-financing"
+    }
+  ]
+}

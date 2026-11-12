@@ -1,0 +1,342 @@
+{
+  "_note": "Curated, citation-backed. Each entry verified against the cited url on 2026-11-12. Where a source gives a range, 'price' is the low end and the range is stated in 'note'. 'usd' is only filled when the source itself states a USD figure.",
+  "china_prices": [
+    {
+      "item": "NVIDIA H200 8-GPU server (mainland China)",
+      "price": 6000000,
+      "currency": "CNY",
+      "usd": 900000,
+      "unit": "per 8-GPU server",
+      "as_of": "2026-11-05",
+      "source": "Reuters (via The Standard HK)",
+      "url": "https://www.thestandard.com.hk/innovation/article/347673/Nvidia-chips-pile-up-in-Hong-Kong-as-China-withholds-import-approval",
+      "note": "Offered for 'more than 6 million yuan (US$900,000)' by end-October 2026, about 3x the price a year earlier; ~600,000 H200s held in Hong Kong awaiting Beijing import approval."
+    },
+    {
+      "item": "NVIDIA Blackwell-based server (export-controlled, mainland China)",
+      "price": 20000000,
+      "currency": "CNY",
+      "usd": null,
+      "unit": "per server",
+      "as_of": "2026-11-05",
+      "source": "Reuters (via The Standard HK)",
+      "url": "https://www.thestandard.com.hk/innovation/article/347673/Nvidia-chips-pile-up-in-Hong-Kong-as-China-withholds-import-approval",
+      "note": "Grey-market: servers using Blackwell chips 'offered for more than 20 million yuan apiece'; configuration not specified."
+    },
+    {
+      "item": "NVIDIA B300 8-GPU server (China grey market)",
+      "price": 7000000,
+      "currency": "CNY",
+      "usd": 1000000,
+      "unit": "per 8-GPU server",
+      "as_of": "2026-04-30",
+      "source": "Reuters (via The Standard HK)",
+      "url": "https://www.thestandard.com.hk/innovation/article/330775/Prices-of-Nvidias-B300-server-at-US1-million-in-China-on-US-curbs-sources-say",
+      "note": "Up from ~4M yuan late 2025; same server ~US$550,000 in the US. One-year rentals up to 190,000 yuan/month. B300 restricted from sale to China."
+    },
+    {
+      "item": "NVIDIA B200 8-GPU rack (China black market)",
+      "price": 3000000,
+      "currency": "CNY",
+      "usd": 420000,
+      "unit": "per 8-GPU rack",
+      "as_of": "2025-07-24",
+      "source": "Financial Times (via Tom's Hardware)",
+      "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/chinese-companies-allegedly-smuggled-in-usd1bn-worth-of-nvidia-ai-chips-in-the-last-three-months-despite-increasing-export-controls-some-companies-are-already-flaunting-future-b300-availability",
+      "note": "Range CNY 3.0-3.5M (~US$420k-490k) per FT; >US$1bn of restricted Nvidia chips smuggled into China in 3 months after May 2025."
+    },
+    {
+      "item": "NVIDIA H100 8-GPU complete server (China channel quote)",
+      "price": 3200000,
+      "currency": "CNY",
+      "usd": null,
+      "unit": "per 8-GPU server",
+      "as_of": "2026-09-07",
+      "source": "SMM (Shanghai Metals Market) Computing Power",
+      "url": "https://news.metal.com/newscontent/104101579-smm-computing-power-flash-h100-full-system-quoted-at-32-million-yuan-channels-say-it-consolidated-at-highs-for-about-10-days",
+      "note": "Channel quotation ~3.2M yuan; a completed transaction at ~3.1M yuan already delivered. H100 is export-banned to China, so this is grey-market."
+    },
+    {
+      "item": "NVIDIA H20 96GB 8-card module (South China spot)",
+      "price": 1400000,
+      "currency": "CNY",
+      "usd": null,
+      "unit": "per 8-GPU module",
+      "as_of": "2026-09-03",
+      "source": "SMM (Shanghai Metals Market) Computing Power",
+      "url": "https://news.metal.com/newscontent/104094411-smm-computing-power-news-south-china-h20-eight-card-module-spot-quoted-at-14-million-yuan-per-set",
+      "note": "Brand-new spot cargo quoted at 1.4M yuan per set, ~175,000 yuan per card."
+    },
+    {
+      "item": "NVIDIA H20 (per card)",
+      "price": 10000,
+      "currency": "USD",
+      "usd": 10000,
+      "unit": "per card",
+      "as_of": "2025-09-04",
+      "source": "Reuters (via BNN Bloomberg)",
+      "url": "https://www.bnnbloomberg.ca/business/2025/09/04/chinese-firms-still-want-nvidia-chips-despite-government-pressure-not-to-buy-reuters-sources-say/",
+      "note": "H20 'currently sells for between US$10,000 and $12,000'; proposed B30A likely to cost about double if approved."
+    },
+    {
+      "item": "NVIDIA H20 141GB server, without InfiniBand card (distributor quote)",
+      "price": 1250000,
+      "currency": "CNY",
+      "usd": null,
+      "unit": "per server",
+      "as_of": "2025-07-16",
+      "source": "TrendForce (citing Cailian Press)",
+      "url": "https://www.trendforce.com/news/2025/07/16/news-nvidia-h20-sales-restart-sparks-buzz-likely-inventory-sell-off-with-new-blackwell-gpu-for-china-expected/",
+      "note": "Distributor quote on July 15, 2025 after US allowed H20 sales to resume; 'almost the same as in early March'."
+    },
+    {
+      "item": "NVIDIA B30A (proposed China Blackwell part, estimate)",
+      "price": 20000,
+      "currency": "USD",
+      "usd": 20000,
+      "unit": "per card",
+      "as_of": "2025-09-04",
+      "source": "Tom's Hardware (based on Reuters)",
+      "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/nvidias-next-gen-ai-chip-could-double-the-price-of-h20-if-china-export-is-approved-chinese-firms-still-consider-nvidias-b30a-a-good-deal",
+      "note": "Estimate only (US$20,000-25,000, ~2x H20) contingent on US export approval; not a transaction price."
+    },
+    {
+      "item": "NVIDIA RTX Pro 6000D (RTX6000D)",
+      "price": 50000,
+      "currency": "CNY",
+      "usd": null,
+      "unit": "per card",
+      "as_of": "2025-09-16",
+      "source": "Reuters (via The Standard HK)",
+      "url": "https://www.thestandard.com.hk/innovation/article/311671/Nvidias-new-RTX6000D-chip-for-China-finds-little-favour-with-major-firms-sources-say",
+      "note": "Price 'around 50,000 yuan'; weak demand. Grey-market RTX 5090 available at less than half that price."
+    },
+    {
+      "item": "NVIDIA GeForce RTX 5090 D v2 (official China MSRP)",
+      "price": 16499,
+      "currency": "CNY",
+      "usd": null,
+      "unit": "per card",
+      "as_of": "2026-11-12",
+      "source": "NVIDIA China (nvidia.cn)",
+      "url": "https://www.nvidia.cn/geforce/graphics-cards/50-series/rtx-5090-d-v2/",
+      "note": "Official page lists '¥16,499 元起' (starting price). Launched Aug 2025 at same MSRP as RTX 5090 D; 24GB GDDR7. as_of = date page was checked."
+    },
+    {
+      "item": "NVIDIA RTX 4090D 48GB (modified, resold by Chinese data centers)",
+      "price": 20000,
+      "currency": "CNY",
+      "usd": 2735,
+      "unit": "per card",
+      "as_of": "2025-04-23",
+      "source": "Tom's Hardware (citing DigiTimes)",
+      "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/chinese-data-centers-refurbing-and-selling-rtx-4090s-due-to-overcapacity-48gb-models-sell-for-up-to-usd5-500",
+      "note": "Range CNY 20,000-40,000 (~US$2,735-5,470); refurbished cards sold off due to data-center overcapacity."
+    }
+  ],
+  "domestic_supply": [
+    {
+      "item": "Huawei Ascend 910C",
+      "metric": "2026 production plan (units)",
+      "value": "~600,000 units in 2026 (roughly double 2025); Ascend line up to 1.6 million dies in 2026 vs up to 1 million in 2025",
+      "as_of": "2025-09-29",
+      "source": "Bloomberg (via Gulf News)",
+      "url": "https://gulfnews.com/technology/huawei-to-double-output-of-top-ai-chip-as-nvidia-wavers-in-china-1.500287469"
+    },
+    {
+      "item": "Huawei Ascend 950PR",
+      "metric": "2026 production target (units)",
+      "value": "~750,000 units in 2026; samples shipped January 2026, full-scale shipments expected H2 2026",
+      "as_of": "2026-05-05",
+      "source": "Tom's Hardware",
+      "url": "https://www.tomshardware.com/tech-industry/huawei-expects-12-billion-in-ai-chip-revenue-this-year-as-nvidias-china-market-share-hits-zero"
+    },
+    {
+      "item": "Huawei AI processors",
+      "metric": "Expected revenue",
+      "value": "~US$12 billion in 2026, up from US$7.5 billion in 2025",
+      "as_of": "2026-05-05",
+      "source": "Tom's Hardware",
+      "url": "https://www.tomshardware.com/tech-industry/huawei-expects-12-billion-in-ai-chip-revenue-this-year-as-nvidias-china-market-share-hits-zero"
+    },
+    {
+      "item": "Huawei Ascend roadmap",
+      "metric": "Release schedule (Huawei Connect 2026)",
+      "value": "Ascend 960DT Q1 2027 (pulled in 3 quarters); 960PR Q3 2027; 970 in 2028; 980 in 2029. Atlas 950 in commercial use; 256,000-card Atlas 950 SuperCluster being deployed",
+      "as_of": "2026-09-18",
+      "source": "CRN Asia",
+      "url": "https://www.crnasia.com/news/2026/artificial-intelligence/huawei-outlines-ascend-960-roadmap-and-million-processor-ai"
+    },
+    {
+      "item": "China AI accelerator market (IDC)",
+      "metric": "2025 shipments and share",
+      "value": "~4 million cards shipped in China in 2025; Nvidia ~2.2M (55%), Chinese vendors ~41%, AMD ~160,000 (4%); Huawei ~812,000; Kunlunxin and Cambricon ~116,000 each",
+      "as_of": "2026-04-01",
+      "source": "Reuters (via Khaleej Times)",
+      "url": "https://www.khaleejtimes.com/business/tech/chinese-chipmakers-claim-nearly-half-of-of-local-market-as-nvidias-lead-shrinks-idc-says"
+    },
+    {
+      "item": "China high-end AI chip market (TrendForce)",
+      "metric": "Domestic share forecast 2026",
+      "value": "Domestic chips to take nearly 90% of China's high-end AI chip market in 2026, domestic high-end shipments +83% YoY (revised up from ~50% in Dec 2025 outlook)",
+      "as_of": "2026-08-21",
+      "source": "Tom's Hardware (citing TrendForce Aug 10 survey)",
+      "url": "https://www.tomshardware.com/pc-components/gpus/china-approves-first-nvidia-h200-deliveries-to-bytedance-and-tencent-under-case-by-case-import-licenses"
+    },
+    {
+      "item": "SMIC advanced-node (7nm-class) capacity",
+      "metric": "Wafers per month",
+      "value": "45,000 wpm end-2025, 60,000 in 2026, 80,000 in 2027 (projection, SemiAnalysis via Tom's Hardware)",
+      "as_of": "2025-09-10",
+      "source": "Tom's Hardware (citing SemiAnalysis)",
+      "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/chinas-chip-champions-ramp-up-production-of-ai-accelerators-at-domestic-fabs-but-hbm-and-fab-production-capacity-are-towering-bottlenecks"
+    },
+    {
+      "item": "Hua Hong (Huali) 7nm",
+      "metric": "7nm capacity target",
+      "value": "Reportedly able to produce 7nm-class chips; several thousand wafers per month by end-2026",
+      "as_of": "2026-03-16",
+      "source": "heise online",
+      "url": "https://heise.de/-11212934"
+    },
+    {
+      "item": "Cambricon",
+      "metric": "H1 2026 revenue / net profit",
+      "value": "Revenue ~6.0 billion yuan (5.996bn, +108% YoY); net profit ~2.3 billion yuan; both more than doubled",
+      "as_of": "2026-08-28",
+      "source": "Caixin Global",
+      "url": "https://www.caixinglobal.com/2026-08-28/chart-of-the-day-chinas-ai-chipmakers-are-turning-self-reliance-into-sales-102479387.html"
+    },
+    {
+      "item": "CXMT HBM",
+      "metric": "HBM production status",
+      "value": "Began small-scale HBM3E production, aims to ramp next year; T-Head and Cambricon reportedly testing it",
+      "as_of": "2026-09-01",
+      "source": "Korea JoongAng Daily",
+      "url": "https://www.koreajoongangdaily.com/business/chinas-cxmt-begins-hbm3e-production-as-chip-battle-with-korean-powerhouses-widens/12854260"
+    },
+    {
+      "item": "NVIDIA China revenue (10-Q, Q2 FY2027)",
+      "metric": "Revenue from customers headquartered in China incl. Hong Kong",
+      "value": "US$7,880M of US$96,221M total (~8.2%) for quarter ended 2026-07-26; H1 FY27 US$12,430M. Hopper data-center shipments to China <1% of Data Center revenue",
+      "as_of": "2026-07-26",
+      "source": "NVIDIA Form 10-Q (SEC)",
+      "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm"
+    },
+    {
+      "item": "NVIDIA China revenue (10-K, FY2026)",
+      "metric": "Revenue from customers headquartered in China incl. Hong Kong",
+      "value": "US$19,677M of US$215,938M (~9.1%) for FY ended 2026-01-25, down from US$25,048M in FY2025",
+      "as_of": "2026-01-25",
+      "source": "NVIDIA Form 10-K (SEC)",
+      "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm"
+    }
+  ],
+  "status": [
+    {
+      "topic": "H200 exports to China",
+      "status": "US allows H200 under case-by-case licenses with a 25% cut, but Beijing still withholds approval for large-scale imports: ~600,000 H200s sit in Hong Kong, and several major Chinese internet firms have each received only ~10,000.",
+      "as_of": "2026-11-05",
+      "source": "Reuters (via The Standard HK)",
+      "url": "https://www.thestandard.com.hk/innovation/article/347673/Nvidia-chips-pile-up-in-Hong-Kong-as-China-withholds-import-approval"
+    },
+    {
+      "topic": "H200 policy origin (US side)",
+      "status": "Trump announced on Dec 8, 2025 that H200 exports to approved Chinese customers would be allowed with a 25% fee; BIS moved H200/MI325X license reviews to case-by-case (rule issued Jan 13, effective Jan 15, 2026) subject to security requirements.",
+      "as_of": "2026-01-13",
+      "source": "U.S. Bureau of Industry and Security",
+      "url": "https://media.bis.gov/press-release/department-commerce-revises-license-review-policy-semiconductors-exported-china"
+    },
+    {
+      "topic": "NVIDIA H200 sales reality (10-Q)",
+      "status": "NVIDIA took a $0.4B H200 excess-inventory charge in H1 FY27; licensed H200 shipments were <1% of Data Center revenue, must pass US inspection and carry a 25% US import tariff, and NVIDIA assumes no China data-center compute revenue in guidance.",
+      "as_of": "2026-08-26",
+      "source": "NVIDIA Form 10-Q (SEC)",
+      "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm"
+    },
+    {
+      "topic": "H20 licensing saga",
+      "status": "April 2025 license requirement on H20 led to a $4.5B charge; licenses granted August 2025 yielded only ~$60M of H20 revenue, with US officials expecting 15%+ of licensed revenue (never codified).",
+      "as_of": "2026-01-25",
+      "source": "NVIDIA Form 10-K (SEC)",
+      "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm"
+    },
+    {
+      "topic": "CAC summons Nvidia over H20",
+      "status": "The Cyberspace Administration of China summoned Nvidia on July 31, 2025 to explain alleged H20 backdoor/security risks, shortly after the US signalled H20 sales could resume.",
+      "as_of": "2025-07-31",
+      "source": "TrendForce",
+      "url": "https://www.trendforce.com/news/2025/07/31/news-chinese-regulators-reportedly-summon-nvidia-over-h20-chip-backdoor-security-risks/"
+    },
+    {
+      "topic": "CAC order to stop buying Nvidia RTX Pro 6000D",
+      "status": "China's Cyberspace Administration told ByteDance, Alibaba and other tech firms to stop testing and ordering Nvidia's China-specific RTX Pro 6000D (first reported by the FT).",
+      "as_of": "2025-09-17",
+      "source": "TechCrunch (citing Financial Times)",
+      "url": "https://techcrunch.com/2025/09/17/china-tells-its-tech-companies-they-cant-buy-ai-chips-from-nvidia/"
+    },
+    {
+      "topic": "Beijing discouraging Nvidia purchases",
+      "status": "Regulators in Beijing strongly discouraged Alibaba, ByteDance and others from buying Nvidia's H20, though firms remained keen and sought reassurance on orders.",
+      "as_of": "2025-09-04",
+      "source": "Reuters (via BNN Bloomberg)",
+      "url": "https://www.bnnbloomberg.ca/business/2025/09/04/chinese-firms-still-want-nvidia-chips-despite-government-pressure-not-to-buy-reuters-sources-say/"
+    },
+    {
+      "topic": "Chinese customs crackdown on Nvidia imports",
+      "status": "From October 2025 Chinese customs teams at major ports stepped up inspections of Nvidia data-center chips, focused on H20 and RTX 6000D, coordinated with the CAC.",
+      "as_of": "2025-10-10",
+      "source": "Tom's Hardware (citing Financial Times)",
+      "url": "https://www.tomshardware.com/pc-components/gpus/china-launches-port-crackdown-on-nvidia-chips"
+    },
+    {
+      "topic": "AI Diffusion Rule",
+      "status": "Rescinded by BIS on May 13, 2025 with a promise of a replacement rule; as of June 2026 no replacement had been issued, and GAO ruled (May 12, 2026) that the non-enforcement announcement was itself a 'rule' under the Congressional Review Act.",
+      "as_of": "2026-06-05",
+      "source": "Holland & Knight",
+      "url": "https://www.hklaw.com/en/insights/publications/2026/06/bis-publishes-guidance-license-requirements-advanced-computing-items"
+    },
+    {
+      "topic": "BIS Affiliates (50%) Rule",
+      "status": "Suspension extended again to January 10, 2027 (was due to lapse Nov 2026), in line with the extended US-China trade truce.",
+      "as_of": "2026-11-06",
+      "source": "Reed Smith",
+      "url": "https://www.reedsmith.com/our-insights/blogs/trade-compliance-resource-hub/5272/bis-further-suspends-affiliates-rule-until-january-2027/"
+    },
+    {
+      "topic": "Section 232 semiconductor tariffs",
+      "status": "Proclamation signed Jan 14, 2026 imposes an immediate 25% tariff on a narrow set of advanced computing chips (e.g., H200, MI325X), with exemptions for chips used in US data centers, R&D and other domestic uses; broader phase depends on negotiations.",
+      "as_of": "2026-01-14",
+      "source": "KPMG",
+      "url": "https://kpmg.com/us/en/taxnewsflash/news/2026/01/united-states-imposes-tariff-advanced-computing-chips.html"
+    },
+    {
+      "topic": "GAIN AI Act",
+      "status": "The GAIN AI Act (US-customer right of first refusal on AI chips) passed the Senate as part of the FY2026 NDAA but the House version lacked it and it lost steam in final NDAA negotiations.",
+      "as_of": "2025-12-03",
+      "source": "Nextgov/FCW",
+      "url": "https://www.nextgov.com/policy/2025/12/bill-prioritizing-american-customers-ai-chips-not-expected-make-final-ndaa-sources-say/409920/"
+    },
+    {
+      "topic": "Chip Security Act",
+      "status": "House Foreign Affairs Committee advanced the Chip Security Act (anti-smuggling / location-verification for exported AI chips) on March 26, 2026; full House passage not verified.",
+      "as_of": "2026-03-26",
+      "source": "House Foreign Affairs Committee",
+      "url": "https://foreignaffairs.house.gov/news/press-releases/chairman-mast-hfac-advances-chip-security-act"
+    },
+    {
+      "topic": "US-China trade truce (Busan)",
+      "status": "The one-year Busan truce of Oct 2025 was formally extended on Nov 9, 2026 to January 10, 2027: tariff reductions kept, China suspends critical-mineral export controls and its 24% tariff on US goods for two months.",
+      "as_of": "2026-11-09",
+      "source": "The National (with Reuters)",
+      "url": "https://www.thenationalnews.com/news/us/2026/11/09/china-extends-pause-on-rare-earth-export-curbs-for-two-months/"
+    },
+    {
+      "topic": "China gallium/germanium/antimony export ban to US",
+      "status": "MOFCOM suspended its Dec 2024 ban on exports of gallium, germanium, antimony and superhard materials to the US until November 27, 2026; no extension verified as of this file's date.",
+      "as_of": "2025-11-11",
+      "source": "Fastmarkets",
+      "url": "https://www.fastmarkets.com/insights/china-suspends-export-prohibition-on-superhard-materials-us/"
+    }
+  ]
+}
