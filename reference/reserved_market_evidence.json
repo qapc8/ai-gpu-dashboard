@@ -1,0 +1,282 @@
+{
+ "last_reviewed": "2026-11-10",
+ "basis": "reference",
+ "note": "Curated, dated evidence on contract and list-price movements. Statements are paraphrased. 'secondhand' marks summaries of another party's work. Snippet-only items were excluded.",
+ "items": [
+  {
+   "date": "2025-10-31",
+   "gpu": "H100",
+   "kind": "contract",
+   "term": "1 year",
+   "value": 1.7,
+   "statement": "H100 1-year contract index bottomed at $1.70/GPU-hr in October 2025.",
+   "source": "SemiAnalysis (2026-04-02)",
+   "url": "https://newsletter.semianalysis.com/p/the-great-gpu-shortage-rental-capacity",
+   "secondhand": false
+  },
+  {
+   "date": "2026-01-15",
+   "gpu": "H100",
+   "kind": "rate_card",
+   "term": "8x on-demand",
+   "value": 2.99,
+   "statement": "Lambda's 8x H100 on-demand list rate was $2.99.",
+   "source": "Lambda price page (Wayback)",
+   "url": "https://web.archive.org/web/20260115000000/https://lambda.ai/pricing",
+   "secondhand": false
+  },
+  {
+   "date": "2026-01-15",
+   "gpu": "H100",
+   "kind": "rate_card",
+   "term": "cluster, 3 mo-3 yr reserved",
+   "value": 2.19,
+   "statement": "Lambda reserved H100 clusters (3 months to 3 years) at $2.19.",
+   "source": "Lambda price page (Wayback)",
+   "url": "https://web.archive.org/web/20260115000000/https://lambda.ai/pricing",
+   "secondhand": false
+  },
+  {
+   "date": "2026-01-15",
+   "gpu": "B200",
+   "kind": "rate_card",
+   "term": "cluster, 1 yr reserved",
+   "value": 3.49,
+   "statement": "Lambda reserved B200 clusters for 1 year at $3.49.",
+   "source": "Lambda price page (Wayback)",
+   "url": "https://web.archive.org/web/20260115000000/https://lambda.ai/pricing",
+   "secondhand": false
+  },
+  {
+   "date": "2026-02-03",
+   "gpu": "Blackwell",
+   "kind": "contract",
+   "term": "5 years (estimate)",
+   "value": 10.0,
+   "statement": "Next Platform estimates the OpenAI-Oracle deal near $10/GPU-hr, against $14-18 hyperscaler list and $5-8 neocloud.",
+   "source": "Next Platform (analyst estimate)",
+   "url": "https://www.nextplatform.com/compute/2026/02/03/oracles-financing-primes-the-openai-pump/4",
+   "secondhand": false
+  },
+  {
+   "date": "2026-03-16",
+   "gpu": "H100",
+   "kind": "rate_card",
+   "term": "8x on-demand",
+   "value": 3.44,
+   "statement": "Lambda raised 8x H100 on-demand to $3.44.",
+   "source": "Lambda price page (Wayback)",
+   "url": "https://web.archive.org/web/20260316141830/https://lambda.ai/pricing",
+   "secondhand": false
+  },
+  {
+   "date": "2026-03-31",
+   "gpu": "H100",
+   "kind": "contract",
+   "term": "1 year",
+   "value": 2.35,
+   "statement": "SemiAnalysis: H100 1-year contracts up roughly 40% from the October low to $2.35 by March 2026.",
+   "source": "SemiAnalysis (2026-04-02)",
+   "url": "https://newsletter.semianalysis.com/p/the-great-gpu-shortage-rental-capacity",
+   "secondhand": false
+  },
+  {
+   "date": "2026-04-02",
+   "gpu": "H100",
+   "kind": "commentary",
+   "term": "renewals",
+   "value": null,
+   "statement": "SemiAnalysis: expiring H100 contracts renewing at their original rates, some for four years.",
+   "source": "SemiAnalysis",
+   "url": "https://newsletter.semianalysis.com/p/the-great-gpu-shortage-rental-capacity",
+   "secondhand": false
+  },
+  {
+   "date": "2026-04-02",
+   "gpu": "All",
+   "kind": "commentary",
+   "term": "4-5 year offtake",
+   "value": null,
+   "statement": "SemiAnalysis: frontier-cluster offtakes run 4-5 years, with buyers accepting prepayments above 20%.",
+   "source": "SemiAnalysis",
+   "url": "https://newsletter.semianalysis.com/p/the-great-gpu-shortage-rental-capacity",
+   "secondhand": false
+  },
+  {
+   "date": "2026-04-08",
+   "gpu": "H100",
+   "kind": "contract",
+   "term": "1 year forward",
+   "value": 2.64,
+   "statement": "Compute Desk's H100 1-year forward rose from $1.90 to $2.64 by end-March.",
+   "source": "KuCoin summary of Compute Desk",
+   "url": "https://www.kucoin.com/news/flash/gpu-pricing-disarray-four-indices-diverge-market-lacks-c",
+   "secondhand": true
+  },
+  {
+   "date": "2026-04-10",
+   "gpu": "H100",
+   "kind": "rate_card",
+   "term": "8x on-demand",
+   "value": 3.99,
+   "statement": "Lambda raised 8x H100 on-demand to $3.99; cluster reservations repriced to $6.16 (16 GPUs).",
+   "source": "Lambda price page (Wayback)",
+   "url": "https://web.archive.org/web/20260410155841/https://lambda.ai/pricing",
+   "secondhand": false
+  },
+  {
+   "date": "2026-04-30",
+   "gpu": "B200",
+   "kind": "trade",
+   "term": "transacted",
+   "value": 3.82,
+   "statement": "B200 private trades averaged $3.82 in April against a $5.24 listed rate.",
+   "source": "Compute Desk",
+   "url": "https://computedesk.substack.com/p/what-does-a-b300-cost",
+   "secondhand": false
+  },
+  {
+   "date": "2026-04-30",
+   "gpu": "B300",
+   "kind": "trade",
+   "term": "transacted",
+   "value": 4.03,
+   "statement": "B300 private trades averaged $4.03 in April, 22% below listed.",
+   "source": "Compute Desk",
+   "url": "https://computedesk.substack.com/p/what-does-a-b300-cost",
+   "secondhand": false
+  },
+  {
+   "date": "2026-06-26",
+   "gpu": "H100",
+   "kind": "contract",
+   "term": "1 year",
+   "value": 2.65,
+   "statement": "SemiAnalysis survey: 1-year H100 near $2.65 while spot fell to about $2.42.",
+   "source": "OfficeChai summary of SemiAnalysis",
+   "url": "https://officechai.com/ai/semianalysis-explains-why-falling-h100-spot-prices-might-not-nec",
+   "secondhand": true
+  },
+  {
+   "date": "2026-07-20",
+   "gpu": "GB300",
+   "kind": "contract",
+   "term": "~4 years avg",
+   "value": null,
+   "statement": "IREN's contract book averages about four years; its Microsoft GB300 deal is $9.7B over five years.",
+   "source": "W.Media",
+   "url": "https://w.media/iren-lifts-ai-cloud-revenue-target-after-usd-2-8bn-contract-wins/",
+   "secondhand": false
+  },
+  {
+   "date": "2026-08-01",
+   "gpu": "H100",
+   "kind": "rate_card",
+   "term": "12-month reserved",
+   "value": 3.26,
+   "statement": "DigitalOcean's new pricing: 12-month reserved H100 at $3.26.",
+   "source": "DigitalOcean price page",
+   "url": "https://www.digitalocean.com/pricing/gpu-droplets",
+   "secondhand": false
+  },
+  {
+   "date": "2026-08-12",
+   "gpu": "Blackwell",
+   "kind": "commentary",
+   "term": "auction",
+   "value": null,
+   "statement": "Nebius: a capacity auction cleared 15% above its previous highest Blackwell price.",
+   "source": "MarketBeat summary of Nebius Q2 call",
+   "url": "https://www.marketbeat.com/instant-alerts/nebius-group-q2-earnings-call-highlights-2026-08",
+   "secondhand": true
+  },
+  {
+   "date": "2026-08-12",
+   "gpu": "All",
+   "kind": "commentary",
+   "term": "short vs long term",
+   "value": null,
+   "statement": "Nebius: long-term contracts at $20-25M per MW; six months or less at $40-50M per MW.",
+   "source": "MarketBeat summary of Nebius Q2 call",
+   "url": "https://www.marketbeat.com/instant-alerts/nebius-group-q2-earnings-call-highlights-2026-08",
+   "secondhand": true
+  },
+  {
+   "date": "2026-08-27",
+   "gpu": "GB300",
+   "kind": "contract",
+   "term": "3 years",
+   "value": null,
+   "statement": "IREN: 3-year GB300 contracts above $20M annual revenue per MW, negotiations near $25M.",
+   "source": "The Energy Mag",
+   "url": "https://theenergymag.com/news/market-news/iren-reports-707-million-fy-26-revenue-and-ai-cl",
+   "secondhand": false
+  },
+  {
+   "date": "2026-10-01",
+   "gpu": "H100",
+   "kind": "list_change",
+   "term": "on-demand",
+   "value": 4.5,
+   "statement": "Nebius raised on-demand list prices: H100 $3.85 to $4.50, H200 $4.50 to $5.40.",
+   "source": "WHTop",
+   "url": "https://www.whtop.com/news/35799-nebius-raises-gpu-cloud-rates-again-as-ai-demand-accelera",
+   "secondhand": false
+  },
+  {
+   "date": "2026-10-01",
+   "gpu": "B200",
+   "kind": "list_change",
+   "term": "on-demand",
+   "value": 8.5,
+   "statement": "Nebius raised B200 $7.15 to $8.50 and B300 $7.85 to $9.50.",
+   "source": "WHTop",
+   "url": "https://www.whtop.com/news/35799-nebius-raises-gpu-cloud-rates-again-as-ai-demand-accelera",
+   "secondhand": false
+  },
+  {
+   "date": "2026-10-15",
+   "gpu": "B300",
+   "kind": "trade",
+   "term": "on-demand transacted",
+   "value": null,
+   "statement": "Compute Desk: B300 on-demand trading near $7-10/GPU-hr, an all-time high versus about $4.55 a year earlier.",
+   "source": "Crypto Briefing summary of Compute Desk",
+   "url": "https://cryptobriefing.com/blackwell-ultra-gpu-rental-prices-record-high/",
+   "secondhand": true
+  },
+  {
+   "date": "2026-11-04",
+   "gpu": "H100",
+   "kind": "contract",
+   "term": "1 year",
+   "value": 2.8,
+   "statement": "Dylan Patel: 1-year H100 deals transact at $2.40-3.20, median about $2.80.",
+   "source": "BigGo summary of talk",
+   "url": "https://finance.biggo.com/news/79985da1-950d-4765-8d93-64bbcaa9353f",
+   "secondhand": true
+  },
+  {
+   "date": "2026-11-16",
+   "gpu": "H100",
+   "kind": "list_change",
+   "term": "8x on-demand",
+   "value": 4.59,
+   "statement": "Lambda list price change takes effect: H100 $3.99 to $4.59, B200 $6.69 to $7.69.",
+   "source": "Lambda price page",
+   "url": "https://lambda.ai/pricing",
+   "secondhand": false
+  },
+  {
+   "date": "2026-12-01",
+   "gpu": "H100",
+   "kind": "list_change",
+   "term": "on-demand",
+   "value": 4.5,
+   "statement": "Crusoe's announced on-demand prices: H100 $3.90 to $4.50, H200 $4.29 to $5.40, B300 $8.96 to $9.90.",
+   "source": "Crusoe price page",
+   "url": "https://crusoe.ai/cloud/pricing",
+   "secondhand": false
+  }
+ ]
+}

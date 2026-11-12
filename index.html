@@ -1347,6 +1347,14 @@ loadExternalData();
 
   <div class="card mb">
     <div class="card-hd">
+      <span class="card-hd-title">Reserved market — what the numbers say</span>
+      <span class="card-hd-sub" id="rmAsOf"></span>
+    </div>
+    <div class="card-bd"><ul id="rmTakeaways" style="margin:0;padding-left:18px;font-size:12px;line-height:1.75;color:var(--text-1);"></ul></div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-hd">
       <span class="card-hd-title">Top-tier GPUs at a glance</span>
       <span class="card-hd-sub">median discount vs the same provider's on-demand rate · break-even utilisation in brackets</span>
     </div>
@@ -1365,6 +1373,53 @@ loadExternalData();
       <div class="dim" style="font-size:10px;padding-top:6px;">Each line is one provider: its on-demand rate on the left, then the rate it charges for each commitment length it publishes. The dashed line is the median dedicated-cloud on-demand rate.</div>
     </div>
     <div class="card-bd-flush" style="overflow-x:auto;border-top:1px solid var(--border-0);"><table class="dt" id="termProviderTable"></table></div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-hd">
+      <span class="card-hd-title">Short-term capacity — days to months</span>
+      <span class="card-hd-sub">capacity blocks and short reservations vs the same provider's on-demand rate</span>
+    </div>
+    <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="rmShortTable"></table></div>
+    <div class="card-bd dim" style="font-size:10.5px;line-height:1.6;" id="rmShortNote"></div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-hd">
+      <span class="card-hd-title">Hyperscaler discount schedule</span>
+      <span class="card-hd-sub">% below the same instance's on-demand rate, us-east / us-central · payment option in brackets</span>
+    </div>
+    <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="rmDiscTable"></table></div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-hd">
+      <span class="card-hd-title" id="rmRegionTitle">Where you buy — regional prices</span>
+      <span class="card-hd-sub">per GPU-hour, every region the provider lists it in</span>
+    </div>
+    <div class="card-bd">
+      <div class="chart-wrap" id="rmRegionWrap" style="height:340px;"><canvas id="chartRmRegion"></canvas></div>
+      <div id="rmRegionNote" class="dim" style="padding:10px 4px 0;font-size:11px;line-height:1.6;"></div>
+    </div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-hd">
+      <span class="card-hd-title" id="rmIndexTitle">Market prices by commitment length</span>
+      <span class="card-hd-sub">weekly median across providers · Ornn transaction index</span>
+    </div>
+    <div class="card-bd">
+      <div class="chart-wrap" style="height:300px;"><canvas id="chartRmIndex"></canvas></div>
+      <div id="rmIndexNote" class="dim" style="padding:10px 4px 0;font-size:11px;line-height:1.6;"></div>
+    </div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-hd">
+      <span class="card-hd-title">Contract &amp; list-price evidence</span>
+      <span class="card-hd-sub" id="rmEvSub">dated public reports, newest first</span>
+    </div>
+    <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="rmEvidenceTable"></table></div>
   </div>
 
   <div class="card">
@@ -2098,6 +2153,9 @@ document.querySelectorAll('.nav-item').forEach(tab => {
     document.querySelectorAll('.tab-panel').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    // Charts built while their tab was hidden have zero size; this tab's
+    // charts are rebuilt on show so they measure the visible container.
+    if (tab.dataset.tab === 'terms' && termGpu) requestAnimationFrame(() => selectTermGpu(termGpu));
     resizeAllChartsRobust();
   });
 });
@@ -2324,6 +2382,7 @@ function renderTermsTab() {
   }
   const chips = document.getElementById('termGpuChips');
   if (chips) chips.innerHTML = gpus.map(g => `<button class="term-chip" data-g="${g}" onclick="selectTermGpu('${g}')">${escHtml(g)}</button>`).join('');
+  _renderRmStatic();
   selectTermGpu(termGpu && ts[termGpu] ? termGpu : (ts['H100-SXM'] ? 'H100-SXM' : gpus[0]));
 }
 
@@ -2367,6 +2426,183 @@ function selectTermGpu(g) {
   _renderTermLadder(r);
   _renderTermTable(r);
   _renderTermHistory(r);
+  _renderRmRegion(g);
+  _renderRmIndex(g);
+}
+
+// ── Reserved market (DATA.reserved_market) ───────────────────────
+const RM_GPUS = ['B300', 'GB200', 'B200', 'H200', 'H100-SXM', 'MI300X'];
+function _pctCell(d) {
+  if (d == null) return '<span class="dim">—</span>';
+  const r = Math.round(d);
+  return `<b style="color:${r >= 0 ? 'var(--green)' : 'var(--red)'}">${r >= 0 ? '−' : '+'}${Math.abs(r)}%</b>`;
+}
+
+function _renderRmStatic() {
+  const rm = DATA.reserved_market;
+  const asOf = document.getElementById('rmAsOf');
+  const tk = document.getElementById('rmTakeaways');
+  if (!rm) { if (tk) tk.innerHTML = '<li class="dim">No reserved-market data in this refresh.</li>'; return; }
+  const failed = (rm.failed || []);
+  if (asOf) asOf.textContent = `as of ${rm.as_of}` + (failed.length ? ` · not refreshed this run: ${failed.join(', ')}` : '');
+  if (tk) tk.innerHTML = (rm.takeaways || []).map(t => `<li>${escHtml(t)}</li>`).join('') || '<li class="dim">—</li>';
+
+  // Short-term table, grouped by GPU.
+  const st = document.getElementById('rmShortTable');
+  if (st) {
+    let h = '<thead><tr><th>GPU</th><th>Provider · product</th><th>Commitment</th><th><span class="term-badge tb-commit">RATE</span></th><th><span class="term-badge tb-od">SAME-PROVIDER ON-DEMAND</span></th><th>vs on-demand</th></tr></thead><tbody>';
+    let last = null;
+    (rm.short_term || []).forEach(r => {
+      const cluster = r.min_gpus && r.min_gpus > 8;
+      h += `<tr${r.gpu !== last ? ' style="border-top:2px solid var(--border-0)"' : ''}>`
+        + `<td class="gpu-name">${r.gpu !== last ? escHtml(r.gpu) : ''}</td>`
+        + `<td>${escHtml(r.provider)} <span class="dim">· ${escHtml(r.product || '')}</span>${cluster ? ' <span class="term-badge tb-cluster">CLUSTER ' + r.min_gpus + '+</span>' : ''}${r.instance ? `<div class="dim d" style="font-size:9.5px">${escHtml(r.instance)}${r.regions ? ' · ' + r.regions + ' regions' : ''}</div>` : ''}</td>`
+        + `<td class="dim" style="font-size:10.5px;max-width:240px;">${escHtml(r.term || '')}</td>`
+        + `<td class="term-cell"><b>${_fmtUsd(r.rate)}</b></td>`
+        + `<td class="term-cell">${r.on_demand_same_provider != null ? _fmtUsd(r.on_demand_same_provider) : '<span class="dim" title="' + escHtml(r.note || 'No comparable on-demand rate') + '">—</span>'}</td>`
+        + `<td class="term-cell">${_pctCell(r.discount_pct)}</td></tr>`;
+      last = r.gpu;
+    });
+    st.innerHTML = h + '</tbody>';
+  }
+  const sn = document.getElementById('rmShortNote');
+  if (sn) sn.innerHTML = 'AWS Capacity Blocks: one rate per instance in every commercial region, set by AWS from supply and demand and paid upfront at the rate in force when booked. '
+    + 'GCP Flex-start runs a job when capacity frees up; Calendar mode books fixed dates up to 90 days ahead. '
+    + 'Lambda cluster reservations are multi-node InfiniBand clusters and cost more than its single-node on-demand rate — a premium for guaranteed interconnected capacity, not a discount.';
+
+  // Discount schedule matrix.
+  const dt = document.getElementById('rmDiscTable');
+  if (dt) {
+    const rows = {};
+    (rm.discounts || []).forEach(d => {
+      const key = `${d.provider}|${d.product}|${d.term}|${d.payment}`;
+      (rows[key] = rows[key] || { provider: d.provider, product: d.product, term: d.term, payment: d.payment, g: {} }).g[d.gpu] = d;
+    });
+    const order = r => ['AWS', 'Azure', 'GCP'].indexOf(r.provider) * 100 + parseInt(r.term) * 10 + (['no_upfront', 'monthly', 'partial_upfront', 'all_upfront'].indexOf(r.payment) + 1);
+    const list = Object.values(rows).sort((a, b) => order(a) - order(b));
+    const gpus = RM_GPUS.filter(g => list.some(r => r.g[g]));
+    let h = '<thead><tr><th>Provider</th><th>Product</th><th>Term</th>' + gpus.map(g => `<th>${escHtml(g)}</th>`).join('') + '</tr></thead><tbody>';
+    list.forEach(r => {
+      h += `<tr><td>${escHtml(r.provider)}</td><td class="dim">${escHtml(r.product || '')}</td><td class="term-cell">${escHtml(_termLabel(r.term))} <span class="dim d">(${escHtml((r.payment || '').replace('_', ' '))})</span></td>`;
+      gpus.forEach(g => {
+        const d = r.g[g];
+        h += d ? `<td class="term-cell" title="${escHtml((d.note || '') + ' rate $' + d.rate.toFixed(2) + (d.on_demand ? ' vs on-demand $' + d.on_demand.toFixed(2) : ''))}">${d.discount_pct != null ? _pctCell(d.discount_pct) : '<span class="term-badge tb-ro">COMMIT ONLY</span>'}<div class="dim d">${_fmtUsd(d.rate)}</div></td>` : '<td class="dim">—</td>';
+      });
+      h += '</tr>';
+    });
+    dt.innerHTML = h + '</tbody>';
+  }
+
+  // Evidence timeline.
+  const ev = document.getElementById('rmEvidenceTable');
+  const evd = rm.evidence || {};
+  if (ev) {
+    const items = (evd.items || []).slice().sort((a, b) => b.date.localeCompare(a.date));
+    const kind = { contract: 'CONTRACT', rate_card: 'RATE CARD', list_change: 'LIST CHANGE', trade: 'TRADES', commentary: 'COMMENTARY' };
+    const cls = { contract: 'tb-commit', rate_card: 'tb-od', list_change: 'tb-cluster', trade: 'tb-spot', commentary: 'tb-ro' };
+    ev.innerHTML = '<thead><tr><th>Date</th><th>Type</th><th>GPU · term</th><th>$/GPU-hr</th><th>What it says</th><th>Source</th></tr></thead><tbody>'
+      + items.map(i => `<tr><td class="term-cell">${escHtml(i.date)}${i.date > (DATA.last_updated || '').slice(0, 10) ? ' <span class="term-badge tb-ro">UPCOMING</span>' : ''}</td>`
+        + `<td><span class="term-badge ${cls[i.kind] || 'tb-ro'}">${kind[i.kind] || escHtml(i.kind)}</span></td>`
+        + `<td>${escHtml(i.gpu)} <span class="dim d">· ${escHtml(i.term || '')}</span></td>`
+        + `<td class="term-cell">${i.value != null ? _fmtUsd(i.value) : '<span class="dim">—</span>'}</td>`
+        + `<td style="font-size:11px;max-width:420px;white-space:normal;line-height:1.45;">${escHtml(i.statement)}</td>`
+        + `<td style="font-size:10.5px;white-space:normal;max-width:200px;"><a href="${escHtml(i.url)}" target="_blank" rel="noopener" style="color:var(--cyan)">${escHtml(i.source)}</a>${i.secondhand ? ' <span class="dim d" title="A summary of another party\'s work">(second-hand)</span>' : ''}</td></tr>`).join('')
+      + '</tbody>';
+  }
+  const evs = document.getElementById('rmEvSub');
+  if (evs && evd.last_reviewed) evs.textContent = `dated public reports, newest first · curated, last reviewed ${evd.last_reviewed}`;
+}
+
+function _renderRmRegion(g) {
+  const el = document.getElementById('chartRmRegion');
+  const note = document.getElementById('rmRegionNote');
+  const title = document.getElementById('rmRegionTitle');
+  if (!el) return;
+  if (charts.rmRegion) charts.rmRegion.destroy();
+  const reg = ((DATA.reserved_market || {}).regional || {})[g] || {};
+  if (title) title.textContent = `Where you buy — ${g} by region`;
+  const rows = [];
+  if (reg.AWS) reg.AWS.by_region.forEach(r => rows.push({ label: 'AWS · ' + r.region, od: r.on_demand }));
+  if (reg.Azure) reg.Azure.by_region.forEach(r => rows.push({ label: 'Azure · ' + r.region, od: r.on_demand, y1: r['1yr'], y3: r['3yr'], y5: r['5yr'] }));
+  if (!rows.length) {
+    if (note) note.textContent = `No hyperscaler lists ${g} in more than one region with public prices.`;
+    el.parentElement.style.height = '60px';
+    return;
+  }
+  rows.sort((a, b) => a.od - b.od);
+  el.parentElement.style.height = Math.max(220, rows.length * 16 + 80) + 'px';
+  const ds = [
+    ['On-demand', 'od', C.blue], ['1-yr reserved', 'y1', C.amber], ['3-yr reserved', 'y3', C.cyan], ['5-yr reserved', 'y5', C.purple],
+  ].filter(([, k]) => rows.some(r => r[k] != null)).map(([label, k, col]) => ({
+    label, data: rows.map(r => r[k] ?? null), backgroundColor: col + (k === 'od' ? '90' : '60'), borderColor: col, borderWidth: 1, borderRadius: 2,
+  }));
+  charts.rmRegion = new Chart(el, {
+    type: 'bar',
+    data: { labels: rows.map(r => r.label), datasets: ds },
+    options: {
+      animation: false,
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } },
+                 tooltip: { callbacks: { label: x => x.parsed.x == null ? null : `${x.dataset.label}: $${x.parsed.x.toFixed(2)}/GPU-hr` } } },
+      scales: { x: { title: { display: true, text: '$ per GPU-hour' }, ticks: { callback: v => '$' + v }, grid: { color: 'rgba(26,34,51,0.4)' } },
+                y: { ticks: { font: { size: 9.5 } }, grid: { display: false } } },
+    },
+  });
+  if (note) {
+    const parts = [];
+    ['AWS', 'Azure'].forEach(p => {
+      const e = reg[p]; if (!e || !e.on_demand) return;
+      const o = e.on_demand;
+      parts.push(`${p} ${escHtml(e.instance || '')}: on-demand $${o.low.toFixed(2)} (${escHtml(o.low_region)}) to $${o.high.toFixed(2)} (${escHtml(o.high_region)}) across ${e.regions} regions.`);
+    });
+    if (reg.AWS) parts.push('AWS applies the same Savings Plan / Reserved Instance discount % in every region, so its committed rates scale with the on-demand bars.');
+    note.innerHTML = parts.join(' ');
+  }
+}
+
+function _renderRmIndex(g) {
+  const el = document.getElementById('chartRmIndex');
+  const note = document.getElementById('rmIndexNote');
+  const title = document.getElementById('rmIndexTitle');
+  if (!el) return;
+  if (charts.rmIndex) charts.rmIndex.destroy();
+  const idx = (DATA.reserved_market || {}).indexes || {};
+  const gd = ((idx.getdeploying || {}).series || {})[g] || {};
+  const ornn = ((idx.ornn || {}).history || {})[g] || {};
+  if (title) title.textContent = `Market prices by commitment length — ${g}`;
+  const weeks = Array.from(new Set([...Object.values(gd).flat().map(x => x[0]), ...Object.keys(ornn)])).sort();
+  const series = [['on_demand', 'On-demand (median)', C.blue], ['spot', 'Spot (median)', C.green], ['reserved_1mo', '1-month reserved', C.lime],
+                  ['reserved_6mo', '6-month reserved', C.purple], ['reserved_12mo', '12-month reserved', C.amber],
+                  ['reserved_36mo', '36-month reserved', C.cyan]];
+  const ds = series.filter(([k]) => (gd[k] || []).length).map(([k, label, col]) => {
+    // A weekly median over one or two listings is a quote, not a market
+    // level; drop those weeks so a single provider cannot spike the line.
+    const m = Object.fromEntries((gd[k] || []).filter(x => k === 'on_demand' || (x[2] || 0) >= 3).map(x => [x[0], x[1]]));
+    const n = Object.fromEntries((gd[k] || []).map(x => [x[0], x[2]]));
+    return { label, data: weeks.map(w => m[w] ?? null), _n: weeks.map(w => n[w]), spanGaps: true, borderColor: col, backgroundColor: col,
+             borderWidth: k === 'on_demand' ? 2.5 : 1.5, pointRadius: 0, borderDash: k === 'spot' ? [4, 3] : [] };
+  });
+  if (Object.keys(ornn).length) ds.push({ label: 'Ornn index (transactions)', data: weeks.map(w => ornn[w] ?? null), spanGaps: true,
+    borderColor: '#ffffff', backgroundColor: '#ffffff', pointRadius: 4, pointStyle: 'rectRot', borderWidth: 1, showLine: Object.keys(ornn).length > 1 });
+  charts.rmIndex = new Chart(el, {
+    type: 'line',
+    data: { labels: weeks, datasets: ds },
+    options: {
+      animation: false,
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } },
+                 tooltip: { callbacks: { label: x => x.parsed.y == null ? null : `${x.dataset.label}: $${x.parsed.y.toFixed(2)}${x.dataset._n && x.dataset._n[x.dataIndex] ? ' · ' + x.dataset._n[x.dataIndex] + ' providers' : ''}` } } },
+      scales: { y: { title: { display: true, text: '$ per GPU-hour' }, ticks: { callback: v => '$' + Number(v).toFixed(2) }, grid: { color: 'rgba(26,34,51,0.4)' } },
+                x: { grid: { display: false }, ticks: { maxTicksLimit: 10 } } },
+    },
+  });
+  if (note) {
+    const gdi = idx.getdeploying || {};
+    note.innerHTML = `Lines: weekly median price across every provider that listed ${escHtml(g)} that week (provider mix changes week to week, so read the direction, not single steps). `
+      + (g === 'H100-SXM' ? 'GetDeploying groups H100 SXM and PCIe. ' : '')
+      + `White points: Ornn's daily transaction index, which the Kalshi and Polymarket GPU contracts settle on; its public feed has no history, so points accumulate from ${Object.keys(ornn).sort()[0] || 'the next refresh'}. `
+      + `Source: ${escHtml(gdi.attribution || 'GetDeploying, CC BY 4.0')}; <a href="${escHtml((idx.ornn || {}).source || '#')}" target="_blank" rel="noopener" style="color:var(--cyan)">Ornn public index</a>.`;
+  }
 }
 
 function _termProviders(r) {
@@ -2420,6 +2656,7 @@ function _renderTermLadder(r) {
     type: 'line',
     data: { labels, datasets },
     options: {
+      animation: false,
       responsive: true, maintainAspectRatio: false,
       plugins: {
         legend: { position: 'right', labels: { boxWidth: 10, font: { size: 10 } } },
@@ -2489,6 +2726,7 @@ function _renderTermHistory(r) {
     type: 'line',
     data: { labels: hist.map(h => h.month), datasets },
     options: {
+      animation: false,
       responsive: true, maintainAspectRatio: false,
       plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } } },
       scales: {
@@ -3090,6 +3328,21 @@ function renderPredictionMarkets() {
   if (unavailable) unavailable.style.display = has ? 'none' : 'block';
   if (content) content.style.display = has ? 'block' : 'none';
   if (!has) return;
+  // Quotes carried over from an earlier refresh because the venues were
+  // unreachable this time: say so above everything else on the tab.
+  let staleBanner = document.getElementById('pmStaleBanner');
+  if (pm.stale) {
+    if (!staleBanner && content) {
+      staleBanner = document.createElement('div');
+      staleBanner.id = 'pmStaleBanner';
+      staleBanner.style.cssText = 'margin:0 0 12px;padding:8px 12px;border:1px solid var(--amber);border-radius:6px;color:var(--amber);font-size:11px;';
+      content.prepend(staleBanner);
+    }
+    if (staleBanner) staleBanner.textContent = 'Not refreshed on the latest run — these quotes are from '
+      + new Date(pm.last_updated).toISOString().replace('T', ' ').slice(0, 16) + ' UTC.';
+  } else if (staleBanner) {
+    staleBanner.remove();
+  }
 
   if (!pmSelectedGpu || !gpus.some(g => g.gpu === pmSelectedGpu)) {
     pmSelectedGpu = (gpus.find(g => (g.curve || []).length) || gpus[0]).gpu;
