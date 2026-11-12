@@ -27,6 +27,7 @@ import china_export as _china_export
 import equities as _equities
 import events as _events
 import power as _power
+import reserved_dynamics as _reserved_dynamics
 import secondary_market as _secondary_market
 import signals as _signals
 import supply_signals as _supply_signals
@@ -2076,6 +2077,7 @@ _SECTION_SOURCES = {
     "capex": _capex.SOURCES,
     "power": _power.SOURCES,
     "equities": _equities.SOURCES,
+    "reserved_dynamics": _reserved_dynamics.SOURCES,
     "signals": _signals.SOURCES,
     "alerts": _signals.SOURCES,
     "anomalies": _signals.SOURCES,
@@ -3438,7 +3440,8 @@ def main():
     for build in (_availability.build_availability, _secondary_market.build_secondary_market,
                   _benchmarks.build_benchmarks, _china_export.build_china_export,
                   _events.build_events, _supply_signals.build_supply_signals,
-                  _capex.build_capex, _power.build_power, _equities.build_equities):
+                  _capex.build_capex, _power.build_power, _equities.build_equities,
+                  _reserved_dynamics.build_reserved_dynamics):
         try:
             data = build(data, log_info, log_ok, log_fail)
         except Exception as exc:  # belt and braces: builders are meant not to raise

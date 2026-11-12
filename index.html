@@ -1432,6 +1432,47 @@ loadExternalData();
       <div id="termHistNote" class="dim" style="padding:10px 4px 0;font-size:11px;line-height:1.6;"></div>
     </div>
   </div>
+
+  <div class="mi-section-title" style="margin-top:18px;">Reserved price dynamics — is committing getting cheaper or dearer?</div>
+  <div class="card mb" data-section="reserved_dynamics">
+    <div class="card-hd">
+      <span class="card-hd-title">Commitment Discount by Contract Length</span>
+      <span class="card-hd-sub">reserved price vs on-demand median, now and 12 weeks ago</span>
+    </div>
+    <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="rdSummary"></table></div>
+    <div class="mi-foot mi-note" id="rdSummaryNote"></div>
+  </div>
+  <div class="grid g-6-4 mb">
+    <div class="card" data-section="reserved_dynamics">
+      <div class="card-hd">
+        <span class="card-hd-title">Discount Over Time</span>
+        <select class="ctrl-select" id="rdGpu" onchange="renderRdChart();miSaveHash()"></select>
+      </div>
+      <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="rdChartDisc"></canvas></div>
+        <div class="mi-note" id="rdChartNote" style="margin-top:10px;"></div></div>
+    </div>
+    <div class="card" data-section="reserved_dynamics">
+      <div class="card-hd"><span class="card-hd-title">Reserved Repricings</span><span class="card-hd-sub">every committed or short-term rate change seen</span></div>
+      <div class="card-bd-flush" style="overflow-x:auto;max-height:380px;overflow-y:auto;"><table class="dt" id="rdChanges"></table></div>
+    </div>
+  </div>
+  <div class="card mb" data-section="reserved_dynamics">
+    <div class="card-hd"><span class="card-hd-title">Short-Term Capacity Prices</span><span class="card-hd-sub">AWS Capacity Blocks, GCP DWS, Lambda &amp; Together reservations · daily</span></div>
+    <div class="card-bd-flush" style="overflow-x:auto;max-height:420px;overflow-y:auto;"><table class="dt" id="rdShort"></table></div>
+    <div class="mi-foot mi-note" id="rdShortNote"></div>
+  </div>
+  <div class="grid g-2 mb">
+    <div class="card" data-section="reserved_dynamics">
+      <div class="card-hd"><span class="card-hd-title">Contracted Backlog</span><span class="card-hd-sub">signed, not-yet-delivered revenue · SEC filings, $bn</span></div>
+      <div class="card-bd"><div class="chart-wrap" style="height:280px;"><canvas id="rdChartBacklog"></canvas></div>
+        <div class="mi-note" id="rdBacklogNote" style="margin-top:10px;"></div></div>
+    </div>
+    <div class="card" data-section="reserved_dynamics">
+      <div class="card-hd"><span class="card-hd-title">Disclosed Compute Contracts</span><span class="card-hd-sub">multi-year capacity deals · implied $/GPU-hr where disclosed</span></div>
+      <div class="card-bd-flush" style="overflow-x:auto;max-height:380px;overflow-y:auto;"><table class="dt" id="rdContracts"></table></div>
+      <div class="mi-foot mi-note" id="rdContractsNote"></div>
+    </div>
+  </div>
 </div>
 
 <!-- ── TRENDS ── -->
@@ -6043,7 +6084,7 @@ function miAddCsvButtons(){
 }
 
 // ── shareable links: #tab=…&gpu=… ──
-const MI_SHARE_SELECTS={trendGpuSelect:'trend',providerGpuSelect:'pgpu',miAvailGpu:'agpu',miSupplySeries:'series'};
+const MI_SHARE_SELECTS={trendGpuSelect:'trend',providerGpuSelect:'pgpu',miAvailGpu:'agpu',miSupplySeries:'series',rdGpu:'rgpu'};
 function miSaveHash(){
   const tab=document.querySelector('.nav-item.active')?.dataset.tab||'overview';
   const p=new URLSearchParams();p.set('tab',tab);
@@ -6071,9 +6112,84 @@ function miInitShare(){
   window.addEventListener('hashchange',()=>{const t=new URLSearchParams(location.hash.slice(1)).get('tab');if(t&&t!==document.querySelector('.nav-item.active')?.dataset.tab)miRestoreHash();});
 }
 
+
+// ── Reserved price dynamics (DATA.reserved_dynamics) ──
+function renderReservedDynamics(){
+  const rd=DATA.reserved_dynamics;
+  if(!rd){['rdSummary','rdChanges','rdShort','rdContracts'].forEach(id=>miEmptyTable(id,'Reserved price dynamics.'));miNoChart('rdChartDisc','Discount history.');miNoChart('rdChartBacklog','Contracted backlog.');return;}
+  const terms=(rd.term_curve_terms||[]).slice(1);
+  const sum=rd.summary||{};
+  const gpus=Object.keys(sum).filter(g=>terms.some(t=>sum[g][t.key]));
+  const cell=x=>{if(!x)return '<span class="dim">—</span>';
+    const ch=x.discount_change_pp_12w;
+    const arrow=ch==null?'':ch>=2?`<span class="c-green" title="Deeper discount than 12 weeks ago: committing got relatively cheaper">▼ ${Math.abs(ch).toFixed(0)}pp deeper</span>`:ch<=-2?`<span class="c-red" title="Shallower discount than 12 weeks ago: committing got relatively dearer (tightening)">▲ ${Math.abs(ch).toFixed(0)}pp shallower</span>`:'<span class="dim">≈ flat</span>';
+    const big=ch!=null&&Math.abs(ch)>40?' <span class="c-amber" title="A move this large over 12 weeks usually means the provider mix behind the median changed, not the market. Check before relying on it.">check</span>':'';
+    return `<b${x.thin?' style="opacity:.55"':''}>${x.discount_pct>0?'−':'+'}${Math.abs(x.discount_pct).toFixed(0)}%</b> <span class="dim">${miUsd(x.price)}</span><span class="sub">${arrow}${big}${arrow?' · ':''}${x.n||'?'} prov${x.thin?' · thin':''}</span>`;};
+  miSetTable('rdSummary',[
+    {h:'GPU',f:g=>`<span class="gpu-name">${miEsc(g)}</span><span class="sub">week of ${miDate(sum[g].week)}</span>`},
+    ...terms.map(t=>({h:t.label,r:1,f:g=>cell(sum[g][t.key])})),
+    {h:'Repricings 90d',r:1,f:g=>sum[g].n_changes_90d??'—'},
+  ],gpus,'No term data yet.');
+  miSet('rdSummaryNote','<b style="color:var(--text-2)">How to read:</b> the % is how far below the on-demand median each contract length trades. <span class="c-red">Shallower</span> than 12 weeks ago = providers give less to win a commitment (tightening); <span class="c-green">deeper</span> = commitments got relatively cheaper (loosening). Trends are shown only when both weeks have 3+ providers; faded cells are thin. '+miEsc(rd.term_curve_note||''));
+  const sel=document.getElementById('rdGpu');
+  if(sel){const ex=sel.value;const ids=Object.keys(rd.term_curve||{});sel.innerHTML=ids.map(g=>`<option value="${miEsc(g)}"${g===ex?' selected':''}>${miEsc(g)}</option>`).join('');if(!ex&&ids.includes('H100-SXM'))sel.value='H100-SXM';}
+  renderRdChart();
+  const kindLbl={committed:'COMMITTED',short_term:'SHORT-TERM'};
+  miSetTable('rdChanges',[
+    {h:'Date',f:c=>`<span class="ev-date">${miDate(c.date)}</span>`},
+    {h:'Provider',f:c=>`<span class="gpu-name">${miEsc(c.provider)}</span><span class="sub">${kindLbl[c.kind]||''}</span>`},
+    {h:'GPU',f:c=>miEsc(c.gpu)+`<span class="sub">${miEsc(c.term)}</span>`},
+    {h:'Move',r:1,f:c=>`<span class="${c.change_pct>0?'c-red':'c-green'}">${c.change_pct>0?'+':''}${c.change_pct.toFixed(1)}%</span><span class="sub">${miUsd(c.from)} → ${miUsd(c.to)}</span>`},
+  ],rd.rate_changes||[],'No reserved rate has changed in the period we have recorded.');
+  const st=Object.entries(rd.short_term||{}).map(([k,pts])=>{const [prov,product,gpu,term]=k.split('|');const last=pts[pts.length-1]||{};
+    const first=pts.find(p=>p.date>=(()=>{const t=new Date(last.date);t.setUTCDate(t.getUTCDate()-30);return t.toISOString().slice(0,10);})())||pts[0];
+    return {prov,product,gpu,term,last,ch:first&&first.rate&&pts.length>1?(last.rate/first.rate-1)*100:null,n:pts.length,since:pts[0]&&pts[0].date};});
+  const ord=g=>{const i=['B300','GB200','B200','H200','H100-SXM','MI300X'].indexOf(g);return i<0?9:i;};
+  miSetTable('rdShort',[
+    {h:'GPU',f:r=>`<span class="gpu-name">${miEsc(r.gpu)}</span>`},
+    {w:1,h:'Product',f:r=>`${miEsc(r.prov)} · ${miEsc(r.product)}<span class="sub">${miEsc(r.term)}</span>`},
+    {h:'Rate',r:1,f:r=>miUsd(r.last.rate)+'/hr'},
+    {h:'vs own on-demand',r:1,f:r=>{const d=r.last.discount_pct;if(d==null)return '<span class="dim">—</span>';const v=Math.round(d);return v===0?'same':`${v>0?'−':'+'}${Math.abs(v)}%`+`<span class="sub">${v>0?'cheaper':'dearer'} than on-demand</span>`;}},
+    {h:'30d',r:1,f:r=>r.ch==null?`<span class="dim">since ${miDate(r.since)}</span>`:miPct(r.ch)},
+  ],st.sort((a,b)=>ord(a.gpu)-ord(b.gpu)||a.last.rate-b.last.rate),'No short-term rates recorded.');
+  miSet('rdShortNote','AWS reprices Capacity Blocks with supply and demand, which makes them the most liquid public reserved price. History accumulates daily from the first run; the 30-day column fills in as it builds.');
+  const bl=rd.backlog||{}, cos=Object.keys(bl).filter(k=>(bl[k].points||[]).length);
+  if(cos.length){
+    const dates=[...new Set(cos.flatMap(k=>bl[k].points.map(p=>p.date)))].sort();
+    miChart('rdBacklog','rdChartBacklog',{type:'line',data:{labels:dates,datasets:cos.map((k,i)=>{const m=Object.fromEntries(bl[k].points.map(p=>[p.date,p.value_bn]));
+      return {label:`${bl[k].name} (${k})`,data:dates.map(d=>m[d]??null),borderColor:MI_CO_COLORS[i],backgroundColor:MI_CO_COLORS[i],spanGaps:true,tension:.2,pointRadius:3,yAxisID:k==='CRWV'?'y1':'y'};})},
+      options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top',labels:{font:{size:10}}},tooltip:{callbacks:{label:c=>c.raw!=null?`${c.dataset.label}: $${c.raw.toFixed(1)}bn`:''}}},
+        scales:{x:MI_TIME_SCALE(),y:miAxisY('$bn (Oracle, Microsoft)'),y1:{position:'right',grid:{display:false},title:{display:true,text:'$bn (CoreWeave)'}}}}});
+    miSet('rdBacklogNote',cos.map(k=>{const p=bl[k].points[bl[k].points.length-1];return `<b style="color:var(--text-1)">${miEsc(bl[k].name)}</b> ${miUsd(p.value_bn,1)}bn at ${miDate(p.date)}${p.yoy_pct!=null?` (${p.yoy_pct>0?'+':''}${Math.round(p.yoy_pct)}% YoY)`:''} — ${miEsc(bl[k].scope)}`;}).join('<br>')+'<br>Remaining performance obligations from 10-Q/10-K XBRL. CoreWeave is almost pure GPU capacity, so its backlog is the cleanest public read on signed reserved demand.');
+  } else miNoChart('rdChartBacklog','Contracted backlog from SEC filings.');
+  const ct=rd.contracts||{};
+  miSetTable('rdContracts',[
+    {h:'Date',f:c=>`<span class="ev-date">${miDate(c.date)}</span>`},
+    {w:1,h:'Deal',f:c=>`<span class="gpu-name">${miEsc(c.buyer)} ← ${miEsc(c.seller)}</span><span class="sub">${[c.gpu_type,c.gpus?Number(c.gpus).toLocaleString()+' GPUs':null,c.mw?c.mw+' MW':null].filter(Boolean).map(miEsc).join(' · ')}</span>`},
+    {h:'Value',r:1,f:c=>(c.value_usd_bn!=null?miUsd(c.value_usd_bn,1)+'bn':'—')+(c.term_years?`<span class="sub">${c.term_years} yr${c.term_years===1?'':'s'}</span>`:'')},
+    {h:'Implied',r:1,f:c=>c.implied_usd_per_gpu_hr!=null?`<b>${miUsd(c.implied_usd_per_gpu_hr)}</b>/hr<span class="sub" title="${miEsc(c.implied_basis||'')}">estimate</span>`:'<span class="dim">—</span>'},
+    {w:1,h:'Source',f:c=>miLink(c.url,c.source)+`<span class="sub">${miEsc(c.confidence||'')}</span>`},
+  ],ct.items||[],'No contracts recorded yet.');
+  miSet('rdContractsNote','Implied prices bundle everything the contract includes (networking, storage, power, services), so they are an upper bound on the GPU itself.'+(ct.method?`<details style="margin-top:6px;"><summary style="cursor:pointer;color:var(--text-2);">How these are sourced and calculated</summary><div style="margin-top:6px;">${miEsc(ct.method)}</div></details>`:''));
+}
+function renderRdChart(){
+  const rd=DATA.reserved_dynamics;if(!rd)return;
+  const g=document.getElementById('rdGpu')?.value, rows=(rd.term_curve||{})[g]||[];
+  const terms=(rd.term_curve_terms||[]).slice(1);
+  if(!rows.length){miSet('rdChartNote','No weekly data for this GPU.');return;}
+  const cols=[C.lime,C.teal,C.purple,C.amber,C.orange,C.cyan];
+  const ds=terms.filter(t=>rows.some(r=>r[t.key+'_disc']!=null)).map((t,i)=>({label:t.label,data:rows.map(r=>(r[t.key+'_n']||0)>=3&&(r.on_demand_n||0)>=3?r[t.key+'_disc']:null),_n:rows.map(r=>r[t.key+'_n']),borderColor:cols[i%cols.length],backgroundColor:cols[i%cols.length],spanGaps:true,tension:.25,pointRadius:2,borderWidth:1.6}));
+  const ours=(rd.discounts||{})[g]||{};
+  miChart('rdDisc','rdChartDisc',{type:'line',data:{labels:rows.map(r=>r.week),datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'top',labels:{font:{size:10}}},tooltip:{callbacks:{label:c=>c.raw==null?null:`${c.dataset.label}: ${c.raw.toFixed(1)}% below on-demand · ${c.dataset._n[c.dataIndex]} providers`}}},
+      scales:{x:MI_TIME_SCALE(),y:{...miAxisY('% below on-demand median'),ticks:{callback:v=>v+'%'}}}}});
+  const oursTxt=Object.entries(ours).map(([k,pts])=>{const [p,t]=k.split('|');const l=pts[pts.length-1];return l&&l.discount_pct!=null?`${miEsc(p)} ${miEsc(t)} ${l.discount_pct.toFixed(0)}%`:null;}).filter(Boolean);
+  miSet('rdChartNote',`Weekly market discount for ${miEsc(g)} by contract length; weeks with fewer than 3 providers on either side are left out. A rising line means reserved is getting cheaper relative to on-demand.`+(oursTxt.length?`<br><b style="color:var(--text-2)">Published provider discounts today:</b> ${oursTxt.join(' · ')}`:''));
+}
 function renderMarketIntel(){
   const steps=[renderSignals,renderAlerts,renderUpcoming,renderAnomalies,renderAvailability,renderSupplySignals,renderCapex,renderPower,
-    renderChina,renderEquities,renderEvents,renderBenchmarks,renderSecondary,miApplyTrendMarkers];
+    renderChina,renderEquities,renderEvents,renderBenchmarks,renderSecondary,renderReservedDynamics,miApplyTrendMarkers];
   steps.forEach(fn=>{try{fn();}catch(e){console.error('[market-intel]',fn.name,e);}});
   try{miTagLegacyCards();miStampFreshness();miAddCsvButtons();miInitShare();miRestoreHash();}catch(e){console.error('[market-intel] console',e);}
 }

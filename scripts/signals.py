@@ -168,10 +168,26 @@ def _build(data):
                           "severity": "high" if new == "sold_out" else "medium", "gpu": gpu,
                           "text": f"{gpu} availability {old.replace('_', ' ')} → {new.replace('_', ' ')}"})
 
+    # Reserved and short-term capacity rates rarely move, so any repricing is news.
+    rd = data.get("reserved_dynamics") or {}
+    rc = rd.get("rate_changes") or []
+    rc_latest = max((c["date"] for c in rc), default=None)
+    if rc_latest and latest and rc_latest >= latest:
+        for c in rc:
+            if c["date"] != rc_latest:
+                continue
+            up = c["change_pct"] > 0
+            items.append({"date": c["date"], "kind": "reserved_up" if up else "reserved_down",
+                          "severity": "high" if abs(c["change_pct"]) >= 10 else "medium",
+                          "gpu": c["gpu"], "provider": c["provider"],
+                          "text": f"{c['provider']} {c['gpu']} {c['term']} rate {c['change_pct']:+.1f}% "
+                                  f"(${c['from']:.2f} → ${c['to']:.2f}/hr)"})
+
     sev = {"high": 0, "medium": 1, "low": 2}
     items.sort(key=lambda x: (sev.get(x["severity"], 3), x.get("gpu", "")))
     data["alerts"] = {"as_of": now.isoformat(), "date": latest,
-                      "rule": f"Single-provider moves of {ALERT_MOVE_PCT:g}%+ since the previous run, "
+                      "rule": f"Single-provider on-demand moves of {ALERT_MOVE_PCT:g}%+ since the previous run, "
+                              "any change in a reserved or short-term capacity rate, "
                               "listings, delistings and availability status changes.",
                       "items": items}
 
