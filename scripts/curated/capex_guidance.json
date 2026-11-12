@@ -1,0 +1,42 @@
+{
+  "_about": "Latest capex guidance per company, as stated by management. Each entry hand-verified against the cited page. Update after each earnings call.",
+  "verified_on": "2026-11-12",
+  "guidance": {
+    "MSFT": {
+      "text": "FQ1 FY27 call: Q2 FY27 capex expected to be over $50B; calendar-2026 capex approximately $170B (lowered due to third-party capacity delays), with capex accelerating in H2 FY27 driven by CPUs/GPUs, higher memory and storage costs, and shifted 3P capacity deliveries.",
+      "source": "Microsoft Investor Relations (FY27 Q1 earnings call)",
+      "url": "https://www.microsoft.com/en-us/investor/events/fy-2027/earnings-fy-2027-q1",
+      "as_of": "2026-10-28"
+    },
+    "GOOGL": {
+      "text": "Q3 2026: Alphabet held 2026 capex guidance unchanged at $195B-$205B; CFO Anat Ashkenazi: 'We continue to expect our capex to increase significantly in 2027, and will provide further details on our Q4 call.'",
+      "source": "CNBC",
+      "url": "https://www.cnbc.com/2026/10/28/alphabet-googl-earnings-q3-2026.html",
+      "as_of": "2026-10-28"
+    },
+    "AMZN": {
+      "text": "Q3 2026 release: 'We continue to expect 2026 cash capital expenditures to be approximately $220 billion.' No numeric 2027 guidance in the release.",
+      "source": "Amazon (About Amazon Q3 2026 earnings)",
+      "url": "https://aboutamazon.com/news/company-news/amazon-earnings-q3-2026-report",
+      "as_of": "2026-10-29"
+    },
+    "META": {
+      "text": "Q3 2026 release: 2026 capital expenditures, including principal payments on finance leases, expected in the range of $135-145B, narrowed from prior $130-145B; no 2027 capex figure given.",
+      "source": "Meta Platforms press release (via Finviz)",
+      "url": "https://finviz.com/news/405782/meta-reports-third-quarter-2026-results",
+      "as_of": "2026-10-21"
+    },
+    "ORCL": {
+      "text": "Q1 FY27 call: CFO Hilary Maxson: 'We continue to anticipate $90 billion to $95 billion in CapEx for the full year ... with not more than $70 billion in net cash CapEx.'",
+      "source": "The Motley Fool (Oracle Q1 FY2027 earnings call transcript)",
+      "url": "https://www.fool.com/earnings/call-transcripts/2026/09/11/oracle-orcl-q1-2027-earnings-call-transcript/",
+      "as_of": "2026-09-10"
+    },
+    "CRWV": {
+      "text": "Q3 2026: 'We now expect full year 2026 capital expenditures of $37 billion to $39 billion' (low end raised from $35B); CFO said on committed backlog alone 2027 capex would remain in line with 2026.",
+      "source": "CoreWeave Q3 2026 earnings press release (SEC Form 8-K exhibit); 2027 comment per CNBC",
+      "url": "https://www.sec.gov/Archives/edgar/data/0001769628/000176962826000461/coreweave3q26earningspress.htm",
+      "as_of": "2026-11-10"
+    }
+  }
+}

@@ -1,0 +1,645 @@
+{
+ "_note": "Curated market-moving events for the AI-GPU calendar. Every entry was checked against its url on as_of. 'tier' (conferences) and 'flagship' (model releases) drive the rule-based impact in scripts/events.py; date_confirmed=false marks a date the organiser has not firmly published. Earnings and Federal Register policy items are fetched live and are NOT listed here.",
+ "items": [
+  {
+   "id": "policy-h20-license",
+   "date": "2025-04-15",
+   "date_confirmed": true,
+   "type": "policy",
+   "title": "NVIDIA 8-K: US requires export licence for H20 to China/D:5 for the indefinite future",
+   "tickers": [
+    "NVDA",
+    "AMD"
+   ],
+   "source": "SEC EDGAR (NVIDIA 8-K)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000082/nvda-20250409.htm",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "policy-ai-diffusion-rescinded",
+   "date": "2025-05-13",
+   "date_confirmed": true,
+   "type": "policy",
+   "title": "BIS rescinds the Biden AI Diffusion Rule before its May 15 compliance date; issues Huawei Ascend guidance",
+   "tickers": [
+    "NVDA",
+    "AMD"
+   ],
+   "source": "Kirkland & Ellis alert",
+   "url": "https://www.kirkland.com/publications/kirkland-alert/2025/05/bis-rescission-of-the-biden-administration",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "conf-computex-2025",
+   "date": "2025-05-20",
+   "end_date": "2025-05-23",
+   "date_confirmed": true,
+   "type": "conference",
+   "tier": 2,
+   "title": "Computex 2025, Taipei (NVIDIA keynote May 19 local time)",
+   "tickers": [
+    "NVDA",
+    "AMD",
+    "TSM",
+    "SMCI"
+   ],
+   "source": "TechPowerUp (NVIDIA press release)",
+   "url": "https://www.techpowerup.com/333924/nvidia-ceo-jensen-huang-will-deliver-first-keynote-at-computex-2025",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "model-claude-4",
+   "date": "2025-05-22",
+   "date_confirmed": true,
+   "type": "model_release",
+   "flagship": true,
+   "title": "Anthropic releases Claude Opus 4 and Sonnet 4",
+   "tickers": [
+    "AMZN",
+    "GOOGL"
+   ],
+   "source": "Anthropic",
+   "url": "https://www.anthropic.com/news/claude-4",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "model-deepseek-r1-0528",
+   "date": "2025-05-28",
+   "date_confirmed": true,
+   "type": "model_release",
+   "flagship": false,
+   "title": "DeepSeek-R1-0528 released",
+   "tickers": [],
+   "source": "DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/news/news250528",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "conf-amd-advancing-ai-2025",
+   "date": "2025-06-12",
+   "date_confirmed": true,
+   "type": "conference",
+   "tier": 2,
+   "title": "AMD Advancing AI 2025, San Jose",
+   "tickers": [
+    "AMD"
+   ],
+   "source": "Tom's Hardware",
+   "url": "https://www.tomshardware.com/pc-components/gpus/amd-announces-mi350x-and-mi355x-ai-gpus-claims-up-to-4x-generational-gain-up-to-35x-faster-inference-performance",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "launch-amd-mi350",
+   "date": "2025-06-12",
+   "date_confirmed": true,
+   "type": "launch",
+   "title": "AMD launches Instinct MI350X / MI355X (CDNA 4); volume availability H2 2025",
+   "tickers": [
+    "AMD"
+   ],
+   "source": "Tom's Hardware",
+   "url": "https://www.tomshardware.com/pc-components/gpus/amd-announces-mi350x-and-mi355x-ai-gpus-claims-up-to-4x-generational-gain-up-to-35x-faster-inference-performance",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "model-grok-4",
+   "date": "2025-07-09",
+   "date_confirmed": true,
+   "type": "model_release",
+   "flagship": true,
+   "title": "xAI releases Grok 4",
+   "tickers": [],
+   "source": "xAI",
+   "url": "https://x.ai/news/grok-4",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "model-gpt-5",
+   "date": "2025-08-07",
+   "date_confirmed": true,
+   "type": "model_release",
+   "flagship": true,
+   "title": "OpenAI releases GPT-5",
+   "tickers": [
+    "MSFT"
+   ],
+   "source": "Wikipedia (GPT-5)",
+   "url": "https://en.wikipedia.org/wiki/GPT-5",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "model-deepseek-v3-1",
+   "date": "2025-08-21",
+   "date_confirmed": true,
+   "type": "model_release",
+   "flagship": false,
+   "title": "DeepSeek V3.1 released",
+   "tickers": [],
+   "source": "DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/news/news250821",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "conf-hot-chips-2025",
+   "date": "2025-08-24",
+   "end_date": "2025-08-26",
+   "date_confirmed": true,
+   "type": "conference",
+   "tier": 3,
+   "title": "Hot Chips 2025 (HC37), Stanford",
+   "tickers": [],
+   "source": "Hot Chips",
+   "url": "https://hc2025.hotchips.org/",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "model-claude-sonnet-4-5",
+   "date": "2025-09-29",
+   "date_confirmed": true,
+   "type": "model_release",
+   "flagship": false,
+   "title": "Anthropic releases Claude Sonnet 4.5",
+   "tickers": [
+    "AMZN",
+    "GOOGL"
+   ],
+   "source": "Anthropic",
+   "url": "https://www.anthropic.com/news/claude-sonnet-4-5",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "launch-dgx-spark",
+   "date": "2025-10-13",
+   "date_confirmed": true,
+   "type": "launch",
+   "title": "NVIDIA DGX Spark (GB10) ships to developers",
+   "tickers": [
+    "NVDA"
+   ],
+   "source": "NVIDIA Newsroom",
+   "url": "https://nvidianews.nvidia.com/news/nvidia-dgx-spark-arrives-for-worlds-ai-developers",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "model-gemini-3",
+   "date": "2025-11-18",
+   "date_confirmed": true,
+   "type": "model_release",
+   "flagship": true,
+   "title": "Google releases Gemini 3",
+   "tickers": [
+    "GOOGL"
+   ],
+   "source": "Google Blog",
+   "url": "https://blog.google/products/gemini/gemini-3/",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "model-claude-opus-4-5",
+   "date": "2025-11-24",
+   "date_confirmed": true,
+   "type": "model_release",
+   "flagship": false,
+   "title": "Anthropic releases Claude Opus 4.5",
+   "tickers": [
+    "AMZN",
+    "GOOGL"
+   ],
+   "source": "Anthropic",
+   "url": "https://www.anthropic.com/news/claude-opus-4-5",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "conf-reinvent-2025",
+   "date": "2025-12-01",
+   "end_date": "2025-12-05",
+   "date_confirmed": true,
+   "type": "conference",
+   "tier": 2,
+   "title": "AWS re:Invent 2025, Las Vegas",
+   "tickers": [
+    "AMZN"
+   ],
+   "source": "About Amazon",
+   "url": "https://www.aboutamazon.com/news/aws/aws-re-invent-2025-ai-news-updates",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "model-deepseek-v3-2",
+   "date": "2025-12-01",
+   "date_confirmed": true,
+   "type": "model_release",
+   "flagship": false,
+   "title": "DeepSeek-V3.2 released",
+   "tickers": [],
+   "source": "DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/news/news251201",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "launch-trainium3",
+   "date": "2025-12-02",
+   "date_confirmed": true,
+   "type": "launch",
+   "title": "AWS Trainium3 UltraServers (Trn3) generally available",
+   "tickers": [
+    "AMZN"
+   ],
+   "source": "HPCwire",
+   "url": "https://www.hpcwire.com/aiwire/2025/12/02/aws-trainium3-ultraservers-now-available/",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "policy-h200-china-approval",
+   "date": "2025-12-08",
+   "date_confirmed": true,
+   "type": "policy",
+   "title": "Trump says US will allow NVIDIA H200 exports to approved China customers with a 25% fee (Blackwell/Rubin excluded)",
+   "tickers": [
+    "NVDA",
+    "AMD"
+   ],
+   "source": "Reuters via RTE",
+   "url": "https://www.rte.ie/news/business/2025/1209/1547993-us-to-allow-nvidia-h200-chip-shipments-to-china-trump",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "model-claude-opus-4-6",
+   "date": "2026-02-05",
+   "date_confirmed": true,
+   "type": "model_release",
+   "flagship": false,
+   "title": "Anthropic releases Claude Opus 4.6",
+   "tickers": [
+    "AMZN",
+    "GOOGL"
+   ],
+   "source": "Anthropic",
+   "url": "https://www.anthropic.com/news/claude-opus-4-6",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "conf-gtc-2026",
+   "date": "2026-03-16",
+   "end_date": "2026-03-19",
+   "date_confirmed": true,
+   "type": "conference",
+   "tier": 1,
+   "title": "NVIDIA GTC 2026, San Jose (Huang keynote Mar 16)",
+   "tickers": [
+    "NVDA"
+   ],
+   "source": "NVIDIA Newsroom",
+   "url": "https://nvidianews.nvidia.com/news/nvidia-ceo-jensen-huang-and-global-technology-leaders-to-showcase-age-of-ai-at-gtc-2026",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "model-claude-opus-4-7",
+   "date": "2026-04-16",
+   "date_confirmed": true,
+   "type": "model_release",
+   "flagship": false,
+   "title": "Anthropic releases Claude Opus 4.7",
+   "tickers": [
+    "AMZN",
+    "GOOGL"
+   ],
+   "source": "Anthropic",
+   "url": "https://www.anthropic.com/news/claude-opus-4-7",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "model-gpt-5-5",
+   "date": "2026-04-23",
+   "date_confirmed": true,
+   "type": "model_release",
+   "flagship": false,
+   "title": "OpenAI releases GPT-5.5",
+   "tickers": [
+    "MSFT"
+   ],
+   "source": "The Next Web",
+   "url": "https://thenextweb.com/news/openai-gpt-5-5-launch-enterprise",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "model-deepseek-v4",
+   "date": "2026-04-24",
+   "date_confirmed": true,
+   "type": "model_release",
+   "flagship": true,
+   "title": "DeepSeek-V4 preview released (Pro and Flash)",
+   "tickers": [],
+   "source": "DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/news/news260424",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "conf-google-io-2026",
+   "date": "2026-05-19",
+   "end_date": "2026-05-20",
+   "date_confirmed": true,
+   "type": "conference",
+   "tier": 2,
+   "title": "Google I/O 2026, Mountain View",
+   "tickers": [
+    "GOOGL"
+   ],
+   "source": "Engadget",
+   "url": "https://www.engadget.com/general/google-io-2026-is-set-for-may-19-and-20-200805024.html",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "launch-vera-rubin-samples",
+   "date": "2026-05-20",
+   "date_confirmed": true,
+   "type": "launch",
+   "title": "NVIDIA ships first Vera Rubin samples to customers (disclosed on Q1 FY27 call)",
+   "tickers": [
+    "NVDA"
+   ],
+   "source": "Tom's Hardware",
+   "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/nvidia-delivers-first-vera-rubin-ai-gpu-samples-to-customers-88-core-vera-cpu-paired-with-rubin-gpus-with-288-gb-of-hbm4-memory-apiece",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "conf-computex-2026",
+   "date": "2026-06-02",
+   "end_date": "2026-06-05",
+   "date_confirmed": true,
+   "type": "conference",
+   "tier": 2,
+   "title": "Computex 2026, Taipei",
+   "tickers": [
+    "NVDA",
+    "AMD",
+    "TSM",
+    "SMCI"
+   ],
+   "source": "COMPUTEX (TAITRA)",
+   "url": "https://www.computextaipei.com.tw/",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "model-claude-fable-5",
+   "date": "2026-06-09",
+   "date_confirmed": true,
+   "type": "model_release",
+   "flagship": true,
+   "title": "Anthropic releases Claude Fable 5 (public) and Mythos 5 (restricted)",
+   "tickers": [
+    "AMZN",
+    "GOOGL"
+   ],
+   "source": "Constellation Research",
+   "url": "https://www.constellationr.com/insights/news/anthropics-claude-fable-5-mythos-5-what-you-need-know",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "conf-amd-advancing-ai-2026",
+   "date": "2026-07-23",
+   "date_confirmed": true,
+   "type": "conference",
+   "tier": 2,
+   "title": "AMD Advancing AI 2026, San Francisco",
+   "tickers": [
+    "AMD"
+   ],
+   "source": "AMD Newsroom",
+   "url": "https://newsroom.amd.com/news/amd-announces-advancing-ai-2026/",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "launch-amd-helios-mi455x",
+   "date": "2026-07-23",
+   "date_confirmed": true,
+   "type": "launch",
+   "title": "AMD launches Helios rack (Instinct MI455X + EPYC Venice) at Advancing AI 2026, in production",
+   "tickers": [
+    "AMD"
+   ],
+   "source": "Igor'sLAB",
+   "url": "https://www.igorslab.de/en/amd-helios-in-production-mi455x-epyc-venice-openai-challenge-nvidia-ai-racks/",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "model-claude-opus-5",
+   "date": "2026-07-24",
+   "date_confirmed": true,
+   "type": "model_release",
+   "flagship": false,
+   "title": "Anthropic releases Claude Opus 5",
+   "tickers": [
+    "AMZN",
+    "GOOGL"
+   ],
+   "source": "Anthropic",
+   "url": "https://www.anthropic.com/news/claude-opus-5",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "model-deepseek-v4-pro-ga",
+   "date": "2026-08-13",
+   "date_confirmed": true,
+   "type": "model_release",
+   "flagship": false,
+   "title": "DeepSeek-V4-Pro general availability",
+   "tickers": [],
+   "source": "DeepSeek API Docs",
+   "url": "https://api-docs.deepseek.com/news/news260813",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "conf-hot-chips-2026",
+   "date": "2026-08-23",
+   "end_date": "2026-08-25",
+   "date_confirmed": true,
+   "type": "conference",
+   "tier": 3,
+   "title": "Hot Chips 2026, Stanford",
+   "tickers": [],
+   "source": "Hot Chips",
+   "url": "https://www.hotchips.org/",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "launch-vera-rubin-shipments",
+   "date": "2026-08-26",
+   "date_confirmed": true,
+   "type": "launch",
+   "title": "NVIDIA confirms first Vera Rubin (VR200 NVL72) revenue shipments began in August; guides ~20% of Q3 data-center revenue",
+   "tickers": [
+    "NVDA"
+   ],
+   "source": "Tom's Hardware",
+   "url": "https://www.tomshardware.com/tech-industry/artificial-intelligence/nvidia-expects-to-sell-usd20-billion-worth-of-vera-rubin-hardware-this-quarter-would-account-for-20-percent-of-data-center-revenue-its-fastest-ramp-in-company-history",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "model-gpt-6-astra",
+   "date": "2026-09-03",
+   "date_confirmed": true,
+   "type": "model_release",
+   "flagship": true,
+   "title": "OpenAI releases GPT-6 Astra (limited rollout first)",
+   "tickers": [
+    "MSFT"
+   ],
+   "source": "Al Jazeera",
+   "url": "https://www.aljazeera.com/economy/2026/9/4/openai-unveils-gpt-6-astra-amid-rising-scrutiny-and-safety",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "model-claude-opus-5-5",
+   "date": "2026-09-22",
+   "date_confirmed": true,
+   "type": "model_release",
+   "flagship": false,
+   "title": "Anthropic releases Claude Opus 5.5",
+   "tickers": [
+    "AMZN",
+    "GOOGL"
+   ],
+   "source": "Anthropic",
+   "url": "https://www.anthropic.com/claude-opus-5-5",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "model-gemini-4-argon",
+   "date": "2026-09-30",
+   "date_confirmed": true,
+   "type": "model_release",
+   "flagship": true,
+   "title": "Google announces Gemini 4 Argon (initially limited to trusted cyber defenders)",
+   "tickers": [
+    "GOOGL"
+   ],
+   "source": "Google Blog",
+   "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-argon/",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "model-gemini-4-carbon",
+   "date": "2026-10-28",
+   "date_confirmed": true,
+   "type": "model_release",
+   "flagship": false,
+   "title": "Google announces Gemini 4 Carbon (limited access via Fairwind Program)",
+   "tickers": [
+    "GOOGL"
+   ],
+   "source": "Google Blog",
+   "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-carbon/",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "model-claude-fable-5-2",
+   "date": "2026-11-09",
+   "date_confirmed": true,
+   "type": "model_release",
+   "flagship": false,
+   "title": "Anthropic releases Claude Fable 5.2 and Mythos 5.2",
+   "tickers": [
+    "AMZN",
+    "GOOGL"
+   ],
+   "source": "Anthropic",
+   "url": "https://www.anthropic.com/claude-fable-and-mythos-5-2",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "policy-china-gallium-suspension-expiry",
+   "date": "2026-11-27",
+   "date_confirmed": true,
+   "type": "policy",
+   "title": "China's suspension of its gallium/germanium/antimony export ban to the US is due to expire (no extension verified)",
+   "tickers": [
+    "NVDA",
+    "AMD",
+    "MU"
+   ],
+   "source": "Fastmarkets",
+   "url": "https://www.fastmarkets.com/insights/china-suspends-export-prohibition-on-superhard-materials-us/",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "conf-reinvent-2026",
+   "date": "2026-11-30",
+   "end_date": "2026-12-04",
+   "date_confirmed": true,
+   "type": "conference",
+   "tier": 2,
+   "title": "AWS re:Invent 2026, Las Vegas",
+   "tickers": [
+    "AMZN"
+   ],
+   "source": "AWS re:Invent",
+   "url": "https://reinvent.awsevents.com/",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "conf-ces-2027",
+   "date": "2027-01-06",
+   "end_date": "2027-01-09",
+   "date_confirmed": true,
+   "type": "conference",
+   "tier": 3,
+   "title": "CES 2027, Las Vegas",
+   "tickers": [
+    "NVDA",
+    "AMD"
+   ],
+   "source": "audioXpress (CTA announcement)",
+   "url": "https://audioxpress.com/news/ces-returns-january-with-ai-connected-mobility-and-new-opportunities-for-audio",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "policy-us-china-truce-expiry",
+   "date": "2027-01-10",
+   "date_confirmed": true,
+   "type": "policy",
+   "title": "Extended US-China (Busan) trade truce runs to Jan 10, 2027: tariff cuts and China's critical-mineral export-control pause",
+   "tickers": [
+    "NVDA",
+    "AMD",
+    "TSM"
+   ],
+   "source": "The National (with Reuters)",
+   "url": "https://www.thenationalnews.com/news/us/2026/11/09/china-extends-pause-on-rare-earth-export-curbs-for-two-months/",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "conf-gtc-2027",
+   "date": "2027-03-15",
+   "end_date": "2027-03-18",
+   "date_confirmed": true,
+   "type": "conference",
+   "tier": 1,
+   "title": "NVIDIA GTC 2027, San Jose (NVIDIA pages list Mar 15-18; FAQ says Mar 14-18 incl. workshops)",
+   "tickers": [
+    "NVDA"
+   ],
+   "source": "NVIDIA",
+   "url": "https://www.nvidia.com/gtc/call-for-submissions/",
+   "as_of": "2026-11-12"
+  },
+  {
+   "id": "conf-computex-2027",
+   "date": "2027-06-01",
+   "end_date": "2027-06-04",
+   "date_confirmed": false,
+   "type": "conference",
+   "tier": 2,
+   "title": "Computex 2027, Taipei (dates per listings; not yet confirmed on TAITRA site)",
+   "tickers": [
+    "NVDA",
+    "AMD",
+    "TSM",
+    "SMCI"
+   ],
+   "source": "OpenCurious event listing",
+   "url": "https://www.opencurious.com/tech-events/computex-2027",
+   "as_of": "2026-11-12"
+  }
+ ]
+}

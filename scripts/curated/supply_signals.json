@@ -1,0 +1,373 @@
+{
+  "_about": "Hand-verified supply-side reference data. Every estimate and point carries source, url and as_of (publication date). Ranges: value = low end, value_high = high end. Add the new quarter after each earnings release.",
+  "verified_on": "2026-11-12",
+  "estimates": [
+    {
+      "metric": "TSMC CoWoS capacity",
+      "value": 35000,
+      "unit": "wafers/month",
+      "period": "2024",
+      "source": "TrendForce News citing Commercial Times (institutional investors)",
+      "url": "https://www.trendforce.com/news/2024/12/13/news-tsmc-ramps-up-cowos-capacity-across-taiwan-projected-to-nearly-triple-by-2026/",
+      "as_of": "2024-12-13",
+      "note": "'reaches 35,000 wafers this year'"
+    },
+    {
+      "metric": "TSMC CoWoS capacity",
+      "value": 70000,
+      "unit": "wafers/month",
+      "period": "end-2025",
+      "source": "TrendForce News citing Commercial Times (institutional investors)",
+      "url": "https://www.trendforce.com/news/2024/12/13/news-tsmc-ramps-up-cowos-capacity-across-taiwan-projected-to-nearly-triple-by-2026/",
+      "as_of": "2024-12-13",
+      "note": "projection made Dec 2024"
+    },
+    {
+      "metric": "TSMC CoWoS capacity",
+      "value": 90000,
+      "unit": "wafers/month",
+      "period": "end-2026",
+      "source": "TrendForce News citing Commercial Times (institutional investors)",
+      "url": "https://www.trendforce.com/news/2024/12/13/news-tsmc-ramps-up-cowos-capacity-across-taiwan-projected-to-nearly-triple-by-2026/",
+      "as_of": "2024-12-13",
+      "note": "stale projection made Dec 2024; superseded by later estimates"
+    },
+    {
+      "metric": "TSMC CoWoS capacity",
+      "value": 75000,
+      "unit": "wafers/month",
+      "period": "2025",
+      "source": "TrendForce News citing Economic Daily News",
+      "url": "https://www.trendforce.com/news/2025/01/02/news-tsmc-set-to-expand-cowos-capacity-to-record-75000-wafers-in-2025-doubling-2024-output/",
+      "as_of": "2025-01-02",
+      "note": "'could reach a record high of 75,000 wafers in 2025'"
+    },
+    {
+      "metric": "TSMC CoWoS capacity",
+      "value": 115000,
+      "unit": "wafers/month",
+      "period": "end-2026",
+      "source": "TrendForce News citing TechNews (institutional investors)",
+      "url": "https://www.trendforce.com/news/2026/04/16/news-tsmc-says-cowos-offers-industrys-largest-reticle-size-packaging-amid-intel-emib-rivalry-copos-advances/",
+      "as_of": "2026-04-16",
+      "value_high": 140000,
+      "note": "range 115,000-140,000"
+    },
+    {
+      "metric": "TSMC CoWoS capacity",
+      "value": 170000,
+      "unit": "wafers/month",
+      "period": "2027",
+      "source": "TrendForce News citing TechNews (institutional investors)",
+      "url": "https://www.trendforce.com/news/2026/04/16/news-tsmc-says-cowos-offers-industrys-largest-reticle-size-packaging-amid-intel-emib-rivalry-copos-advances/",
+      "as_of": "2026-04-16"
+    },
+    {
+      "metric": "TSMC CoWoS capacity",
+      "value": 120000,
+      "unit": "wafers/month",
+      "period": "2026",
+      "source": "TrendForce News citing Economic Daily News (institutional investors)",
+      "url": "https://www.trendforce.com/news/2026/06/15/news-tsmc-cowos-supply-demand-gap-reportedly-seen-narrowing-from-20-to-10-by-end-2026-as-capacity-expands/",
+      "as_of": "2026-06-15",
+      "value_high": 140000,
+      "note": "range 120,000-140,000"
+    },
+    {
+      "metric": "CoWoS-class 2.5D capacity - industry total (TSMC + OSAT)",
+      "value": 200000,
+      "unit": "wafers/month",
+      "period": "2026 (period implied)",
+      "source": "TrendForce News citing Economic Daily News",
+      "url": "https://www.trendforce.com/news/2026/06/15/news-tsmc-cowos-supply-demand-gap-reportedly-seen-narrowing-from-20-to-10-by-end-2026-as-capacity-expands/",
+      "as_of": "2026-06-15",
+      "note": "'could approach 200,000 wafers per month' incl. 50-60k from OSAT partners"
+    },
+    {
+      "metric": "TSMC CoWoS capacity",
+      "value": 130000,
+      "unit": "wafers/month",
+      "period": "end-2026",
+      "source": "TrendForce News citing Economic Daily News via Wccftech",
+      "url": "https://www.trendforce.com/news/2026/09/14/news-tsmc-reportedly-targets-22-2nm-16-3nm-capacity-boost-by-mid-2027-cowos-to-double-by-2028/",
+      "as_of": "2026-09-14",
+      "note": "'roughly 130,000'"
+    },
+    {
+      "metric": "TSMC CoWoS capacity",
+      "value": 260000,
+      "unit": "wafers/month",
+      "period": "end-2028",
+      "source": "TrendForce News citing Economic Daily News via Wccftech",
+      "url": "https://www.trendforce.com/news/2026/09/14/news-tsmc-reportedly-targets-22-2nm-16-3nm-capacity-boost-by-mid-2027-cowos-to-double-by-2028/",
+      "as_of": "2026-09-14"
+    },
+    {
+      "metric": "TSMC CoWoS capacity",
+      "value": 130000,
+      "unit": "wafers/month",
+      "period": "2026",
+      "source": "TrendForce News citing Commercial Times (analysts)",
+      "url": "https://www.trendforce.com/news/2026/10/27/news-tsmc-reportedly-eyes-20-cowos-price-hike-skips-equipment-price-renegotiations-amid-ai-demand-surge/",
+      "as_of": "2026-10-27",
+      "note": "'will exceed 130,000 wafers in 2026'"
+    },
+    {
+      "metric": "TSMC CoWoS capacity",
+      "value": 200000,
+      "unit": "wafers/month",
+      "period": "2027",
+      "source": "TrendForce News citing Commercial Times (analysts)",
+      "url": "https://www.trendforce.com/news/2026/10/27/news-tsmc-reportedly-eyes-20-cowos-price-hike-skips-equipment-price-renegotiations-amid-ai-demand-surge/",
+      "as_of": "2026-10-27",
+      "note": "target"
+    },
+    {
+      "metric": "TSMC CoWoS capacity",
+      "value": 106000,
+      "unit": "wafers/month",
+      "period": "2026 (annual avg)",
+      "source": "Goldman Sachs, as reported by TrendForce News",
+      "url": "https://www.trendforce.com/news/2026/10/27/news-tsmc-reportedly-eyes-20-cowos-price-hike-skips-equipment-price-renegotiations-amid-ai-demand-surge/",
+      "as_of": "2026-10-27",
+      "note": "1.275M wafers/yr, 'roughly 106,000 per month'"
+    },
+    {
+      "metric": "TSMC CoWoS capacity",
+      "value": 227500,
+      "unit": "wafers/month",
+      "period": "2027 (annual avg)",
+      "source": "Goldman Sachs, as reported by TrendForce News",
+      "url": "https://www.trendforce.com/news/2026/10/27/news-tsmc-reportedly-eyes-20-cowos-price-hike-skips-equipment-price-renegotiations-amid-ai-demand-surge/",
+      "as_of": "2026-10-27",
+      "note": "2.73M wafers/yr"
+    },
+    {
+      "metric": "TSMC CoWoS capacity",
+      "value": 290000,
+      "unit": "wafers/month",
+      "period": "2028 (annual avg)",
+      "source": "Goldman Sachs, as reported by TrendForce News",
+      "url": "https://www.trendforce.com/news/2026/10/27/news-tsmc-reportedly-eyes-20-cowos-price-hike-skips-equipment-price-renegotiations-amid-ai-demand-surge/",
+      "as_of": "2026-10-27",
+      "note": "3.48M wafers/yr, 'nearly 290,000 per month'"
+    },
+    {
+      "metric": "HBM market share - SK hynix",
+      "value": 50,
+      "unit": "%",
+      "period": "2026-Q2",
+      "source": "Counterpoint Research",
+      "url": "https://counterpointresearch.com/en/insights/global-dram-and-hbm-market-share",
+      "as_of": "2026-09-02",
+      "note": "revenue basis; was 58% in 2026-Q1"
+    },
+    {
+      "metric": "HBM market share - Samsung",
+      "value": 33,
+      "unit": "%",
+      "period": "2026-Q2",
+      "source": "Counterpoint Research",
+      "url": "https://counterpointresearch.com/en/insights/global-dram-and-hbm-market-share",
+      "as_of": "2026-09-02"
+    },
+    {
+      "metric": "HBM market share - Micron",
+      "value": 18,
+      "unit": "%",
+      "period": "2026-Q2",
+      "source": "Counterpoint Research",
+      "url": "https://counterpointresearch.com/en/insights/global-dram-and-hbm-market-share",
+      "as_of": "2026-09-02",
+      "note": "was 21% in 2026-Q1; shares may not sum to 100 (rounding)"
+    },
+    {
+      "metric": "HBM market share - SK hynix",
+      "value": 64,
+      "unit": "%",
+      "period": "2025-Q2",
+      "source": "Counterpoint Research via Korea Herald",
+      "url": "https://www.koreaherald.com/article/10915040",
+      "as_of": "2026-10-26"
+    },
+    {
+      "metric": "HBM market share - Samsung",
+      "value": 15,
+      "unit": "%",
+      "period": "2025-Q2",
+      "source": "Counterpoint Research via Korea Herald",
+      "url": "https://www.koreaherald.com/article/10915040",
+      "as_of": "2026-10-26"
+    },
+    {
+      "metric": "HBM revenue - Samsung (estimate)",
+      "value": 8.7,
+      "unit": "USD bn",
+      "period": "2026-Q3",
+      "source": "Bernstein via Korea Herald",
+      "url": "https://www.koreaherald.com/article/10915040",
+      "as_of": "2026-10-26"
+    },
+    {
+      "metric": "HBM revenue - SK hynix (estimate)",
+      "value": 7.6,
+      "unit": "USD bn",
+      "period": "2026-Q3",
+      "source": "Bernstein via Korea Herald",
+      "url": "https://www.koreaherald.com/article/10915040",
+      "as_of": "2026-10-26"
+    },
+    {
+      "metric": "HBM TAM",
+      "value": 35,
+      "unit": "USD bn",
+      "period": "2025",
+      "source": "Micron (CEO prepared remarks, FQ1 2026 call)",
+      "url": "https://www.fool.com/earnings/call-transcripts/2025/12/17/micron-mu-q1-2026-earnings-call-transcript/",
+      "as_of": "2025-12-17",
+      "note": "'approximately $35 billion in 2025'"
+    },
+    {
+      "metric": "HBM TAM",
+      "value": 100,
+      "unit": "USD bn",
+      "period": "2028",
+      "source": "Micron (CEO prepared remarks, FQ1 2026 call)",
+      "url": "https://www.fool.com/earnings/call-transcripts/2025/12/17/micron-mu-q1-2026-earnings-call-transcript/",
+      "as_of": "2025-12-17",
+      "note": "'around $100 billion in 2028', ~40% CAGR"
+    }
+  ],
+  "quarterly": {
+    "skhynix_revenue": {
+      "label": "SK hynix quarterly revenue",
+      "unit": "KRW tn",
+      "note": "Consolidated, K-IFRS, as first reported (preliminary) in each release",
+      "points": [
+        {
+          "period": "2024-Q4",
+          "value": 19.767,
+          "source": "SK hynix newsroom",
+          "url": "https://news.skhynix.com/en/sk-hynix-announces-4q24-financial-results/",
+          "as_of": "2025-01-22"
+        },
+        {
+          "period": "2025-Q1",
+          "value": 17.6391,
+          "source": "SK hynix newsroom",
+          "url": "https://news.skhynix.com/en/sk-hynix-announces-1q25-financial-results/",
+          "as_of": "2025-04-24"
+        },
+        {
+          "period": "2025-Q2",
+          "value": 22.232,
+          "source": "SK hynix newsroom",
+          "url": "https://news.skhynix.com/en/sk-hynix-announces-2q25-financial-results/",
+          "as_of": "2025-07-24"
+        },
+        {
+          "period": "2025-Q3",
+          "value": 24.4489,
+          "source": "SK hynix newsroom",
+          "url": "https://news.skhynix.com/en/sk-hynix-announces-3q25-financial-results/",
+          "as_of": "2025-10-29"
+        },
+        {
+          "period": "2025-Q4",
+          "value": 32.8267,
+          "source": "SK hynix newsroom",
+          "url": "https://news.skhynix.com/en/sk-hynix-announces-fy25-financial-results/",
+          "as_of": "2026-01-28"
+        },
+        {
+          "period": "2026-Q1",
+          "value": 52.5763,
+          "source": "SK hynix newsroom",
+          "url": "https://news.skhynix.com/en/q1-2026-business-results/",
+          "as_of": "2026-04-23"
+        },
+        {
+          "period": "2026-Q2",
+          "value": 79.3187,
+          "source": "SK hynix newsroom",
+          "url": "https://news.skhynix.com/en/q2-2026-business-results/",
+          "as_of": "2026-07-29"
+        },
+        {
+          "period": "2026-Q3",
+          "value": 104.6155,
+          "source": "SK hynix newsroom",
+          "url": "https://news.skhynix.com/en/q3-2026-business-results/",
+          "as_of": "2026-10-28"
+        }
+      ],
+      "source": "SK hynix earnings releases (curated)",
+      "as_of": "2026-10-28"
+    },
+    "samsung_ds_revenue": {
+      "label": "Samsung Device Solutions (semiconductor) quarterly revenue",
+      "unit": "KRW tn",
+      "note": "DS Division consolidated revenue as stated in each earnings release",
+      "points": [
+        {
+          "period": "2024-Q4",
+          "value": 30.1,
+          "source": "Samsung Newsroom (global)",
+          "url": "https://news.samsung.com/global/samsung-electronics-announces-fourth-quarter-and-fy-2024-results",
+          "as_of": "2025-01-31"
+        },
+        {
+          "period": "2025-Q1",
+          "value": 25.1,
+          "source": "Samsung Newsroom (global)",
+          "url": "https://news.samsung.com/global/samsung-electronics-announces-first-quarter-2025-results",
+          "as_of": "2025-04-30"
+        },
+        {
+          "period": "2025-Q2",
+          "value": 27.9,
+          "source": "Samsung Newsroom (global)",
+          "url": "https://news.samsung.com/global/samsung-electronics-announces-second-quarter-2025-results",
+          "as_of": "2025-07-31"
+        },
+        {
+          "period": "2025-Q3",
+          "value": 33.1,
+          "source": "Samsung Newsroom (global)",
+          "url": "https://news.samsung.com/global/samsung-electronics-announces-third-quarter-2025-results",
+          "as_of": "2025-10-30"
+        },
+        {
+          "period": "2025-Q4",
+          "value": 44.0,
+          "source": "Samsung Newsroom (global)",
+          "url": "https://news.samsung.com/global/samsung-electronics-announces-fourth-quarter-and-fy-2025-results",
+          "as_of": "2026-01-29"
+        },
+        {
+          "period": "2026-Q1",
+          "value": 81.7,
+          "source": "Samsung Newsroom (global)",
+          "url": "https://news.samsung.com/global/samsung-electronics-announces-first-quarter-2026-results",
+          "as_of": "2026-04-30"
+        },
+        {
+          "period": "2026-Q2",
+          "value": 127.5,
+          "source": "Samsung Newsroom (global)",
+          "url": "https://news.samsung.com/global/samsung-electronics-announces-second-quarter-2026-results",
+          "as_of": "2026-07-30"
+        },
+        {
+          "period": "2026-Q3",
+          "value": 147.1,
+          "source": "Samsung Newsroom (global)",
+          "url": "https://news.samsung.com/global/samsung-electronics-announces-third-quarter-2026-results",
+          "as_of": "2026-10-29"
+        }
+      ],
+      "source": "Samsung Electronics earnings releases (curated)",
+      "as_of": "2026-10-29"
+    }
+  }
+}

@@ -61,6 +61,11 @@ jobs:
           LLM_API_BASE: ${{ secrets.LLM_API_BASE }}
           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
           LLM_MODEL: ${{ secrets.LLM_MODEL }}
+          # Optional market-intelligence keys. Each source is skipped cleanly
+          # (and says so on the page) when its key is absent.
+          EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+          EBAY_CLIENT_ID: ${{ secrets.EBAY_CLIENT_ID }}
+          EBAY_CLIENT_SECRET: ${{ secrets.EBAY_CLIENT_SECRET }}
         run: python -u scripts/update_data.py
 
       - name: Sanity-check before publishing

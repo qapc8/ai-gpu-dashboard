@@ -997,6 +997,81 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--border-1); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--blue); }
 
+
+/* ─── MARKET INTELLIGENCE (signals, alerts, supply, markets) ─── */
+.mi-note { font-size: 11px; color: var(--text-3); line-height: 1.6; }
+.mi-note a, .dt a.mi-link { color: var(--blue); text-decoration: none; }
+.mi-note a:hover, .dt a.mi-link:hover { text-decoration: underline; }
+.mi-empty { padding: 22px 20px; font-size: 12px; color: var(--text-2); line-height: 1.7; }
+.mi-empty b { color: var(--text-1); }
+.mi-section-title { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-3); margin: 6px 2px 12px; }
+.mi-toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.mi-foot { padding: 10px 20px; border-top: 1px solid var(--border-0); }
+
+.sig-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.sig-card { background: var(--bg-3); border: 1px solid var(--border-0); border-radius: 8px; padding: 11px 13px; position: relative; }
+.sig-card.watched { border-color: rgba(0,247,255,0.35); }
+.sig-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px; }
+.sig-name { font-weight: 700; color: var(--text-0); font-size: 13px; }
+.sig-reasons { font-size: 10.5px; color: var(--text-2); line-height: 1.5; margin: 0; padding: 0; list-style: none; }
+.sig-reasons li::before { content: '· '; color: var(--text-3); }
+.sig-badge { display: inline-block; font-family: var(--mono); font-size: 9.5px; font-weight: 700; letter-spacing: .06em; padding: 2px 7px; border-radius: 3px; }
+.sig-tightening { background: var(--red-dim); color: var(--red); }
+.sig-loosening { background: var(--green-dim); color: var(--green); }
+.sig-stable { background: rgba(255,255,255,0.06); color: var(--text-2); }
+.sig-insufficient { background: transparent; color: var(--text-3); border: 1px dashed var(--border-1); }
+.star-btn { background: none; border: none; cursor: pointer; font-size: 15px; line-height: 1; color: var(--text-3); padding: 0 2px; }
+.star-btn.on { color: var(--cyan); }
+.star-btn:hover { color: var(--text-0); }
+
+.alert-row { display: flex; gap: 10px; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid var(--border-0); font-size: 12px; }
+.alert-row:last-child { border-bottom: none; }
+.alert-dot { width: 7px; height: 7px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+.sev-high { background: var(--red); } .sev-medium { background: var(--amber); } .sev-low { background: var(--blue); }
+.alert-kind { font-family: var(--mono); font-size: 9.5px; color: var(--text-3); text-transform: uppercase; letter-spacing: .05em; }
+
+.ev-tag { display: inline-block; font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: .05em; padding: 2px 6px; border-radius: 3px; text-transform: uppercase; white-space: nowrap; }
+.ev-earnings { background: var(--blue-dim); color: var(--blue); }
+.ev-conference { background: var(--purple-dim); color: var(--purple); }
+.ev-launch { background: var(--green-dim); color: var(--green); }
+.ev-policy { background: var(--red-dim); color: var(--red); }
+.ev-model_release { background: var(--amber-dim); color: var(--amber); }
+.ev-date { font-family: var(--mono); font-size: 11px; color: var(--text-2); white-space: nowrap; }
+.ev-est { font-size: 9px; color: var(--text-3); font-family: var(--mono); }
+
+.st-tag { display: inline-block; font-family: var(--mono); font-size: 9.5px; font-weight: 700; padding: 2px 7px; border-radius: 3px; letter-spacing: .04em; white-space: nowrap; }
+.st-available { background: var(--green-dim); color: var(--green); }
+.st-limited { background: var(--amber-dim); color: var(--amber); }
+.st-sold_out { background: var(--red-dim); color: var(--red); }
+.st-unknown { background: rgba(255,255,255,0.05); color: var(--text-3); }
+.st-announced { background: var(--blue-dim); color: var(--blue); }
+.st-construction { background: var(--amber-dim); color: var(--amber); }
+.st-energized { background: var(--green-dim); color: var(--green); }
+.curated-tag { font-family: var(--mono); font-size: 8.5px; color: var(--text-3); border: 1px solid var(--border-1); border-radius: 3px; padding: 0 4px; margin-left: 4px; vertical-align: 1px; }
+
+.fresh-badge { font-family: var(--mono); font-size: 9px; font-weight: 600; padding: 2px 7px; border-radius: 3px; white-space: nowrap; letter-spacing: .03em; }
+.fresh-ok { background: var(--green-dim); color: var(--green); }
+.fresh-warn { background: var(--amber-dim); color: var(--amber); }
+.fresh-bad { background: var(--red-dim); color: var(--red); }
+.fresh-none { background: rgba(255,255,255,0.05); color: var(--text-3); }
+.card-hd-tools { display: flex; align-items: center; gap: 6px; margin-left: auto; flex-shrink: 0; }
+.csv-btn { font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: .05em; padding: 2px 7px; border-radius: 3px; border: 1px solid var(--border-1); background: transparent; color: var(--text-3); cursor: pointer; }
+.csv-btn:hover { color: var(--cyan); border-color: var(--cyan); }
+.nav-share { margin-left: auto; align-self: center; flex-shrink: 0; font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: .05em; padding: 5px 10px; border-radius: 4px; border: 1px solid var(--border-1); background: transparent; color: var(--text-2); cursor: pointer; white-space: nowrap; }
+.nav-share:hover { color: var(--cyan); border-color: var(--cyan); }
+.mi-check { font-size: 11px; color: var(--text-2); display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
+.mi-ev-list { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 10.5px; color: var(--text-2); }
+.mi-ev-list span b { color: var(--text-1); font-weight: 600; }
+.dt td .sub { display: block; font-size: 10px; color: var(--text-3); }
+.dt td .mi-empty { white-space: normal; }
+.dt td.mi-wrap { white-space: normal; min-width: 220px; max-width: 520px; line-height: 1.45; }
+.dt td { vertical-align: top; }
+@media (max-width: 700px) {
+  .main { padding: 14px 12px; }
+  .sig-grid { grid-template-columns: 1fr 1fr; }
+  .card-hd { flex-wrap: wrap; }
+}
+
 /* ─── RESPONSIVE ─── */
 @media (max-width: 1200px) {
   .g-2, .g-3, .g-4, .g-7-3, .g-3-7, .g-6-4, .g-5-5 { grid-template-columns: 1fr; }
@@ -1097,6 +1172,8 @@ loadExternalData();
 <div class="nav" id="navTabs">
   <div class="nav-item active" data-tab="overview">Overview</div>
   <div class="nav-item" data-tab="pricing">Pricing</div>
+  <div class="nav-item" data-tab="supply">Supply &amp; Demand</div>
+  <div class="nav-item" data-tab="marketsev">Markets &amp; Events</div>
   <div class="nav-item" data-tab="terms">Reserved vs On-demand</div>
   <div class="nav-item" data-tab="trends">Trends</div>
   <div class="nav-item" data-tab="markets">Prediction Markets</div>
@@ -1105,8 +1182,7 @@ loadExternalData();
   <div class="nav-item" data-tab="tco">TCO</div>
   <div class="nav-item" data-tab="workloads">Workloads & Fit</div>
   <div class="nav-item" data-tab="efficiency">Ops & Sustainability</div>
-  <div class="nav-item" data-tab="ai-analysis">AI Analysis</div>
-  <div class="nav-item" data-tab="data-audit">Data</div>
+  <button class="nav-share" id="miShareBtn" title="Copy a link to exactly this view">⧉ Copy link</button>
 </div>
 
 <!-- ═══ MAIN ═══ -->
@@ -1114,6 +1190,36 @@ loadExternalData();
 
 <!-- ── OVERVIEW ── -->
 <div class="tab-panel active" id="tab-overview">
+
+
+  <!-- Market signals: one call per GPU, with the inputs that produced it -->
+  <div class="card mb" data-section="signals">
+    <div class="card-hd">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="card-hd-title">Market Signals</span>
+        <span class="card-hd-sub">is each GPU getting harder or easier to rent? ☆ to watch</span>
+      </div>
+    </div>
+    <div class="card-bd" id="miSignals"></div>
+    <div class="mi-foot mi-note" id="miSignalsRule"></div>
+  </div>
+
+  <div class="grid g-2 mb">
+    <div class="card" data-section="alerts">
+      <div class="card-hd">
+        <span class="card-hd-title">Alerts</span>
+        <label class="mi-check"><input type="checkbox" id="miAlertsWatchOnly"> watchlist only</label>
+      </div>
+      <div class="card-bd" style="max-height:340px;overflow-y:auto;padding-top:8px;padding-bottom:8px;" id="miAlerts"></div>
+    </div>
+    <div class="card" data-section="events">
+      <div class="card-hd">
+        <span class="card-hd-title">Coming Up</span>
+        <span class="card-hd-sub">earnings, launches, policy · full calendar in Markets &amp; Events</span>
+      </div>
+      <div class="card-bd-flush" style="max-height:340px;overflow-y:auto;"><table class="dt" id="miUpcoming"></table></div>
+    </div>
+  </div>
 
   <!-- Top 5 GPU Carousel -->
   <div class="gpu-carousel mb" id="gpuCarousel">
@@ -1210,6 +1316,15 @@ loadExternalData();
       <div id="commitRateNote" class="dim" style="padding:10px 4px 0;font-size:11px;line-height:1.6;"></div>
     </div>
   </div>
+
+  <div class="card mb" data-section="anomalies">
+    <div class="card-hd">
+      <span class="card-hd-title">Price Anomalies</span>
+      <span class="card-hd-sub">prices far from the median, and prices that never move</span>
+    </div>
+    <div class="card-bd-flush" style="max-height:420px;overflow-y:auto;"><table class="dt" id="miAnomalies"></table></div>
+    <div class="mi-foot mi-note" id="miAnomaliesRule"></div>
+  </div>
 </div>
 
 <!-- ── RESERVED VS ON-DEMAND ── -->
@@ -1279,6 +1394,7 @@ loadExternalData();
     </div>
     <div class="card-bd">
       <div class="chart-wrap" style="height:360px;"><canvas id="chartTrends"></canvas></div>
+<div class="mi-ev-list" id="miTrendEvents"></div>
       <div class="ai-commentary" id="priceAiCommentary">
         <div class="ai-commentary-header">
           <span class="ai-commentary-icon">&#9733;</span>
@@ -1543,6 +1659,18 @@ loadExternalData();
     </div>
     <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="commitTable"></table></div>
   </div>
+
+  <div class="card mb" data-section="secondary_market">
+    <div class="card-hd">
+      <span class="card-hd-title">Buy vs Rent: Hardware Prices</span>
+      <span class="card-hd-sub">used &amp; new purchase prices, and how many rental hours they equal</span>
+    </div>
+    <div class="grid g-2" style="gap:0;">
+      <div class="card-bd-flush" style="overflow-x:auto;border-right:1px solid var(--border-0);"><table class="dt" id="miHwPrices"></table></div>
+      <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="miRentBuy"></table></div>
+    </div>
+    <div class="mi-foot mi-note" id="miHwNote"></div>
+  </div>
 </div>
 
 <!-- ── WORKLOADS & FIT ── -->
@@ -1623,126 +1751,135 @@ loadExternalData();
 </div>
 
 
-<!-- ── AI ANALYSIS ── -->
-<div class="tab-panel" id="tab-ai-analysis">
 
-  <!-- GPU Selector Bar -->
-  <div class="ai-cmdbar">
-    <div class="ai-cmdbar-label">GPU Deep Dive</div>
-    <div class="ai-cmdbar-sep"></div>
-    <select class="ctrl-select" id="aiGpuSelect" style="min-width:180px;"><option value="">-- Select a GPU --</option></select>
-    <button class="btn btn-primary" onclick="loadGpuAI()">Analyze</button>
-    <span class="intel-status intel-status-idle" id="statusGpu" style="margin-left:8px;">IDLE</span>
-    <div style="margin-left:auto;">
-      <span class="intel-status intel-status-idle" id="aiGlobalStatus">IDLE</span>
+<!-- ── SUPPLY & DEMAND ── -->
+<div class="tab-panel" id="tab-supply">
+
+  <div class="mi-section-title">Availability — can you actually rent it?</div>
+  <div class="grid g-6-4 mb">
+    <div class="card" data-section="availability">
+      <div class="card-hd">
+        <span class="card-hd-title">Availability &amp; Depth</span>
+        <span class="card-hd-sub">marketplace supply and stock status, not just list price</span>
+      </div>
+      <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="miAvailTable"></table></div>
+      <div class="mi-foot mi-note" id="miAvailRule"></div>
+    </div>
+    <div class="card" data-section="availability">
+      <div class="card-hd">
+        <span class="card-hd-title">Supply Over Time</span>
+        <select class="ctrl-select" id="miAvailGpu" onchange="renderAvailChart();miSaveHash()"></select>
+      </div>
+      <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="miChartAvail"></canvas></div></div>
     </div>
   </div>
 
-  <!-- GPU Deep Dive Result -->
-  <div class="ai-section mb" id="intelGpuDive" style="display:none;">
-    <div class="ai-section-hd" style="border-left:3px solid var(--cyan);">
-      <span class="ai-section-icon" style="color:var(--cyan);">&#x1F50D;</span>
-      <span class="ai-section-title" id="aiGpuTitle">GPU Deep Dive</span>
+  <div class="mi-section-title">Upstream supply — chips, packaging, memory</div>
+  <div class="grid g-6-4 mb">
+    <div class="card" data-section="supply_signals">
+      <div class="card-hd">
+        <span class="card-hd-title">Supply Chain Signals</span>
+        <select class="ctrl-select" id="miSupplySeries" onchange="renderSupplyChart();miSaveHash()"></select>
+      </div>
+      <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="miChartSupply"></canvas></div>
+        <div class="mi-note" id="miSupplyNote" style="margin-top:10px;"></div></div>
     </div>
-    <div class="ai-body" id="aiGpuContent"></div>
-  </div>
-
-  <!-- Auto-loaded Reports — flowing sections, no click required -->
-  <div class="ai-section mb">
-    <div class="ai-section-hd" style="border-left:3px solid var(--orange);">
-      <span class="ai-section-icon" style="color:var(--orange);">&#x26A1;</span>
-      <span class="ai-section-title">Market Snapshot</span>
-    </div>
-    <div class="ai-body" id="aiNotesContent">
-      <div class="ai-loading"><div class="ai-spinner"></div>Loading...</div>
+    <div class="card" data-section="supply_signals">
+      <div class="card-hd"><span class="card-hd-title">Capacity Estimates</span><span class="card-hd-sub">CoWoS, HBM · cited</span></div>
+      <div class="card-bd-flush" style="overflow-x:auto;max-height:380px;overflow-y:auto;"><table class="dt" id="miSupplyEst"></table></div>
     </div>
   </div>
 
-  <div class="grid g-5-5 mb" style="gap:14px;">
-    <div class="ai-section">
-      <div class="ai-section-hd" style="border-left:3px solid var(--blue);">
-        <span class="ai-section-icon" style="color:var(--blue);">&#x1F4C8;</span>
-        <span class="ai-section-title">Market Trends</span>
-      </div>
-      <div class="ai-body" id="aiTrendsContent">
-        <div class="ai-loading"><div class="ai-spinner"></div>Loading...</div>
-      </div>
+  <div class="mi-section-title">Demand — who is buying, and with what money</div>
+  <div class="card mb" data-section="capex">
+    <div class="card-hd">
+      <span class="card-hd-title">Hyperscaler &amp; Neocloud Capex</span>
+      <span class="card-hd-sub">quarterly cash capex from SEC filings, $bn</span>
     </div>
-    <div class="ai-section">
-      <div class="ai-section-hd" style="border-left:3px solid var(--green);">
-        <span class="ai-section-icon" style="color:var(--green);">&#x1F4B0;</span>
-        <span class="ai-section-title">Procurement Guide</span>
-      </div>
-      <div class="ai-body" id="aiInvestmentContent">
-        <div class="ai-loading"><div class="ai-spinner"></div>Loading...</div>
-      </div>
+    <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="miChartCapex"></canvas></div></div>
+    <div class="card-bd-flush" style="overflow-x:auto;border-top:1px solid var(--border-0);"><table class="dt" id="miCapexTable"></table></div>
+  </div>
+  <div class="grid g-2 mb">
+    <div class="card" data-section="capex">
+      <div class="card-hd"><span class="card-hd-title">Credit Stress</span><span class="card-hd-sub">US high-yield spread, % · rising = tighter money for GPU borrowers</span></div>
+      <div class="card-bd"><div class="chart-wrap" style="height:240px;"><canvas id="miChartOas"></canvas></div>
+        <div class="mi-note" id="miDebtNote" style="margin-top:10px;"></div></div>
+    </div>
+    <div class="card" data-section="capex">
+      <div class="card-hd"><span class="card-hd-title">GPU-Backed Financing</span><span class="card-hd-sub">debt raised against GPUs</span></div>
+      <div class="card-bd-flush" style="overflow-x:auto;max-height:330px;overflow-y:auto;"><table class="dt" id="miDeals"></table></div>
     </div>
   </div>
 
-  <div class="grid g-5-5 mb" style="gap:14px;">
-    <div class="ai-section">
-      <div class="ai-section-hd" style="border-left:3px solid var(--purple);">
-        <span class="ai-section-icon" style="color:var(--purple);">&#x1F52E;</span>
-        <span class="ai-section-title">Price Commentary</span>
-        <span class="dim" style="font-size:10px;font-family:var(--mono);margin-left:8px;">AI commentary (not a forecast)</span>
-      </div>
-      <div class="ai-body" id="aiForecastContent">
-        <div class="ai-loading"><div class="ai-spinner"></div>Loading...</div>
-      </div>
+  <div class="mi-section-title">Power — the constraint on new capacity</div>
+  <div class="kpi-strip mb" id="miPowerKpis"></div>
+  <div class="grid g-2 mb">
+    <div class="card" data-section="power">
+      <div class="card-hd"><span class="card-hd-title">Wholesale Power Prices</span><span class="card-hd-sub">daily average, $/MWh, data-center hubs</span></div>
+      <div class="card-bd"><div class="chart-wrap" style="height:280px;"><canvas id="miChartPower"></canvas></div>
+        <div class="mi-note" id="miPowerNote" style="margin-top:10px;"></div></div>
     </div>
-    <div class="ai-section">
-      <div class="ai-section-hd" style="border-left:3px solid var(--amber);">
-        <span class="ai-section-icon" style="color:var(--amber);">&#x26A1;</span>
-        <span class="ai-section-title">Optimization Tips</span>
-      </div>
-      <div class="ai-body" id="aiEfficiencyContent">
-        <div class="ai-loading"><div class="ai-spinner"></div>Loading...</div>
-      </div>
+    <div class="card" data-section="power">
+      <div class="card-hd"><span class="card-hd-title">Grid Connection Queues</span><span class="card-hd-sub">capacity waiting to connect</span></div>
+      <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="miQueues"></table></div>
     </div>
   </div>
-
-  <div class="grid g-5-5 mb" style="gap:14px;">
-    <div class="ai-section">
-      <div class="ai-section-hd" style="border-left:3px solid var(--cyan);">
-        <span class="ai-section-icon" style="color:var(--cyan);">&#x1F30D;</span>
-        <span class="ai-section-title">Regional Pricing</span>
-      </div>
-      <div class="ai-body" id="aiRegionalContent">
-        <div class="ai-loading"><div class="ai-spinner"></div>Loading...</div>
-      </div>
-    </div>
-    <div class="ai-section">
-      <div class="ai-section-hd" style="border-left:3px solid var(--green);">
-        <span class="ai-section-icon" style="color:var(--green);">&#x1F331;</span>
-        <span class="ai-section-title">Supply Chain & Risk</span>
-      </div>
-      <div class="ai-body" id="aiSustainabilityContent">
-        <div class="ai-loading"><div class="ai-spinner"></div>Loading...</div>
-      </div>
-    </div>
+  <div class="card mb" data-section="power">
+    <div class="card-hd"><span class="card-hd-title">AI Data-Center Pipeline</span><span class="card-hd-sub">major projects by power, MW</span></div>
+    <div class="card-bd-flush" style="overflow-x:auto;max-height:440px;overflow-y:auto;"><table class="dt" id="miProjects"></table></div>
   </div>
 
+  <div class="mi-section-title">China &amp; export controls</div>
+  <div class="grid g-2 mb">
+    <div class="card" data-section="china_export">
+      <div class="card-hd"><span class="card-hd-title">Export-Control Rules</span><span class="card-hd-sub">Federal Register, BIS / Commerce</span></div>
+      <div class="card-bd-flush" style="overflow-x:auto;max-height:420px;overflow-y:auto;"><table class="dt" id="miRules"></table></div>
+    </div>
+    <div class="card" data-section="china_export">
+      <div class="card-hd"><span class="card-hd-title">Where Things Stand</span><span class="card-hd-sub">status of key rules · cited</span></div>
+      <div class="card-bd-flush" style="overflow-x:auto;max-height:420px;overflow-y:auto;"><table class="dt" id="miChinaStatus"></table></div>
+    </div>
+  </div>
+  <div class="grid g-2 mb">
+    <div class="card" data-section="china_export">
+      <div class="card-hd"><span class="card-hd-title">China Market Prices</span><span class="card-hd-sub">restricted &amp; China-specific parts · reported</span></div>
+      <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="miChinaPrices"></table></div>
+    </div>
+    <div class="card" data-section="china_export">
+      <div class="card-hd"><span class="card-hd-title">Domestic Alternatives</span><span class="card-hd-sub">Huawei Ascend and others · reported</span></div>
+      <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="miChinaDomestic"></table></div>
+    </div>
+  </div>
 </div>
 
-<!-- ── DATA AUDIT ── -->
-<div class="tab-panel" id="tab-data-audit">
-
-  <div class="ai-cmdbar mb">
-    <div class="ai-cmdbar-label">Data Audit</div>
-    <div class="ai-cmdbar-sep"></div>
-    <input class="ctrl-input" id="dataAuditSearch" placeholder="Search across all datasets..." style="max-width:360px;">
-    <div class="ai-cmdbar-sep"></div>
-    <button class="btn" onclick="expandAllDataSections(true)">Expand All</button>
-    <button class="btn" onclick="expandAllDataSections(false)">Collapse All</button>
-    <button class="btn btn-primary" onclick="exportAllDataJSON()">Export JSON</button>
-    <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
-      <span class="ai-cmdbar-label" style="font-size:9px;">DATASETS</span>
-      <span class="tag" style="background:var(--cyan-dim);color:var(--cyan);" id="dataAuditCount">0</span>
+<!-- ── MARKETS & EVENTS ── -->
+<div class="tab-panel" id="tab-marketsev">
+  <div class="grid g-6-4 mb">
+    <div class="card" data-section="equities">
+      <div class="card-hd"><span class="card-hd-title">Compute Complex vs Rental Price</span><span class="card-hd-sub">equal-weighted equity basket vs H100 rental</span></div>
+      <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="miChartEq"></canvas></div>
+        <div class="mi-note" id="miEqNote" style="margin-top:10px;"></div></div>
+    </div>
+    <div class="card" data-section="equities">
+      <div class="card-hd"><span class="card-hd-title">Equity Basket</span><span class="card-hd-sub">the listed AI-compute supply chain</span></div>
+      <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="miEqTable"></table></div>
     </div>
   </div>
 
-  <div id="dataAuditContainer"></div>
+  <div class="card mb" data-section="events">
+    <div class="card-hd">
+      <span class="card-hd-title">Event Calendar</span>
+      <div class="mi-toolbar" id="miEvFilters"></div>
+    </div>
+    <div class="card-bd-flush" style="overflow-x:auto;max-height:520px;overflow-y:auto;"><table class="dt" id="miEvents"></table></div>
+    <div class="mi-foot mi-note" id="miEventsNote"></div>
+  </div>
 
+  <div class="card mb" data-section="benchmarks">
+    <div class="card-hd"><span class="card-hd-title">Our Prices vs Published Indices</span><span class="card-hd-sub">where we disagree with other GPU price trackers</span></div>
+    <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="miBench"></table></div>
+    <div class="mi-foot mi-note" id="miBenchNote"></div>
+  </div>
 </div>
 
 </div><!-- /main -->
@@ -1770,7 +1907,8 @@ const PC = {
   'AWS':C.orange,'GCP':C.blue,'Azure':C.cyan,'Lambda':C.purple,
   'CoreWeave':C.green,'RunPod':C.pink,'Vast.ai':C.amber,
   'FluidStack':C.teal,'Together':C.indigo,
-  'Oracle':C.red,'Nebius':C.lime,'DigitalOcean':C.sky,'Vultr':C.teal,'Crusoe':C.orange
+  'Oracle':C.red,'Nebius':C.lime,'DigitalOcean':C.sky,'Vultr':C.teal,'Crusoe':C.orange,
+  'Hyperbolic':C.indigo,'Paperspace':C.blue,'Hot Aisle':C.red
 };
 // Any provider not in the map (new ones appear as the pipeline adds sources)
 // gets a neutral colour rather than undefined.
@@ -1983,7 +2121,7 @@ function renderAll() {
   renderTcoTab();
   renderEfficiencyTab();
   renderSentimentPanel();
-  renderDataAudit();
+  renderMarketIntel();
   attachChartResizeObserver();
   updateTime();
   setInterval(updateTime, 60000);
@@ -3281,6 +3419,7 @@ function updateTrendChart() {
         tooltip:{callbacks:{label:ctx=>{const v=ctx.raw;return v!=null?ctx.dataset.label.replace(/^_/,'')+': $'+v.toFixed(2)+'/hr':'';}}}},
       scales:{y:{title:{display:true,text:'$/hr'},grid:{color:'rgba(26,34,51,0.4)'}},x:{grid:{display:false},ticks:{maxRotation:45,font:{size:9}}}}}
   });
+  if(typeof miApplyTrendMarkers==='function')miApplyTrendMarkers();
 }
 
 function _decayDataCache(){
@@ -5074,18 +5213,6 @@ async function loadGpuAI() {
 
 }
 
-// Auto-load AI for tab-specific panels when tab is visited
-let aiAnalysisLoaded = false;
-document.addEventListener('click', function(e) {
-  const navItem = e.target.closest('.nav-item');
-  if(!navItem) return;
-  const tabId = navItem.dataset.tab;
-  if(tabId === 'ai-analysis' && !aiAnalysisLoaded) {
-    aiAnalysisLoaded = true;
-    loadAllAI();
-  }
-});
-
 // The AI chat panel was removed. It could only work by holding an LLM
 // credential: on static hosting the page shipped the key to the browser, and
 // behind a proxy it still needed a live key and a running backend for one
@@ -5101,6 +5228,11 @@ document.addEventListener('click', function(e) {
 // would have thrown "_esc is not defined" at the moment they tried to report
 // a failure.
 function _esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+// Shared by the ticker, term tables and others. It used to live in the Data
+// tab's code and went with it, which stopped renderAll at the ticker.
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
 // _chatRequest is gone with the last browser-to-LLM call. Everything the page
 // shows from a language model is now written by the pipeline into
@@ -5218,262 +5350,480 @@ function renderSentimentPanel() {
 // ── AI SENTIMENT COMMENTARY ──
 
 // ════════════════════════════════════════════════════════════════
-// DATA AUDIT
+// MARKET INTELLIGENCE
+// Signals, alerts, anomalies, supply & demand, markets & events.
+// Every panel reads one data.json section and says plainly when that
+// section hasn't been collected yet, rather than drawing an empty chart.
 // ════════════════════════════════════════════════════════════════
+function miEsc(s){return s==null?'':String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function miNum(v,dp){if(v==null||v===''||isNaN(v))return '—';dp=dp==null?1:dp;return Number(v).toLocaleString('en-US',{minimumFractionDigits:dp,maximumFractionDigits:dp});}
+function miUsd(v,dp){if(v==null||isNaN(v))return '—';dp=dp==null?(Math.abs(v)>=100?0:2):dp;return '$'+miNum(v,dp);}
+function miPct(v,dp){if(v==null||isNaN(v))return '<span class="dim">—</span>';const n=Number(v);const c=n>0?'var(--green)':n<0?'var(--red)':'var(--text-2)';return `<span style="color:${c}">${n>0?'+':''}${n.toFixed(dp==null?1:dp)}%</span>`;}
+function miDate(d){if(!d)return '—';const t=new Date(String(d).length===10?d+'T00:00:00Z':d);if(isNaN(t))return miEsc(d);return t.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'UTC'});}
+function miLink(url,label){return url?`<a class="mi-link" href="${miEsc(url)}" target="_blank" rel="noopener">${miEsc(label||'source')}</a>`:miEsc(label||'');}
+function miEmpty(what){return `<div class="mi-empty"><b>Not collected yet.</b> ${miEsc(what)} The daily pipeline fills this in; until its first successful run there is nothing honest to show.</div>`;}
+function miTableHTML(cols,rows,emptyMsg){
+  if(!rows||!rows.length)return `<tbody><tr><td class="dim" style="padding:18px 16px;">${miEsc(emptyMsg||'Nothing to show.')}</td></tr></tbody>`;
+  return '<thead><tr>'+cols.map(c=>`<th${c.r?' class="r"':''}>${c.h}</th>`).join('')+'</tr></thead><tbody>'+
+    rows.map(r=>'<tr>'+cols.map(c=>`<td${c.r?' class="r"':c.w?' class="mi-wrap"':''}>${c.f(r)}</td>`).join('')+'</tr>').join('')+'</tbody>';
+}
+function miSetTable(id,cols,rows,emptyMsg){const el=document.getElementById(id);if(el)el.innerHTML=miTableHTML(cols,rows,emptyMsg);}
+function miEmptyTable(id,msg){miSet(id,`<tbody><tr><td style="white-space:normal;padding:0;">${miEmpty(msg)}</td></tr></tbody>`);}
+function miSet(id,html){const el=document.getElementById(id);if(el)el.innerHTML=html;}
+function miChart(key,canvasId,cfg){
+  if(charts[key]){try{charts[key].destroy();}catch(e){}delete charts[key];}
+  const el=document.getElementById(canvasId);if(!el)return null;
+  charts[key]=new Chart(el,cfg);return charts[key];
+}
+function miNoChart(canvasId,msg){
+  const el=document.getElementById(canvasId);if(!el)return;
+  const wrap=el.closest('.chart-wrap');if(wrap)wrap.outerHTML=miEmpty(msg);
+}
+function miSrcList(sec){
+  const s=(sec&&sec.sources)||{};
+  const parts=Object.entries(s).map(([k,v])=>`${v&&v.url?miLink(v.url,k):miEsc(k)}${v&&v.ok===false?' <span class="dim" title="'+miEsc(v.note||'not refreshed this run')+'" style="cursor:help;text-decoration:underline dotted;">(unavailable)</span>':''}`);
+  return parts.length?'Sources: '+parts.join(' · '):'';
+}
+function miCurated(r){return (r&&(r.curated||r.fetched===false))?'<span class="curated-tag" title="Curated reference value with a cited source, not fetched automatically">CITED</span>':'';}
+function miToday(){return new Date().toISOString().slice(0,10);}
+const MI_TIME_SCALE=(unit)=>({type:'category',grid:{display:false},ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:8,font:{size:9.5}}});
+function miAxisY(title){return {grid:{color:'rgba(26,34,51,0.4)'},title:{display:!!title,text:title||''}};}
 
-const DATA_SECTIONS = [
-  { key:'matrix',         label:'GPU Price Matrix',       color:'blue',   type:'array' },
-  { key:'specs',          label:'GPU Specifications',     color:'cyan',   type:'dict-of-objects' },
-  { key:'providers',      label:'Cloud Providers',        color:'orange', type:'dict-of-objects' },
-  { key:'historical',     label:'Historical Pricing',     color:'purple', type:'dict-of-objects' },
-  { key:'indicators',     label:'Market Indicators',      color:'green',  type:'flat-object' },
-  { key:'regional',       label:'Regional Markets',       color:'amber',  type:'dict-of-objects' },
-  { key:'tco',            label:'TCO Breakdown',          color:'red',    type:'dict-of-objects' },
-  { key:'inference.models', label:'Inference Demand & Pricing', color:'blue', type:'array', metaKey:'inference' },
-  { key:'inference.providers', label:'Inference Providers', color:'cyan', type:'array', metaKey:'inference' },
-  { key:'spot',           label:'Spot Market',            color:'cyan',   type:'dict-of-objects' },
-  { key:'news',           label:'News Feed',              color:'amber',  type:'array' },
-  { key:'volatility',     label:'Price Momentum',         color:'orange', type:'dict-of-objects' },
-  { key:'changelog',      label:'Change Feed',            color:'green',  type:'array' },
-  { key:'sustainability', label:'Sustainability Metrics', color:'green',  type:'dict-of-objects' },
-  { key:'supplychain',    label:'Supply Chain',           color:'red',    type:'dict-of-objects' },
-  { key:'modelfit',       label:'Self-Hosting Fit / VRAM Sizing', color:'purple', type:'dict-of-objects' },
-  { key:'price_history.providers', label:'Provider Price Volatility', color:'orange', type:'array', metaKey:'price_history' },
-  { key:'sentiment',     label:'Developer & MLOps Sentiment', color:'pink', type:'dict-of-objects' },
-  { key:'prediction_markets.gpus', label:'Prediction Markets', color:'purple', type:'array',
-    metaKey:'prediction_markets' },
-  { key:'ai_analysis', label:'AI Commentary (ai_analysis.json)', color:'purple', type:'dict-of-objects' },
-];
+// ── watchlist (this browser only) ──
+const MI_WATCH_KEY='gpuWatchlist';
+function miWatch(){try{return new Set(JSON.parse(localStorage.getItem(MI_WATCH_KEY)||'[]'));}catch(e){return new Set();}}
+function miToggleWatch(g){
+  const w=miWatch();w.has(g)?w.delete(g):w.add(g);
+  try{localStorage.setItem(MI_WATCH_KEY,JSON.stringify([...w]));}catch(e){}
+  renderSignals();renderAlerts();
+}
 
-// Sections may point at a nested key (prediction_markets.gpus) so the audit
-// table lists the rows rather than the wrapper object.
-function dataSectionValue(key) {
-  if (key === 'ai_analysis') {
-    // Lives in its own file; list each entry's type and when it was written.
-    if (!EMBEDDED_AI) return null;
-    const out = {};
-    Object.entries(EMBEDDED_AI).forEach(([k, v]) => {
-      const a = aiAgeInfo(v);
-      out[k] = { type: (v && v.type) || '', timestamp: (v && v.timestamp) || '', out_of_date: a.stale };
-    });
-    return out;
+// ── Overview: signals ──
+function renderSignals(){
+  const el=document.getElementById('miSignals');if(!el)return;
+  const s=DATA.signals;
+  if(!s||!s.gpus||!Object.keys(s.gpus).length){el.innerHTML=miEmpty('Per-GPU market signals.');return;}
+  const w=miWatch(), order={tightening:0,loosening:1,stable:2,insufficient:3};
+  const ids=Object.keys(s.gpus).sort((a,b)=>(w.has(b)-w.has(a))||(order[s.gpus[a].call]-order[s.gpus[b].call])||Math.abs(s.gpus[b].score)-Math.abs(s.gpus[a].score)||a.localeCompare(b));
+  const label={tightening:'TIGHTENING',loosening:'LOOSENING',stable:'STABLE',insufficient:'NOT ENOUGH DATA'};
+  el.innerHTML='<div class="sig-grid">'+ids.map(g=>{
+    const x=s.gpus[g],on=w.has(g);
+    return `<div class="sig-card${on?' watched':''}">
+      <div class="sig-top"><span class="sig-name">${miEsc(g)}</span>
+        <button class="star-btn${on?' on':''}" title="${on?'Remove from':'Add to'} watchlist" onclick="miToggleWatch('${miEsc(g)}')">${on?'★':'☆'}</button></div>
+      <span class="sig-badge sig-${x.call}">${label[x.call]||x.call}</span>
+      <ul class="sig-reasons" style="margin-top:7px;">${(x.reasons||[]).map(r=>`<li>${miEsc(r)}</li>`).join('')||'<li>No inputs yet</li>'}</ul>
+    </div>`;}).join('')+'</div>';
+  miSet('miSignalsRule','<b style="color:var(--text-2)">How the call is made:</b> '+miEsc(s.rule||''));
+}
+
+// ── Overview: alerts ──
+function renderAlerts(){
+  const el=document.getElementById('miAlerts');if(!el)return;
+  const a=DATA.alerts, an=DATA.anomalies;
+  if(!a){el.innerHTML=miEmpty('Alerts on big price moves, sell-outs and new listings.');return;}
+  const only=document.getElementById('miAlertsWatchOnly')?.checked, w=miWatch();
+  let items=(a.items||[]).filter(i=>!only||w.has(i.gpu));
+  let h='';
+  if(!items.length)h=`<div class="dim" style="font-size:12px;padding:10px 0;">${only?'Nothing on your watchlist moved.':'Nothing crossed an alert threshold on the latest run.'}</div>`;
+  h+=items.map(i=>`<div class="alert-row"><span class="alert-dot sev-${i.severity}"></span><div style="flex:1;">
+      <div>${miEsc(i.text)}${i.needs_review?' <span class="c-amber" title="Moves over 100% are usually a reading error; check before acting">(check)</span>':''}</div>
+      <div class="alert-kind">${miEsc((i.kind||'').replace('_',' '))}${i.date?' · '+miDate(i.date):''}</div></div></div>`).join('');
+  const nOut=(an?.items||[]).filter(x=>x.kind!=='unchanged').length;
+  if(nOut)h+=`<div class="alert-row"><span class="alert-dot sev-low"></span><div style="flex:1;">${nOut} price${nOut>1?'s':''} far from the median <a class="mi-link" href="#" onclick="miGoTab('pricing','miAnomalies');return false;" style="color:var(--blue)">see Price Anomalies →</a></div></div>`;
+  el.innerHTML=h;
+}
+
+// ── Overview: upcoming events ──
+function miEventItems(){return ((DATA.events&&DATA.events.items)||[]).slice().sort((a,b)=>a.date.localeCompare(b.date));}
+function miEvRow(e){
+  return `<span class="ev-date">${miDate(e.date)}</span>${e.date_confirmed===false?' <span class="ev-est" title="Estimated date, not yet confirmed">EST</span>':''}`;
+}
+function renderUpcoming(){
+  const today=miToday();
+  const items=miEventItems().filter(e=>e.date>=today).slice(0,10);
+  if(!DATA.events){miEmptyTable('miUpcoming','Earnings, launches and policy dates.');return;}
+  miSetTable('miUpcoming',[
+    {h:'Date',f:miEvRow},
+    {h:'Type',f:e=>`<span class="ev-tag ev-${miEsc(e.type)}">${miEsc((e.type||'').replace('_',' '))}</span>`},
+    {w:1,h:'Event',f:e=>e.url?miLink(e.url,e.title):miEsc(e.title)},
+  ],items,'No upcoming events in the calendar.');
+}
+
+// ── Pricing: anomalies ──
+function renderAnomalies(){
+  const an=DATA.anomalies;
+  if(!an){miEmptyTable('miAnomalies','Outlier and unchanged-price flags.');return;}
+  const lbl={outlier_low:['FAR BELOW MEDIAN','c-green'],outlier_high:['FAR ABOVE MEDIAN','c-red'],unchanged:['UNCHANGED','dim']};
+  miSetTable('miAnomalies',[
+    {h:'Flag',f:x=>`<span class="${lbl[x.kind][1]}" style="font-family:var(--mono);font-size:10px;font-weight:700;">${lbl[x.kind][0]}</span>`},
+    {h:'Provider',f:x=>miEsc(x.provider)},
+    {h:'GPU',f:x=>`<span class="gpu-name">${miEsc(x.gpu)}</span>`},
+    {h:'Price',r:1,f:x=>miUsd(x.price)+'/hr'},
+    {w:1,h:'Detail',f:x=>x.kind==='unchanged'?`${x.days} days at this price`:`${Math.round(x.ratio*100)}% of ${miUsd(x.median)} median`},
+  ],an.items,'No anomalies flagged.');
+  miSet('miAnomaliesRule',miEsc(an.rule||''));
+}
+
+// ── Supply: availability ──
+function renderAvailability(){
+  const av=DATA.availability, sel=document.getElementById('miAvailGpu');
+  if(!av||!av.gpus){miEmptyTable('miAvailTable','Marketplace depth and stock status per GPU.');miNoChart('miChartAvail','Supply history.');return;}
+  const st={available:'AVAILABLE',limited:'LIMITED',sold_out:'SOLD OUT',unknown:'UNKNOWN'};
+  const ord={sold_out:0,limited:1,available:2,unknown:3};
+  const rows=Object.entries(av.gpus).map(([g,x])=>({g,...x})).sort((a,b)=>(ord[a.status]??4)-(ord[b.status]??4)||((b.vast?.rentable_gpus||0)-(a.vast?.rentable_gpus||0)));
+  const sup=(g)=>{const h=(av.history||{})[g]||[];const p=h.filter(x=>x.rentable_gpus!=null);if(p.length<2)return null;const last=p[p.length-1];const t=new Date(last.date);t.setUTCDate(t.getUTCDate()-7);const iso=t.toISOString().slice(0,10);const e=p.filter(x=>x.date<=iso).pop();return e&&e.rentable_gpus?(last.rentable_gpus/e.rentable_gpus-1)*100:null;};
+  const rp=x=>{if(!x.runpod)return '<span class="dim">—</span>';return ['secure','community'].filter(k=>x.runpod[k]).map(k=>`<span class="sub" style="display:inline">${k[0].toUpperCase()}:</span> ${miEsc(x.runpod[k])}`).join(' ')||'<span class="dim">—</span>';};
+  miSetTable('miAvailTable',[
+    {h:'GPU',f:r=>`<span class="gpu-name">${miEsc(r.g)}</span>`},
+    {h:'Status',f:r=>`<span class="st-tag st-${miEsc(r.status||'unknown')}">${st[r.status]||miEsc(r.status||'—')}</span>`},
+    {h:'Rentable GPUs',r:1,f:r=>r.vast?miNum(r.vast.rentable_gpus,0)+`<span class="sub">of ${miNum(r.vast.gpus,0)} listed</span>`:'<span class="dim">—</span>'},
+    {h:'7d',r:1,f:r=>miPct(sup(r.g),0)},
+    {h:'Marketplace $/hr',r:1,f:r=>r.vast&&r.vast.min_price!=null?miUsd(r.vast.min_price)+`<span class="sub">median ${miUsd(r.vast.median_price)}</span>`:'<span class="dim">—</span>'},
+    {h:'RunPod stock',f:rp},
+    {h:'Providers',r:1,f:r=>r.providers_listing!=null?`${r.providers_listing}<span class="dim">/${r.providers_total??'?'}</span>`:'—'},
+  ],rows);
+  miSet('miAvailRule',(av.status_rule?'<b style="color:var(--text-2)">Status:</b> '+miEsc(av.status_rule)+'<br>':'')+miSrcList(av));
+  if(sel){
+    const ex=sel.value, ids=Object.keys(av.history||{}).filter(g=>(av.history[g]||[]).length);
+    sel.innerHTML=ids.map(g=>`<option value="${miEsc(g)}"${g===ex?' selected':''}>${miEsc(g)}</option>`).join('');
+    if(!ex&&ids.includes('H100-SXM'))sel.value='H100-SXM';
   }
-  return key.split('.').reduce((obj, part) => (obj == null ? obj : obj[part]), DATA);
+  renderAvailChart();
+}
+function renderAvailChart(){
+  const av=DATA.availability, g=document.getElementById('miAvailGpu')?.value;
+  const h=(av&&av.history&&av.history[g])||[];
+  const card=document.getElementById('miChartAvail')?.closest('.card-bd');
+  if(card){let n=card.querySelector('.mi-hist-note');if(!n){n=document.createElement('div');n.className='mi-note mi-hist-note';n.style.marginTop='10px';card.appendChild(n);}
+    n.innerHTML=h.length<7?`History started ${miDate(h[0]&&h[0].date)} and grows by one point per daily run, so the trend becomes readable after about a week.`:'Marketplace counts are lower bounds: the Vast.ai search samples, so day-to-day moves of 10–25% are noise.';}
+  if(!h.length){if(charts.miAvail){charts.miAvail.destroy();delete charts.miAvail;}return;}
+  miChart('miAvail','miChartAvail',{type:'line',data:{labels:h.map(p=>p.date),datasets:[
+    {label:'Rentable marketplace GPUs',data:h.map(p=>p.rentable_gpus),borderColor:C.cyan,backgroundColor:C.cyan+'18',fill:true,tension:.3,pointRadius:h.length>40?0:3,yAxisID:'y'},
+    {label:'Providers listing',data:h.map(p=>p.providers_listing),borderColor:C.amber,borderDash:[5,4],tension:.2,pointRadius:0,yAxisID:'y1',stepped:true},
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+    plugins:{legend:{position:'top',labels:{font:{size:10}}}},
+    scales:{x:MI_TIME_SCALE(),y:{...miAxisY('GPUs'),beginAtZero:true},y1:{position:'right',beginAtZero:true,grid:{display:false},ticks:{precision:0},title:{display:true,text:'providers'}}}}});
 }
 
-function countEntries(val, type) {
-  if (!val) return 0;
-  if (type === 'array') return val.length;
-  if (type === 'flat-object') return Object.keys(val).length;
-  return Object.keys(val).length;
+// ── Supply: upstream signals ──
+function renderSupplySignals(){
+  const ss=DATA.supply_signals, sel=document.getElementById('miSupplySeries');
+  if(!ss){miNoChart('miChartSupply','Foundry, packaging and memory supply signals.');miEmptyTable('miSupplyEst','Cited capacity estimates.');return;}
+  const series=ss.series||{};
+  if(sel){const ex=sel.value;sel.innerHTML=Object.entries(series).map(([k,v])=>`<option value="${miEsc(k)}"${k===ex?' selected':''}>${miEsc(v.label||k)}</option>`).join('');}
+  renderSupplyChart();
+  miSetTable('miSupplyEst',[
+    {w:1,h:'Metric',f:r=>miEsc(r.metric)+miCurated({curated:true})},
+    {h:'Value',r:1,f:r=>{const n=v=>typeof v==='number'?v.toLocaleString('en-US'):miEsc(v);return `<b>${n(r.value)}${r.value_high!=null?'–'+n(r.value_high):''}</b> <span class="dim">${miEsc(r.unit||'')}</span>`+(r.note?`<span class="sub">${miEsc(r.note)}</span>`:'');}},
+    {h:'Period',f:r=>miEsc(r.period||'')},
+    {h:'Source',f:r=>miLink(r.url,r.source)+`<span class="sub">${miDate(r.as_of)}</span>`},
+  ],ss.estimates||[],'No estimates recorded.');
+}
+function renderSupplyChart(){
+  const ss=DATA.supply_signals;if(!ss)return;
+  const k=document.getElementById('miSupplySeries')?.value, s=(ss.series||{})[k];
+  if(!s||!(s.points||[]).length){if(charts.miSupply){charts.miSupply.destroy();delete charts.miSupply;}miSet('miSupplyNote','No data points for this series yet.');return;}
+  const pts=s.points.slice(-36);
+  miChart('miSupply','miChartSupply',{data:{labels:pts.map(p=>p.period),datasets:[
+    {type:'bar',label:s.label+(s.unit?' ('+s.unit+')':''),data:pts.map(p=>p.value),backgroundColor:C.blue+'99',borderColor:C.blue,yAxisID:'y'},
+    {type:'line',label:'Year-on-year %',data:pts.map(p=>p.yoy_pct),borderColor:C.amber,pointRadius:2,tension:.3,yAxisID:'y1',spanGaps:true},
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top',labels:{font:{size:10}}}},
+    scales:{x:MI_TIME_SCALE(),y:miAxisY(s.unit),y1:{position:'right',grid:{display:false},title:{display:true,text:'YoY %'}}}}});
+  miSet('miSupplyNote',`${s.freq?miEsc(s.freq)+' · ':''}${miLink(s.url,s.source||'source')}${s.stale?' · <span class="c-amber">not refreshed on the latest run</span>':''}`);
 }
 
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+// ── Demand: capex & financing ──
+const MI_CO_COLORS=[C.blue,C.green,C.amber,C.purple,C.red,C.cyan,C.orange,C.teal,C.indigo];
+function renderCapex(){
+  const cx=DATA.capex;
+  if(!cx||!cx.companies){miNoChart('miChartCapex','Quarterly capex from SEC filings.');miEmptyTable('miCapexTable','Per-company capex.');miNoChart('miChartOas','High-yield credit spread.');miEmptyTable('miDeals','GPU-backed financing deals.');return;}
+  const cos=Object.keys(cx.companies);
+  const periods=[...new Set(cos.flatMap(c=>(cx.companies[c].quarters||[]).map(q=>q.period)))].sort().slice(-12);
+  miChart('miCapex','miChartCapex',{type:'bar',data:{labels:periods,datasets:cos.map((c,i)=>{
+      const m=Object.fromEntries((cx.companies[c].quarters||[]).map(q=>[q.period,q.capex_usd_bn]));
+      return {label:c,data:periods.map(p=>m[p]??null),backgroundColor:MI_CO_COLORS[i%MI_CO_COLORS.length]+'cc',stack:'s'};})},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'top',labels:{font:{size:10}}},tooltip:{callbacks:{label:c=>c.raw!=null?`${c.dataset.label}: $${c.raw.toFixed(1)}bn`:'',footer:it=>'Total: $'+it.reduce((s,x)=>s+(x.raw||0),0).toFixed(1)+'bn'}}},
+      scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,...miAxisY('$bn')}}}});
+  const rows=cos.map(c=>({c,...cx.companies[c]})).sort((a,b)=>(b.ttm_bn||0)-(a.ttm_bn||0));
+  miSetTable('miCapexTable',[
+    {h:'Company',f:r=>`<span class="gpu-name">${miEsc(r.c)}</span><span class="sub">${miEsc(r.name||'')}</span>`},
+    {h:'Latest quarter',r:1,f:r=>{const q=(r.quarters||[]).slice(-1)[0];return q?miUsd(q.capex_usd_bn,1)+'bn'+`<span class="sub">${miEsc(q.period)}</span>`:'—';}},
+    {h:'Trailing 12m',r:1,f:r=>r.ttm_bn!=null?miUsd(r.ttm_bn,1)+'bn':'—'},
+    {h:'YoY',r:1,f:r=>miPct(r.yoy_pct,0)},
+    {w:1,h:'Guidance',f:r=>r.guidance?`${miEsc(r.guidance.text)} <span class="sub">${miLink(r.guidance.url,r.guidance.source)} · ${miDate(r.guidance.as_of)}</span>`:'<span class="dim">—</span>'},
+  ],rows);
+  const f=cx.financing||{}, oas=f.hy_oas;
+  if(oas&&(oas.points||[]).length){
+    miChart('miOas','miChartOas',{type:'line',data:{labels:oas.points.map(p=>p.date),datasets:[{label:oas.label||'HY OAS',data:oas.points.map(p=>p.value),borderColor:C.red,backgroundColor:C.red+'14',fill:true,pointRadius:0,tension:.25}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:MI_TIME_SCALE(),y:miAxisY('%')}}});
+  } else miNoChart('miChartOas','High-yield credit spread.');
+  const debt=Object.entries(f.neocloud_debt||{}).map(([k,v])=>`<b style="color:var(--text-1)">${miEsc(k)}</b> total debt ${miUsd(v.total_debt_bn,1)}bn (${miDate(v.as_of)}, ${miLink(v.url,v.source)})`).join(' · ');
+  miSet('miDebtNote',(debt?debt+'<br>':'')+(oas?miLink(oas.url,oas.source):'')+'<br>'+miSrcList(cx));
+  miSetTable('miDeals',[
+    {h:'Date',f:r=>`<span class="ev-date">${miDate(r.date)}</span>`},
+    {h:'Borrower',f:r=>`<span class="gpu-name">${miEsc(r.company)}</span>`},
+    {h:'Amount',r:1,f:r=>r.amount_usd_bn!=null?miUsd(r.amount_usd_bn,1)+'bn':'—'},
+    {w:1,h:'Type',f:r=>miEsc(r.type||'')+(r.collateral?`<span class="sub">${miEsc(r.collateral)}</span>`:'')},
+    {h:'Source',f:r=>miLink(r.url,r.source)},
+  ],(f.deals||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')),'No financing deals recorded.');
 }
 
-function flattenValue(v) {
-  if (v === null || v === undefined) return '';
-  if (typeof v === 'object') return JSON.stringify(v);
-  return String(v);
+// ── Power ──
+function renderPower(){
+  const pw=DATA.power;
+  if(!pw){miSet('miPowerKpis','');miNoChart('miChartPower','Wholesale power prices.');miEmptyTable('miQueues','Grid connection queues.');miEmptyTable('miProjects','Data-center projects by power.');return;}
+  const t=pw.totals||{};
+  const kpi=(cls,l,v,s)=>`<div class="kpi ${cls}"><div class="kpi-label">${l}</div><div class="kpi-value">${v}</div><div class="kpi-sub">${s}</div></div>`;
+  const gw=v=>v==null?'—':(v/1000).toFixed(1)+' GW';
+  const planned=(t.energized_mw||0)+(t.construction_mw||0)+(t.announced_mw||0);
+  miSet('miPowerKpis',kpi('kpi-cyan','Planned capacity',gw(planned),`${t.n_projects??'—'} large AI sites tracked`)+kpi('kpi-green','Online today',gw(t.energized_mw),planned?Math.round((t.energized_mw||0)/planned*100)+'% of planned':'')+kpi('kpi-amber','Still to come',gw((t.construction_mw||0)+(t.announced_mw||0)),'under construction or announced')+
+    kpi('kpi-blue','Peak power price',(()=>{const h=Object.values(pw.wholesale||{}).find(v=>(v.points||[]).length);const l=h&&h.points[h.points.length-1];return l?'$'+Math.round(l.value):'—';})(),(()=>{const h=Object.values(pw.wholesale||{}).find(v=>(v.points||[]).length);return h?miEsc((h.label||'').split(',')[0])+' · $/MWh':'';})()));
+  const hubs=Object.entries(pw.wholesale||{}).filter(([k,v])=>(v.points||[]).length);
+  if(hubs.length){
+    const dates=[...new Set(hubs.flatMap(([k,v])=>v.points.map(p=>p.date)))].sort();
+    miChart('miPower','miChartPower',{type:'line',data:{labels:dates,datasets:hubs.map(([k,v],i)=>{const m=Object.fromEntries(v.points.map(p=>[p.date,p.value]));
+      return {label:v.label||k,data:dates.map(d=>m[d]??null),borderColor:MI_CO_COLORS[i%MI_CO_COLORS.length],pointRadius:0,borderWidth:1.5,tension:.2,spanGaps:true};})},
+      options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top',labels:{font:{size:10}}}},scales:{x:MI_TIME_SCALE(),y:miAxisY('$/MWh')}}});
+  } else miNoChart('miChartPower','Wholesale power prices (an EIA_API_KEY secret may be needed).');
+  miSet('miPowerNote',miSrcList(pw));
+  miSetTable('miQueues',[
+    {h:'Grid',f:r=>`<span class="gpu-name">${miEsc(r.iso)}</span>`},
+    {w:1,h:'Measure',f:r=>miEsc(r.metric)},
+    {h:'GW',r:1,f:r=>miNum(r.value_gw,1)},
+    {h:'Source',f:r=>miLink(r.url,r.source)+`<span class="sub">${miDate(r.as_of)}</span>`},
+  ],pw.queues||[],'No queue data.');
+  const so={energized:0,construction:1,announced:2};
+  miSetTable('miProjects',[
+    {h:'Project',f:r=>`<span class="gpu-name">${miEsc(r.name)}</span><span class="sub">${miEsc(r.company||'')}</span>`},
+    {w:1,h:'Location',f:r=>miEsc(r.location||'')},
+    {h:'Planned MW',r:1,f:r=>miNum(r.mw,0)},
+    {h:'Online MW',r:1,f:r=>r.mw_online!=null?miNum(r.mw_online,0):'—'},
+    {h:'Status',f:r=>`<span class="st-tag st-${miEsc(r.status)}">${miEsc((r.status||'').toUpperCase())}</span>`},
+    {h:'Target',f:r=>miEsc(r.target_date||'—')},
+    {h:'Source',f:r=>miLink(r.url,r.source)+`<span class="sub">${miDate(r.as_of)}</span>`},
+  ],(pw.projects||[]).slice().sort((a,b)=>(so[a.status]??3)-(so[b.status]??3)||(b.mw||0)-(a.mw||0)),'No projects recorded.');
 }
 
-function buildArrayTable(arr, searchTerm) {
-  if (!arr || !arr.length) return '<div class="da-raw dim">No data</div>';
-  const cols = Object.keys(arr[0]);
-  let html = '<table class="dt"><thead><tr>';
-  cols.forEach(c => html += `<th>${escHtml(c)}</th>`);
-  html += '</tr></thead><tbody>';
-  arr.forEach(row => {
-    const vals = cols.map(c => flattenValue(row[c]));
-    const rowStr = vals.join(' ').toLowerCase();
-    if (searchTerm && !rowStr.includes(searchTerm)) return;
-    html += '<tr>';
-    vals.forEach(v => {
-      let display = escHtml(v);
-      if (searchTerm && display.toLowerCase().includes(searchTerm)) {
-        const re = new RegExp('(' + searchTerm.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
-        display = display.replace(re, '<span class="da-highlight">$1</span>');
-      }
-      html += `<td>${display}</td>`;
-    });
-    html += '</tr>';
+// ── China & export controls ──
+function renderChina(){
+  const ce=DATA.china_export;
+  if(!ce){['miRules','miChinaStatus','miChinaPrices','miChinaDomestic'].forEach(id=>miEmptyTable(id,'Export-control rules and China market data.'));return;}
+  miSetTable('miRules',[
+    {h:'Date',f:r=>`<span class="ev-date">${miDate(r.date)}</span>`},
+    {h:'Type',f:r=>`<span class="ev-tag ev-policy">${miEsc((r.type||'').replace('_',' '))}</span>`},
+    {w:1,h:'Document',f:r=>miLink(r.url,r.title)+(r.abstract?`<span class="sub" title="${miEsc(r.abstract)}">${miEsc(r.abstract.slice(0,140))}${r.abstract.length>140?'…':''}</span>`:'')},
+  ],(ce.rules||[]).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')),'No rules found.');
+  miSetTable('miChinaStatus',[
+    {h:'Topic',f:r=>`<span class="gpu-name">${miEsc(r.topic)}</span>`},
+    {w:1,h:'Status',f:r=>miEsc(r.status)},
+    {h:'Source',f:r=>miLink(r.url,r.source)+`<span class="sub">${miDate(r.as_of)}</span>`},
+  ],ce.status||[],'No status entries.');
+  miSetTable('miChinaPrices',[
+    {w:1,h:'Item',f:r=>`<span class="gpu-name">${miEsc(r.item)}</span>`+(r.note?`<span class="sub">${miEsc(r.note)}</span>`:'')},
+    {h:'Price',r:1,f:r=>(r.usd!=null?miUsd(r.usd,0):'')+(r.currency&&r.currency!=='USD'?`<span class="sub">${miEsc(r.currency)} ${miNum(r.price,0)}</span>`:'')+(r.unit?`<span class="sub">${miEsc(r.unit)}</span>`:'')},
+    {h:'Source',f:r=>miLink(r.url,r.source)+`<span class="sub">${miDate(r.as_of)}</span>`},
+  ],ce.china_prices||[],'No price reports recorded.');
+  miSetTable('miChinaDomestic',[
+    {w:1,h:'Item',f:r=>`<span class="gpu-name">${miEsc(r.item)}</span>`},
+    {w:1,h:'Measure',f:r=>miEsc(r.metric)},
+    {h:'Value',r:1,f:r=>`<b>${miEsc(r.value)}</b>`},
+    {h:'Source',f:r=>miLink(r.url,r.source)+`<span class="sub">${miDate(r.as_of)}</span>`},
+  ],ce.domestic_supply||[],'No reports recorded.');
+}
+
+// ── Markets: equities ──
+function renderEquities(){
+  const eq=DATA.equities;
+  if(!eq||!eq.tickers){miNoChart('miChartEq','Equity basket vs rental price.');miEmptyTable('miEqTable','Equity basket.');return;}
+  const rows=Object.entries(eq.tickers).map(([t,x])=>({t,...x}));
+  miSetTable('miEqTable',[
+    {h:'Ticker',f:r=>`<span class="gpu-name">${miEsc(r.t)}</span><span class="sub">${miEsc(r.role||'')}</span>`},
+    {h:'Price',r:1,f:r=>miUsd(r.price)},
+    {h:'1d',r:1,f:r=>miPct(r.chg_1d_pct)},
+    {h:'30d',r:1,f:r=>miPct(r.chg_30d_pct)},
+    {h:'YTD',r:1,f:r=>miPct(r.ytd_pct,0)},
+  ],rows);
+  const vr=eq.vs_rental, idx=eq.index;
+  const pts=(vr&&(vr.points||[]).length)?vr.points:((idx&&idx.points)||[]).map(p=>({date:p.date,index:p.value}));
+  if(pts.length){
+    const ds=[{label:(idx&&idx.name)||'Compute Complex',data:pts.map(p=>p.index),borderColor:C.cyan,pointRadius:0,tension:.2,yAxisID:'y'}];
+    if(pts.some(p=>p.rental_hr!=null))ds.push({label:`${vr.gpu_id||'H100'} rental $/hr`,data:pts.map(p=>p.rental_hr??null),borderColor:C.amber,pointRadius:0,tension:.2,spanGaps:true,yAxisID:'y1'});
+    miChart('miEq','miChartEq',{type:'line',data:{labels:pts.map(p=>p.date),datasets:ds},
+      options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top',labels:{font:{size:10}}}},
+        scales:{x:MI_TIME_SCALE(),y:miAxisY('index'),y1:{position:'right',grid:{display:false},title:{display:true,text:'$/hr'}}}}});
+  } else miNoChart('miChartEq','Equity basket index.');
+  const corr=vr&&vr.corr_90d!=null?`90-day correlation of daily moves: <b style="color:var(--text-1)">${vr.corr_90d.toFixed(2)}</b>. `:(vr&&vr.corr_note?miEsc(vr.corr_note)+' ':'');
+  miSet('miEqNote',corr+(idx&&idx.method?miEsc(idx.method)+' ':'')+(vr&&vr.basis?'Rental: '+miEsc(vr.basis)+'. ':'')+'<br>'+miSrcList(eq));
+}
+
+// ── Markets: event calendar ──
+let miEvType='all', miEvWhen='upcoming';
+function renderEvents(){
+  const ev=DATA.events;
+  if(!ev){miEmptyTable('miEvents','Earnings, conferences, launches, policy and model releases.');miSet('miEvFilters','');return;}
+  const types=['all',...new Set(miEventItems().map(e=>e.type))];
+  const chip=(k,v,lab,on)=>`<span class="term-chip${on?' active':''}" onclick="${k}='${v}';renderEvents()">${lab}</span>`;
+  miSet('miEvFilters',chip('miEvWhen','upcoming','Upcoming',miEvWhen==='upcoming')+chip('miEvWhen','past','Past',miEvWhen==='past')+'<span style="width:8px"></span>'+
+    types.map(t=>chip('miEvType',t,t==='all'?'All':t.replace('_',' '),miEvType===t)).join(''));
+  const today=miToday();
+  let items=miEventItems().filter(e=>(miEvType==='all'||e.type===miEvType)&&(miEvWhen==='upcoming'?e.date>=today:e.date<today));
+  if(miEvWhen==='past')items.reverse();
+  miSetTable('miEvents',[
+    {h:'Date',f:miEvRow},
+    {h:'Type',f:e=>`<span class="ev-tag ev-${miEsc(e.type)}">${miEsc((e.type||'').replace('_',' '))}</span>`},
+    {w:1,h:'Event',f:e=>`${e.url?miLink(e.url,e.title):miEsc(e.title)}${(e.tickers||[]).length?`<span class="sub">${e.tickers.map(miEsc).join(' · ')}</span>`:''}`},
+    {h:'Impact',f:e=>`<span class="${e.impact==='high'?'c-red':e.impact==='medium'?'c-amber':'dim'}" style="font-family:var(--mono);font-size:10px;font-weight:700;">${miEsc((e.impact||'').toUpperCase())}</span>`},
+    {h:'Source',f:e=>miEsc(e.source||'')},
+  ],items,'No events match this filter.');
+  const ir=ev.impact_rule, irTxt=!ir?'':typeof ir==='string'?miEsc(ir):Object.entries(ir).filter(([k])=>miEvType==='all'||k===miEvType).map(([k,v])=>`<b style="color:var(--text-2)">${miEsc(k.replace('_',' '))}:</b> ${miEsc(v)}`).join('<br>');
+  miSet('miEventsNote',(irTxt?'<b style="color:var(--text-1)">How impact is rated</b><br>'+irTxt+'<br>':'')+'EST = estimated date, not yet confirmed by the company.<br>'+miSrcList(ev));
+}
+
+// ── Markets: benchmark indices ──
+function renderBenchmarks(){
+  const b=DATA.benchmarks;
+  if(!b){miEmptyTable('miBench','Comparison with third-party GPU price indices.');return;}
+  const idx=Object.fromEntries((b.indices||[]).map(i=>[i.name+'|'+i.gpu_id,i]));
+  miSetTable('miBench',[
+    {h:'Index',f:r=>{const i=idx[r.name+'|'+r.gpu_id]||{};return `<span class="gpu-name">${miEsc(r.name)}</span>${miCurated(i)}<span class="sub">${miEsc(i.publisher||'')}</span>`;}},
+    {h:'GPU',f:r=>miEsc(r.gpu_id)},
+    {h:'Theirs',r:1,f:r=>miUsd(r.theirs_hr)+'/hr'+`<span class="sub">${miDate(r.their_as_of)}${r.stale?' · <span class="c-amber">old</span>':''}</span>`},
+    {h:'Ours',r:1,f:r=>miUsd(r.ours_hr)+'/hr'+(r.ours_basis?`<span class="sub">${miEsc(r.ours_basis)}</span>`:'')},
+    {h:'Difference',r:1,f:r=>r.diff_pct==null?'—':`<span style="color:var(--text-1)">${r.diff_pct>0?'+':''}${Math.round(r.diff_pct)}%</span><span class="sub">${r.diff_pct>0?'ours higher':'ours lower'}</span>`},
+    {w:1,h:'Method',f:r=>{const i=idx[r.name+'|'+r.gpu_id]||{};return `<span class="sub" style="display:inline">${miEsc(i.method_note||'')}</span> ${miLink(i.url,'link')}`;}},
+  ],b.comparison||[],'No comparable indices.');
+  miSet('miBenchNote','A large difference usually means a different basket (which providers, which contract length), not that either side is wrong. Read the method before acting on it.<br>'+miSrcList(b));
+}
+
+// ── TCO: secondary hardware ──
+function renderSecondary(){
+  const sm=DATA.secondary_market;
+  if(!sm){miEmptyTable('miHwPrices','Used and new GPU purchase prices.');miEmptyTable('miRentBuy','Rent vs buy payback.');return;}
+  miSetTable('miHwPrices',[
+    {h:'Hardware',f:r=>`<span class="gpu-name">${miEsc(r.gpu_id)}</span>${miCurated(r)}<span class="sub">${r.form==='server_8x'?'8-GPU server':'card'} · ${miEsc(r.condition||'')}</span>`},
+    {h:'Median',r:1,f:r=>miUsd(r.median_usd,0)+(r.low_usd!=null?`<span class="sub">${miUsd(r.low_usd,0)}–${miUsd(r.high_usd,0)}</span>`:'')},
+    {h:'Listings',r:1,f:r=>r.n_listings!=null?miNum(r.n_listings,0):'—'},
+    {h:'Source',f:r=>miLink(r.url,r.source)+`<span class="sub">${miDate(r.as_of)}</span>`},
+  ],sm.items||[],'No hardware prices recorded.');
+  const rb=Object.entries(sm.rent_vs_buy||{}).map(([g,x])=>({g,...x})).sort((a,b)=>(a.breakeven_months_at_70pct_util||1e9)-(b.breakeven_months_at_70pct_util||1e9));
+  miSetTable('miRentBuy',[
+    {h:'GPU',f:r=>`<span class="gpu-name">${miEsc(r.g)}</span>`},
+    {h:'Buy / GPU',r:1,f:r=>miUsd(r.buy_usd_per_gpu,0)},
+    {h:'Rent',r:1,f:r=>miUsd(r.rent_hr)+'/hr'},
+    {h:'Buying pays off after',r:1,f:r=>r.breakeven_months_at_70pct_util!=null?`<b>${miNum(r.breakeven_months_at_70pct_util,1)} months</b><span class="sub">${miNum(r.breakeven_hours,0)} rental hours at 70% use</span>`:'—'},
+  ],rb,'Not enough prices to compare.');
+  miSet('miHwNote',(sm.method?miEsc(sm.method)+' ':'')+'Payback counts the purchase price only — power, hosting, networking and staff are not included, so the real payback is longer (see the TCO calculator above).<br>'+miSrcList(sm));
+}
+
+// ── Trends: event markers on the price-history chart ──
+const miEventMarkerPlugin={id:'miEventMarkers',afterDatasetsDraw(chart,args,opts){
+  const marks=(opts&&opts.marks)||[];if(!marks.length)return;
+  const {ctx,chartArea:{top,bottom},scales:{x}}=chart;
+  ctx.save();
+  marks.forEach(m=>{const i=chart.data.labels.indexOf(m.label);if(i<0)return;const px=x.getPixelForValue(i);
+    ctx.strokeStyle=m.color;ctx.globalAlpha=.55;ctx.setLineDash([3,3]);ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(px,top);ctx.lineTo(px,bottom);ctx.stroke();
+    ctx.globalAlpha=1;ctx.setLineDash([]);ctx.fillStyle=m.color;ctx.beginPath();ctx.moveTo(px-4,top);ctx.lineTo(px+4,top);ctx.lineTo(px,top+6);ctx.fill();});
+  ctx.restore();
+}};
+Chart.register(miEventMarkerPlugin);
+const MI_EV_COLOR={earnings:C.blue,conference:C.purple,launch:C.green,policy:C.red,model_release:C.amber};
+function miApplyTrendMarkers(){
+  const ch=charts.tr, list=document.getElementById('miTrendEvents');
+  if(!ch||!list)return;
+  const labels=ch.data.labels||[];
+  const ev=miEventItems().filter(e=>e.impact==='high'&&e.date<=miToday()&&labels.includes(e.date.slice(0,7)));
+  const marks=ev.map(e=>({label:e.date.slice(0,7),color:MI_EV_COLOR[e.type]||C.cyan}));
+  ch.options.plugins.miEventMarkers={marks};
+  ch.update('none');
+  list.innerHTML=ev.length?'<span class="dim">Markers ▾</span>'+ev.map(e=>`<span><span style="color:${MI_EV_COLOR[e.type]||C.cyan}">●</span> <b>${miEsc(e.date.slice(0,7))}</b> ${miEsc(e.title)}</span>`).join(''):'';
+}
+
+// ── per-panel freshness badges ──
+function miStampFreshness(){
+  const fr=(DATA._meta&&DATA._meta.freshness)||{};
+  document.querySelectorAll('.card[data-section]').forEach(card=>{
+    const sec=card.dataset.section, hd=card.querySelector('.card-hd');if(!hd)return;
+    let tools=hd.querySelector('.card-hd-tools');
+    if(!tools){tools=document.createElement('div');tools.className='card-hd-tools';hd.appendChild(tools);}
+    let b=tools.querySelector('.fresh-badge');
+    if(!b){b=document.createElement('span');tools.prepend(b);}
+    const s=DATA[sec], f=fr[sec]||{};
+    const iso=(f.refreshed)||(s&&s.as_of)||null;
+    let cls='fresh-none', txt='NOT COLLECTED', tip='This section has not been collected yet.';
+    if(s&&iso){
+      const days=Math.floor((Date.now()-new Date(String(iso).length===10?iso+'T00:00:00Z':iso))/864e5);
+      txt=days<=0?'TODAY':days===1?'1D OLD':days+'D OLD';
+      cls=days<=2?'fresh-ok':days<=7?'fresh-warn':'fresh-bad';
+      tip='Last refreshed '+String(iso).slice(0,10)+(f.stale_runs?` · ${f.stale_runs} run(s) failed since`:'');
+      if(f.stale_runs){cls=cls==='fresh-ok'?'fresh-warn':cls;}
+    } else if(s){cls='fresh-warn';txt='UNDATED';tip='No refresh date recorded.';}
+    b.className='fresh-badge '+cls;b.textContent=txt;b.title=tip;
   });
-  html += '</tbody></table>';
-  return html;
+}
+// Older panels get badges too: tag them by the table/element they hold.
+const MI_LEGACY_SECTIONS={dispersionTable:'matrix',changeFeed:'changelog',priceMatrixTable:'providers',providerCloudTable:'providers',
+  termGlanceTable:'term_structure',volTable:'volatility',chartTrends:'historical',pmContractsTable:'prediction_markets',
+  regionalPricingTable:'regional',inferenceTable:'inference',tcoTable:'tco',workloadTable:'modelfit',sentimentPanel:'sentiment'};
+function miTagLegacyCards(){
+  Object.entries(MI_LEGACY_SECTIONS).forEach(([id,sec])=>{const card=document.getElementById(id)?.closest('.card');if(card&&!card.dataset.section)card.dataset.section=sec;});
 }
 
-function buildFlatObjectTable(obj, searchTerm) {
-  if (!obj) return '<div class="da-raw dim">No data</div>';
-  let html = '<table class="dt"><thead><tr><th>Key</th><th>Value</th></tr></thead><tbody>';
-  Object.entries(obj).forEach(([k, v]) => {
-    const valStr = flattenValue(v);
-    const rowStr = (k + ' ' + valStr).toLowerCase();
-    if (searchTerm && !rowStr.includes(searchTerm)) return;
-    let dispK = escHtml(k), dispV = escHtml(valStr);
-    if (searchTerm) {
-      const re = new RegExp('(' + searchTerm.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
-      dispK = dispK.replace(re, '<span class="da-highlight">$1</span>');
-      dispV = dispV.replace(re, '<span class="da-highlight">$1</span>');
-    }
-    html += `<tr><td class="gpu-name">${dispK}</td><td>${dispV}</td></tr>`;
-  });
-  html += '</tbody></table>';
-  return html;
+// ── CSV export on every table card ──
+function miCsvCell(t){t=(t||'').replace(/\s+/g,' ').trim();return /[",\n]/.test(t)?'"'+t.replace(/"/g,'""')+'"':t;}
+function miExportCard(card){
+  const lines=[];
+  card.querySelectorAll('table.dt').forEach((tb,i)=>{if(i)lines.push('');tb.querySelectorAll('tr').forEach(tr=>{const cells=[...tr.children].map(td=>miCsvCell(td.innerText));if(cells.some(c=>c))lines.push(cells.join(','));});});
+  const title=(card.querySelector('.card-hd-title')?.textContent||'table').trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/csv'}));a.download=`${title}-${miToday()}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 }
-
-function buildDictOfObjectsTable(obj, searchTerm) {
-  if (!obj) return '<div class="da-raw dim">No data</div>';
-  const keys = Object.keys(obj);
-  if (!keys.length) return '<div class="da-raw dim">No data</div>';
-  const first = obj[keys[0]];
-
-  // If values are simple objects, show as a combined table
-  if (first && typeof first === 'object' && !Array.isArray(first)) {
-    const subKeys = Object.keys(first);
-    const isSimple = subKeys.every(sk => typeof first[sk] !== 'object' || first[sk] === null);
-    if (isSimple) {
-      let html = '<table class="dt"><thead><tr><th>ID</th>';
-      subKeys.forEach(sk => html += `<th>${escHtml(sk)}</th>`);
-      html += '</tr></thead><tbody>';
-      keys.forEach(id => {
-        const row = obj[id];
-        const vals = subKeys.map(sk => flattenValue(row[sk]));
-        const rowStr = (id + ' ' + vals.join(' ')).toLowerCase();
-        if (searchTerm && !rowStr.includes(searchTerm)) return;
-        const re = searchTerm ? new RegExp('(' + searchTerm.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi') : null;
-        let dispId = escHtml(id);
-        if (re) dispId = dispId.replace(re, '<span class="da-highlight">$1</span>');
-        html += `<tr><td class="gpu-name">${dispId}</td>`;
-        vals.forEach(v => {
-          let d = escHtml(v);
-          if (re) d = d.replace(re, '<span class="da-highlight">$1</span>');
-          html += `<td>${d}</td>`;
-        });
-        html += '</tr>';
-      });
-      html += '</tbody></table>';
-      return html;
-    }
-  }
-
-  // Complex nested: show JSON per key
-  let html = '';
-  keys.forEach(id => {
-    const jsonStr = JSON.stringify(obj[id], null, 2);
-    const rowStr = (id + ' ' + jsonStr).toLowerCase();
-    if (searchTerm && !rowStr.includes(searchTerm)) return;
-    let dispJson = escHtml(jsonStr);
-    if (searchTerm) {
-      const re = new RegExp('(' + searchTerm.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
-      dispJson = dispJson.replace(re, '<span class="da-highlight">$1</span>');
-    }
-    html += `<div style="border-bottom:1px solid var(--border-0);padding:8px 16px;">
-      <span class="gpu-name" style="display:block;margin-bottom:4px;color:var(--cyan);">${escHtml(id)}</span>
-      <pre class="da-raw" style="padding:4px 0;margin:0;">${dispJson}</pre>
-    </div>`;
-  });
-  return html || '<div class="da-raw dim">No matching entries</div>';
-}
-
-function renderDataAudit(searchTerm) {
-  const container = document.getElementById('dataAuditContainer');
-  if (!container) return;
-  const st = (searchTerm || '').toLowerCase().trim();
-  let totalEntries = 0;
-  let html = '';
-
-  DATA_SECTIONS.forEach((sec, idx) => {
-    const val = dataSectionValue(sec.key);
-    const count = countEntries(val, sec.type);
-    totalEntries += count;
-
-    // Build body content
-    let bodyContent;
-    if (sec.type === 'array') bodyContent = buildArrayTable(val, st);
-    else if (sec.type === 'flat-object') bodyContent = buildFlatObjectTable(val, st);
-    else bodyContent = buildDictOfObjectsTable(val, st);
-
-    const isOpen = st ? true : false;
-    const typeLabel = sec.type === 'array' ? 'ARRAY' : sec.type === 'flat-object' ? 'OBJECT' : 'COLLECTION';
-
-    // Provenance: distinguish live measurements from estimates so a modelled
-    // number is never mistaken for a reading.
-    const meta = (DATA._meta && DATA._meta.sections
-      && DATA._meta.sections[sec.metaKey || sec.key]) || null;
-    const basisColor = { measured:'var(--green)', derived:'var(--cyan)', reference:'var(--blue)',
-                         modeled:'var(--amber)', mixed:'var(--purple)' };
-    const basisBadge = meta
-      ? `<span class="da-badge" style="background:var(--bg-2);color:${basisColor[meta.basis]||'var(--text-2)'};" title="${escHtml(meta.detail)}">${meta.basis.toUpperCase()}</span>`
-      : '';
-
-    // Freshness: a dataset frozen for weeks used to look identical to one
-    // fetched minutes ago. Every auto-refreshed section now says when it last
-    // came back from its source.
-    const fr = (DATA._meta && DATA._meta.freshness && DATA._meta.freshness[(sec.metaKey || sec.key).split('.')[0]]) || null;
-    let freshBadge = '';
-    if (fr && fr.auto) {
-      const days = fr.refreshed
-        ? Math.floor((Date.now() - new Date(fr.refreshed + 'T00:00:00Z').getTime()) / 86400000)
-        : null;
-      const col = days == null ? 'var(--red)' : days <= 1 ? 'var(--green)' : days <= 3 ? 'var(--amber)' : 'var(--red)';
-      const label = days == null ? 'NEVER' : days === 0 ? 'TODAY' : days === 1 ? '1 DAY AGO' : days + ' DAYS AGO';
-      const tip = fr.sources_total
-        ? `${fr.sources_ok} of ${fr.sources_total} sources returned on the last run`
-        : fr.stale_runs != null ? `refreshed automatically · ${fr.stale_runs} run(s) since last successful refresh`
-        : 'refreshed automatically';
-      freshBadge = `<span class="da-badge" style="background:var(--bg-2);color:${col};" title="${escHtml(tip)}">${label}</span>`;
-    } else if (fr) {
-      freshBadge = '<span class="da-badge" style="background:var(--bg-2);color:var(--text-3);" title="Curated reference data — no fetcher owns it, so it does not claim a refresh">MANUAL</span>';
-    }
-
-    html += `<div class="da-section" data-da-idx="${idx}">
-      <div class="da-header${isOpen ? ' open' : ''}" onclick="toggleDataSection(this)">
-        <div class="da-header-left">
-          <span class="da-chevron">&#9654;</span>
-          <span class="da-title">${escHtml(sec.label)}</span>
-          <span class="da-badge" style="background:var(--${sec.color}-dim);color:var(--${sec.color});">${typeLabel}</span>
-          ${basisBadge}
-          ${freshBadge}
-        </div>
-        <div class="da-meta">
-          <span class="da-badge" style="background:var(--bg-2);color:var(--text-2);">${count} entries</span>
-          <span class="da-badge" style="background:var(--bg-2);color:var(--text-3);">DATA.${sec.key}</span>
-        </div>
-      </div>
-      <div class="da-body${isOpen ? ' open' : ''}">${bodyContent}</div>
-    </div>`;
-  });
-
-  container.innerHTML = html;
-  document.getElementById('dataAuditCount').textContent = totalEntries + ' entries / ' + DATA_SECTIONS.length + ' datasets';
-}
-
-function toggleDataSection(headerEl) {
-  headerEl.classList.toggle('open');
-  headerEl.nextElementSibling.classList.toggle('open');
-}
-
-function expandAllDataSections(open) {
-  document.querySelectorAll('.da-header').forEach(h => {
-    h.classList.toggle('open', open);
-    h.nextElementSibling.classList.toggle('open', open);
+function miAddCsvButtons(){
+  document.querySelectorAll('.card').forEach(card=>{
+    if(!card.querySelector('table.dt'))return;
+    const hd=card.querySelector('.card-hd');if(!hd||hd.querySelector('.csv-btn'))return;
+    let tools=hd.querySelector('.card-hd-tools');
+    if(!tools){tools=document.createElement('div');tools.className='card-hd-tools';hd.appendChild(tools);}
+    const b=document.createElement('button');b.className='csv-btn';b.textContent='CSV';b.title='Download this table as CSV';
+    b.addEventListener('click',e=>{e.stopPropagation();miExportCard(card);});tools.appendChild(b);
   });
 }
 
-function exportAllDataJSON() {
-  const blob = new Blob([JSON.stringify(DATA, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'gpu-intel-pro-data-export.json';
-  a.click();
-  URL.revokeObjectURL(a.href);
+// ── shareable links: #tab=…&gpu=… ──
+const MI_SHARE_SELECTS={trendGpuSelect:'trend',providerGpuSelect:'pgpu',miAvailGpu:'agpu',miSupplySeries:'series'};
+function miSaveHash(){
+  const tab=document.querySelector('.nav-item.active')?.dataset.tab||'overview';
+  const p=new URLSearchParams();p.set('tab',tab);
+  Object.entries(MI_SHARE_SELECTS).forEach(([id,k])=>{const el=document.getElementById(id);if(el&&el.value&&el.closest('.tab-panel')?.id==='tab-'+tab)p.set(k,el.value);});
+  try{history.replaceState(null,'','#'+p.toString());}catch(e){}
+}
+function miGoTab(tab,scrollToId){
+  const item=document.querySelector(`.nav-item[data-tab="${tab}"]`);if(item)item.click();
+  if(scrollToId)setTimeout(()=>document.getElementById(scrollToId)?.scrollIntoView({behavior:'smooth',block:'start'}),60);
+}
+function miRestoreHash(){
+  const p=new URLSearchParams(location.hash.replace(/^#/,''));
+  const tab=p.get('tab');
+  Object.entries(MI_SHARE_SELECTS).forEach(([id,k])=>{const v=p.get(k),el=document.getElementById(id);
+    if(v&&el&&[...el.options].some(o=>o.value===v)){el.value=v;el.dispatchEvent(new Event('change'));}});
+  if(tab&&document.getElementById('tab-'+tab))miGoTab(tab);
+}
+function miInitShare(){
+  document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>setTimeout(miSaveHash,0)));
+  Object.keys(MI_SHARE_SELECTS).forEach(id=>document.getElementById(id)?.addEventListener('change',miSaveHash));
+  const btn=document.getElementById('miShareBtn');
+  if(btn)btn.addEventListener('click',()=>{miSaveHash();const done=()=>{btn.textContent='✓ Copied';setTimeout(()=>btn.textContent='⧉ Copy link',1500);};
+    if(navigator.clipboard)navigator.clipboard.writeText(location.href).then(done,()=>{btn.textContent=location.href;});else btn.textContent=location.href;});
+  document.getElementById('miAlertsWatchOnly')?.addEventListener('change',renderAlerts);
+  window.addEventListener('hashchange',()=>{const t=new URLSearchParams(location.hash.slice(1)).get('tab');if(t&&t!==document.querySelector('.nav-item.active')?.dataset.tab)miRestoreHash();});
 }
 
-// Wire up search
-document.getElementById('dataAuditSearch').addEventListener('input', function() {
-  renderDataAudit(this.value);
-});
+function renderMarketIntel(){
+  const steps=[renderSignals,renderAlerts,renderUpcoming,renderAnomalies,renderAvailability,renderSupplySignals,renderCapex,renderPower,
+    renderChina,renderEquities,renderEvents,renderBenchmarks,renderSecondary,miApplyTrendMarkers];
+  steps.forEach(fn=>{try{fn();}catch(e){console.error('[market-intel]',fn.name,e);}});
+  try{miTagLegacyCards();miStampFreshness();miAddCsvButtons();miInitShare();miRestoreHash();}catch(e){console.error('[market-intel] console',e);}
+}
 
 // ════════════════════════════════════════════════════════════════
 // INIT

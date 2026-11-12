@@ -20,6 +20,16 @@ from datetime import datetime, timedelta, timezone
 from xml.etree import ElementTree
 
 from extra_providers import PROVIDERS as EXTRA_PROVIDERS
+import availability as _availability
+import benchmarks as _benchmarks
+import capex as _capex
+import china_export as _china_export
+import equities as _equities
+import events as _events
+import power as _power
+import secondary_market as _secondary_market
+import signals as _signals
+import supply_signals as _supply_signals
 from term_pricing import TERM_PROVIDERS
 from term_structure import (
     attach_terms,
@@ -2024,7 +2034,7 @@ def build_regional(data):
 # tab can say so instead of the staleness being invisible.
 _SECTION_SOURCES = {
     "providers": ["AWS", "GCP", "Azure", "Lambda", "CoreWeave", "Together", "RunPod", "Vast.ai",
-                  "Oracle", "Nebius", "DigitalOcean", "Vultr", "Crusoe"],
+                  *EXTRA_PROVIDERS],
     "matrix": ["Matrix"],
     "spot": ["Spot"],
     "historical": ["Historical"],
@@ -2043,6 +2053,19 @@ _SECTION_SOURCES = {
     "summary": ["Summary"],
     "term_structure": ["Term Structure"],
     "changelog": ["Changelog"],
+    # Market-intelligence sections. Each module names the sources it logs.
+    "availability": _availability.SOURCES,
+    "secondary_market": _secondary_market.SOURCES,
+    "benchmarks": _benchmarks.SOURCES,
+    "events": _events.SOURCES,
+    "china_export": _china_export.SOURCES,
+    "supply_signals": _supply_signals.SOURCES,
+    "capex": _capex.SOURCES,
+    "power": _power.SOURCES,
+    "equities": _equities.SOURCES,
+    "signals": _signals.SOURCES,
+    "alerts": _signals.SOURCES,
+    "anomalies": _signals.SOURCES,
 }
 
 
@@ -3347,6 +3370,22 @@ def main():
         data.pop("prediction_markets", None)
     print()
 
+    # ---- 10b. Market intelligence: supply, demand, markets, events ----
+    # Each build fetches its own sources, logs per-source success/failure and
+    # never raises; a source that fails keeps its previous values, marked stale.
+    # China/export runs before events, which folds its rules into the calendar.
+    print("[MI] Market Intelligence")
+    print("-" * 40)
+    for build in (_availability.build_availability, _secondary_market.build_secondary_market,
+                  _benchmarks.build_benchmarks, _china_export.build_china_export,
+                  _events.build_events, _supply_signals.build_supply_signals,
+                  _capex.build_capex, _power.build_power, _equities.build_equities):
+        try:
+            data = build(data, log_info, log_ok, log_fail)
+        except Exception as exc:  # belt and braces: builders are meant not to raise
+            log_fail(build.__name__, str(exc))
+    print()
+
     # ---- 11. AI Analysis ----
     print("[10/10] AI Analysis")
     print("-" * 40)
@@ -3366,6 +3405,10 @@ def main():
         data = build_changelog(data, _snapshot_before)
     except Exception as exc:
         log_fail("Changelog", str(exc))
+
+    # Signals, alerts and anomalies read this run's changelog, availability and
+    # price history, so they are derived after everything else.
+    data = _signals.build_signals(data, log_info, log_ok, log_fail)
 
     try:
         data = stamp_freshness(data, _results)
