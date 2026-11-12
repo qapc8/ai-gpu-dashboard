@@ -4964,6 +4964,11 @@ async function loadGpuAI() {
 // would have thrown "_esc is not defined" at the moment they tried to report
 // a failure.
 function _esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+// Shared by the ticker, term tables and others. It used to live in the Data
+// tab's code and went with it, which stopped renderAll at the ticker.
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
 // _chatRequest is gone with the last browser-to-LLM call. Everything the page
 // shows from a language model is now written by the pipeline into
