@@ -1347,6 +1347,14 @@ loadExternalData();
 
   <div class="card mb">
     <div class="card-hd">
+      <span class="card-hd-title">Reserved market — what the numbers say</span>
+      <span class="card-hd-sub" id="rmAsOf"></span>
+    </div>
+    <div class="card-bd"><ul id="rmTakeaways" style="margin:0;padding-left:18px;font-size:12px;line-height:1.75;color:var(--text-1);"></ul></div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-hd">
       <span class="card-hd-title">Top-tier GPUs at a glance</span>
       <span class="card-hd-sub">median discount vs the same provider's on-demand rate · break-even utilisation in brackets</span>
     </div>
@@ -1367,6 +1375,53 @@ loadExternalData();
     <div class="card-bd-flush" style="overflow-x:auto;border-top:1px solid var(--border-0);"><table class="dt" id="termProviderTable"></table></div>
   </div>
 
+  <div class="card mb">
+    <div class="card-hd">
+      <span class="card-hd-title">Short-term capacity — days to months</span>
+      <span class="card-hd-sub">capacity blocks and short reservations vs the same provider's on-demand rate</span>
+    </div>
+    <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="rmShortTable"></table></div>
+    <div class="card-bd dim" style="font-size:10.5px;line-height:1.6;" id="rmShortNote"></div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-hd">
+      <span class="card-hd-title">Hyperscaler discount schedule</span>
+      <span class="card-hd-sub">% below the same instance's on-demand rate, us-east / us-central · payment option in brackets</span>
+    </div>
+    <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="rmDiscTable"></table></div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-hd">
+      <span class="card-hd-title" id="rmRegionTitle">Where you buy — regional prices</span>
+      <span class="card-hd-sub">per GPU-hour, every region the provider lists it in</span>
+    </div>
+    <div class="card-bd">
+      <div class="chart-wrap" id="rmRegionWrap" style="height:340px;"><canvas id="chartRmRegion"></canvas></div>
+      <div id="rmRegionNote" class="dim" style="padding:10px 4px 0;font-size:11px;line-height:1.6;"></div>
+    </div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-hd">
+      <span class="card-hd-title" id="rmIndexTitle">Market prices by commitment length</span>
+      <span class="card-hd-sub">weekly median across providers · Ornn transaction index</span>
+    </div>
+    <div class="card-bd">
+      <div class="chart-wrap" style="height:300px;"><canvas id="chartRmIndex"></canvas></div>
+      <div id="rmIndexNote" class="dim" style="padding:10px 4px 0;font-size:11px;line-height:1.6;"></div>
+    </div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-hd">
+      <span class="card-hd-title">Contract &amp; list-price evidence</span>
+      <span class="card-hd-sub" id="rmEvSub">dated public reports, newest first</span>
+    </div>
+    <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="rmEvidenceTable"></table></div>
+  </div>
+
   <div class="card">
     <div class="card-hd">
       <span class="card-hd-title">Spread over time</span>
@@ -1375,6 +1430,47 @@ loadExternalData();
     <div class="card-bd">
       <div class="chart-wrap" style="height:280px;"><canvas id="chartTermHistory"></canvas></div>
       <div id="termHistNote" class="dim" style="padding:10px 4px 0;font-size:11px;line-height:1.6;"></div>
+    </div>
+  </div>
+
+  <div class="mi-section-title" style="margin-top:18px;">Reserved price dynamics — is committing getting cheaper or dearer?</div>
+  <div class="card mb" data-section="reserved_dynamics">
+    <div class="card-hd">
+      <span class="card-hd-title">Commitment Discount by Contract Length</span>
+      <span class="card-hd-sub">reserved price vs on-demand median, now and 12 weeks ago</span>
+    </div>
+    <div class="card-bd-flush" style="overflow-x:auto;"><table class="dt" id="rdSummary"></table></div>
+    <div class="mi-foot mi-note" id="rdSummaryNote"></div>
+  </div>
+  <div class="grid g-6-4 mb">
+    <div class="card" data-section="reserved_dynamics">
+      <div class="card-hd">
+        <span class="card-hd-title">Discount Over Time</span>
+        <select class="ctrl-select" id="rdGpu" onchange="renderRdChart();miSaveHash()"></select>
+      </div>
+      <div class="card-bd"><div class="chart-wrap" style="height:300px;"><canvas id="rdChartDisc"></canvas></div>
+        <div class="mi-note" id="rdChartNote" style="margin-top:10px;"></div></div>
+    </div>
+    <div class="card" data-section="reserved_dynamics">
+      <div class="card-hd"><span class="card-hd-title">Reserved Repricings</span><span class="card-hd-sub">every committed or short-term rate change seen</span></div>
+      <div class="card-bd-flush" style="overflow-x:auto;max-height:380px;overflow-y:auto;"><table class="dt" id="rdChanges"></table></div>
+    </div>
+  </div>
+  <div class="card mb" data-section="reserved_dynamics">
+    <div class="card-hd"><span class="card-hd-title">Short-Term Capacity Prices</span><span class="card-hd-sub">AWS Capacity Blocks, GCP DWS, Lambda &amp; Together reservations · daily</span></div>
+    <div class="card-bd-flush" style="overflow-x:auto;max-height:420px;overflow-y:auto;"><table class="dt" id="rdShort"></table></div>
+    <div class="mi-foot mi-note" id="rdShortNote"></div>
+  </div>
+  <div class="grid g-2 mb">
+    <div class="card" data-section="reserved_dynamics">
+      <div class="card-hd"><span class="card-hd-title">Contracted Backlog</span><span class="card-hd-sub">signed, not-yet-delivered revenue · SEC filings, $bn</span></div>
+      <div class="card-bd"><div class="chart-wrap" style="height:280px;"><canvas id="rdChartBacklog"></canvas></div>
+        <div class="mi-note" id="rdBacklogNote" style="margin-top:10px;"></div></div>
+    </div>
+    <div class="card" data-section="reserved_dynamics">
+      <div class="card-hd"><span class="card-hd-title">Disclosed Compute Contracts</span><span class="card-hd-sub">multi-year capacity deals · implied $/GPU-hr where disclosed</span></div>
+      <div class="card-bd-flush" style="overflow-x:auto;max-height:380px;overflow-y:auto;"><table class="dt" id="rdContracts"></table></div>
+      <div class="mi-foot mi-note" id="rdContractsNote"></div>
     </div>
   </div>
 </div>
@@ -2098,6 +2194,9 @@ document.querySelectorAll('.nav-item').forEach(tab => {
     document.querySelectorAll('.tab-panel').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    // Charts built while their tab was hidden have zero size; this tab's
+    // charts are rebuilt on show so they measure the visible container.
+    if (tab.dataset.tab === 'terms' && termGpu) requestAnimationFrame(() => selectTermGpu(termGpu));
     resizeAllChartsRobust();
   });
 });
@@ -2324,6 +2423,7 @@ function renderTermsTab() {
   }
   const chips = document.getElementById('termGpuChips');
   if (chips) chips.innerHTML = gpus.map(g => `<button class="term-chip" data-g="${g}" onclick="selectTermGpu('${g}')">${escHtml(g)}</button>`).join('');
+  _renderRmStatic();
   selectTermGpu(termGpu && ts[termGpu] ? termGpu : (ts['H100-SXM'] ? 'H100-SXM' : gpus[0]));
 }
 
@@ -2367,6 +2467,183 @@ function selectTermGpu(g) {
   _renderTermLadder(r);
   _renderTermTable(r);
   _renderTermHistory(r);
+  _renderRmRegion(g);
+  _renderRmIndex(g);
+}
+
+// ── Reserved market (DATA.reserved_market) ───────────────────────
+const RM_GPUS = ['B300', 'GB200', 'B200', 'H200', 'H100-SXM', 'MI300X'];
+function _pctCell(d) {
+  if (d == null) return '<span class="dim">—</span>';
+  const r = Math.round(d);
+  return `<b style="color:${r >= 0 ? 'var(--green)' : 'var(--red)'}">${r >= 0 ? '−' : '+'}${Math.abs(r)}%</b>`;
+}
+
+function _renderRmStatic() {
+  const rm = DATA.reserved_market;
+  const asOf = document.getElementById('rmAsOf');
+  const tk = document.getElementById('rmTakeaways');
+  if (!rm) { if (tk) tk.innerHTML = '<li class="dim">No reserved-market data in this refresh.</li>'; return; }
+  const failed = (rm.failed || []);
+  if (asOf) asOf.textContent = `as of ${rm.as_of}` + (failed.length ? ` · not refreshed this run: ${failed.join(', ')}` : '');
+  if (tk) tk.innerHTML = (rm.takeaways || []).map(t => `<li>${escHtml(t)}</li>`).join('') || '<li class="dim">—</li>';
+
+  // Short-term table, grouped by GPU.
+  const st = document.getElementById('rmShortTable');
+  if (st) {
+    let h = '<thead><tr><th>GPU</th><th>Provider · product</th><th>Commitment</th><th><span class="term-badge tb-commit">RATE</span></th><th><span class="term-badge tb-od">SAME-PROVIDER ON-DEMAND</span></th><th>vs on-demand</th></tr></thead><tbody>';
+    let last = null;
+    (rm.short_term || []).forEach(r => {
+      const cluster = r.min_gpus && r.min_gpus > 8;
+      h += `<tr${r.gpu !== last ? ' style="border-top:2px solid var(--border-0)"' : ''}>`
+        + `<td class="gpu-name">${r.gpu !== last ? escHtml(r.gpu) : ''}</td>`
+        + `<td>${escHtml(r.provider)} <span class="dim">· ${escHtml(r.product || '')}</span>${cluster ? ' <span class="term-badge tb-cluster">CLUSTER ' + r.min_gpus + '+</span>' : ''}${r.instance ? `<div class="dim d" style="font-size:9.5px">${escHtml(r.instance)}${r.regions ? ' · ' + r.regions + ' regions' : ''}</div>` : ''}</td>`
+        + `<td class="dim" style="font-size:10.5px;max-width:240px;">${escHtml(r.term || '')}</td>`
+        + `<td class="term-cell"><b>${_fmtUsd(r.rate)}</b></td>`
+        + `<td class="term-cell">${r.on_demand_same_provider != null ? _fmtUsd(r.on_demand_same_provider) : '<span class="dim" title="' + escHtml(r.note || 'No comparable on-demand rate') + '">—</span>'}</td>`
+        + `<td class="term-cell">${_pctCell(r.discount_pct)}</td></tr>`;
+      last = r.gpu;
+    });
+    st.innerHTML = h + '</tbody>';
+  }
+  const sn = document.getElementById('rmShortNote');
+  if (sn) sn.innerHTML = 'AWS Capacity Blocks: one rate per instance in every commercial region, set by AWS from supply and demand and paid upfront at the rate in force when booked. '
+    + 'GCP Flex-start runs a job when capacity frees up; Calendar mode books fixed dates up to 90 days ahead. '
+    + 'Lambda cluster reservations are multi-node InfiniBand clusters and cost more than its single-node on-demand rate — a premium for guaranteed interconnected capacity, not a discount.';
+
+  // Discount schedule matrix.
+  const dt = document.getElementById('rmDiscTable');
+  if (dt) {
+    const rows = {};
+    (rm.discounts || []).forEach(d => {
+      const key = `${d.provider}|${d.product}|${d.term}|${d.payment}`;
+      (rows[key] = rows[key] || { provider: d.provider, product: d.product, term: d.term, payment: d.payment, g: {} }).g[d.gpu] = d;
+    });
+    const order = r => ['AWS', 'Azure', 'GCP'].indexOf(r.provider) * 100 + parseInt(r.term) * 10 + (['no_upfront', 'monthly', 'partial_upfront', 'all_upfront'].indexOf(r.payment) + 1);
+    const list = Object.values(rows).sort((a, b) => order(a) - order(b));
+    const gpus = RM_GPUS.filter(g => list.some(r => r.g[g]));
+    let h = '<thead><tr><th>Provider</th><th>Product</th><th>Term</th>' + gpus.map(g => `<th>${escHtml(g)}</th>`).join('') + '</tr></thead><tbody>';
+    list.forEach(r => {
+      h += `<tr><td>${escHtml(r.provider)}</td><td class="dim">${escHtml(r.product || '')}</td><td class="term-cell">${escHtml(_termLabel(r.term))} <span class="dim d">(${escHtml((r.payment || '').replace('_', ' '))})</span></td>`;
+      gpus.forEach(g => {
+        const d = r.g[g];
+        h += d ? `<td class="term-cell" title="${escHtml((d.note || '') + ' rate $' + d.rate.toFixed(2) + (d.on_demand ? ' vs on-demand $' + d.on_demand.toFixed(2) : ''))}">${d.discount_pct != null ? _pctCell(d.discount_pct) : '<span class="term-badge tb-ro">COMMIT ONLY</span>'}<div class="dim d">${_fmtUsd(d.rate)}</div></td>` : '<td class="dim">—</td>';
+      });
+      h += '</tr>';
+    });
+    dt.innerHTML = h + '</tbody>';
+  }
+
+  // Evidence timeline.
+  const ev = document.getElementById('rmEvidenceTable');
+  const evd = rm.evidence || {};
+  if (ev) {
+    const items = (evd.items || []).slice().sort((a, b) => b.date.localeCompare(a.date));
+    const kind = { contract: 'CONTRACT', rate_card: 'RATE CARD', list_change: 'LIST CHANGE', trade: 'TRADES', commentary: 'COMMENTARY' };
+    const cls = { contract: 'tb-commit', rate_card: 'tb-od', list_change: 'tb-cluster', trade: 'tb-spot', commentary: 'tb-ro' };
+    ev.innerHTML = '<thead><tr><th>Date</th><th>Type</th><th>GPU · term</th><th>$/GPU-hr</th><th>What it says</th><th>Source</th></tr></thead><tbody>'
+      + items.map(i => `<tr><td class="term-cell">${escHtml(i.date)}${i.date > (DATA.last_updated || '').slice(0, 10) ? ' <span class="term-badge tb-ro">UPCOMING</span>' : ''}</td>`
+        + `<td><span class="term-badge ${cls[i.kind] || 'tb-ro'}">${kind[i.kind] || escHtml(i.kind)}</span></td>`
+        + `<td>${escHtml(i.gpu)} <span class="dim d">· ${escHtml(i.term || '')}</span></td>`
+        + `<td class="term-cell">${i.value != null ? _fmtUsd(i.value) : '<span class="dim">—</span>'}</td>`
+        + `<td style="font-size:11px;max-width:420px;white-space:normal;line-height:1.45;">${escHtml(i.statement)}</td>`
+        + `<td style="font-size:10.5px;white-space:normal;max-width:200px;"><a href="${escHtml(i.url)}" target="_blank" rel="noopener" style="color:var(--cyan)">${escHtml(i.source)}</a>${i.secondhand ? ' <span class="dim d" title="A summary of another party\'s work">(second-hand)</span>' : ''}</td></tr>`).join('')
+      + '</tbody>';
+  }
+  const evs = document.getElementById('rmEvSub');
+  if (evs && evd.last_reviewed) evs.textContent = `dated public reports, newest first · curated, last reviewed ${evd.last_reviewed}`;
+}
+
+function _renderRmRegion(g) {
+  const el = document.getElementById('chartRmRegion');
+  const note = document.getElementById('rmRegionNote');
+  const title = document.getElementById('rmRegionTitle');
+  if (!el) return;
+  if (charts.rmRegion) charts.rmRegion.destroy();
+  const reg = ((DATA.reserved_market || {}).regional || {})[g] || {};
+  if (title) title.textContent = `Where you buy — ${g} by region`;
+  const rows = [];
+  if (reg.AWS) reg.AWS.by_region.forEach(r => rows.push({ label: 'AWS · ' + r.region, od: r.on_demand }));
+  if (reg.Azure) reg.Azure.by_region.forEach(r => rows.push({ label: 'Azure · ' + r.region, od: r.on_demand, y1: r['1yr'], y3: r['3yr'], y5: r['5yr'] }));
+  if (!rows.length) {
+    if (note) note.textContent = `No hyperscaler lists ${g} in more than one region with public prices.`;
+    el.parentElement.style.height = '60px';
+    return;
+  }
+  rows.sort((a, b) => a.od - b.od);
+  el.parentElement.style.height = Math.max(220, rows.length * 16 + 80) + 'px';
+  const ds = [
+    ['On-demand', 'od', C.blue], ['1-yr reserved', 'y1', C.amber], ['3-yr reserved', 'y3', C.cyan], ['5-yr reserved', 'y5', C.purple],
+  ].filter(([, k]) => rows.some(r => r[k] != null)).map(([label, k, col]) => ({
+    label, data: rows.map(r => r[k] ?? null), backgroundColor: col + (k === 'od' ? '90' : '60'), borderColor: col, borderWidth: 1, borderRadius: 2,
+  }));
+  charts.rmRegion = new Chart(el, {
+    type: 'bar',
+    data: { labels: rows.map(r => r.label), datasets: ds },
+    options: {
+      animation: false,
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } },
+                 tooltip: { callbacks: { label: x => x.parsed.x == null ? null : `${x.dataset.label}: $${x.parsed.x.toFixed(2)}/GPU-hr` } } },
+      scales: { x: { title: { display: true, text: '$ per GPU-hour' }, ticks: { callback: v => '$' + v }, grid: { color: 'rgba(26,34,51,0.4)' } },
+                y: { ticks: { font: { size: 9.5 } }, grid: { display: false } } },
+    },
+  });
+  if (note) {
+    const parts = [];
+    ['AWS', 'Azure'].forEach(p => {
+      const e = reg[p]; if (!e || !e.on_demand) return;
+      const o = e.on_demand;
+      parts.push(`${p} ${escHtml(e.instance || '')}: on-demand $${o.low.toFixed(2)} (${escHtml(o.low_region)}) to $${o.high.toFixed(2)} (${escHtml(o.high_region)}) across ${e.regions} regions.`);
+    });
+    if (reg.AWS) parts.push('AWS applies the same Savings Plan / Reserved Instance discount % in every region, so its committed rates scale with the on-demand bars.');
+    note.innerHTML = parts.join(' ');
+  }
+}
+
+function _renderRmIndex(g) {
+  const el = document.getElementById('chartRmIndex');
+  const note = document.getElementById('rmIndexNote');
+  const title = document.getElementById('rmIndexTitle');
+  if (!el) return;
+  if (charts.rmIndex) charts.rmIndex.destroy();
+  const idx = (DATA.reserved_market || {}).indexes || {};
+  const gd = ((idx.getdeploying || {}).series || {})[g] || {};
+  const ornn = ((idx.ornn || {}).history || {})[g] || {};
+  if (title) title.textContent = `Market prices by commitment length — ${g}`;
+  const weeks = Array.from(new Set([...Object.values(gd).flat().map(x => x[0]), ...Object.keys(ornn)])).sort();
+  const series = [['on_demand', 'On-demand (median)', C.blue], ['spot', 'Spot (median)', C.green], ['reserved_1mo', '1-month reserved', C.lime],
+                  ['reserved_6mo', '6-month reserved', C.purple], ['reserved_12mo', '12-month reserved', C.amber],
+                  ['reserved_36mo', '36-month reserved', C.cyan]];
+  const ds = series.filter(([k]) => (gd[k] || []).length).map(([k, label, col]) => {
+    // A weekly median over one or two listings is a quote, not a market
+    // level; drop those weeks so a single provider cannot spike the line.
+    const m = Object.fromEntries((gd[k] || []).filter(x => k === 'on_demand' || (x[2] || 0) >= 3).map(x => [x[0], x[1]]));
+    const n = Object.fromEntries((gd[k] || []).map(x => [x[0], x[2]]));
+    return { label, data: weeks.map(w => m[w] ?? null), _n: weeks.map(w => n[w]), spanGaps: true, borderColor: col, backgroundColor: col,
+             borderWidth: k === 'on_demand' ? 2.5 : 1.5, pointRadius: 0, borderDash: k === 'spot' ? [4, 3] : [] };
+  });
+  if (Object.keys(ornn).length) ds.push({ label: 'Ornn index (transactions)', data: weeks.map(w => ornn[w] ?? null), spanGaps: true,
+    borderColor: '#ffffff', backgroundColor: '#ffffff', pointRadius: 4, pointStyle: 'rectRot', borderWidth: 1, showLine: Object.keys(ornn).length > 1 });
+  charts.rmIndex = new Chart(el, {
+    type: 'line',
+    data: { labels: weeks, datasets: ds },
+    options: {
+      animation: false,
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } },
+                 tooltip: { callbacks: { label: x => x.parsed.y == null ? null : `${x.dataset.label}: $${x.parsed.y.toFixed(2)}${x.dataset._n && x.dataset._n[x.dataIndex] ? ' · ' + x.dataset._n[x.dataIndex] + ' providers' : ''}` } } },
+      scales: { y: { title: { display: true, text: '$ per GPU-hour' }, ticks: { callback: v => '$' + Number(v).toFixed(2) }, grid: { color: 'rgba(26,34,51,0.4)' } },
+                x: { grid: { display: false }, ticks: { maxTicksLimit: 10 } } },
+    },
+  });
+  if (note) {
+    const gdi = idx.getdeploying || {};
+    note.innerHTML = `Lines: weekly median price across every provider that listed ${escHtml(g)} that week (provider mix changes week to week, so read the direction, not single steps). `
+      + (g === 'H100-SXM' ? 'GetDeploying groups H100 SXM and PCIe. ' : '')
+      + `White points: Ornn's daily transaction index, which the Kalshi and Polymarket GPU contracts settle on; its public feed has no history, so points accumulate from ${Object.keys(ornn).sort()[0] || 'the next refresh'}. `
+      + `Source: ${escHtml(gdi.attribution || 'GetDeploying, CC BY 4.0')}; <a href="${escHtml((idx.ornn || {}).source || '#')}" target="_blank" rel="noopener" style="color:var(--cyan)">Ornn public index</a>.`;
+  }
 }
 
 function _termProviders(r) {
@@ -2420,6 +2697,7 @@ function _renderTermLadder(r) {
     type: 'line',
     data: { labels, datasets },
     options: {
+      animation: false,
       responsive: true, maintainAspectRatio: false,
       plugins: {
         legend: { position: 'right', labels: { boxWidth: 10, font: { size: 10 } } },
@@ -2489,6 +2767,7 @@ function _renderTermHistory(r) {
     type: 'line',
     data: { labels: hist.map(h => h.month), datasets },
     options: {
+      animation: false,
       responsive: true, maintainAspectRatio: false,
       plugins: { legend: { position: 'top', labels: { boxWidth: 10, font: { size: 10 } } } },
       scales: {
@@ -3090,6 +3369,21 @@ function renderPredictionMarkets() {
   if (unavailable) unavailable.style.display = has ? 'none' : 'block';
   if (content) content.style.display = has ? 'block' : 'none';
   if (!has) return;
+  // Quotes carried over from an earlier refresh because the venues were
+  // unreachable this time: say so above everything else on the tab.
+  let staleBanner = document.getElementById('pmStaleBanner');
+  if (pm.stale) {
+    if (!staleBanner && content) {
+      staleBanner = document.createElement('div');
+      staleBanner.id = 'pmStaleBanner';
+      staleBanner.style.cssText = 'margin:0 0 12px;padding:8px 12px;border:1px solid var(--amber);border-radius:6px;color:var(--amber);font-size:11px;';
+      content.prepend(staleBanner);
+    }
+    if (staleBanner) staleBanner.textContent = 'Not refreshed on the latest run — these quotes are from '
+      + new Date(pm.last_updated).toISOString().replace('T', ' ').slice(0, 16) + ' UTC.';
+  } else if (staleBanner) {
+    staleBanner.remove();
+  }
 
   if (!pmSelectedGpu || !gpus.some(g => g.gpu === pmSelectedGpu)) {
     pmSelectedGpu = (gpus.find(g => (g.curve || []).length) || gpus[0]).gpu;
@@ -5790,7 +6084,7 @@ function miAddCsvButtons(){
 }
 
 // ── shareable links: #tab=…&gpu=… ──
-const MI_SHARE_SELECTS={trendGpuSelect:'trend',providerGpuSelect:'pgpu',miAvailGpu:'agpu',miSupplySeries:'series'};
+const MI_SHARE_SELECTS={trendGpuSelect:'trend',providerGpuSelect:'pgpu',miAvailGpu:'agpu',miSupplySeries:'series',rdGpu:'rgpu'};
 function miSaveHash(){
   const tab=document.querySelector('.nav-item.active')?.dataset.tab||'overview';
   const p=new URLSearchParams();p.set('tab',tab);
@@ -5818,9 +6112,84 @@ function miInitShare(){
   window.addEventListener('hashchange',()=>{const t=new URLSearchParams(location.hash.slice(1)).get('tab');if(t&&t!==document.querySelector('.nav-item.active')?.dataset.tab)miRestoreHash();});
 }
 
+
+// ── Reserved price dynamics (DATA.reserved_dynamics) ──
+function renderReservedDynamics(){
+  const rd=DATA.reserved_dynamics;
+  if(!rd){['rdSummary','rdChanges','rdShort','rdContracts'].forEach(id=>miEmptyTable(id,'Reserved price dynamics.'));miNoChart('rdChartDisc','Discount history.');miNoChart('rdChartBacklog','Contracted backlog.');return;}
+  const terms=(rd.term_curve_terms||[]).slice(1);
+  const sum=rd.summary||{};
+  const gpus=Object.keys(sum).filter(g=>terms.some(t=>sum[g][t.key]));
+  const cell=x=>{if(!x)return '<span class="dim">—</span>';
+    const ch=x.discount_change_pp_12w;
+    const arrow=ch==null?'':ch>=2?`<span class="c-green" title="Deeper discount than 12 weeks ago: committing got relatively cheaper">▼ ${Math.abs(ch).toFixed(0)}pp deeper</span>`:ch<=-2?`<span class="c-red" title="Shallower discount than 12 weeks ago: committing got relatively dearer (tightening)">▲ ${Math.abs(ch).toFixed(0)}pp shallower</span>`:'<span class="dim">≈ flat</span>';
+    const big=ch!=null&&Math.abs(ch)>40?' <span class="c-amber" title="A move this large over 12 weeks usually means the provider mix behind the median changed, not the market. Check before relying on it.">check</span>':'';
+    return `<b${x.thin?' style="opacity:.55"':''}>${x.discount_pct>0?'−':'+'}${Math.abs(x.discount_pct).toFixed(0)}%</b> <span class="dim">${miUsd(x.price)}</span><span class="sub">${arrow}${big}${arrow?' · ':''}${x.n||'?'} prov${x.thin?' · thin':''}</span>`;};
+  miSetTable('rdSummary',[
+    {h:'GPU',f:g=>`<span class="gpu-name">${miEsc(g)}</span><span class="sub">week of ${miDate(sum[g].week)}</span>`},
+    ...terms.map(t=>({h:t.label,r:1,f:g=>cell(sum[g][t.key])})),
+    {h:'Repricings 90d',r:1,f:g=>sum[g].n_changes_90d??'—'},
+  ],gpus,'No term data yet.');
+  miSet('rdSummaryNote','<b style="color:var(--text-2)">How to read:</b> the % is how far below the on-demand median each contract length trades. <span class="c-red">Shallower</span> than 12 weeks ago = providers give less to win a commitment (tightening); <span class="c-green">deeper</span> = commitments got relatively cheaper (loosening). Trends are shown only when both weeks have 3+ providers; faded cells are thin. '+miEsc(rd.term_curve_note||''));
+  const sel=document.getElementById('rdGpu');
+  if(sel){const ex=sel.value;const ids=Object.keys(rd.term_curve||{});sel.innerHTML=ids.map(g=>`<option value="${miEsc(g)}"${g===ex?' selected':''}>${miEsc(g)}</option>`).join('');if(!ex&&ids.includes('H100-SXM'))sel.value='H100-SXM';}
+  renderRdChart();
+  const kindLbl={committed:'COMMITTED',short_term:'SHORT-TERM'};
+  miSetTable('rdChanges',[
+    {h:'Date',f:c=>`<span class="ev-date">${miDate(c.date)}</span>`},
+    {h:'Provider',f:c=>`<span class="gpu-name">${miEsc(c.provider)}</span><span class="sub">${kindLbl[c.kind]||''}</span>`},
+    {h:'GPU',f:c=>miEsc(c.gpu)+`<span class="sub">${miEsc(c.term)}</span>`},
+    {h:'Move',r:1,f:c=>`<span class="${c.change_pct>0?'c-red':'c-green'}">${c.change_pct>0?'+':''}${c.change_pct.toFixed(1)}%</span><span class="sub">${miUsd(c.from)} → ${miUsd(c.to)}</span>`},
+  ],rd.rate_changes||[],'No reserved rate has changed in the period we have recorded.');
+  const st=Object.entries(rd.short_term||{}).map(([k,pts])=>{const [prov,product,gpu,term]=k.split('|');const last=pts[pts.length-1]||{};
+    const first=pts.find(p=>p.date>=(()=>{const t=new Date(last.date);t.setUTCDate(t.getUTCDate()-30);return t.toISOString().slice(0,10);})())||pts[0];
+    return {prov,product,gpu,term,last,ch:first&&first.rate&&pts.length>1?(last.rate/first.rate-1)*100:null,n:pts.length,since:pts[0]&&pts[0].date};});
+  const ord=g=>{const i=['B300','GB200','B200','H200','H100-SXM','MI300X'].indexOf(g);return i<0?9:i;};
+  miSetTable('rdShort',[
+    {h:'GPU',f:r=>`<span class="gpu-name">${miEsc(r.gpu)}</span>`},
+    {w:1,h:'Product',f:r=>`${miEsc(r.prov)} · ${miEsc(r.product)}<span class="sub">${miEsc(r.term)}</span>`},
+    {h:'Rate',r:1,f:r=>miUsd(r.last.rate)+'/hr'},
+    {h:'vs own on-demand',r:1,f:r=>{const d=r.last.discount_pct;if(d==null)return '<span class="dim">—</span>';const v=Math.round(d);return v===0?'same':`${v>0?'−':'+'}${Math.abs(v)}%`+`<span class="sub">${v>0?'cheaper':'dearer'} than on-demand</span>`;}},
+    {h:'30d',r:1,f:r=>r.ch==null?`<span class="dim">since ${miDate(r.since)}</span>`:miPct(r.ch)},
+  ],st.sort((a,b)=>ord(a.gpu)-ord(b.gpu)||a.last.rate-b.last.rate),'No short-term rates recorded.');
+  miSet('rdShortNote','AWS reprices Capacity Blocks with supply and demand, which makes them the most liquid public reserved price. History accumulates daily from the first run; the 30-day column fills in as it builds.');
+  const bl=rd.backlog||{}, cos=Object.keys(bl).filter(k=>(bl[k].points||[]).length);
+  if(cos.length){
+    const dates=[...new Set(cos.flatMap(k=>bl[k].points.map(p=>p.date)))].sort();
+    miChart('rdBacklog','rdChartBacklog',{type:'line',data:{labels:dates,datasets:cos.map((k,i)=>{const m=Object.fromEntries(bl[k].points.map(p=>[p.date,p.value_bn]));
+      return {label:`${bl[k].name} (${k})`,data:dates.map(d=>m[d]??null),borderColor:MI_CO_COLORS[i],backgroundColor:MI_CO_COLORS[i],spanGaps:true,tension:.2,pointRadius:3,yAxisID:k==='CRWV'?'y1':'y'};})},
+      options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top',labels:{font:{size:10}}},tooltip:{callbacks:{label:c=>c.raw!=null?`${c.dataset.label}: $${c.raw.toFixed(1)}bn`:''}}},
+        scales:{x:MI_TIME_SCALE(),y:miAxisY('$bn (Oracle, Microsoft)'),y1:{position:'right',grid:{display:false},title:{display:true,text:'$bn (CoreWeave)'}}}}});
+    miSet('rdBacklogNote',cos.map(k=>{const p=bl[k].points[bl[k].points.length-1];return `<b style="color:var(--text-1)">${miEsc(bl[k].name)}</b> ${miUsd(p.value_bn,1)}bn at ${miDate(p.date)}${p.yoy_pct!=null?` (${p.yoy_pct>0?'+':''}${Math.round(p.yoy_pct)}% YoY)`:''} — ${miEsc(bl[k].scope)}`;}).join('<br>')+'<br>Remaining performance obligations from 10-Q/10-K XBRL. CoreWeave is almost pure GPU capacity, so its backlog is the cleanest public read on signed reserved demand.');
+  } else miNoChart('rdChartBacklog','Contracted backlog from SEC filings.');
+  const ct=rd.contracts||{};
+  miSetTable('rdContracts',[
+    {h:'Date',f:c=>`<span class="ev-date">${miDate(c.date)}</span>`},
+    {w:1,h:'Deal',f:c=>`<span class="gpu-name">${miEsc(c.buyer)} ← ${miEsc(c.seller)}</span><span class="sub">${[c.gpu_type,c.gpus?Number(c.gpus).toLocaleString()+' GPUs':null,c.mw?c.mw+' MW':null].filter(Boolean).map(miEsc).join(' · ')}</span>`},
+    {h:'Value',r:1,f:c=>(c.value_usd_bn!=null?miUsd(c.value_usd_bn,1)+'bn':'—')+(c.term_years?`<span class="sub">${c.term_years} yr${c.term_years===1?'':'s'}</span>`:'')},
+    {h:'Implied',r:1,f:c=>c.implied_usd_per_gpu_hr!=null?`<b>${miUsd(c.implied_usd_per_gpu_hr)}</b>/hr<span class="sub" title="${miEsc(c.implied_basis||'')}">estimate</span>`:'<span class="dim">—</span>'},
+    {w:1,h:'Source',f:c=>miLink(c.url,c.source)+`<span class="sub">${miEsc(c.confidence||'')}</span>`},
+  ],ct.items||[],'No contracts recorded yet.');
+  miSet('rdContractsNote','Implied prices bundle everything the contract includes (networking, storage, power, services), so they are an upper bound on the GPU itself.'+(ct.method?`<details style="margin-top:6px;"><summary style="cursor:pointer;color:var(--text-2);">How these are sourced and calculated</summary><div style="margin-top:6px;">${miEsc(ct.method)}</div></details>`:''));
+}
+function renderRdChart(){
+  const rd=DATA.reserved_dynamics;if(!rd)return;
+  const g=document.getElementById('rdGpu')?.value, rows=(rd.term_curve||{})[g]||[];
+  const terms=(rd.term_curve_terms||[]).slice(1);
+  if(!rows.length){miSet('rdChartNote','No weekly data for this GPU.');return;}
+  const cols=[C.lime,C.teal,C.purple,C.amber,C.orange,C.cyan];
+  const ds=terms.filter(t=>rows.some(r=>r[t.key+'_disc']!=null)).map((t,i)=>({label:t.label,data:rows.map(r=>(r[t.key+'_n']||0)>=3&&(r.on_demand_n||0)>=3?r[t.key+'_disc']:null),_n:rows.map(r=>r[t.key+'_n']),borderColor:cols[i%cols.length],backgroundColor:cols[i%cols.length],spanGaps:true,tension:.25,pointRadius:2,borderWidth:1.6}));
+  const ours=(rd.discounts||{})[g]||{};
+  miChart('rdDisc','rdChartDisc',{type:'line',data:{labels:rows.map(r=>r.week),datasets:ds},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'top',labels:{font:{size:10}}},tooltip:{callbacks:{label:c=>c.raw==null?null:`${c.dataset.label}: ${c.raw.toFixed(1)}% below on-demand · ${c.dataset._n[c.dataIndex]} providers`}}},
+      scales:{x:MI_TIME_SCALE(),y:{...miAxisY('% below on-demand median'),ticks:{callback:v=>v+'%'}}}}});
+  const oursTxt=Object.entries(ours).map(([k,pts])=>{const [p,t]=k.split('|');const l=pts[pts.length-1];return l&&l.discount_pct!=null?`${miEsc(p)} ${miEsc(t)} ${l.discount_pct.toFixed(0)}%`:null;}).filter(Boolean);
+  miSet('rdChartNote',`Weekly market discount for ${miEsc(g)} by contract length; weeks with fewer than 3 providers on either side are left out. A rising line means reserved is getting cheaper relative to on-demand.`+(oursTxt.length?`<br><b style="color:var(--text-2)">Published provider discounts today:</b> ${oursTxt.join(' · ')}`:''));
+}
 function renderMarketIntel(){
   const steps=[renderSignals,renderAlerts,renderUpcoming,renderAnomalies,renderAvailability,renderSupplySignals,renderCapex,renderPower,
-    renderChina,renderEquities,renderEvents,renderBenchmarks,renderSecondary,miApplyTrendMarkers];
+    renderChina,renderEquities,renderEvents,renderBenchmarks,renderSecondary,renderReservedDynamics,miApplyTrendMarkers];
   steps.forEach(fn=>{try{fn();}catch(e){console.error('[market-intel]',fn.name,e);}});
   try{miTagLegacyCards();miStampFreshness();miAddCsvButtons();miInitShare();miRestoreHash();}catch(e){console.error('[market-intel] console',e);}
 }
