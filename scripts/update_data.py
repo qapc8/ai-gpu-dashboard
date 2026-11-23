@@ -3184,7 +3184,23 @@ _STOCK_GUARD = (
     "'X% below the 52-week high' is pct_below_52w_high, 'X% above the 52-week low' is "
     "pct_above_52w_low, and year-to-date is ytd_pct_vs_prior_year_end_close. Never "
     "compute or combine these yourself."
+    " Where a value in the data is null or missing, write 'n/a' -- never null, None or NaN."
 )
+
+# The snapshot carries JSON nulls for figures that are deliberately unmeasured
+# (e.g. volatility for a GPU with no clean provider basket). The model copied
+# them verbatim into tables, so the page showed "null" cells. Normalise any
+# that still slip through, in table cells and as bare words in prose.
+_NULL_CELL = _re.compile(r"(?<=\|)[ \t]*(?:null|None|NaN|undefined)[ \t]*(?=\|)")
+# "None" is ordinary English ("None of the providers..."), so outside a table
+# cell only the programming spellings are replaced.
+_NULL_WORD = _re.compile(r"(?<![\w.$-])(?:null|NaN|undefined)(?![\w-]|\.\w)")
+
+
+def _scrub_nulls(text):
+    if not isinstance(text, str):
+        return text
+    return _NULL_WORD.sub("n/a", _NULL_CELL.sub(" n/a ", text))
 
 _TICKER_ALIASES = {"NVDA": ("NVDA", "NVIDIA", "Nvidia"), "AMD": ("AMD",)}
 
@@ -3242,13 +3258,14 @@ def _generate_checked(config, system, user, figures, label):
     than publishing a misquote.
     """
     content = _call_llm(config, system + _STOCK_GUARD, user)
+    content = _scrub_nulls(content)
     problems = _check_stock_claims(content, figures)
     if not problems:
         return content
     log_info(f"AI/{label}: stock figures misquoted ({'; '.join(problems[:3])}); regenerating")
     retry_user = (user + "\n\nA previous draft misquoted stock figures: " + "; ".join(problems)
                   + ". Use the stock_figures values exactly as labelled.")
-    content = _call_llm(config, system + _STOCK_GUARD, retry_user)
+    content = _scrub_nulls(_call_llm(config, system + _STOCK_GUARD, retry_user))
     problems = _check_stock_claims(content, figures)
     if problems:
         raise RuntimeError("stock figures still misquoted after retry: " + "; ".join(problems[:3]))
