@@ -552,7 +552,7 @@
    "date": "2026-11-27",
    "date_confirmed": true,
    "type": "policy",
-   "title": "China's suspension of its gallium/germanium/antimony export ban to the US is due to expire (no extension verified)",
+   "title": "China's suspension of its gallium/germanium/antimony export ban to the US is due to expire (not mentioned in the Nov 9 truce extension; no MOFCOM extension found as of 2026-11-23)",
    "tickers": [
     "NVDA",
     "AMD",
@@ -560,7 +560,7 @@
    ],
    "source": "Fastmarkets",
    "url": "https://www.fastmarkets.com/insights/china-suspends-export-prohibition-on-superhard-materials-us/",
-   "as_of": "2026-11-12"
+   "as_of": "2026-11-23"
   },
   {
    "id": "conf-reinvent-2026",

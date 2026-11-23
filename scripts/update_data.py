@@ -12,14 +12,16 @@ Dependencies:
 """
 
 import json
+import math
 import os
 import sys
 import time
 import urllib.parse
+import urllib.request
 from datetime import datetime, timedelta, timezone
 from xml.etree import ElementTree
 
-from extra_providers import PROVIDERS as EXTRA_PROVIDERS
+from extra_providers import PROVIDERS as EXTRA_PROVIDERS, html_table_by_header
 import availability as _availability
 import benchmarks as _benchmarks
 import capex as _capex
@@ -41,7 +43,7 @@ from term_structure import (
 )
 from inference_market import refresh_inference_market
 from model_fit import build_model_fit
-from price_history import METHODOLOGY_CHANGES, build_price_history
+from price_history import METHODOLOGY_CHANGES, SCRAPER_FAULTS, _fault_end, build_price_history
 from sustainability import build_gpu_carbon
 from prediction_markets import (
     build_prediction_markets,
@@ -596,18 +598,20 @@ def fetch_coreweave_pricing():
 def fetch_together_pricing():
     """Scrape Together.ai GPU-cluster on-demand prices.
 
-    The pricing page carries three tables that all mention `HGX <gpu>`:
+    The pricing page carries tables that all mention `HGX <gpu>`:
 
       1. Dedicated Inference -- managed single-tenant endpoints (H100 $5.49,
-         B200 $8.99). A different product; not a raw GPU rental.
-      2. GPU Clusters, "Hardware | Hourly" (H100 $3.99, H200 $5.99, B200 $8.19).
-      3. GPU Clusters, "Hardware | ON-Demand | Reserved | 7-30 days | ..."
-         -- same on-demand column plus commitment tiers.
+         B200 $9.29). A different product; not a raw GPU rental. No header row.
+      2. GPU Clusters, "Hardware | Preemptible | ON-Demand | Reserved" over a
+         second header row "Pay as you go | Pay as you go | 3-30 days | ...".
+      3. A one-row B200 promo table, no header.
 
     A plain `HGX <gpu> ... $x.xx` regex matches table 1 first, which is how the
-    published H100 rate drifted to $5.49 -- 38% above Together's actual
-    on-demand cluster price. Parse tables instead and keep only the GPU-cluster
-    ones, identified by their header row.
+    published H100 rate drifted to $5.49. Later "first dollar in the row" was
+    used, which silently became the Preemptible rate ($1.99 vs $3.99 on-demand)
+    once Together added that column ahead of On-Demand. So read the rate from
+    the column whose header says on-demand, resolved through rowspan/colspan,
+    and skip any table that has no such column.
     """
     log_info("Fetching Together.ai HGX cluster pricing...")
     url = "https://www.together.ai/pricing"
@@ -615,57 +619,48 @@ def fetch_together_pricing():
     if status != 200:
         raise RuntimeError(f"Together returned HTTP {status}")
 
-    def cells(row_html):
-        raw = _re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", row_html, _re.IGNORECASE | _re.DOTALL)
-        return [_re.sub(r"\s+", " ", _html.unescape(_re.sub(r"<[^>]+>", " ", c))).strip() for c in raw]
-
     def preceding_text(upto, window=2000):
         pre = body[max(0, upto - window):upto]
         pre = _re.sub(r"<script.*?</script>", " ", pre, flags=_re.IGNORECASE | _re.DOTALL)
         pre = _re.sub(r"<style.*?</style>", " ", pre, flags=_re.IGNORECASE | _re.DOTALL)
         return _re.sub(r"\s+", " ", _html.unescape(_re.sub(r"<[^>]+>", " ", pre))).lower()
 
-    anchors = [("B200", "HGX B200"), ("H200", "HGX H200"), ("H100-SXM", "HGX H100")]
+    anchors = [("B300", "HGX B300"), ("B200", "HGX B200"), ("H200", "HGX H200"),
+               ("H100-SXM", "HGX H100")]
     result = {}
     for match in _re.finditer(r"<table[^>]*>.*?</table>", body, _re.IGNORECASE | _re.DOTALL):
         table = match.group(0)
         if "HGX" not in table:
             continue
-        # Keep only tables sitting under the "GPU Clusters" heading. The tables
-        # carry no usable header row (some have none; the tiered one splits its
-        # header across two rows), so the enclosing section heading is the only
-        # reliable discriminator.
+        # Belt and braces: the table must also sit under "GPU Clusters", not
+        # "Dedicated Inference", in case the latter ever grows a header row.
         pre = preceding_text(match.start())
         cluster_at = pre.rfind("gpu cluster")
         dedicated_at = pre.rfind("dedicated inference")
         if cluster_at < 0 or cluster_at < dedicated_at:
             continue
-        rows = _re.findall(r"<tr[^>]*>(.*?)</tr>", table, _re.IGNORECASE | _re.DOTALL)
+        labels, rows = html_table_by_header(table)
+        od_col = next((l for l in labels
+                       if _re.sub(r"[^a-z]", "", l.split("|")[0].lower()) == "ondemand"), None)
+        if od_col is None or not labels:
+            continue
         for row in rows:
-            cs = cells(row)
-            if not cs:
-                continue
-            label = " ".join(cs).replace("\xa0", " ")
-            label = _re.sub(r"\s+", " ", label)
+            name = row.get(labels[0], "")
             for gpu_id, anchor in anchors:
-                if anchor.lower() not in label.lower():
+                if anchor.lower() not in name.lower():
                     continue
-                # First dollar amount in the row is the on-demand rate; later
-                # columns are commitment tiers.
-                pm = _re.search(r"\$(\d+\.\d{2})", label)
+                # The cell also holds a live "Checking..." availability badge;
+                # the rate is the dollar amount in it ("—" = not offered).
+                pm = _re.search(r"\$(\d+\.\d{2})", row.get(od_col, ""))
                 if not pm:
-                    continue
+                    break
                 price = float(pm.group(1))
-                if not (0.05 <= price <= 500):
-                    continue
-                # Same rate appears in both cluster tables; lowest wins if they
-                # ever disagree.
-                if gpu_id not in result or price < result[gpu_id]:
+                if 0.05 <= price <= 500:
                     result[gpu_id] = price
                 break
 
     if not result:
-        raise RuntimeError("Together: no GPU-cluster prices parsed from HTML")
+        raise RuntimeError("Together: no GPU-cluster on-demand prices parsed from HTML")
     log_ok("Together", f"{len(result)} GPU types")
     return result
 
@@ -1041,7 +1036,11 @@ def get_hardcoded_fallback_prices():
                 "A100-80GB": {"price_per_gpu_hr": 5.069},  # a2-ultragpu-1g
                 "A100-40GB": {"price_per_gpu_hr": 3.673},  # a2-highgpu-1g
                 "L4": {"price_per_gpu_hr": 1.000},         # g2-standard
-                "T4": {"price_per_gpu_hr": 0.350},
+                # No T4. $0.35 was the bare GPU attach price for an N1 VM, while
+                # every other GCP figure is a whole machine / GPU count, and the
+                # accelerator-optimized page the scraper reads has no T4 row --
+                # so the constant could never be refreshed and only ever showed
+                # up stale. The orphan prune below withdraws the old entry.
             },
         },
         # Azure Retail Prices API, eastus. Azure does not publish retail pricing
@@ -1363,6 +1362,8 @@ def merge_live_pricing_into_data(
             log_info(f"{provider_key}: withdrawn from fallback table, removed {', '.join(sorted(orphaned))}")
 
     _mark_stale_prices(providers, live_sources, now)
+    data["providers"] = providers
+    _mark_scraper_faults(data)
 
     # Every provider carries a last_updated so the Data tab can report its
     # freshness. Fallback-only providers (e.g. FluidStack) had none at all.
@@ -1455,6 +1456,62 @@ def _mark_stale_prices(providers, live_sources, now):
         log_info(f"Withdrawn after {STALE_DROP_DAYS} days unconfirmed: {', '.join(sorted(dropped))}")
 
 
+def scraper_fault_state(data, since=None):
+    """(open_pairs, closing_pairs) of (provider, gpu) under price_history.SCRAPER_FAULTS.
+
+    Judged on the recorded daily history plus this run's provider prices, so
+    a fix landing today closes its fault today (before build_price_history has
+    recorded the day). `open_pairs` are listings whose current price is still
+    the faulty reading; `closing_pairs` are those whose fault closed after
+    `since` (the previous run's date) -- their move this run is the reader
+    being repaired, not the market.
+    """
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    days = dict(((data.get("price_history") or {}).get("days") or {}))
+    snap = {}
+    for prov_key, prov in (data.get("providers") or {}).items():
+        for gpu_id, info in (prov.get("gpus") or {}).items():
+            if info.get("price_per_gpu_hr") and info.get("source") != "hardcoded_fallback":
+                snap.setdefault(prov_key, {})[gpu_id] = info["price_per_gpu_hr"]
+    days[today] = snap
+    open_pairs, closing_pairs = set(), set()
+    for fault in SCRAPER_FAULTS:
+        if fault["from"] > today:
+            continue
+        end = _fault_end(days, fault)
+        pairs = {(fault["provider"], g) for g in fault["gpus"]}
+        if not end or end > today:
+            open_pairs |= pairs
+        elif since is None or end > since:
+            closing_pairs |= pairs
+    return open_pairs, closing_pairs
+
+
+def _mark_scraper_faults(data):
+    """Flag listings inside an open scraper fault stale, so every derived
+    figure (matrix, spot, TCO, term_structure, reserved_market) drops them the
+    way it already drops stale prices. Without this Together's misread $1.99
+    H100 fed the medians for as long as the fault stayed open."""
+    open_pairs, _ = scraper_fault_state(data)
+    providers = data.get("providers") or {}
+    for prov_key, gpu_id in sorted(open_pairs):
+        entry = ((providers.get(prov_key) or {}).get("gpus") or {}).get(gpu_id)
+        if entry and entry.get("price_per_gpu_hr"):
+            entry["stale"] = True
+            entry["stale_reason"] = "scraper_fault"
+    # A listing that left the fault drops the reason. Its `stale` flag needs
+    # no undoing: _mark_stale_prices ran just before this and already decided
+    # it from this run's fetch (cleared if re-confirmed, set if not).
+    for prov_key, prov in providers.items():
+        for gpu_id, entry in (prov.get("gpus") or {}).items():
+            if entry.get("stale_reason") == "scraper_fault" and (prov_key, gpu_id) not in open_pairs:
+                entry.pop("stale_reason", None)
+    if open_pairs:
+        log_info(f"Scraper fault open, excluded from derived figures: "
+                 f"{', '.join(f'{p}/{g}' for p, g in sorted(open_pairs))}")
+    return data
+
+
 def _usable(entry):
     """A price that may feed derived figures: present, positive, not flagged."""
     price = entry.get("price_per_gpu_hr")
@@ -1511,15 +1568,6 @@ def recalculate_matrix(data):
         flops_per_dollar = round(fp16 / median_price, 1) if median_price > 0 and fp16 else 0
         vram_per_dollar = round(vram / median_price, 1) if median_price > 0 and vram else 0
 
-        hist = data.get("historical", {}).get(gpu_id, {})
-        periods = sorted(hist.keys())
-        monthly_change = 0
-        if len(periods) >= 2:
-            prev_avg = hist[periods[-2]].get("avg")
-            cur_avg = hist[periods[-1]].get("avg")
-            if prev_avg and cur_avg:
-                monthly_change = round((cur_avg - prev_avg) / prev_avg * 100, 1)
-
         matrix.append({
             "gpu_id": gpu_id,
             "name": spec.get("name", gpu_id),
@@ -1540,7 +1588,9 @@ def recalculate_matrix(data):
             "num_providers": len(prices_sorted),
             "stale_excluded": stale_counts.get(gpu_id, 0),
             "price_spread_pct": spread,
-            "monthly_change_pct": monthly_change,
+            # Filled by apply_matrix_monthly_change once this run's
+            # `historical` has been rebuilt.
+            "monthly_change_pct": None,
             "flops_per_dollar": flops_per_dollar,
             "vram_per_dollar": vram_per_dollar,
             "value_basis": "median price across providers",
@@ -1549,6 +1599,26 @@ def recalculate_matrix(data):
     matrix.sort(key=lambda x: x["flops_per_dollar"], reverse=True)
     data["matrix"] = matrix
     log_ok("Matrix", f"{len(matrix)} GPUs recalculated from {len(providers)} providers")
+    return data
+
+
+def apply_matrix_monthly_change(data):
+    """Set matrix[].monthly_change_pct from this run's rebuilt `historical`.
+
+    Kept apart from recalculate_matrix because the matrix is built before
+    price_history.rebuild_historical runs; computing it there read the
+    previous run's monthly series. Call after build_price_history.
+    """
+    historical = data.get("historical") or {}
+    for row in data.get("matrix") or []:
+        hist = historical.get(row.get("gpu_id")) or {}
+        periods = sorted(hist.keys())
+        # price_history computes change_pct over the providers that priced the
+        # GPU in both months (no provider-mix effect, no methodology breaks).
+        # A ratio of the two `avg`s moved whenever a provider joined or left,
+        # so it is not used as a fallback: null means "not comparable".
+        latest = (hist[periods[-1]] or {}) if periods else {}
+        row["monthly_change_pct"] = latest.get("change_pct")
     return data
 
 
@@ -1669,6 +1739,21 @@ def update_spot(data):
         log_info(f"Spot: dropped {', '.join(dropped)} (no provider lists them)")
 
     data["spot"] = spot
+    # Written here so it cannot drift from the code again: the stored text
+    # still described bid/ask as a modelled spread months after those fields
+    # were retired.
+    data.setdefault("_meta", {}).setdefault("sections", {})["spot"] = {
+        "basis": "derived",
+        "detail": (
+            "Aggregated from this run's usable provider list prices (stale and "
+            "out-of-date fallback prices excluded). on_demand_low/avg/high span "
+            "the providers listing each GPU. Spot and 1-/3-year committed bands "
+            "appear only where a provider publishes that rate, and each saving "
+            "is measured against on-demand over the SAME providers "
+            "(*_vs_ondemand). No bid/ask: nothing trades against a list price; "
+            "traded quotes are in prediction_markets."
+        ),
+    }
     log_ok("Spot", f"{len(gpu_prices)} GPUs refreshed")
     return data
 
@@ -1790,11 +1875,18 @@ def refresh_lead_times(data):
     if not gpu_lead or not specs:
         return data
 
+    def has_weeks(gid):
+        w = (gpu_lead.get(gid) or {}).get("weeks")
+        return isinstance(w, (int, float)) and not isinstance(w, bool)
+
     def newest_flagship(vendor=None):
+        # Only parts with a numeric lead time qualify. Announced parts (Rubin,
+        # MI355X) sit in specs and the lead-time table with weeks: null, and
+        # being newest they won the pick, so the flagship figure went blank.
         candidates = [
             gid for gid, spec in specs.items()
             if spec.get("tier") == "flagship"
-            and gid in gpu_lead
+            and has_weeks(gid)
             and (vendor is None or spec.get("vendor") == vendor)
         ]
         if not candidates:
@@ -1805,24 +1897,161 @@ def refresh_lead_times(data):
 
     flagship = newest_flagship()
     if flagship:
-        weeks = gpu_lead[flagship].get("weeks")
-        if weeks is not None:
-            series = indicators.setdefault("flagship_lead_time_weeks", {})
-            series[datetime.now(timezone.utc).strftime("%Y-%m")] = weeks
-            log_ok("Lead Times", f"flagship = {flagship} @ {weeks} wk")
+        src = gpu_lead[flagship]
+        weeks = src["weeks"]
+        month = datetime.now(timezone.utc).strftime("%Y-%m")
+        series = indicators.setdefault("flagship_lead_time_weeks", {})
+        series[month] = weeks
+        # The series is {month: weeks} and the page plots every key, so the
+        # provenance lives beside it, not in it. Carried from the per-GPU
+        # entry so an editorial estimate is not presented as measured.
+        indicators["flagship_lead_time"] = {
+            "gpu": flagship,
+            "weeks": weeks,
+            "month": month,
+            "status": src.get("status"),
+            "basis": src.get("basis") or "unspecified",
+            "as_of": src.get("as_of"),
+            "source": src.get("source"),
+        }
+        log_ok("Lead Times", f"flagship = {flagship} @ {weeks} wk ({src.get('basis') or 'basis unspecified'})")
+    else:
+        indicators.pop("flagship_lead_time", None)
 
     for vendor_key, vendor in (data.get("supplychain", {}).get("vendors") or {}).items():
         gid = newest_flagship(vendor_key)
         if not gid:
             continue
-        weeks = gpu_lead[gid].get("weeks")
-        if weeks is None:
-            continue
+        weeks = gpu_lead[gid]["weeks"]
         vendor["lead_time_weeks"] = weeks
+        vendor["lead_time_gpu"] = gid
+        vendor["lead_time_basis"] = gpu_lead[gid].get("basis")
+        vendor["lead_time_as_of"] = gpu_lead[gid].get("as_of")
         trend = vendor.get("lead_time_trend")
         if isinstance(trend, list) and trend:
             trend[-1] = weeks
 
+    return data
+
+
+CAPEX_GUIDANCE_JSON = os.path.join(SCRIPT_DIR, "curated", "capex_guidance.json")
+
+# "<year> ... capex/capital expenditures ... $X[-$Y] B/billion" in a guidance
+# quote. The year must not be a quarter label ("Q3 2026"), the gap must name
+# capex, and the first dollar figure after it is the one taken, so "prior
+# $130-145B" or "Q2 FY27 ... over $50B" are never read as an annual figure.
+_GUIDANCE_RE = _re.compile(
+    r"(?<!Q\d )(?<![\w-])(?:calendar-)?(20\d\d)\b([^$]{0,140}?)"
+    r"\$(\d+(?:\.\d+)?)\s*(?:B|billion)?"
+    r"(?:\s*(?:-|–|to)\s*\$?(\d+(?:\.\d+)?))?\s*(?:B\b|billion)",
+    _re.IGNORECASE)
+
+
+def _parse_capex_guidance(text):
+    """{year: (low_bn, high_bn)} for each calendar year a guidance quote prices."""
+    out = {}
+    for m in _GUIDANCE_RE.finditer(text or ""):
+        if not _re.search(r"cap(?:ex|ital expenditure)", m.group(2), _re.IGNORECASE):
+            continue
+        lo = float(m.group(3))
+        hi = float(m.group(4)) if m.group(4) else lo
+        if hi < lo:
+            continue
+        out.setdefault(m.group(1), (lo, hi))  # first statement for a year wins
+    return out
+
+
+def refresh_market_indicators(data):
+    """Derive indicators.ai_capex_bn; label indicators.gpu_market_size_bn honestly.
+
+    Both used to be static seeds nobody wrote, while _meta claimed they were
+    "derived from reported company revenue and guidance". ai_capex_bn is now
+    the sum of the latest management capex guidance per company for each
+    calendar year, read from the curated, cited guidance file. There is no
+    measured source for GPU market size, so it is kept as what it is -- an
+    editorial estimate, dated -- rather than dressed up as derived.
+    """
+    indicators = data.setdefault("indicators", {})
+
+    capex = None
+    try:
+        with open(CAPEX_GUIDANCE_JSON) as f:
+            guidance = json.load(f)
+        by_year, used, excluded = {}, {}, {}
+        for tk, entry in (guidance.get("guidance") or {}).items():
+            years = _parse_capex_guidance(entry.get("text"))
+            if not years:
+                # e.g. Oracle guides by fiscal year (Jun-May); adding it to a
+                # calendar-year sum would mix bases.
+                excluded[tk] = "no calendar-year capex figure in the guidance quote"
+                continue
+            used[tk] = entry.get("as_of")
+            for year, (lo, hi) in years.items():
+                row = by_year.setdefault(year, {"companies": {}})
+                row["companies"][tk] = {"low_bn": lo, "high_bn": hi, "as_of": entry.get("as_of")}
+        for year, row in by_year.items():
+            cs = row["companies"].values()
+            row["low_bn"] = round(sum(c["low_bn"] for c in cs), 1)
+            row["high_bn"] = round(sum(c["high_bn"] for c in cs), 1)
+            # Range guidance counts at its midpoint.
+            row["total_bn"] = round((row["low_bn"] + row["high_bn"]) / 2, 1)
+        if by_year:
+            capex = {
+                "basis": "derived",
+                "by_year": dict(sorted(by_year.items())),
+                "companies": sorted(used),
+                "excluded": excluded,
+                # Newest and oldest guidance date in the sum: one stale quote
+                # (a company not yet re-verified after its call) shows here.
+                "as_of": max(d for d in used.values() if d) if any(used.values()) else None,
+                "oldest_as_of": min(d for d in used.values() if d) if any(used.values()) else None,
+                "verified_on": guidance.get("verified_on"),
+                "source": "scripts/curated/capex_guidance.json",
+                "method": ("Sum of each company's latest stated capex guidance for the "
+                           "calendar year (range midpoint; low/high also summed). Only "
+                           "companies whose quote names that year are included, so "
+                           "years are not like-for-like across company sets. Company "
+                           "definitions differ (e.g. Meta includes finance-lease "
+                           "principal)."),
+            }
+    except Exception as exc:
+        log_fail("AI Capex Guidance", str(exc))
+    if capex:
+        indicators["ai_capex_bn"] = capex
+        log_ok("AI Capex Guidance", ", ".join(
+            f"{y}: ${r['total_bn']:.0f}B ({len(r['companies'])} cos)" for y, r in capex["by_year"].items()))
+    elif not (indicators.get("ai_capex_bn") or {}).get("by_year"):
+        # Never derived: drop the unsourced seed rather than publish it.
+        indicators.pop("ai_capex_bn", None)
+
+    size = indicators.get("gpu_market_size_bn")
+    if isinstance(size, dict) and size:
+        values = size.get("values") if "values" in size else size
+        indicators["gpu_market_size_bn"] = {
+            "values": values,
+            "basis": "editorial_estimate",
+            # Last set by hand in e3bb264 ("rebased on reported revenue over
+            # share"); nothing in the pipeline refreshes it.
+            "as_of": size.get("as_of") or "2026-07-28",
+            "note": ("Editorial estimate, not measured or derived each run: vendor "
+                     "data-center revenue grossed up by estimated share, set by "
+                     "hand. *_est years are projections."),
+        }
+
+    ms = indicators.get("gpu_market_size_bn") or {}
+    cap = indicators.get("ai_capex_bn") or {}
+    detail = "NVDA/AMD prices, 52-week range and YTD (vs the prior year-end close) are live from Yahoo Finance. "
+    if cap.get("by_year"):
+        detail += (f"AI capex (ai_capex_bn) is derived each run as the sum of the latest "
+                   f"management capex guidance for {', '.join(cap['companies'])} "
+                   f"(guidance as of {cap.get('as_of')}; curated with citations). ")
+    if ms:
+        detail += (f"GPU market size (gpu_market_size_bn) is an editorial estimate, "
+                   f"last set {ms.get('as_of')}, not refreshed by the pipeline. ")
+    detail += "Lead times are curated."
+    data.setdefault("_meta", {}).setdefault("sections", {})["indicators"] = {
+        "basis": "mixed", "detail": detail,
+    }
     return data
 
 
@@ -1841,7 +2070,13 @@ def refresh_summary(data):
     indicators = data.get("indicators") or {}
 
     summary["timestamp"] = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    summary["total_gpus_tracked"] = len(specs)
+    # "Tracked" = has at least one usable price this run, i.e. a matrix row.
+    # len(specs) counted spec-only GPUs (MI250X with no live listing, and
+    # announced parts like Rubin / MI355X / GB300 whose specs land before any
+    # provider lists them), so the headline said 18 while the matrix had 17.
+    # The spec count is published separately under its own name.
+    summary["total_gpus_tracked"] = len({r.get("gpu_id") for r in matrix if r.get("gpu_id")})
+    summary["total_gpus_specified"] = len(specs)
     summary["total_providers_tracked"] = len(providers)
 
     if matrix:
@@ -1886,8 +2121,10 @@ def refresh_summary(data):
         # listed in each, so a provider joining could read as a "price drop".
         vol = data.get("volatility") or {}
         names = {r["gpu_id"]: r.get("name") for r in matrix}
+        # A GPU without enough clean history has no volatility entry at all
+        # (T4), so nothing here may assume one exists.
         moves = [(g, v["change_30d_pct"]) for g, v in vol.items()
-                 if v.get("change_30d_pct") is not None and g in names]
+                 if isinstance(v, dict) and v.get("change_30d_pct") is not None and g in names]
         moves = [m for m in moves if m[1] < 0]
         if moves:
             g, chg = min(moves, key=lambda m: m[1])
@@ -2058,10 +2295,10 @@ _SECTION_SOURCES = {
     "price_history": ["Price History"],
     "regional": ["Regional Pricing"],
     "volatility": ["Volatility"],
-    "sentiment": ["HuggingFace", "GitHub Compat", "Sentiment Merge"],
+    "sentiment": ["Reddit Sentiment", "HuggingFace", "GitHub Compat", "Sentiment Merge"],
     "news": ["Google News RSS"],
     "stocks": ["Stock/NVDA", "Stock/AMD"],
-    "indicators": ["Stock/NVDA", "Stock/AMD"],
+    "indicators": ["Stock/NVDA", "Stock/AMD", "AI Capex Guidance"],
     "sustainability": ["Sustainability"],
     "summary": ["Summary"],
     "term_structure": ["Term Structure"],
@@ -2084,12 +2321,58 @@ _SECTION_SOURCES = {
 }
 
 
+def _content_as_of(section):
+    """Oldest `as_of` date on the quotes a section is currently showing.
+
+    The section's own top-level `as_of` is the run time, which says nothing
+    about how old its content is: secondary_market refreshed today while every
+    used-GPU quote it showed (and the rent-vs-buy built on them) dated from
+    April 2026 or earlier. Walk the section for nested `as_of` stamps, skipping
+    time series (history / points / series points), which are old by design.
+    Returns "YYYY-MM-DD" or None.
+    """
+    found = []
+
+    def walk(node, depth):
+        if isinstance(node, dict):
+            for k, v in node.items():
+                if k in ("history", "points", "_aws_regional_raw", "_azure_regional_raw"):
+                    continue
+                if k == "as_of" and depth > 0 and isinstance(v, str) and _re.match(r"\d{4}-\d{2}-\d{2}", v):
+                    found.append(v[:10])
+                elif isinstance(v, (dict, list)):
+                    walk(v, depth + 1)
+        elif isinstance(node, list):
+            for v in node:
+                walk(v, depth + 1)
+
+    walk(section, 0)
+    return min(found) if found else None
+
+
 def stamp_freshness(data, results):
     """Record, per section, when it last actually refreshed.
 
     Sections used to carry no refresh stamp at all, so a dataset frozen since
     March looked identical to one fetched minutes ago. Every section now says
     when it last came back from its source and whether that was this run.
+
+    _meta.freshness.<section> fields (stable; the UI reads them):
+      auto            bool  section is refreshed by this pipeline
+      refreshed       date  last run in which at least one source succeeded
+      sources_ok      int   sources that succeeded this run
+      sources_total   int   sources the section depends on
+      failed_sources  list  names of the sources that did not succeed this
+                            run (absent when all succeeded)
+      partial_runs    int   consecutive runs with 0 < sources_ok < total
+                            (absent when the last run was complete)
+      stale_runs      int   consecutive runs with sources_ok == 0 (absent
+                            once any source succeeds)
+      content_as_of   date  oldest as_of on the quotes the section shows,
+                            when it carries per-quote dates (see
+                            _content_as_of); absent otherwise
+    Partial failures used to leave no trace beyond the two counts: a section
+    with 1/3 sources live looked fresh.
     """
     now = datetime.now(timezone.utc)
     today = now.strftime("%Y-%m-%d")
@@ -2120,15 +2403,28 @@ def stamp_freshness(data, results):
             continue
         entry["auto"] = True
         got = [s for s in sources if s in succeeded]
+        missing = [s for s in sources if s not in succeeded]
+        entry["sources_ok"] = len(got)
+        entry["sources_total"] = len(sources)
+        if missing:
+            entry["failed_sources"] = missing
+        else:
+            entry.pop("failed_sources", None)
         if got:
             entry["refreshed"] = today
-            entry["sources_ok"] = len(got)
-            entry["sources_total"] = len(sources)
             entry.pop("stale_runs", None)
+            if missing:
+                entry["partial_runs"] = entry.get("partial_runs", 0) + 1
+            else:
+                entry.pop("partial_runs", None)
         else:
             entry["stale_runs"] = entry.get("stale_runs", 0) + 1
-            entry["sources_ok"] = 0
-            entry["sources_total"] = len(sources)
+            entry.pop("partial_runs", None)
+        content = _content_as_of(data.get(key))
+        if content:
+            entry["content_as_of"] = content
+        else:
+            entry.pop("content_as_of", None)
 
     data["_meta"]["last_run"] = now.isoformat()
     fresh_n = sum(1 for v in freshness.values() if v.get("refreshed") == today)
@@ -2146,11 +2442,19 @@ def build_changelog(data, previous):
     prev_run = (previous.get("last_updated") or "")[:10]
     events = []
 
+    # Listings in an open scraper fault, or whose fault closed since the last
+    # run, are not diffed: Together's restoration 1.99 -> 3.99 is our reader
+    # being fixed, and reporting it as +100% would be the same mistake twice.
+    fault_open, fault_closing = scraper_fault_state(data, since=prev_run or None)
+    fault_skip = fault_open | fault_closing
+
     old_p, new_p = previous.get("providers") or {}, data.get("providers") or {}
     for prov, pdata in new_p.items():
         old_gpus = (old_p.get(prov) or {}).get("gpus") or {}
         new_gpus = pdata.get("gpus") or {}
         for gpu_id, info in new_gpus.items():
+            if (prov, gpu_id) in fault_skip:
+                continue
             new_price = info.get("price_per_gpu_hr")
             old_price = (old_gpus.get(gpu_id) or {}).get("price_per_gpu_hr")
             if old_price and new_price:
@@ -2160,9 +2464,12 @@ def build_changelog(data, previous):
                         "date": stamp, "type": "price", "provider": prov, "gpu": gpu_id,
                         "from": old_price, "to": new_price, "change_pct": round(delta, 1),
                     }
-                    # A >100% week-on-week move in list pricing is almost always a
-                    # scraper artefact, not the market. Flag rather than silently
-                    # publish it as a price signal.
+                    # A doubling or halving run-on-run in list pricing is almost
+                    # always a scraper artefact (wrong column, wrong table), not
+                    # the market. Flag rather than silently publish it as a price
+                    # signal. Measured as |log ratio| >= log 2 so drops count the
+                    # same as rises: a ">100%" test could never fire on a fall,
+                    # and a -62.5% Together misparse went through unflagged.
                     # A move on a day we changed how this provider is read is
                     # our change, not the market's. Say so on the event.
                     change = next((c for c in METHODOLOGY_CHANGES
@@ -2171,14 +2478,14 @@ def build_changelog(data, previous):
                     if change:
                         ev["methodology_change"] = True
                         ev["note"] = "Measurement change, not a market move: " + change["reason"]
-                    elif abs(delta) > 100:
+                    elif abs(math.log(new_price / old_price)) >= math.log(2):
                         ev["needs_review"] = True
                     events.append(ev)
             elif not old_price:
                 events.append({"date": stamp, "type": "listed", "provider": prov,
                                "gpu": gpu_id, "to": new_price})
         for gpu_id in old_gpus:
-            if gpu_id not in new_gpus:
+            if gpu_id not in new_gpus and (prov, gpu_id) not in fault_skip:
                 events.append({"date": stamp, "type": "delisted", "provider": prov,
                                "gpu": gpu_id, "from": old_gpus[gpu_id].get("price_per_gpu_hr")})
 
@@ -2236,14 +2543,29 @@ def fetch_stock_price(ticker):
     prior_closes = [c for c in closes if c is not None]
     prev_close = prior_closes[-2] if len(prior_closes) >= 2 else meta.get("previousClose")
 
-    # Find first close of current year
-    current_year = datetime.now().year
+    # YTD base: the last close of the previous year (the standard convention,
+    # and the one equities.py uses). The first close of this year was used
+    # before, so the two YTD figures on the page disagreed. Falls back to the
+    # first close of this year only if the series has no prior-year bar.
+    # Yahoo stamps daily bars at the session open (14:30 UTC), so the UTC date
+    # is the trading date.
+    # Dividend-adjusted closes when present, again as equities.py does, so the
+    # two pages' YTD figures match to the basis point.
+    adj = (indicators.get("adjclose") or [{}])[0].get("adjclose") or []
+    base_series = adj if len(adj) == len(timestamps) else closes
+    current_year = datetime.now(timezone.utc).year
     ytd_start_price = None
+    first_this_year = None
     for i, ts in enumerate(timestamps):
-        dt = datetime.fromtimestamp(ts)
-        if dt.year == current_year and i < len(closes) and closes[i] is not None:
-            ytd_start_price = closes[i]
-            break
+        if i >= len(base_series) or base_series[i] is None:
+            continue
+        year = datetime.fromtimestamp(ts, timezone.utc).year
+        if year < current_year:
+            ytd_start_price = base_series[i]
+        elif first_this_year is None:
+            first_this_year = base_series[i]
+    if ytd_start_price is None:
+        ytd_start_price = first_this_year
 
     ytd_change = None
     if ytd_start_price and current_price:
@@ -2494,7 +2816,11 @@ def fetch_reddit_sentiment():
     log_info("Fetching Reddit sentiment...")
     token = _get_reddit_token()
     if not token:
-        log_info("No Reddit OAuth token (set REDDIT_CLIENT_ID + REDDIT_CLIENT_SECRET). Skipping.")
+        # A failure, not an info line: without it the sentiment merge quietly
+        # republished the last Reddit figures run after run, and every
+        # composite score sat unchanged for 8 days looking current.
+        log_fail("Reddit Sentiment", "no OAuth token (set REDDIT_CLIENT_ID + REDDIT_CLIENT_SECRET); "
+                 "Reddit inputs kept from last fetch and flagged stale")
         return {}
 
     results = {}
@@ -2560,11 +2886,21 @@ def fetch_reddit_sentiment():
     return results
 
 
+HF_PAGE_LIMIT = 1000   # the models API's largest page
+HF_MAX_PAGES = 30      # 30k models per search term before we call it a floor
+
+
 def fetch_huggingface_models():
-    """Fetch model counts per GPU from HuggingFace API."""
+    """Count HuggingFace models matching each GPU's search term.
+
+    The API returns no total, and this used to fetch a single page of 200 and
+    report its length -- so every popular GPU read exactly 200 for good. Page
+    through with the `Link: rel="next"` cursor instead and count every row.
+    A GPU whose query fails is left out (the merge keeps its last count and
+    flags it stale) rather than reported as 0.
+    """
     log_info("Fetching HuggingFace model counts...")
     results = {}
-    # HF API: search models with GPU keywords in tags/description
     hf_gpu_tags = {
         "H100-SXM": "h100",
         "B300": "b300",
@@ -2575,36 +2911,39 @@ def fetch_huggingface_models():
         "L40S": "l40s",
         "RTX-4090": "4090",
     }
-
+    headers = {"User-Agent": "GPUDashboard/1.0"}
+    failed = []
     for gpu_id, tag in hf_gpu_tags.items():
+        url = ("https://huggingface.co/api/models?"
+               + urllib.parse.urlencode({"search": tag, "limit": HF_PAGE_LIMIT}))
+        count, pages = 0, 0
         try:
-            url = "https://huggingface.co/api/models"
-            params = {"search": tag, "limit": "1", "sort": "downloads"}
-            headers = {"User-Agent": "GPUDashboard/1.0"}
-            status, body = http_get(url, headers=headers, params=params, timeout=15)
-            if status != 200:
-                results[gpu_id] = {"model_count": 0}
-                continue
+            while url and pages < HF_MAX_PAGES:
+                req = urllib.request.Request(url, headers=headers)
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    rows = json.loads(resp.read().decode("utf-8", "replace"))
+                    link = resp.headers.get("Link") or ""
+                if not isinstance(rows, list):
+                    raise RuntimeError("unexpected response shape")
+                count += len(rows)
+                pages += 1
+                nxt = _re.search(r'<([^>]+)>;\s*rel="next"', link)
+                url = nxt.group(1) if nxt else None
+                time.sleep(0.3)
+        except Exception as exc:
+            failed.append(f"{gpu_id} ({exc})")
+            continue
+        results[gpu_id] = {
+            "model_count": count,
+            # True only if we stopped at HF_MAX_PAGES with more to read.
+            "estimated": url is not None,
+        }
 
-            # The API doesn't return total count directly with search,
-            # so we fetch with a larger limit to estimate
-            params["limit"] = "200"
-            status2, body2 = http_get(url, headers=headers, params=params, timeout=20)
-            if status2 == 200:
-                models = json.loads(body2)
-                count = len(models) if isinstance(models, list) else 0
-                # If we got exactly 200, there are likely more
-                results[gpu_id] = {
-                    "model_count": count,
-                    "estimated": count >= 200,
-                }
-            else:
-                results[gpu_id] = {"model_count": 0}
-            time.sleep(0.3)
-        except Exception:
-            results[gpu_id] = {"model_count": 0}
-
-    log_ok("HuggingFace", f"{len(results)} GPUs queried")
+    if not results:
+        raise RuntimeError("HuggingFace: every model-count query failed: " + "; ".join(failed[:3]))
+    if failed:
+        log_info(f"HuggingFace: no count for {', '.join(failed)}")
+    log_ok("HuggingFace", f"{len(results)}/{len(hf_gpu_tags)} GPUs counted")
     return results
 
 
@@ -2616,9 +2955,13 @@ def fetch_github_compat():
         "User-Agent": "GPUDashboard/1.0",
         "Accept": "application/vnd.github.v3+json",
     }
+    # The workflow's GITHUB_TOKEN lifts search from 10 to 30 requests/min.
+    if os.environ.get("GITHUB_TOKEN"):
+        headers["Authorization"] = f"Bearer {os.environ['GITHUB_TOKEN']}"
 
+    failed = []
     for gpu_id, terms in _GPU_SEARCH_TERMS.items():
-        total_repos = 0
+        total_repos = None
         for term in terms[:1]:  # Use first term only to stay within rate limits
             try:
                 url = "https://api.github.com/search/repositories"
@@ -2630,10 +2973,18 @@ def fetch_github_compat():
                 status, body = http_get(url, headers=headers, params=params, timeout=15)
                 if status == 200:
                     data = json.loads(body)
-                    total_repos = data.get("total_count", 0)
+                    total_repos = data.get("total_count")
+                else:
+                    failed.append(f"{gpu_id} (HTTP {status})")
                 time.sleep(2)  # GitHub rate limit: 10 req/min unauthenticated
-            except Exception:
+            except Exception as exc:
+                failed.append(f"{gpu_id} ({exc})")
                 continue
+        # A rate-limited query used to score as 0 repos and was then skipped
+        # by the merge, silently keeping the old score. Leave it out instead;
+        # the merge marks the input stale.
+        if total_repos is None:
+            continue
 
         # Normalize to a 0-100 score (H100 ~95, newer GPUs lower)
         # Scale: 1000+ repos = 95+, 100 = ~70, 10 = ~40, 0 = 20
@@ -2651,7 +3002,11 @@ def fetch_github_compat():
             "github_compat_score": min(score, 99),
         }
 
-    log_ok("GitHub Compat", f"{len(results)} GPUs scored")
+    if not results:
+        raise RuntimeError("GitHub: every search failed: " + "; ".join(failed[:3]))
+    if failed:
+        log_info(f"GitHub Compat: no result for {', '.join(failed)}")
+    log_ok("GitHub Compat", f"{len(results)}/{len(_GPU_SEARCH_TERMS)} GPUs scored")
     return results
 
 
@@ -2673,25 +3028,46 @@ def merge_sentiment_into_data(data, reddit, hf, github):
         prev_score = s.get("score", 50)
         history = s.get("score_history", [])
 
-        # Reddit data
-        rd = reddit.get(gpu_id, {})
-        if rd.get("mentions_30d", 0) > 0:
-            s["reddit_sentiment"] = rd["reddit_sentiment"]
+        # Each input records the date it was last actually fetched. An input
+        # not fetched this run keeps its previous value (one bad run should
+        # not zero a score) but is listed in `stale_inputs`, so a score built
+        # on carried-forward numbers says so instead of passing for live.
+        as_of = s.setdefault("inputs_as_of", {})
+        today = now[:10]
+
+        # Reddit data. A fetched result with 0 mentions is a real reading.
+        rd = reddit.get(gpu_id)
+        if rd is not None:
             s["mentions_30d"] = rd["mentions_30d"]
             s["hot_topics"] = rd.get("hot_topics", [])
+            if rd["mentions_30d"] > 0:
+                s["reddit_sentiment"] = rd["reddit_sentiment"]
+            as_of["reddit"] = today
 
         # HuggingFace data
-        hfd = hf.get(gpu_id, {})
-        if hfd.get("model_count", 0) > 0:
+        hfd = hf.get(gpu_id)
+        if hfd is not None:
             s["hf_models_trained"] = hfd["model_count"]
             if hfd.get("estimated"):
                 s["hf_models_estimated"] = True
+            else:
+                s.pop("hf_models_estimated", None)
+            as_of["huggingface"] = today
 
         # GitHub data
-        ghd = github.get(gpu_id, {})
-        if ghd.get("repo_count", 0) > 0:
+        ghd = github.get(gpu_id)
+        if ghd is not None:
             s["github_compat_score"] = ghd["github_compat_score"]
             s["github_repos"] = ghd["repo_count"]
+            as_of["github"] = today
+
+        stale_inputs = [k for k in ("reddit", "huggingface", "github") if as_of.get(k) != today]
+        if stale_inputs:
+            s["stale"] = True
+            s["stale_inputs"] = stale_inputs
+        else:
+            s.pop("stale", None)
+            s.pop("stale_inputs", None)
 
         # Recalculate composite score:
         # 35% reddit sentiment + 30% github compat + 20% HF activity + 15% mentions volume
@@ -2714,11 +3090,16 @@ def merge_sentiment_into_data(data, reddit, hf, github):
         else:
             s["adoption"] = "stable"
 
-        # Append to score history (keep last 8 weeks)
-        history.append({"date": now[:10], "score": s["score"]})
+        # Score history: one point per day, and only when at least one input
+        # was actually re-read. Appending the same carried-forward score every
+        # run is how a frozen series came to look like a stable one.
+        if len(stale_inputs) < 3:
+            if history and history[-1].get("date") == today:
+                history[-1] = {"date": today, "score": s["score"]}
+            else:
+                history.append({"date": today, "score": s["score"]})
+            s["last_updated"] = now
         s["score_history"] = history[-8:]
-
-        s["last_updated"] = now
 
         # Update community_pick: top 2 scores get the badge
         sentiment[gpu_id] = s
@@ -2771,6 +3152,109 @@ def load_config():
     return None
 
 
+def _stock_figures(data):
+    """Per-ticker stock figures for the LLM, every one labelled and pre-computed.
+
+    Handing the model raw current / 52_week_high / 52_week_low / ytd_change_pct
+    let it do the arithmetic and pair the wrong numbers: the commentary said
+    "NVDA 33% below its 52-week high near $124.50" -- $124.50 was the 52-week
+    LOW, 33% was the YTD move, and the price was 48% below the high. Every
+    relationship it might quote is spelled out here instead.
+    """
+    out = {}
+    for tk, st in (data.get("stocks") or {}).items():
+        px, hi, lo = st.get("current_price"), st.get("52_week_high"), st.get("52_week_low")
+        prev = st.get("previous_close")
+        out[tk] = {
+            "price_usd": px,
+            "previous_close_usd": prev,
+            "change_1d_pct": round((px / prev - 1) * 100, 1) if px and prev else None,
+            "week52_high_usd": hi,
+            "week52_low_usd": lo,
+            "pct_below_52w_high": round((1 - px / hi) * 100, 1) if px and hi else None,
+            "pct_above_52w_low": round((px / lo - 1) * 100, 1) if px and lo else None,
+            "ytd_pct_vs_prior_year_end_close": st.get("ytd_change_pct"),
+        }
+    return out
+
+
+_STOCK_GUARD = (
+    " Stock figures: quote ONLY the labelled values in stock_figures, verbatim. "
+    "week52_high_usd is the 52-week HIGH and week52_low_usd the 52-week LOW; "
+    "'X% below the 52-week high' is pct_below_52w_high, 'X% above the 52-week low' is "
+    "pct_above_52w_low, and year-to-date is ytd_pct_vs_prior_year_end_close. Never "
+    "compute or combine these yourself."
+)
+
+_TICKER_ALIASES = {"NVDA": ("NVDA", "NVIDIA", "Nvidia"), "AMD": ("AMD",)}
+
+
+def _check_stock_claims(text, figures, tol_pct=1.0, tol_pp=1.5):
+    """Problems with any 52-week figure the text quotes; [] when it is clean.
+
+    Cheap and deliberately narrow: only phrases that tie a number to "52-week
+    high/low" are checked, against the ticker named most recently before them.
+    """
+    problems = []
+    if not text or not figures:
+        return problems
+
+    def ticker_at(pos):
+        best, best_at = None, -1
+        window = text[max(0, pos - 300):pos]
+        for tk, names in _TICKER_ALIASES.items():
+            for n in names:
+                i = window.rfind(n)
+                if i > best_at:
+                    best, best_at = tk, i
+        return best if best in figures else None
+
+    def candidates(pos):
+        tk = ticker_at(pos)
+        return [figures[tk]] if tk else list(figures.values())
+
+    def close(val, ref, tol, relative):
+        if ref is None:
+            return False
+        return abs(val - ref) <= (abs(ref) * tol / 100 if relative else tol)
+
+    hl = r"52[- ]week\s+(high|low)"
+    # "$X ... 52-week high" is too loose to pair; only "<52-week high/low>
+    # (of|near|at|around|:|,|() $X" is checked for dollars.
+    for m in _re.finditer(hl + r"[^$\d%.;]{0,25}\$\s?(\d[\d,]*(?:\.\d+)?)", text, _re.IGNORECASE):
+        kind, val = m.group(1).lower(), float(m.group(2).replace(",", ""))
+        key = "week52_high_usd" if kind == "high" else "week52_low_usd"
+        if not any(close(val, f.get(key), tol_pct, True) for f in candidates(m.start())):
+            problems.append(f"'{m.group(0).strip()}' does not match {key}")
+    for m in _re.finditer(r"(\d+(?:\.\d+)?)%\s+(below|under|off|beneath|above|over)\s+"
+                          r"(?:its\s+|the\s+|a\s+)?" + hl, text, _re.IGNORECASE):
+        val, kind = float(m.group(1)), m.group(3).lower()
+        key = "pct_below_52w_high" if kind == "high" else "pct_above_52w_low"
+        if not any(close(val, f.get(key), tol_pp, False) for f in candidates(m.start())):
+            problems.append(f"'{m.group(0).strip()}' does not match {key}")
+    return problems
+
+
+def _generate_checked(config, system, user, figures, label):
+    """LLM call plus the stock-figure check; one corrective retry, then give up.
+
+    Returns the text, or raises so the caller keeps the previous block rather
+    than publishing a misquote.
+    """
+    content = _call_llm(config, system + _STOCK_GUARD, user)
+    problems = _check_stock_claims(content, figures)
+    if not problems:
+        return content
+    log_info(f"AI/{label}: stock figures misquoted ({'; '.join(problems[:3])}); regenerating")
+    retry_user = (user + "\n\nA previous draft misquoted stock figures: " + "; ".join(problems)
+                  + ". Use the stock_figures values exactly as labelled.")
+    content = _call_llm(config, system + _STOCK_GUARD, retry_user)
+    problems = _check_stock_claims(content, figures)
+    if problems:
+        raise RuntimeError("stock figures still misquoted after retry: " + "; ".join(problems[:3]))
+    return content
+
+
 def _build_market_snapshot(data):
     """Build a compact market snapshot dict for LLM prompts."""
     providers = data.get("providers", {})
@@ -2789,12 +3273,19 @@ def _build_market_snapshot(data):
 
     return {
         "gpu_pricing": {k: v[:5] for k, v in price_summary.items()},
-        "stocks": data.get("stocks", {}),
+        # Labelled, pre-computed figures only -- see _stock_figures. The raw
+        # stocks block is not passed, so there is nothing to mis-pair.
+        "stock_figures": _stock_figures(data),
         "recent_headlines": [a.get("headline", "") for a in data.get("news", [])[:10]],
         "historical": {k: dict(list(v.items())[-6:]) for k, v in data.get("historical", {}).items()},
         "sentiment": {k: {"score": v.get("score"), "adoption": v.get("adoption"), "mentions_30d": v.get("mentions_30d")} for k, v in data.get("sentiment", {}).items()},
         "forecasts": {k: {"trend": v.get("trend"), "next_month": v.get("next_month")} for k, v in data.get("forecasts", {}).items()} if data.get("forecasts") else {},
         "matrix": [{"gpu_id": m["gpu_id"], "cheapest_price": m.get("cheapest_price"), "cheapest_provider": m.get("cheapest_provider"), "monthly_change_pct": m.get("monthly_change_pct"), "flops_per_dollar": m.get("flops_per_dollar")} for m in data.get("matrix", [])[:15]],
+        # The outlook prompt points at "the volatility block"; it was never in
+        # the snapshot. Only GPUs that have an entry are listed.
+        "volatility": {k: {"change_30d_pct": v.get("change_30d_pct"), "change_90d_pct": v.get("change_90d_pct"),
+                           "regime": v.get("regime")}
+                       for k, v in (data.get("volatility") or {}).items() if isinstance(v, dict)},
         "spot": {k: {"on_demand_avg": v.get("on_demand_avg"), "quarterly_trend": v.get("quarterly_trend")} for k, v in data.get("spot", {}).items()},
         "specs": {k: {"vram_gb": v.get("vram_gb"), "fp16_tflops": v.get("fp16_tflops"), "tdp_watts": v.get("tdp_watts")} for k, v in data.get("specs", {}).items()},
         # Traded forward prices from Kalshi/Polymarket. The forecast section is
@@ -3074,7 +3565,8 @@ def update_ai_analysis(data, existing_ai):
         try:
             log_info(f"Regenerating AI section: {section_key}...")
             user_prompt = section_def["user"].format(snapshot=snapshot_str)
-            content = _call_llm(config, section_def["system"], user_prompt)
+            content = _generate_checked(config, section_def["system"], user_prompt,
+                                        snapshot["stock_figures"], section_key)
             existing_ai[section_key] = {
                 "analysis": content,
                 "type": section_def["type"],
@@ -3090,7 +3582,8 @@ def update_ai_analysis(data, existing_ai):
         try:
             log_info(f"Regenerating AI section: {gk}...")
             sys_prompt, usr_prompt = _build_gpu_section_prompt(gpu_id, snapshot_str)
-            content = _call_llm(config, sys_prompt, usr_prompt)
+            content = _generate_checked(config, sys_prompt, usr_prompt,
+                                        snapshot["stock_figures"], gk)
             existing_ai[gk] = {
                 "analysis": content,
                 "gpu_id": gpu_id,
@@ -3315,8 +3808,13 @@ def main():
     except Exception as exc:
         log_fail("GitHub Compat", str(exc))
 
-    if reddit_data or hf_data or github_data:
+    # Always merged, even with nothing fetched: the merge is what marks the
+    # carried-forward inputs stale. Skipping it republished last run's scores
+    # unflagged.
+    try:
         data = merge_sentiment_into_data(data, reddit_data, hf_data, github_data)
+    except Exception as exc:
+        log_fail("Sentiment Merge", str(exc))
     print()
 
     # ---- 9. Derived analytics: regional, volatility, model fit ----
@@ -3335,6 +3833,9 @@ def main():
         data = build_price_history(data, PROJECT_DIR, log_info=log_info, log_ok=log_ok)
     except Exception as exc:
         log_fail("Price History", str(exc))
+    # The matrix's month-on-month figure reads `historical`, so it is set only
+    # now that this run's rebuild is in place.
+    data = apply_matrix_monthly_change(data)
 
     try:
         data = record_term_history(data, PROJECT_DIR, log_info=log_info)
@@ -3455,6 +3956,11 @@ def main():
     existing_ai = update_ai_analysis(data, existing_ai)
     stamp_ai_freshness(data, existing_ai)
     print()
+
+    try:
+        data = refresh_market_indicators(data)
+    except Exception as exc:
+        log_fail("Market Indicators", str(exc))
 
     # ---- Rebuild the summary block last, from everything above ----
     try:

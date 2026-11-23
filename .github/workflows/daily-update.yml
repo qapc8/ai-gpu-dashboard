@@ -66,6 +66,15 @@ jobs:
           EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
           EBAY_CLIENT_ID: ${{ secrets.EBAY_CLIENT_ID }}
           EBAY_CLIENT_SECRET: ${{ secrets.EBAY_CLIENT_SECRET }}
+          # availability.py reads this for the SF Compute order book. It was
+          # never passed through, so adding the secret alone changed nothing.
+          SFCOMPUTE_API_KEY: ${{ secrets.SFCOMPUTE_API_KEY }}
+          # benchmarks.py opt-in flag ("1" enables the Ornn dashboard route).
+          # A repository variable, not a secret: it holds no credential.
+          BENCH_ORNN_DASHBOARD_API: ${{ vars.BENCH_ORNN_DASHBOARD_API }}
+          # Authenticated GitHub search (30/min instead of 10) for the
+          # sentiment GitHub-compat input; rate-limited queries left it frozen.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python -u scripts/update_data.py
 
       - name: Sanity-check before publishing

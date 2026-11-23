@@ -182,17 +182,27 @@ def build_inference(data, as_of, rankings, catalog, endpoints_by_slug, log=lambd
     models = []
     total_tokens = sum(r["total_tokens"] for r in rankings) or 1
 
-    # OpenRouter ranks dated snapshots separately, and two releases of the same
-    # model are often served side by side (deepseek-v4-flash-20260731 alongside
-    # -20260423). They share a base slug, so left alone they render as two rows
-    # with the same name and collide in the history dict. Keep them distinct.
-    base_counts = {}
+    # OpenRouter ranks dated snapshots of one model separately
+    # (deepseek-v4.1-flash-20261017 alongside -20260910). They are the same
+    # model under one catalogue slug, priced off the same endpoints, so
+    # listing them as two rows split its share across ranks 1 and 2 and
+    # understated the leader. Merge on the base slug and keep the snapshot
+    # permaslugs for reference.
+    merged = {}
     for r in rankings:
-        b = _base_slug(r["permaslug"])
-        base_counts[b] = base_counts.get(b, 0) + 1
+        slug = _base_slug(r["permaslug"])
+        m = merged.get(slug)
+        if m is None:
+            merged[slug] = dict(r, slug=slug, permaslugs=[r["permaslug"]])
+            continue
+        m["permaslugs"].append(r["permaslug"])
+        for k in ("prompt_tokens", "completion_tokens", "total_tokens", "reasoning_tokens",
+                  "cached_tokens", "requests", "tool_calls"):
+            m[k] += r[k]
+    rankings = sorted(merged.values(), key=lambda r: -r["total_tokens"])
 
     for rank, r in enumerate(rankings, start=1):
-        slug = _base_slug(r["permaslug"])
+        slug = r["slug"]
         meta = catalog.get(slug) or {}
         eps = endpoints_by_slug.get(slug) or []
         outs = [e["output"] for e in eps if e["output"]]
@@ -203,22 +213,14 @@ def build_inference(data, as_of, rankings, catalog, endpoints_by_slug, log=lambd
         or_out = round(_num(pricing.get("completion")) * 1_000_000, 4) if pricing.get("completion") else None
 
         name = meta.get("name") or slug
-        if base_counts.get(slug, 0) > 1:
-            stamp = re.search(r"-(\d{8})$", r["permaslug"] or "")
-            if stamp:
-                d8 = stamp.group(1)
-                # The catalogue name describes whichever release the base slug
-                # currently resolves to, so it can carry its own MMDD tag --
-                # "DeepSeek V4 Flash 0423". Appending the real snapshot date to
-                # that gives "V4 Flash 0423 (2026-07-31)", which contradicts
-                # itself. Drop the trailing tag and state the date once.
-                base = re.sub(r"\s+\d{4}$", "", name)
-                name = f"{base} ({d8[:4]}-{d8[4:6]}-{d8[6:]})"
 
         entry = {
             "rank": rank,
             "slug": slug,
-            "permaslug": r["permaslug"],
+            # The row's identity is the base slug now; `permaslug` stays as the
+            # key the history and the UI look rows up by.
+            "permaslug": slug,
+            "permaslugs": r["permaslugs"],
             "name": name,
             "author": slug.split("/")[0] if "/" in slug else None,
             # A HuggingFace id is OpenRouter's own marker that the weights are
@@ -279,8 +281,16 @@ def build_inference(data, as_of, rankings, catalog, endpoints_by_slug, log=lambd
 
     # ---- accumulate our own daily history ----
     previous = (data.get("inference") or {}).get("history") or {}
-    history = dict(previous)
-    # Keyed on permaslug: it is the only identifier unique per ranked row.
+    # Keyed on the base slug, like the rows. Days recorded before the merge
+    # were keyed per snapshot permaslug; fold them the same way so the trend
+    # line does not drop to one snapshot's volume on old days.
+    history = {}
+    for day, row in previous.items():
+        folded = {}
+        for key, tokens in (row or {}).items():
+            base = _base_slug(key)
+            folded[base] = folded.get(base, 0) + (tokens or 0)
+        history[day] = folded
     history[as_of] = {m["permaslug"]: m["total_tokens"] for m in models}
     for day in sorted(history)[:-HISTORY_DAYS]:
         history.pop(day, None)

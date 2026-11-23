@@ -80,8 +80,13 @@ BUCKETS = [
      [r"\bh100\b", r"\bsxm"], [r"\bpcie\b", r"\bh800\b", r"\bhgx\b", r"\b8x\b", r"\bserver\b"], 8000),
     ("H200", "card", "nvidia h200 141gb", EBAY_CAT_GPU,
      [r"\bh200\b"], [r"\bh20\b(?!0)", r"\bhgx\b", r"\b8x\b", r"\bserver\b"], 10000),
-    ("A100-80GB", "card", "nvidia a100 80gb", EBAY_CAT_GPU,
-     [r"\ba100\b", r"\b80 ?gb\b"], [r"\b40 ?gb\b", r"\ba800\b", r"\bhgx\b", r"\b[48]x\b", r"\bserver\b"], 3000),
+    # A100 80GB comes as an SXM4 module (the A100-80GB rental row) and a PCIe card (A100-PCIe). Most loose eBay
+    # "A100 80GB" cards are PCIe, and pairing their price with SXM rental rates skewed rent-vs-buy, so each bucket
+    # requires its form factor to be named; listings that name neither are ambiguous and skipped.
+    ("A100-80GB", "card", "nvidia a100 80gb sxm4", EBAY_CAT_GPU,
+     [r"\ba100\b", r"\b80 ?gb\b", r"\bsxm"], [r"\b40 ?gb\b", r"\ba800\b", r"\bpcie\b", r"\bhgx\b", r"\b[48]x\b", r"\bserver\b"], 3000),
+    ("A100-PCIe", "card", "nvidia a100 80gb pcie", EBAY_CAT_GPU,
+     [r"\ba100\b", r"\b80 ?gb\b", r"\bpcie\b"], [r"\b40 ?gb\b", r"\ba800\b", r"\bsxm", r"\bhgx\b", r"\b[48]x\b", r"\bserver\b"], 3000),
     ("A100-40GB", "card", "nvidia a100 40gb", EBAY_CAT_GPU,
      [r"\ba100\b", r"\b40 ?gb\b"], [r"\b80 ?gb\b", r"\ba800\b", r"\bhgx\b", r"\b[48]x\b", r"\bserver\b"], 1500),
     ("RTX-4090", "card", "nvidia geforce rtx 4090 24gb", EBAY_CAT_GPU,

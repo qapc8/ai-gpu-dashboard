@@ -1,5 +1,5 @@
 {
-  "_note": "Curated, cited reference purchase prices. Each entry was checked against its source page on 2026-11-12. These are NOT live market medians: they are published list prices or price ranges quoted in a dated report. Add entries only with a source, url and as_of you have verified yourself. low_usd/high_usd hold a published range; value_usd holds a single published figure.",
+  "_note": "Curated, cited reference purchase prices. Each entry was checked against its source page on 2026-11-12 (entries dated after 2026-04 and the A100 relabel: 2026-11-23). These are NOT live market medians: they are published list prices or price ranges quoted in a dated report. Add entries only with a source, url and as_of you have verified yourself. low_usd/high_usd hold a published range; value_usd holds a single published figure.",
   "entries": [
     {
       "gpu_id": "RTX-5090",
@@ -31,14 +31,14 @@
       "gpu_id": "H100",
       "form": "server_8x",
       "condition": "used",
-      "value_usd": null,
-      "low_usd": 150000,
-      "high_usd": 180000,
-      "basis": "used 8-GPU H100 server price range reported by Hashrate Index (Luxor)",
-      "quote": "At the server level—the typical B2B purchase unit—a used H100 server (8-GPU) trades at roughly $150,000–$180,000.",
-      "source": "Hashrate Index (Luxor)",
-      "as_of": "2026-04-08",
-      "url": "https://hashrateindex.com/blog/used-gpu-market-pricing-deprecation-secondary-ai/"
+      "value_usd": 195000,
+      "low_usd": null,
+      "high_usd": null,
+      "basis": "used 8-GPU HGX H100 node value, August 2026 transactions (American Compute October 2026 Rack Report); replaces Hashrate Index $150k-180k range of 2026-04-08",
+      "quote": "$195,000 per used 8-GPU node in August 2026, from the October 2026 Rack Report.",
+      "source": "American Compute (GPU server values, updated 2026-10-17)",
+      "as_of": "2026-08-31",
+      "url": "https://www.amcompute.com/gpu-server-values/h100"
     },
     {
       "gpu_id": "A100-40GB",
@@ -54,17 +54,30 @@
       "url": "https://hashrateindex.com/blog/used-gpu-market-pricing-deprecation-secondary-ai/"
     },
     {
-      "gpu_id": "A100-80GB",
+      "gpu_id": "A100-PCIe",
       "form": "card",
       "condition": "used",
       "value_usd": 18900,
       "low_usd": null,
       "high_usd": null,
-      "basis": "visible commercial listing ask for an A100 80GB PCIe card (single figure, not a median; condition not stated beyond secondary-market listing)",
+      "basis": "visible commercial listing ask for an A100 80GB PCIe card (single figure, not a median). Relabelled 2026-11-23 from A100-80GB (SXM rental row) to A100-PCIe so rent-vs-buy pairs PCIe with PCIe.",
       "quote": "Visible commercial listings run from roughly $7,800 for A100 40GB refurbished units to about $18,900 for an A100 80GB PCIe card.",
       "source": "Hashrate Index (Luxor)",
       "as_of": "2026-04-08",
       "url": "https://hashrateindex.com/blog/used-gpu-market-pricing-deprecation-secondary-ai/"
+    },
+    {
+      "gpu_id": "A100-80GB",
+      "form": "card",
+      "condition": "used",
+      "value_usd": null,
+      "low_usd": 4700,
+      "high_usd": 5400,
+      "basis": "used A100 SXM4 80GB realized sale range over the 12 months to August 2026 (American Compute appraisal)",
+      "quote": "Used NVIDIA A100 SXM4 80GB units sold for about $4,700-5,400 over the last 12 months, down about 35% from the year before.",
+      "source": "American Compute (A100 SXM4 80GB appraisal, data through Aug 2026)",
+      "as_of": "2026-08-31",
+      "url": "https://www.amcompute.com/appraisals/a100-sxm4-80gb"
     }
   ]
 }

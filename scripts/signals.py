@@ -15,6 +15,8 @@ Sections written:
 from datetime import datetime, timedelta, timezone
 from statistics import median
 
+from price_history import _correction_in_window, _usable
+
 SOURCES = ["Signals"]
 
 PRICE_MOVE_PCT = 5.0        # matched-provider median move that counts as a signal
@@ -34,26 +36,40 @@ RULE = (
 )
 
 
-def _matched_change(days, gpu, back):
+def _matched_change(days, gpu, back, skip=()):
     """Median % change for one GPU between the latest day and `back` days
     earlier, over providers that priced it on both dates. Composition changes
-    (a provider appearing or vanishing) don't count as moves."""
+    (a provider appearing or vanishing) don't count as moves.
+
+    A provider whose method changed inside the window is left out too
+    (price_history.METHODOLOGY_CHANGES): its two ends were measured
+    differently. The 2026-11-09 re-reads of Vast.ai, Azure, Lambda and AWS
+    otherwise showed as RTX-4090 "loosening" -22% and A100-PCIe +35% when the
+    like-for-like move was 0% and +17%. `skip` holds listings whose current
+    price may not be used (stale, fallback, inside a scraper fault)."""
     dates = sorted(days)
     if not dates:
         return None, 0
     last = dates[-1]
     target = (datetime.fromisoformat(last) - timedelta(days=back)).date().isoformat()
-    earlier = [d for d in dates if d <= target]
-    if not earlier:
+    # Each provider's own last reading on or before the target, at most a
+    # week earlier: stale runs are no longer recorded, so the single date
+    # nearest the target can be missing a provider that was read the day
+    # before.
+    floor = (datetime.fromisoformat(target) - timedelta(days=7)).date().isoformat()
+    window = [d for d in dates if floor <= d <= target]
+    if not window:
         return None, 0
-    then = earlier[-1]
     a, b = [], []
     for prov, gpus in (days[last] or {}).items():
         p1 = (gpus or {}).get(gpu)
-        p0 = ((days[then] or {}).get(prov) or {}).get(gpu)
-        if p1 and p0:
-            a.append(p0)
-            b.append(p1)
+        if not p1 or (prov, gpu) in skip:
+            continue
+        then = next((d for d in reversed(window) if ((days[d] or {}).get(prov) or {}).get(gpu)), None)
+        if not then or _correction_in_window(prov, gpu, then):
+            continue
+        a.append(days[then][prov][gpu])
+        b.append(p1)
     if not a:
         return None, 0
     return round((median(b) / median(a) - 1) * 100, 1), len(a)
@@ -87,14 +103,22 @@ def _build(data):
     avail = data.get("availability") or {}
     lead = (data.get("indicators") or {}).get("gpu_lead_times") or {}
     matrix = {r["gpu_id"]: r for r in (data.get("matrix") or []) if r.get("gpu_id")}
+    # Listings whose current price feeds nothing derived (the same rule the
+    # matrix and the price record use). price_history already keeps them out
+    # of `days`; this guards a record written before that rule.
+    ref = data.get("last_updated")
+    unusable = {(prov, gpu) for prov, p in (data.get("providers") or {}).items()
+                for gpu, g in (p.get("gpus") or {}).items() if not _usable(g, ref)}
+    unusable |= {tuple(k.split("|", 1)) for k in
+                 (data.get("price_history") or {}).get("scraper_faults_open") or []}
 
     # ---- per-GPU signal ----
     gpus = {}
     for gpu, row in matrix.items():
         votes, reasons, inputs = [], [], {}
 
-        p30, n30 = _matched_change(days, gpu, 30)
-        p7, _ = _matched_change(days, gpu, 7)
+        p30, n30 = _matched_change(days, gpu, 30, unusable)
+        p7, _ = _matched_change(days, gpu, 7, unusable)
         inputs.update(price_30d_pct=p30, price_7d_pct=p7, price_providers=n30)
         if p30 is not None:
             v = 1 if p30 >= PRICE_MOVE_PCT else -1 if p30 <= -PRICE_MOVE_PCT else 0
@@ -196,6 +220,8 @@ def _build(data):
     for prov, p in (data.get("providers") or {}).items():
         for gpu, g in (p.get("gpus") or {}).items():
             price, med = g.get("price_per_gpu_hr"), (matrix.get(gpu) or {}).get("median_price")
+            if (prov, gpu) in unusable:
+                continue  # the matrix median leaves it out too; flagged in the table already
             if not price or not med or (matrix.get(gpu) or {}).get("num_providers", 0) < 3:
                 continue
             ratio = price / med
@@ -210,7 +236,7 @@ def _build(data):
     for prov, gpus_m in moves.items():
         for gpu, m in (gpus_m or {}).items():
             cur = m.get("current")
-            if not cur or not dates:
+            if not cur or not dates or (prov, gpu) in unusable:
                 continue
             run = 0
             for d in reversed(dates):

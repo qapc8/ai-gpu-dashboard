@@ -40,6 +40,9 @@ CONTEXTS = [8192, 32768, 131072]
 
 # Beyond this many GPUs a single-node fit stops being the right question.
 MAX_GPUS = 8
+# Activations, CUDA context and allocator fragmentation, as a share of
+# weights + KV cache. The one assumption in the VRAM total.
+OVERHEAD_SHARE = 0.20
 
 _UA = {"User-Agent": "Mozilla/5.0 (gpu-dashboard model-fit)"}
 
@@ -127,11 +130,14 @@ def _cheapest_gpu_rate(providers, gpu_id):
     return best
 
 
-# Architectures with native FP8 tensor cores. Hopper and Blackwell added it on
-# the NVIDIA side; CDNA 3 on AMD's. Ampere, Turing and CDNA 2 have no FP8 path,
-# so quoting "4x T4 at fp8" as the cheapest way to serve a model is not a cheap
-# option, it is not an option -- the hardware cannot execute the format.
-_FP8_ARCHS = ("hopper", "blackwell", "cdna 3")
+# Architectures with native FP8 tensor cores. Ada Lovelace (4th-gen tensor
+# cores: L4, L40S, RTX 4090), Hopper, Blackwell and Rubin on the NVIDIA side;
+# CDNA 3 and CDNA 4 on AMD's. Ada was missing, which left the cheapest real
+# FP8 options (L4/L40S) out of every fp8 sizing. Ampere, Turing and CDNA 2
+# have no FP8 path, so quoting "4x T4 at fp8" as the cheapest way to serve a
+# model is not a cheap option, it is not an option -- the hardware cannot
+# execute the format.
+_FP8_ARCHS = ("ada", "hopper", "blackwell", "rubin", "cdna 3", "cdna 4")
 # INT4 weight-only quantisation runs anywhere with INT8/INT4 tensor cores,
 # which covers Turing onward.
 _NO_INT4_ARCHS = ()
@@ -235,16 +241,21 @@ def build_model_fit(data, log_info=lambda m: None, log_ok=lambda a, b="": None):
 
         for prec, nbytes in PRECISIONS.items():
             weights_gib = arch["params"] * nbytes / GIB
-            overhead_gib = weights_gib * 0.20
             per_ctx = {}
             for ctx in CONTEXTS:
                 # KV cache stays at fp16 even when weights are quantised.
                 kv_gib = (2 * arch["attention_layers"] * arch["kv_heads"]
                           * arch["head_dim"] * ctx * 2) / GIB
-                total = weights_gib + overhead_gib + kv_gib
+                # The documented method: (weights + KV) + 20%. The overhead
+                # used to be taken on weights alone, so long-context totals
+                # were short by 20% of the KV cache -- the very case where
+                # activations and fragmentation grow with it.
+                overhead_gib = (weights_gib + kv_gib) * OVERHEAD_SHARE
+                total = weights_gib + kv_gib + overhead_gib
                 fits = _fit_options(total, specs, providers, prec)
                 rec = {
                     "kv_cache_gib": round(kv_gib, 2),
+                    "overhead_gib": round(overhead_gib, 2),
                     "total_vram_gib": round(total, 2),
                     "options": fits[:6],
                     "cheapest_usd_per_hr": fits[0]["usd_per_hr"] if fits else None,
@@ -258,7 +269,13 @@ def build_model_fit(data, log_info=lambda m: None, log_ok=lambda a, b="": None):
                 per_ctx[str(ctx)] = rec
             entry["precisions"][prec] = {
                 "weights_gib": round(weights_gib, 2),
-                "overhead_gib": round(overhead_gib, 2),
+                # Overhead now depends on context (it includes KV), so the
+                # authoritative figure is contexts[ctx].overhead_gib. This
+                # precision-level one is the 20% on weights alone, kept so
+                # existing readers do not break; it is NOT the overhead in
+                # total_vram_gib.
+                "overhead_gib": round(weights_gib * OVERHEAD_SHARE, 2),
+                "overhead_pct": round(OVERHEAD_SHARE * 100),
                 "contexts": per_ctx,
             }
         out[m["name"]] = entry
@@ -283,9 +300,11 @@ def build_model_fit(data, log_info=lambda m: None, log_ok=lambda a, b="": None):
             "Open-weights models from the current demand leaderboard, sized "
             "against live GPU prices. Parameter counts are the exact totals "
             "from each model's HuggingFace safetensors index; layers, KV heads "
-            "and head dim come from its config.json. VRAM = weights + KV cache "
-            "+ 20% overhead for activations and fragmentation -- that 20% is "
-            "the only assumption. MoE models hold every expert in VRAM, so "
+            "and head dim come from its config.json. VRAM = (weights + KV cache) "
+            "x 1.2: a 20% overhead on weights plus KV for activations and "
+            "fragmentation -- that 20% is the only assumption. KV cache is "
+            "fp16 at every precision. FP8 options are limited to GPUs with "
+            "native FP8 tensor cores (Ada, Hopper, Blackwell, CDNA 3). MoE models hold every expert in VRAM, so "
             "weights use total parameters while the active count is reported "
             "separately. Break-even throughput solves for the output tokens/sec "
             "a rig must sustain to beat the cheapest API route for the same "

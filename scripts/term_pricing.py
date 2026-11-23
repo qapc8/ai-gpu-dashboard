@@ -49,7 +49,7 @@ Stdlib only.
 import re
 from datetime import datetime
 
-from extra_providers import _get, _html_tokens, _price, map_gpu_name
+from extra_providers import _get, _html_tokens, _price, html_table_by_header, map_gpu_name
 
 LAMBDA_URL = "https://lambda.ai/pricing"
 DIGITALOCEAN_URL = "https://www.digitalocean.com/pricing/gpu-droplets"
@@ -231,32 +231,29 @@ def fetch_digitalocean_terms() -> dict:
 
 # --------------------------------------------------------------------------
 # Together AI -- "On-demand hourly rates and reserved capacity" table
-#   columns: Preemptible | On-demand | Reserved 3-30 days | 31-90 days |
-#            91-180 days | 181+ days ; rows: "NVIDIA" <model> <cells...>
+#   header row 1: Hardware | Preemptible | ON-Demand | Reserved (colspan 3)
+#   header row 2: Pay as you go | Pay as you go | 3-30 days | 31-90 days | 91+ days
+#   rows: "NVIDIA HGX <model>" | $x Checking... | $y Checking... | $a | $b | Request Capacity
 # --------------------------------------------------------------------------
 
-_DAYS_RE = re.compile(r"^(\d+)\s*[-–]\s*(\d+)\s*days$", re.I)
+_DAYS_RE = re.compile(r"(\d+)\s*(?:[-–]\s*(\d+)|(\+))\s*days", re.I)
 
 
 def fetch_together_terms() -> dict:
-    toks = _html_tokens(_get(TOGETHER_URL))
-    try:
-        start = toks.index("On-demand hourly rates and reserved capacity")
-    except ValueError:
-        raise RuntimeError("Together: reserved-capacity table not found") from None
-    sec = toks[start:start + 200]
-
-    # Column headers: the run of "Pay as you go"/"<a>-<b> days"/"<n>+ days" tokens.
-    hi = next((i for i, t in enumerate(sec) if t.lower() == "pay as you go"), None)
-    if hi is None:
-        raise RuntimeError("Together: table header not found")
-    cols = []
-    j = hi
-    while j < len(sec) and (sec[j].lower() == "pay as you go" or sec[j].lower().endswith("days")):
-        cols.append(sec[j])
-        j += 1
-    if len(cols) < 3 or not cols[2].lower().endswith("days"):
-        raise RuntimeError(f"Together: unexpected columns {cols}")
+    page = _get(TOGETHER_URL)
+    # Cells are read by header position, not by walking text tokens: the
+    # Preemptible and On-Demand cells carry a live "Checking..." availability
+    # badge, and token-walking shifted every later cell one column left, so
+    # "3-30 days" was published at the on-demand rate and 31-90 days vanished.
+    labels, rows = None, None
+    for m in re.finditer(r"<table[^>]*>.*?</table>", page, re.I | re.S):
+        ls, rs = html_table_by_header(m.group(0))
+        if any(l.lower().startswith("reserved") and _DAYS_RE.search(l) for l in ls):
+            labels, rows = ls, rs
+            break
+    if labels is None:
+        raise RuntimeError("Together: reserved-capacity table not found")
+    term_cols = [l for l in labels if l.lower().startswith("reserved") and _DAYS_RE.search(l)]
 
     # Payment terms come from the GPU-clusters product page ("pay upfront").
     payment, pay_note = "unknown", None
@@ -271,43 +268,32 @@ def fetch_together_terms() -> dict:
         pass
 
     out = {}
-    i = j
-    while i < len(sec) - 1:
-        if sec[i] != "NVIDIA":
-            if sec[i] in ("Sandbox",):
-                break
-            i += 1
+    for row in rows:
+        name = row.get(labels[0], "")
+        gid = map_gpu_name(name)
+        if not gid:
             continue
-        model = sec[i + 1]
-        cells = []
-        k = i + 2
-        while k < len(sec) and sec[k] != "NVIDIA" and len(cells) < len(cols):
-            if sec[k] == "Sandbox":
-                break
-            cells.append(sec[k])
-            k += 1
-        i = k
-        gid = map_gpu_name("NVIDIA " + model)
-        if not gid or len(cells) != len(cols):
-            continue  # reserved columns collapsed into one "Contact us" cell
-        for col, cell in zip(cols[2:], cells[2:]):
-            rate = _price(cell)
-            dm = _DAYS_RE.match(col)
-            if rate is None or not dm:
-                continue  # "181+ days" -> "Contact us"
+        for col in term_cols:
+            pm = re.search(r"\$\s*(\d+(?:\.\d+)?)", row.get(col, ""))
+            dm = _DAYS_RE.search(col)
+            if not pm:
+                continue  # "Request Capacity" / "Contact us"
+            band = col.split("|")[-1].strip()
             note = "All prices are per GPU per hour (page)."
             if pay_note:
                 note += f" {pay_note}."
-            _add(out, gid, {
+            term = {
                 "term": _norm_term(int(dm.group(1)), "days"),
-                "term_max": _norm_term(int(dm.group(2)), "days"),
-                "rate": rate,
+                "rate": float(pm.group(1)),
                 "payment": payment,
                 "min_gpus": None,
-                "label": f"GPU Clusters reserved, NVIDIA {model}, {col}",
+                "label": f"GPU Clusters reserved, {name}, {band}",
                 "effective_from": None,
                 "note": note,
-            })
+            }
+            if dm.group(2):
+                term["term_max"] = _norm_term(int(dm.group(2)), "days")
+            _add(out, gid, term)
     return _finish("Together AI", out)
 
 

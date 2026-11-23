@@ -33,17 +33,61 @@ from datetime import datetime, timedelta, timezone
 HISTORY_DAYS = 200  # ~6 months: enough to rebuild monthly history from
 DATA_FILE = "data.json"
 
+# A price the provider table carries but no derived figure may use. Same rule
+# as the page's priceFreshness (index.html) and update_data._usable: flagged
+# stale, a hardcoded fallback constant, or a reading more than
+# STALE_AFTER_HOURS older than the run that published it.
+#
+# The record used to take every published price. GCP's T4 has been a $0.35
+# fallback constant on every day of it, so volatility.T4 was built on that one
+# frozen number alone ("stable, 0%"), the T4 monthly average carried it, and
+# the anomaly feed reported it "unchanged for 200 days". A carried-forward
+# number is not an observation of the market, so it is not history.
+STALE_AFTER_HOURS = 48
+
+
+def _usable(entry, ref_ts=None):
+    price = entry.get("price_per_gpu_hr")
+    if not price or price <= 0:
+        return False
+    if entry.get("stale") or entry.get("source") == "hardcoded_fallback":
+        return False
+    seen = entry.get("last_updated")
+    if ref_ts and seen:
+        try:
+            age = (datetime.fromisoformat(ref_ts) - datetime.fromisoformat(seen)).total_seconds()
+        except (TypeError, ValueError):
+            return True  # unparseable or naive/aware mix: no evidence it is old
+        if age > STALE_AFTER_HOURS * 3600:
+            return False
+    return True
+
+
+def _snapshot(providers, ref_ts):
+    """{provider: {gpu: price}} of the usable prices in one published state."""
+    day = {}
+    for prov_key, prov in (providers or {}).items():
+        for gpu_id, info in (prov.get("gpus") or {}).items():
+            if _usable(info, ref_ts):
+                day.setdefault(prov_key, {})[gpu_id] = round(float(info["price_per_gpu_hr"]), 4)
+    return day
+
 
 def _run(args, cwd=None):
     return subprocess.run(args, capture_output=True, text=True, cwd=cwd, timeout=120).stdout
 
 
-def backfill_from_git(history, repo_dir, log_info=lambda m: None, max_commits=400):
-    """Fill `history` with per-provider prices from past commits of data.json.
+def backfill_from_git(history, repo_dir, log_info=lambda m: None, max_commits=400, screened=None):
+    """Fill `history` with per-provider prices from past commits of data.json,
+    and screen dates recorded before the usability rule existed.
 
-    Only dates absent from `history` are read, so this is expensive once and
-    almost free afterwards. Returns the number of dates added.
+    Only dates absent from `history`, or not yet in `screened`, are read, so
+    this is expensive once and almost free afterwards. Dates the git history
+    does not reach (CI clones shallow) stay unscreened until a run that can
+    see them -- `python scripts/price_history.py --screen` from a full clone.
+    Returns the number of dates added.
     """
+    screened = screened if screened is not None else set()
     log = _run(["git", "log", f"--max-count={max_commits}", "--format=%H %ad",
                 "--date=short", "--", DATA_FILE], cwd=repo_dir).strip()
     if not log:
@@ -52,13 +96,18 @@ def backfill_from_git(history, repo_dir, log_info=lambda m: None, max_commits=40
     # Newest commit for a given day wins; walking newest-first means the first
     # time we see a date is the one to keep.
     seen_dates = set()
-    added = 0
+    added = purged = 0
+    # Once the record is full, older dates would only be read to be trimmed
+    # again at the end of the run -- dozens of `git show`s for nothing.
+    oldest = min(history) if len(history) >= HISTORY_DAYS else None
     for line in log.split("\n"):
         parts = line.split()
         if len(parts) != 2:
             continue
         sha, date = parts
-        if date in seen_dates or date in history:
+        if oldest and date < oldest:
+            continue
+        if date in seen_dates or (date in history and date in screened):
             seen_dates.add(date)
             continue
         seen_dates.add(date)
@@ -71,19 +120,105 @@ def backfill_from_git(history, repo_dir, log_info=lambda m: None, max_commits=40
         except json.JSONDecodeError:
             continue
 
-        day = {}
-        for prov_key, prov in (snap.get("providers") or {}).items():
-            for gpu_id, info in (prov.get("gpus") or {}).items():
-                price = info.get("price_per_gpu_hr")
-                if price and price > 0:
-                    day.setdefault(prov_key, {})[gpu_id] = round(float(price), 4)
-        if day:
-            history[date] = day
+        clean = _snapshot(snap.get("providers"), snap.get("last_updated"))
+        if date in history:
+            # Recorded before stale and fallback prices were kept out: drop
+            # the points that commit shows were not usable when published.
+            # Only a point that matches the commit is touched -- anything else
+            # was recorded by a later run of that day and is not ours to judge.
+            pubd = {pk: {g: round(float(i.get("price_per_gpu_hr") or 0), 4)
+                         for g, i in (p.get("gpus") or {}).items()}
+                    for pk, p in (snap.get("providers") or {}).items()}
+            for prov_key, gpus in list((history[date] or {}).items()):
+                for gpu_id, price in list((gpus or {}).items()):
+                    if gpu_id in (clean.get(prov_key) or {}):
+                        continue
+                    if abs((pubd.get(prov_key) or {}).get(gpu_id, -1) - price) < 1e-4:
+                        gpus.pop(gpu_id)
+                        purged += 1
+                if not gpus:
+                    history[date].pop(prov_key)
+            screened.add(date)
+        elif clean:
+            history[date] = clean
+            screened.add(date)
             added += 1
 
     if added:
         log_info(f"Price history: backfilled {added} days from git")
+    if purged:
+        log_info(f"Price history: dropped {purged} stale/fallback points recorded before screening")
     return added
+
+
+# Scraper faults: spans in which a *live*, fresh-looking price was wrong
+# because our reader was. Unlike a methodology change, where both sides are
+# real prices measured differently, the points inside a fault are not prices
+# at all, so they are kept out of the record rather than merely flagged.
+#
+# A fault closes by itself: on the first recorded day on which any of its GPUs
+# is back within `restored_ratio` of its last pre-fault price, the reader has
+# been fixed and every point from then on is kept. That avoids a hand edit on
+# the day the fix lands, and an open-ended fault silently deleting good data
+# for ever. Set `until` only if the fix restores a genuinely different price.
+SCRAPER_FAULTS = [
+    {
+        # Together added a Preemptible column ahead of On-Demand and the
+        # reader took the first dollar in each row: H100 3.99 -> 1.99, H200
+        # 5.99 -> 2.99, B200 8.19 -> 4.09/4.65. Fixed in update_data
+        # (read the column headed on-demand).
+        "from": "2026-11-11",
+        "until": None,
+        "provider": "Together",
+        "gpus": ["H100-SXM", "H200", "B200", "B300"],
+        "restored_ratio": 0.8,
+        "reason": "scraper read Together's Preemptible column as on-demand",
+    },
+]
+
+
+def _fault_end(history, fault):
+    """First date the fault is over, or None while it is still open."""
+    if fault.get("until"):
+        return fault["until"]
+    dates = sorted(history)
+    for date in dates:
+        if date < fault["from"]:
+            continue
+        for gpu_id in fault["gpus"]:
+            ref = None
+            for d in dates:
+                if d >= fault["from"]:
+                    break
+                ref = ((history[d] or {}).get(fault["provider"]) or {}).get(gpu_id) or ref
+            now = ((history[date] or {}).get(fault["provider"]) or {}).get(gpu_id)
+            if ref and now and now >= fault["restored_ratio"] * ref:
+                return date
+    return None
+
+
+def drop_scraper_faults(history):
+    """Remove points inside an open or closed SCRAPER_FAULTS span, in place.
+
+    Runs on every read as well as at record time, so points recorded before
+    a fault was registered stop leaking into history, volatility and signals.
+    Returns {(provider, gpu): reason} for listings currently inside a fault.
+    """
+    active = {}
+    for fault in SCRAPER_FAULTS:
+        end = _fault_end(history, fault)
+        for date in sorted(history):
+            if date < fault["from"] or (end and date >= end):
+                continue
+            gpus = (history[date] or {}).get(fault["provider"]) or {}
+            for gpu_id in fault["gpus"]:
+                gpus.pop(gpu_id, None)
+            if not gpus:
+                (history[date] or {}).pop(fault["provider"], None)
+        if not end:
+            for gpu_id in fault["gpus"]:
+                active[(fault["provider"], gpu_id)] = fault["reason"]
+    return active
 
 
 # Dates on which this pipeline changed how it reads a provider, with the
@@ -175,7 +310,29 @@ METHODOLOGY_CHANGES = [
         "gpus": None,
         "reason": "providers added; kept out of monthly averages until they have 90 days of history",
     },
+    {
+        "date": "2026-11-11",
+        "kind": "scraper_fault",  # see SCRAPER_FAULTS
+        "providers": ["Together"],
+        "gpus": ["H100-SXM", "H200", "B200", "B300"],
+        "reason": ("scraper correction: on-demand was read from the Preemptible column "
+                   "(H100 3.99 -> 1.99); those points are dropped from history "
+                   "(SCRAPER_FAULTS) and the restored on-demand rate is not a market move"),
+    },
+    {
+        "date": "2026-11-12",
+        "kind": "joined",
+        "providers": ["Hyperbolic", "Paperspace", "Hot Aisle"],
+        "gpus": None,
+        "reason": "providers added; kept out of monthly averages until they have 90 days of history",
+    },
 ]
+
+# Joins and gaps are also detected from the record itself (rebuild_historical): a listing absent for longer than this, or appearing for
+# the first time, is reported as joined/left for the month rather than read
+# as a move. The hand list above stays for documented method changes; a
+# listing vanishing for a quarter (Azure MI300X, 2026-07-28 to 11-09) should
+# not need anyone to notice it.
 
 
 def _recent_joins(days=90):
@@ -186,10 +343,11 @@ def _recent_joins(days=90):
             if c.get("kind") == "joined" and c["date"] >= horizon for p in c["providers"]}
 
 
-def _correction_in_window(provider, gpu, since):
-    """Reason a provider/GPU comparison since `since` is not like-for-like."""
+def _correction_in_window(provider, gpu, since, until=None):
+    """Reason a provider/GPU comparison from `since` to `until` (default: now)
+    is not like-for-like."""
     for change in METHODOLOGY_CHANGES:
-        if change["date"] <= since:
+        if change["date"] <= since or (until and change["date"] > until):
             continue
         if provider not in change["providers"]:
             continue
@@ -248,8 +406,9 @@ def rebuild_historical(data, history, log_ok=lambda a, b="": None):
     # Average over the provider set we track *today*, in every month. The daily
     # record carries whoever was tracked at the time -- Oracle through April,
     # FluidStack until August -- so averaging "whatever was there" would make a
-    # provider joining or leaving look like a price move. Same set throughout
-    # means month-to-month change is the market.
+    # provider joining or leaving look like a price move. A tracked provider
+    # can still drop one listing and return to it, which is why change_pct
+    # below compares matched providers only.
     current = set(data.get("providers") or {}) - _recent_joins()
 
     # A change marked `scope: all` rewrote every provider's basis, so months
@@ -263,8 +422,8 @@ def rebuild_historical(data, history, log_ok=lambda a, b="": None):
         year, mon = (year + 1, 1) if mon == 12 else (year, mon + 1)
         first_month = f"{year:04d}-{mon:02d}"
 
+    # Per GPU, month and provider: that provider's prices that month.
     by_month = {}
-    month_provs = {}
     for date in sorted(history):
         month = date[:7]
         if first_month and month < first_month:
@@ -274,28 +433,61 @@ def rebuild_historical(data, history, log_ok=lambda a, b="": None):
                 continue
             for gpu_id, price in (gpus or {}).items():
                 if price and price > 0:
-                    by_month.setdefault(gpu_id, {}).setdefault(month, []).append(price)
-                    month_provs.setdefault(month, set()).add(provider)
+                    (by_month.setdefault(gpu_id, {}).setdefault(month, {})
+                     .setdefault(provider, []).append((date, price)))
 
     historical = {}
     for gpu_id, months in by_month.items():
         series = {}
-        for month, prices in sorted(months.items()):
+        prev = None
+        for month, provs in sorted(months.items()):
+            prices = [p for pts in provs.values() for _, p in pts]
             entry = {
                 "avg": round(sum(prices) / len(prices), 2),
                 "min": round(min(prices), 2),
                 "max": round(max(prices), 2),
                 "observations": len(prices),
-                "providers": len(month_provs.get(month) or ()),
+                # Providers pricing *this* GPU this month. It was the count
+                # across every GPU, so all of them read 11 in November.
+                "providers": len(provs),
             }
-            # A month in which we changed how a provider is read is not
-            # comparable with its neighbours; say so rather than let the step
-            # be read as market movement.
+            # Month-on-month change over the providers that priced the GPU in
+            # both months, each weighted equally, leaving out any whose method
+            # changed in between. `avg` is a level and moves whenever the
+            # provider mix does: Azure's MI300X vanished on 2026-07-28 and
+            # returned on 11-09, so the November avg (3.70) against October
+            # (2.39) read +54% while RunPod -- the one listing in both months
+            # -- had not moved at all.
+            if prev:
+                pm, pprovs = prev
+                matched = sorted(
+                    p for p in set(provs) & set(pprovs)
+                    if not _correction_in_window(p, gpu_id, pprovs[p][0][0], provs[p][-1][0]))
+                if matched:
+                    now_m = sum(sum(x for _, x in provs[p]) / len(provs[p]) for p in matched)
+                    then_m = sum(sum(x for _, x in pprovs[p]) / len(pprovs[p]) for p in matched)
+                    entry["change_pct"] = round((now_m / then_m - 1) * 100, 1) if then_m else None
+                else:
+                    entry["change_pct"] = None
+                entry["change_providers"] = matched
+                # Composition changes, detected from the record rather than
+                # hand-listed: they move `avg` but are not price moves.
+                joined, left = sorted(set(provs) - set(pprovs)), sorted(set(pprovs) - set(provs))
+                if joined:
+                    entry["joined"] = joined
+                if left:
+                    entry["left"] = left
+            # A month in which we changed how a provider of this GPU is read
+            # is not comparable with its neighbours; say so rather than let
+            # the step be read as market movement.
             changed = [c["reason"] for c in METHODOLOGY_CHANGES if c["date"][:7] == month
-                       and (not c["gpus"] or gpu_id in c["gpus"])]
+                       and c.get("kind") != "joined"
+                       and (not c["gpus"] or gpu_id in c["gpus"])
+                       and (c.get("scope") == "all" or set(c["providers"]) & (set(provs) | set((prev or (None, {}))[1])))]
             if changed:
                 entry["measurement_changed"] = changed[0]
             series[month] = entry
+            prev = (month, provs)
         if series:
             historical[gpu_id] = series
 
@@ -309,8 +501,12 @@ def rebuild_historical(data, history, log_ok=lambda a, b="": None):
         "basis": "derived",
         "detail": (
             "Monthly min/average/max per GPU, aggregated from the daily "
-            "per-provider price record over the provider set tracked today, so "
-            "a provider joining or leaving cannot read as a price move. "
+            "per-provider price record over the provider set tracked today, "
+            "excluding stale, carried-forward and fallback prices. The "
+            "month-on-month change (change_pct) is computed only over "
+            "providers that priced the GPU in both months and whose method did "
+            "not change in between, so a provider joining, leaving or "
+            "returning (listed per month) cannot read as a price move. "
             "Replaces a series that spliced a hand-seeded era onto live "
             "figures: it showed H100 doubling in a month and drove a false "
             "202% year-on-year rise into the volatility panel, which then "
@@ -347,8 +543,16 @@ def compute_volatility_daily(data, history, log_ok=lambda a, b="": None):
     # series for everything, and they rejoin by themselves once their change
     # falls out of the longest window.
     horizon = (datetime.now(timezone.utc) - timedelta(days=90)).strftime("%Y-%m-%d")
+    #
+    # A scraper fault is the exception. Its bad points are not in the record,
+    # and the return spanning it is screened out below, so once the fault has
+    # closed the provider's series is comparable either side and it stays in.
+    # While it is open the provider has no readings for those GPUs, which
+    # would skip every day as an incomplete basket, so it is out until then.
+    open_faults = {f["provider"] for f in SCRAPER_FAULTS if not _fault_end(history, f)}
     unstable = {p for c in METHODOLOGY_CHANGES if c["date"] >= horizon and c.get("scope") != "all"
-                for p in c["providers"]}
+                for p in c["providers"]
+                if c.get("kind") != "scraper_fault" or p in open_faults}
     # Marketplaces stay out permanently: their figure is an order-book
     # statistic that moves with whichever hosts are listed that hour, and it
     # was most of the "53.6% annualized volatility" the H100 panel reported on
@@ -370,7 +574,12 @@ def compute_volatility_daily(data, history, log_ok=lambda a, b="": None):
     # market average" jumped 0.34 -> 0.53 -> 0.34 between a two-provider and a
     # one-provider basket, and reported 118% annualized volatility on a part
     # whose price never moved.
-    coverage = {}
+    #
+    # "Every day" counts the days on which the GPU was read at all. Stale and
+    # carried-forward prices are no longer recorded, and on those runs every
+    # scraped provider is missing together -- a day nobody was read is no
+    # observation, not a basket member dropping out.
+    coverage, read_days = {}, {}
     for date in dates:
         for provider, gpus in (history[date] or {}).items():
             if provider not in basket:
@@ -379,8 +588,9 @@ def compute_volatility_daily(data, history, log_ok=lambda a, b="": None):
                 if price and price > 0:
                     coverage.setdefault(gpu_id, {}).setdefault(provider, 0)
                     coverage[gpu_id][provider] += 1
+                    read_days.setdefault(gpu_id, set()).add(date)
     consistent = {
-        gpu_id: {p for p, n in provs.items() if n >= 0.9 * len(dates)}
+        gpu_id: {p for p, n in provs.items() if n >= 0.9 * len(read_days[gpu_id])}
         for gpu_id, provs in coverage.items()
     }
 
@@ -399,21 +609,15 @@ def compute_volatility_daily(data, history, log_ok=lambda a, b="": None):
             if len(vals) == len(consistent.get(gpu_id, ())):
                 series.setdefault(gpu_id, []).append((date, sum(vals) / len(vals)))
 
-    # Which providers carry each GPU, so a GPU-level average can be checked for
-    # methodology changes among its constituents. The market average is
-    # dominated by whoever lists the part -- MI300X is essentially RunPod and
-    # Vast.ai -- so RunPod's tier fix showed up as MI300X "rising 378% in a
-    # week" with 1194% annualized volatility. That is our change, not a market.
-    carriers = {}
-    for date in history:
-        for provider, gpus in (history[date] or {}).items():
-            if provider in basket:
-                for gpu_id in (gpus or {}):
-                    carriers.setdefault(gpu_id, set()).add(provider)
-
-    def _changed_since(gpu_id, since):
-        for provider in carriers.get(gpu_id, ()):
-            why = _correction_in_window(provider, gpu_id, since)
+    # A GPU-level average has to be checked for methodology changes among its
+    # constituents. The market average is dominated by whoever lists the part
+    # -- MI300X is essentially RunPod and Vast.ai -- so RunPod's tier fix
+    # showed up as MI300X "rising 378% in a week" with 1194% annualized
+    # volatility. That is our change, not a market. Only the providers
+    # actually in the average can move it, so only they are checked.
+    def _changed_since(gpu_id, since, until=None):
+        for provider in sorted(consistent.get(gpu_id, ())):
+            why = _correction_in_window(provider, gpu_id, since, until)
             if why:
                 return f"{provider}: {why}"
         return None
@@ -435,14 +639,22 @@ def compute_volatility_daily(data, history, log_ok=lambda a, b="": None):
         values = [v for _, v in pts]
         current_price = values[-1]
 
-        # Volatility over a window containing one of our own changes measures
-        # the change, not the market.
-        vol_since = pts[max(0, len(pts) - 90)][0]
-        vol_blocked = _changed_since(gpu_id, vol_since)
-        rets = [b / a - 1 for a, b in zip(values, values[1:]) if a]
+        # A return spanning one of our own changes measures the change, not
+        # the market, so it is left out. Every return used is screened: this
+        # used to check only the last 90 points while computing over all ~199,
+        # so Together's 2026-08-20 table switch sat inside H100 volatility.
+        rets, vol_skipped = [], []
+        for (d0, a), (d1, b) in zip(pts, pts[1:]):
+            if not a:
+                continue
+            why = _changed_since(gpu_id, d0, d1)
+            if why:
+                vol_skipped.append(why)
+                continue
+            rets.append(b / a - 1)
         vol = median_move = None
         days_moved = None
-        if len(rets) >= 20 and not vol_blocked:
+        if len(rets) >= 20:
             mean = sum(rets) / len(rets)
             var = sum((r - mean) ** 2 for r in rets) / (len(rets) - 1)
             vol = round((var ** 0.5) * (365 ** 0.5) * 100, 1)
@@ -492,7 +704,10 @@ def compute_volatility_daily(data, history, log_ok=lambda a, b="": None):
                      f"{len(consistent.get(gpu_id, ()))} providers that list this GPU "
                      f"every day since {pts[0][0]}"),
         }
-        why = why30 or why7 or why90 or vol_blocked
+        if vol_skipped:
+            rec["returns_excluded"] = len(vol_skipped)
+            rec["returns_excluded_reason"] = vol_skipped[0]
+        why = why30 or why7 or why90
         if why:
             rec["measurement_changed"] = why
             rec["note"] = ("A provider carrying this GPU changed how it is read within "
@@ -523,7 +738,9 @@ def compute_volatility_daily(data, history, log_ok=lambda a, b="": None):
             "rebuilt on one comparable basis holds four points -- three "
             "returns. Annualized volatility is only reported where at least 20 "
             "daily returns stand behind it, and the observation count is "
-            "published with every figure."
+            "published with every figure. Stale and fallback prices are not "
+            "in the record, and any daily return spanning a methodology change "
+            "of a provider in the average is left out (returns_excluded)."
         ),
     }
     log_ok("Volatility", f"{len(out)} GPUs from daily observations")
@@ -538,30 +755,54 @@ def build_price_history(data, repo_dir, log_info=lambda m: None, log_ok=lambda a
 
     block = data.get("price_history") or {}
     history = block.get("days") or {}
+    screened = set(block.get("screened_dates") or [])
 
-    # One-time (per missing date) backfill of the exact published record.
-    backfill_from_git(history, repo_dir, log_info=log_info)
+    # One-time (per missing or unscreened date) backfill of the exact
+    # published record.
+    backfill_from_git(history, repo_dir, log_info=log_info, screened=screened)
 
-    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    snapshot = {}
-    for prov_key, prov in providers.items():
-        for gpu_id, info in (prov.get("gpus") or {}).items():
-            price = info.get("price_per_gpu_hr")
-            if price and price > 0:
-                snapshot.setdefault(prov_key, {})[gpu_id] = round(float(price), 4)
+    # Only usable prices are recorded (see _usable). A stale or fallback
+    # price stays in the provider table, flagged, but it is not an
+    # observation and must not become one here.
+    # The run's own date, so re-running on a saved data.json (the --screen
+    # entry point below) re-records that day instead of inventing today.
+    today = (data.get("last_updated") or datetime.now(timezone.utc).isoformat())[:10]
+    snapshot = _snapshot(providers, data.get("last_updated"))
     if snapshot:
         history[today] = snapshot
+        screened.add(today)
+
+    # Read-time screens, so points recorded before a rule existed stop
+    # leaking: scraper-fault spans, and any listing now on a fallback
+    # constant -- every recorded point equal to that constant is the
+    # constant, not a reading (GCP T4, $0.35, on every day of the record).
+    in_fault = drop_scraper_faults(history)
+    for prov_key, prov in providers.items():
+        for gpu_id, info in (prov.get("gpus") or {}).items():
+            if info.get("source") != "hardcoded_fallback" or not info.get("price_per_gpu_hr"):
+                continue
+            fb = round(float(info["price_per_gpu_hr"]), 4)
+            for date in history:
+                gpus = (history[date] or {}).get(prov_key) or {}
+                if gpu_id in gpus and abs(gpus[gpu_id] - fb) < 1e-4:
+                    gpus.pop(gpu_id)
+                if prov_key in history[date] and not gpus:
+                    history[date].pop(prov_key)
 
     for old in sorted(history)[:-HISTORY_DAYS]:
         history.pop(old, None)
+    screened &= set(history)
 
     week_ago = (datetime.strptime(today, "%Y-%m-%d") - timedelta(days=7)).strftime("%Y-%m-%d")
     month_ago = (datetime.strptime(today, "%Y-%m-%d") - timedelta(days=30)).strftime("%Y-%m-%d")
 
+    # Moves only for listings recorded today: a stale, fallback or in-fault
+    # price has no "current" to compare, and comparing one produced
+    # "unchanged for 200 days" for a constant that was never read.
     moves = {}
     for prov_key, prov in providers.items():
         for gpu_id, info in (prov.get("gpus") or {}).items():
-            now_price = info.get("price_per_gpu_hr")
+            now_price = ((history.get(today) or {}).get(prov_key) or {}).get(gpu_id)
             if not now_price:
                 continue
             series = _series(history, prov_key, gpu_id)
@@ -641,6 +882,12 @@ def build_price_history(data, repo_dir, log_info=lambda m: None, log_ok=lambda a
         "as_of": today,
         "first_date": dates[0] if dates else None,
         "day_count": len(dates),
+        # Dates checked against the published commit for stale/fallback
+        # points; the rest were recorded before that rule and await a run
+        # whose git history reaches them.
+        "screened_dates": sorted(screened),
+        "unscreened_days": len(set(dates) - screened),
+        "scraper_faults_open": sorted(f"{p}|{g}" for p, g in in_fault),
         # Committed-rate record, maintained by term_structure.record_term_history.
         "term_days": block.get("term_days") or {},
     }
@@ -653,10 +900,35 @@ def build_price_history(data, repo_dir, log_info=lambda m: None, log_ok=lambda a
             "the git history of data.json -- every commit is an exact record of "
             "what was published that day -- and appended once per run "
             "thereafter. The change feed was not used: it only logs moves of 3% "
-            "or more, so a series rebuilt from it drifts. Windows containing "
-            "one of this pipeline's own scraper corrections are flagged, "
-            "because those moves are not the market."
+            "or more, so a series rebuilt from it drifts. Only usable prices "
+            "are recorded: stale, carried forward more than "
+            f"{STALE_AFTER_HOURS}h, or hardcoded fallback prices are not "
+            "observations and are left out (and purged from days recorded "
+            "before that rule). Days on which our scraper read the wrong "
+            "column are dropped. Windows containing one of this pipeline's "
+            "own scraper corrections are flagged, because those moves are not "
+            "the market."
         ),
     }
     log_ok("Price History", f"{len(dates)} days, {sum(len(v) for v in moves.values())} provider/GPU series")
     return data
+
+
+if __name__ == "__main__":
+    # One-off screen of the accumulated record from a full clone. CI clones
+    # 60 commits deep, so days older than that can only be screened here:
+    #   python scripts/price_history.py --screen [path/to/data.json]
+    import os
+    import sys
+    if "--screen" not in sys.argv:
+        sys.exit("usage: price_history.py --screen [data.json]")
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    args = [a for a in sys.argv[1:] if a != "--screen"]
+    path = args[0] if args else os.path.join(root, DATA_FILE)
+    with open(path) as f:
+        d = json.load(f)
+    pr = lambda *a: print(*a)
+    d = build_price_history(d, root, log_info=pr, log_ok=pr)
+    with open(path, "w") as f:
+        json.dump(d, f, indent=2, default=str)
+    print("unscreened days left:", d["price_history"]["unscreened_days"])
