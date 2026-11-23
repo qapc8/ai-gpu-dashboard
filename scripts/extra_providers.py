@@ -82,6 +82,65 @@ def _html_tokens(page):
     return out
 
 
+def _cell_text(cell_html):
+    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", cell_html))).strip()
+
+
+def html_table_by_header(table_html):
+    """Parse one <table> into (column_labels, rows), honouring rowspan/colspan.
+
+    ``column_labels[i]`` is every header cell stacked over column i, joined
+    with " | " (e.g. "Reserved | 3-30 days"); ``rows`` is a list of
+    ``{column_label: cell_text}`` for each body row.
+
+    Cells are matched to columns by grid position, never by counting text
+    tokens: Together's table puts a live "Checking..." availability badge in
+    some cells, and walking tokens shifted every later cell one column left
+    (the 3-30 day band got the on-demand rate; 2026-11-23 audit).
+    """
+    cell_re = re.compile(r"<(t[dh])([^>]*)>(.*?)</t[dh]>", re.I | re.S)
+
+    def span(attrs, name):
+        m = re.search(name + r"\s*=\s*\"?(\d+)", attrs, re.I)
+        return max(1, int(m.group(1))) if m else 1
+
+    header, body = [], []
+    for row in re.findall(r"<tr[^>]*>(.*?)</tr>", table_html, re.I | re.S):
+        cells = cell_re.findall(row)
+        if not cells:
+            continue
+        is_header = all(tag.lower() == "th" for tag, _, _ in cells) and not body
+        (header if is_header else body).append(cells)
+
+    # Header grid: occupied[(r, c)] = label, with rowspans carried down.
+    grid = {}
+    for r, cells in enumerate(header):
+        c = 0
+        for _, attrs, inner in cells:
+            while (r, c) in grid:
+                c += 1
+            text = _cell_text(inner)
+            for dr in range(span(attrs, "rowspan")):
+                for dc in range(span(attrs, "colspan")):
+                    grid[(r + dr, c + dc)] = text if dr == 0 else None
+            c += span(attrs, "colspan")
+    ncols = max((c for _, c in grid), default=-1) + 1
+    labels = []
+    for c in range(ncols):
+        parts = [grid[(r, c)] for r in range(len(header)) if grid.get((r, c))]
+        labels.append(" | ".join(parts))
+
+    rows = []
+    for cells in body:
+        out, c = {}, 0
+        for _, attrs, inner in cells:
+            if c < len(labels):
+                out[labels[c]] = _cell_text(inner)
+            c += span(attrs, "colspan")
+        rows.append(out)
+    return labels, rows
+
+
 _PRICE_RE = re.compile(r"^\$\s*([0-9]+(?:\.[0-9]+)?)\s*$")
 
 

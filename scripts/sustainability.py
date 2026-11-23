@@ -56,14 +56,17 @@ def build_gpu_carbon(data, log_ok=lambda a, b="": None):
         tdp = spec.get("tdp_watts")
         if not tdp:
             continue
-        typical = round(tdp * SUSTAINED_LOAD_FACTOR)
-        kwh_hr = round(typical / 1000, 3)
-        annual_kwh = round(kwh_hr * 8760)
+        # Carry full precision through the chain and round only what is
+        # published. Rounding watts first and then kWh compounded: T4's 57.4W
+        # became 57W -> 0.057 kWh, every downstream figure ~0.8% low.
+        typical = tdp * SUSTAINED_LOAD_FACTOR
+        kwh_hr = typical / 1000
+        annual_kwh = kwh_hr * 8760
         out[gpu_id] = {
             "tdp_watts": tdp,
-            "typical_watts": typical,
-            "kwh_per_hour": kwh_hr,
-            "annual_kwh_full_util": annual_kwh,
+            "typical_watts": round(typical),
+            "kwh_per_hour": round(kwh_hr, 4),
+            "annual_kwh_full_util": round(annual_kwh),
             "carbon_kg_per_year_us_avg": round(annual_kwh * US_GRID_KG_CO2_PER_KWH),
             "carbon_kg_per_year_eu_nordic": round(annual_kwh * NORDIC_GRID_KG_CO2_PER_KWH),
             "water_liters_per_year_us_avg": round(annual_kwh * WATER_L_PER_KWH),

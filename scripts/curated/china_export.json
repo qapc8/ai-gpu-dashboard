@@ -248,7 +248,15 @@
       "url": "https://media.bis.gov/press-release/department-commerce-revises-license-review-policy-semiconductors-exported-china"
     },
     {
-      "topic": "NVIDIA H200 sales reality (10-Q)",
+      "topic": "NVIDIA licensed Hopper shipments to China (Q3 FY27)",
+      "status": "NVIDIA shipped $2.4B of Data Center Hopper products to China in Q3 FY27 (quarter ended 2026-10-25). On the Nov 17 call Colette Kress said NVIDIA is 'no longer shipping licensed Hopper data centre products to China' and Q4 guidance ($130.0B +/-3%) assumes no China data-center compute revenue. The Q3 10-Q (China-headquartered customer revenue) was not yet on EDGAR as of 2026-11-23.",
+      "as_of": "2026-11-17",
+      "source": "NVIDIA CFO commentary (SEC 8-K exhibit, 2026-11-17); 'no longer shipping' quote per Reuters via TimesLive (2026-11-18)",
+      "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/q3fy27cfocommentary.htm",
+      "url_2": "https://www.timeslive.co.za/news/sci-tech/2026-11-18-nvidia-stops-shipping-us-approved-ai-chips-to-china/"
+    },
+    {
+      "topic": "NVIDIA H200 sales reality (Q2 FY27 10-Q; superseded by Q3 FY27 entry)",
       "status": "NVIDIA took a $0.4B H200 excess-inventory charge in H1 FY27; licensed H200 shipments were <1% of Data Center revenue, must pass US inspection and carry a 25% US import tariff, and NVIDIA assumes no China data-center compute revenue in guidance.",
       "as_of": "2026-08-26",
       "source": "NVIDIA Form 10-Q (SEC)",
@@ -333,10 +341,12 @@
     },
     {
       "topic": "China gallium/germanium/antimony export ban to US",
-      "status": "MOFCOM suspended its Dec 2024 ban on exports of gallium, germanium, antimony and superhard materials to the US until November 27, 2026; no extension verified as of this file's date.",
+      "status": "MOFCOM suspended its Dec 2024 ban on exports of gallium, germanium, antimony and superhard materials to the US until November 27, 2026. The Nov 9, 2026 truce extension (2 months from Nov 10, to Jan 10, 2027) covers the control-list and unreliable-entity measures; reports of it do not mention the Ga/Ge/Sb ban suspension, and no MOFCOM notice extending that suspension was found as of 2026-11-23. Unless extended, the ban resumes on 2026-11-27.",
       "as_of": "2025-11-11",
       "source": "Fastmarkets",
-      "url": "https://www.fastmarkets.com/insights/china-suspends-export-prohibition-on-superhard-materials-us/"
+      "url": "https://www.fastmarkets.com/insights/china-suspends-export-prohibition-on-superhard-materials-us/",
+      "as_of_status_checked": "2026-11-23",
+      "url_2": "https://www.thenationalnews.com/news/us/2026/11/09/china-extends-pause-on-rare-earth-export-curbs-for-two-months/"
     }
   ]
 }

@@ -34,6 +34,8 @@ import os
 from datetime import date, datetime, timedelta, timezone
 from statistics import median
 
+from term_structure import _BUCKET_OF, _is_cluster  # one definition of bucket and cluster
+
 SOURCES = ["Reserved Dynamics", "SEC EDGAR XBRL (backlog)", "Curated compute contracts"]
 
 TOP = ["B300", "GB200", "B200", "H200", "H100-SXM", "MI300X"]
@@ -188,6 +190,19 @@ def _derived(data, prev, sec):
     sec["rate_changes"] = changes[:150]
 
     # ---- per-GPU summary: where the discount is now and how it moved ----
+    latest_term_day = max(tdays) if tdays else None
+    # Series whose headline rate today is a multi-node cluster reservation:
+    # every live term in that bucket is one (term_days stores only the
+    # headline rate, so the provider entry is where min_gpus is visible).
+    clusters = set()
+    for prov, p in (data.get("providers") or {}).items():
+        for gpu, entry in (p.get("gpus") or {}).items():
+            buckets = {}
+            for t in entry.get("terms") or []:
+                b = _BUCKET_OF.get(t.get("term"))
+                if b and not t.get("stale"):
+                    buckets.setdefault(b, []).append(_is_cluster(t))
+            clusters |= {(prov, gpu, b) for b, flags in buckets.items() if all(flags)}
     summary = {}
     for gpu in TOP:
         rows = curve.get(gpu) or []
@@ -206,11 +221,28 @@ def _derived(data, prev, sec):
                                                                last.get("on_demand_n") or 0, base.get("on_demand_n") or 0) >= MIN_PROVIDERS
                                                        else None),
                             "thin": (last.get(k + "_n") or 0) < MIN_PROVIDERS}
-        ours = []
+        # Our providers' current discount, one median per commitment length.
+        # This was a single median over every series, which pooled a 2-week
+        # reservation with 1- and 3-year commitments (B200: AWS 3yr 56.8%
+        # beside Lambda's 2-week -28%), counted Lambda's 16+ GPU 1-Click
+        # Cluster reservations that term_structure keeps out of every
+        # discount aggregate, and kept Together|medium, last seen 2026-11-10.
+        # Now: per bucket, single-node commitments only, series seen in the
+        # latest recorded run only. our_providers_median_discount_pct keeps
+        # its name but is now the 1-year median -- the one length most
+        # providers publish -- rather than the pooled figure.
+        by_term = {}
         for key, pts in (disc.get(gpu) or {}).items():
-            if pts and pts[-1].get("discount_pct") is not None:
-                ours.append(pts[-1]["discount_pct"])
-        s["our_providers_median_discount_pct"] = round(median(ours), 1) if ours else None
+            prov, term = key.split("|", 1)
+            if not pts or pts[-1]["date"] != latest_term_day or pts[-1].get("discount_pct") is None:
+                continue
+            if (prov, gpu, term) in clusters:
+                continue
+            by_term.setdefault(term, []).append(pts[-1]["discount_pct"])
+        s["our_providers_median_discount_by_term"] = {
+            t: {"median_pct": round(median(v), 1), "n": len(v)} for t, v in sorted(by_term.items())}
+        one_yr = by_term.get("1yr")
+        s["our_providers_median_discount_pct"] = round(median(one_yr), 1) if one_yr else None
         s["n_changes_90d"] = sum(1 for c in changes if c["gpu"] == gpu and c["date"] >= _days_back(today, 90))
         summary[gpu] = s
     sec["summary"] = summary

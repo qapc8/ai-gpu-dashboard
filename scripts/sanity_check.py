@@ -102,6 +102,12 @@ def main():
     stale = sorted(k for k, v in fresh.items() if v.get("auto") and v.get("stale_runs", 0) >= SECTION_STALE_RUNS)
     if stale:
         _warn(f"sections stale for {SECTION_STALE_RUNS}+ runs: {', '.join(stale)}")
+    # Some sources failing every run is as easy to miss as all of them failing:
+    # the section still reads "refreshed today".
+    partial = sorted(f"{k} ({v.get('sources_ok')}/{v.get('sources_total')})" for k, v in fresh.items()
+                     if v.get("auto") and v.get("partial_runs", 0) >= SECTION_STALE_RUNS)
+    if partial:
+        _warn(f"sections missing sources for {SECTION_STALE_RUNS}+ runs: {', '.join(partial)}")
     ai = fresh.get("ai_analysis") or {}
     if ai.get("refreshed"):
         age = (datetime.now(timezone.utc).date() - datetime.fromisoformat(ai["refreshed"]).date()).days

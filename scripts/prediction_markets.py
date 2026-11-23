@@ -113,6 +113,12 @@ def _implied_median(survival):
         return None
     if survival[-1][1] > 0.5:
         return None
+    # A ladder flat end to end carries no information about where the median
+    # is. This is what an all-empty book looks like (every strike bid 0 / ask
+    # 1 -> mid 0.50), and the midpoint of the first two strikes used to be
+    # published as the "implied price" for it (KXH100MS-27FEB, 2026-11-23).
+    if survival[0][1] <= survival[-1][1]:
+        return None
     for (k0, p0), (k1, p1) in zip(survival, survival[1:]):
         if p0 >= 0.5 >= p1:
             if p0 == p1:
@@ -185,6 +191,14 @@ def _kalshi_horizon(event_ticker):
     return f"{year:04d}-{month:02d}", label
 
 
+# A strike counts as quoted only with a bid > 0 and a spread no wider than
+# this (in probability, i.e. dollars on a $1 binary). Wider than 50c and the
+# mid says little more than "somewhere between".
+KALSHI_MAX_SPREAD = 0.5
+# Fewer liquid strikes than this per month and no curve point is published.
+KALSHI_MIN_LIQUID_STRIKES = 3
+
+
 def fetch_kalshi_gpu_markets(max_horizons=8):
     """Monthly-average GPU compute price ladders, newest month first."""
     curves = []
@@ -222,17 +236,22 @@ def fetch_kalshi_gpu_markets(max_horizons=8):
                 strike = _num(mkt.get("floor_strike"))
                 bid = _num(mkt.get("yes_bid_dollars"))
                 ask = _num(mkt.get("yes_ask_dollars"))
-                last = _num(mkt.get("last_price_dollars"))
-                if bid is not None and ask is not None and ask > 0:
-                    prob = (bid + ask) / 2
-                elif last is not None and last > 0:
-                    prob = last
-                else:
+                # Only a two-sided book is a probability. With no bid the "mid"
+                # of 0/1 is 0.50 by construction, and a last trade can be weeks
+                # old, so neither is used: an unquoted strike is skipped.
+                if bid is None or ask is None or bid <= 0 or ask <= 0:
                     continue
-                ladder.append((strike, prob))
+                if ask - bid > KALSHI_MAX_SPREAD:
+                    continue
+                ladder.append((strike, (bid + ask) / 2))
                 open_interest += _num(mkt.get("open_interest_fp")) or 0.0
                 volume += _num(mkt.get("volume_fp")) or 0.0
 
+            # Too few quoted strikes and the interpolated median is mostly our
+            # straight line, not the market's: drop the month rather than
+            # publish it.
+            if len(ladder) < KALSHI_MIN_LIQUID_STRIKES:
+                continue
             survival = _survival_from_ladder(ladder)
             median = _implied_median(survival)
             if median is None:
@@ -434,7 +453,11 @@ def build_prediction_markets(data, kalshi_curves, polymarket_markets):
             gpu["price_per_gpu_hr"]
             for prov in providers.values()
             for gid, gpu in (prov.get("gpus") or {}).items()
+            # Stale/fallback listings and listings inside an open scraper fault
+            # (marked stale upstream) are not prices anyone can rent at today;
+            # Together's misread $1.99 H100 showed as "our cheapest" here.
             if gid == gpu_id and gpu.get("price_per_gpu_hr")
+            and not gpu.get("stale") and gpu.get("source") != "hardcoded_fallback"
         ]
         if not prices:
             return None, None
